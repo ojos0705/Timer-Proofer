@@ -1,0 +1,133 @@
+1. Perbaikan pada main dashboard yang stiky, main board yang scrollable, dan bottom bar yang sticky (main board belum selesai)
+2. Perbaikan pada file index.html, gemini berhasil meng-generate file index yang rapi dah bersih, cuma bagian lokasi hanya menampilkan jalan, bagus diterapkan di html asli
+3. Perbaikan pada css, dan berhenti di css, lanjut di script
+
+# 1. Install plugin GPS (Geolocation) / Fitur pengaktifan GPS
+npm install @capacitor/geolocation
+
+# 2. Install plugin Status Jaringan (Network) / (Deteksi Online/Offline)
+npm install @capacitor/network
+
+# 3. Install plugin Push Notification / (Fitur Pemberitahuan)
+npm install @capacitor/local-notifications
+
+# 4. Install plugin Getaran (Haptics) / (Fitur Getaran / Vibration)
+npm install @capacitor/haptics
+
+# 4. Install plugin bluetooth / (Fitur Koneksi bluetooth)
+npm install @capacitor-community/bluetooth-le
+
+# 5. Install plugin Penyimpanan Stabil (Preferences) / (Penyimpanan Status Timer)
+npm install @capacitor/preferences
+
+# 6. Install plugin Sistem Aplikasi (App) / (Mengontrol Aplikasi & Tombol Back Android)
+npm install @capacitor/app
+
+# 7. sinkronisasi kode ke folder Android dan iOS
+npx cap sync
+
+@capacitor/android – Core platform untuk Android dan Huawei OS.
+
+@capacitor/ios – Core platform untuk Apple iOS.
+
+PERMISION (DI android/app/src/main/AndroidManifest.xml)
+geolocation
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-feature android:name="android.hardware.location.gps" />
+
+network
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+Push Notification
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+haptics
+<uses-permission android:name="android.permission.VIBRATE" />
+
+<uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+<uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
+
+core platform
+<uses-permission android:name="android.permission.INTERNET" />
+
+=====================
+* BUILD BY Capacitor *
+=====================
+1.Instal Capacitor CLI dan Core:
+Bash :
+npm install @capacitor/core @capacitor/cli
+npm install @capacitor/core@latest @capacitor/cli@latest -> Update
+2. Inisialisasi Capacitor:
+Bash :
+npx cap init "Donut Proofing" "com.donutproofing.app" --web-dir=www
+
+
+Masukkan App Name (contoh: "Proofing Donut").
+Masukkan App ID (contoh: com.donut.proofing).
+Saat diminta Web Asset Directory, masukkan nama folder web Anda (misal: www).
+
+3. Tambahkan Platform Mobile
+Setelah inisialisasi, Anda perlu menambahkan platform target.
+
+a. Instal platform:
+Bash :
+npm install @capacitor/android @capacitor/ios
+npm install @capacitor/android@latest @capacitor/ios@latest -> Update
+npm run build
+S
+b. Instal plugin
+npm install @capacitor/geolocation @capacitor/network @capacitor/local-notifications @capacitor/haptics @capacitor-community/bluetooth-le @capacitor/preferences @capacitor/app cordova-plugin-printer @awesome-cordova-plugins/printer
+npm install cordova-plugin-printer
+npm install @awesome-cordova-plugins/printer
+npm install @capacitor/geolocation - Instal gps
+npm install @capacitor/network - Install plugin Status Jaringan (Network)
+npm install @capacitor/local-notifications - Install plugin Push Notification
+npm install @capacitor/haptics - Install plugin Getaran (Haptics) / (Fitur Getaran / Vibration)
+npm install @capacitor-community/bluetooth-le - Install plugin bluetooth
+npm install @capacitor/preferences - Install plugin Penyimpanan Stabil (Preferences)
+npm install @capacitor/app - Install plugin Sistem Aplikasi (App)
+
+izin pada AndroidManifest
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-feature android:name="android.hardware.location.gps" />
+
+<uses-permission android:name="android.permission.BLUETOOTH" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+c. Tambahkan folder platform ke proyek:
+Bash :
+npx cap add android
+npx cap add ios
+(Catatan: Untuk Huawei, gunakan platform android karena Huawei HarmonyOS mendukung aplikasi berbasis Android).
+
+4. Sinkronisasi Web ke Native
+Setiap kali Anda melakukan perubahan kode pada file di folder www, Anda harus menyalin perubahan tersebut ke folder native:
+
+Bash:
+npx cap sync android
+
+5. Membuka di IDE Native (Android Studio / Xcode)
+Untuk melakukan build akhir (menjadi file .apk atau .ipa), Anda harus menggunakan IDE resmi:
+
+Untuk Android/Huawei:
+
+Bash :
+npx cap open android
+(Android Studio akan terbuka, Anda bisa langsung melakukan Build > Generate Signed Bundle/APK).
+
+Untuk iOS:
+
+Bash
+npx cap open ios
+(Xcode akan terbuka, Anda bisa melakukan proses Archiving untuk dikirim ke App Store atau instalasi ke iPhone).
+
+lanjut refactor halaman uer profile dari chat gpt
