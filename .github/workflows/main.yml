@@ -1,0 +1,6 @@
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+
+  - name: Jalankan skrip bash
+    run: bash skrip-anda.sh
