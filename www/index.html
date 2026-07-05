@@ -7,21 +7,18 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Timer Proofer">
-    <script type="importmap">
-    {
-      "imports": {
-        "@capacitor/share": "https://esm.sh/@capacitor/share",
-        "@capacitor/local-notifications": "https://esm.sh/@capacitor/local-notifications",
-        "@capacitor/app": "https://esm.sh/@capacitor/app",
-        "@capacitor/preferences": "https://esm.sh/@capacitor/preferences",
-        "@capacitor/geolocation": "https://esm.sh/@capacitor/geolocation",
-        "@capacitor/network": "https://esm.sh/@capacitor/network",
-        "@capacitor/haptics": "https://esm.sh/@capacitor/haptics",
-        "@capacitor-community/bluetooth-le": "https://esm.sh/@capacitor-community/bluetooth-le",
-        "@capacitor/filesystem": "https://esm.sh/@capacitor/filesystem"
-    }
-  }
-    </script>
+    <!--
+      Capacitor plugins (App, LocalNotifications, Preferences, Share, Filesystem)
+      are bundled locally at ./vendor/capacitor-plugins.js — built from the same
+      node_modules used by the native Android/iOS project (see package.json /
+      src/capacitor-plugins-entry.js). Do NOT load these from a CDN (e.g. esm.sh):
+      it forces the app to need internet on every launch just to boot its own
+      code, and risks version mismatches with the native shell.
+      Geolocation, Haptics, and Bluetooth LE are accessed natively at runtime via
+      window.Capacitor.Plugins.* and don't need a JS import.
+      Rebuild after changing plugin versions with:
+        npx esbuild src/capacitor-plugins-entry.js --bundle --format=esm --platform=browser --outfile=www/vendor/capacitor-plugins.js --minify
+    -->
     <script src="assets/js/html2pdf.bundle.min.js"></script>
     <link rel="apple-touch-icon" href="logo donat.png">
     <title>Timer Proofer</title>
@@ -1656,11 +1653,7 @@ onclick="openEditProfile()">
 </div>
 -->
 <script type="module">
-import { App } from '@capacitor/app';
-import { LocalNotifications } from '@capacitor/local-notifications';
-import { Preferences } from '@capacitor/preferences';
-import { Share } from '@capacitor/share';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { App, LocalNotifications, Preferences, Share, Filesystem, Directory, Encoding } from './vendor/capacitor-plugins.js';
 
 const RESEP_LIST_KEY = 'premium_saved_recipes';
 const RESEP_LEGACY_KEY = 'premium_saved_recipe';
@@ -5864,13 +5857,9 @@ function kirimPesanKeSW(lat, lon) {
     }
 }
 
-function tampilkanDaftarResepTersimpan() {
-    console.log("Memuat database resep...");
-    // Logika membaca database/Preferences Anda
-}
-
-// WAJIB: Tempelkan fungsi ke objek window agar bisa dipanggil dari HTML onclick
-window.tampilkanDaftarResepTersimpan = tampilkanDaftarResepTersimpan;
+// NOTE: tampilkanDaftarResepTersimpan is defined further down (modal-opening
+// implementation) and assigned to window there. The old stub that used to
+// live here was dead code, silently overwritten — removed to avoid confusion.
 
 // =========================================================
 // DAFTARKAN LISTENER (Taruh di bagian paling bawah script)
@@ -6979,42 +6968,38 @@ window.startProofing = startProofing;
 async function generateBusinessInsight(recipeData) {
     const insightBox = document.getElementById('biz-analysis-insight');
     const insightText = document.getElementById('biz-insight-text');
-    
-    // Tampilkan state loading
+
     insightBox.style.display = 'block';
-    insightText.innerHTML = '<em><i class="fas fa-spinner fa-spin"></i> Agent AI sedang menganalisis performa bisnis resep Anda...</em>';
+    insightText.innerHTML = '<em><i class="fas fa-spinner fa-spin"></i> Menganalisis performa bisnis resep Anda...</em>';
 
-    // Definisikan prompt untuk Agent AI
-    const systemInstruction = "Anda adalah Agen AI Konsultan Keuangan untuk UMKM kuliner rumahan (Kedai Mak-er). Tugas Anda adalah memberikan analisis bisnis yang singkat (maksimal 2-3 kalimat), praktis, motivatif, dan mudah dipahami oleh orang awam berdasarkan data resep yang diberikan.";
-    
-    const userPrompt = `
-    Nama Resep: ${recipeData.name}
-    Total Food Cost: Rp ${recipeData.foodCost}
-    Harga Jual per Pcs: Rp Rp ${recipeData.pricePerPcs}
-    Food Cost Ratio: ${recipeData.ratio}%
-    Profit Margin: ${recipeData.margin}%
-    
-    Berikan analisis singkat: Apakah harga sudah ideal? Jika rasio food cost terlalu tinggi (di atas 35%), berikan saran konkret seperti mencari supplier alternatif untuk bahan termahal (misal cokelat/mentega) atau efisiensi porsi. Gunakan bahasa yang ramah.
-    `;
+    // CATATAN: Sebelumnya fungsi ini fetch ke '/api/donut-agent/analyze-finance',
+    // sebuah endpoint yang TIDAK PERNAH ADA (tidak ada server.js/route Vercel
+    // untuknya, tidak seperti /api/weather yang memang di-deploy). Akibatnya di
+    // app native (base URL https://localhost) request ini selalu gagal, dan di
+    // web pun akan selalu 404 lalu jatuh ke fallback lewat try/catch.
+    //
+    // Untuk sementara dipakai analisis lokal (heuristik) di bawah ini supaya
+    // fitur benar-benar berfungsi & instan, termasuk saat offline di app native.
+    //
+    // Kalau nanti mau pakai AI beneran, buat serverless function baru (contoh
+    // polanya lihat /api/weather.js + rewrite di vercel.json), deploy ke Vercel,
+    // lalu ganti bagian di bawah ini dengan fetch ke URL PENUH-nya, misal:
+    //   fetch('https://proofing-donat-2.vercel.app/api/donut-agent/analyze-finance', {...})
+    // (bukan path relatif '/api/...', karena itu yang menyebabkan bug ini).
 
-    try {
-        // Contoh pemanggilan API (sesuaikan dengan endpoint backend Anda atau library AI SDK yang Anda pakai)
-        const response = await fetch('/api/donut-agent/analyze-finance', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ system: systemInstruction, prompt: userPrompt })
-        });
-        
-        const result = await response.json();
-        
-        // Suntikkan hasil analisis dari Agent AI ke dalam HTML
-        insightText.innerText = result.analysis;
-        
-    } catch (error) {
-        console.error("Gagal memuat analisis Agent AI:", error);
-        // Fallback ke logika statis sederhana jika API bermasalah
-        insightText.innerText = `Food cost Anda berada di angka ${recipeData.ratio}%. Pertahankan performa ini atau lakukan efisiensi pada bahan baku utama untuk meningkatkan margin keuntungan.`;
+    const ratio = parseFloat(recipeData.ratio) || 0;
+    const margin = parseFloat(recipeData.margin) || 0;
+    let analysis;
+
+    if (ratio > 35) {
+        analysis = `Food cost "${recipeData.name}" ada di angka ${recipeData.ratio}% — cukup tinggi. Coba cari supplier alternatif untuk bahan termahal (misalnya cokelat/mentega) atau sesuaikan porsi supaya margin naik ke level yang lebih sehat.`;
+    } else if (ratio > 0) {
+        analysis = `Food cost "${recipeData.name}" ada di angka ${recipeData.ratio}% dengan margin ${recipeData.margin}% — sudah di rentang yang sehat. Pertahankan konsistensi kualitas bahan supaya harga jual tetap kompetitif.`;
+    } else {
+        analysis = `Belum cukup data untuk menghitung food cost "${recipeData.name}". Pastikan harga bahan dan harga jual per pcs sudah terisi.`;
     }
+
+    insightText.innerText = analysis;
 }
 
 function showToast(message) {
