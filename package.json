@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@awesome-cordova-plugins/printer": "^9.2.0",
     "@capacitor-community/bluetooth-le": "^8.2.0",
     "@capacitor/android": "^8.4.1",
     "@capacitor/app": "^8.1.0",
@@ -23,10 +24,12 @@
     "@capacitor/network": "^8.0.1",
     "@capacitor/preferences": "^8.0.1",
     "axios": "^1.16.1",
+    "cordova-plugin-printer": "^0.8.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "expo": "^56.0.12",
     "express": "^5.2.1",
+    "html2pdf.js": "^0.14.0",
     "install": "^0.13.0",
     "npm": "^11.17.0"
   },

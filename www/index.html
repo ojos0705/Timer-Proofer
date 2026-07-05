@@ -22,7 +22,7 @@
     }
   }
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="assets/js/html2pdf.bundle.min.js"></script>
     <link rel="apple-touch-icon" href="logo donat.png">
     <title>Timer Proofer</title>
     <style>
@@ -1656,15 +1656,16 @@ onclick="openEditProfile()">
 </div>
 -->
 <script type="module">
-import { LocalNotifications } from "https://esm.sh/@capacitor/local-notifications";
-import { App } from "https://esm.sh/@capacitor/app";
-import { Preferences } from "https://esm.sh/@capacitor/preferences";
-import { Filesystem, Directory } from '@capacitor/filesystem';
+import { App } from '@capacitor/app';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { Preferences } from '@capacitor/preferences';
 import { Share } from '@capacitor/share';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 const RESEP_LIST_KEY = 'premium_saved_recipes';
 const RESEP_LEGACY_KEY = 'premium_saved_recipe';
-const MAX_RESEP_TERSIMPAN = 30;
+const FILE_RESEP_PATH = 'data/resep_sourdough.json';
+const MAX_RESEP_TERSIMPAN = 10;
 
 async function simpanDaftarResepKePerangkat(daftarResep) {
     const jsonString = JSON.stringify(daftarResep);
@@ -1763,9 +1764,10 @@ function updateProfileSummary(data = {}) {
 
     if (date) {
         date.textContent = new Date().toLocaleDateString("id-ID", {
-            weekday: "short",
+            weekday: "long",
             day: "numeric",
-            month: "short"
+            month: "short",
+            year: "numeric"
         });
     }
 }
@@ -2437,21 +2439,22 @@ window.handleOfflinePremium = function() {
     console.log('Menjalankan kalkulasi mode luring...');
     
     // 1. Coba ambil data cuaca terakhir dari localStorage jika input kosong
-    const cuacaCache = JSON.parse(localStorage.getItem('terakhir_sukses_cuaca') || '{}');
-    
-    // 2. Ambil elemen DOM
     const inputTemp = document.getElementById('off-temp');
     const inputHum = document.getElementById('off-hum');
     const inputCondition = document.getElementById('off-condition');
-    
-    // 3. Jika elemen ada dan kosong, isi dengan data cache sebagai fallback
-    if (inputTemp && !inputTemp.value) inputTemp.value = cuacaCache.temp || 25; // default 25
-    if (inputHum && !inputHum.value) inputHum.value = cuacaCache.hum || 60;     // default 60
-    if (inputCondition && !inputCondition.value) inputCondition.value = cuacaCache.condition || 'clear';
 
-    // 4. Lanjutkan kalkulasi premium offline Anda di sini
-    const finalTemp = inputTemp?.value;
-    const finalHum = inputHum?.value;
+    const cuacaCache = JSON.parse(localStorage.getItem('terakhir_sukses_cuaca') || '{}');
+    
+    // 2. Ambil elemen DOM
+    let finalTemp = parseFloat(inputTemp?.value);
+    if (isNaN(finalTemp)) {
+        finalTemp = cuacaCache.temp || 25; // Gunakan cadangan untuk kalkulasi saja
+    }
+    
+    let finalHum = parseFloat(inputHum?.value);
+    if (isNaN(finalHum)) {
+        finalHum = cuacaCache.hum || 60;   // Gunakan cadangan untuk kalkulasi saja
+    }
     const finalCondition = inputCondition?.value;
     
     console.log('Kalkulasi offline menggunakan data:', { finalTemp, finalHum, finalCondition });
@@ -6727,6 +6730,17 @@ if (typeof MAX_RESEP_TERSIMPAN === 'undefined') {
 }
 
 // 1. FUNGSI SIMPAN RESEP (Dipertahankan & Dioptimalkan agar tidak double pop-up)
+async function simpanResepKeLokal(dataResep) {
+  await Filesystem.writeFile({
+    path: FILE_RESEP_PATH,
+    data: JSON.stringify(dataResep),
+    directory: Directory.Data,
+    encoding: Encoding.UTF8,
+    recursive: true
+  });
+  console.log('File resep berhasil diperbarui di storage perangkat.');
+}
+
 window.simpanResepKeDatabase = async function() {
     try {
         const namaInput = document.getElementById('recipe-save-name');

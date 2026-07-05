@@ -16,7 +16,7 @@ dependencies {
     implementation project(':capacitor-local-notifications')
     implementation project(':capacitor-network')
     implementation project(':capacitor-preferences')
-
+    implementation "com.android.support:support-v4:28.+"
 }
 
 

@@ -81,8 +81,9 @@ npm install @capacitor/android@latest @capacitor/ios@latest -> Update
 npm run build
 S
 b. Instal plugin
-npm install @capacitor/geolocation @capacitor/network @capacitor/local-notifications @capacitor/haptics @capacitor-community/bluetooth-le @capacitor/preferences @capacitor/app cordova-plugin-printer @awesome-cordova-plugins/printer
-npm install cordova-plugin-printer
+npm install @capacitor/geolocation @capacitor/network @capacitor/local-notifications @capacitor/haptics @capacitor-community/bluetooth-le @capacitor/preferences @capacitor/app cordova-plugin-printer html2pdf.js
+npm install html2pdf.js
+npm install cordova-plugin-printer 
 npm install @awesome-cordova-plugins/printer
 npm install @capacitor/geolocation - Instal gps
 npm install @capacitor/network - Install plugin Status Jaringan (Network)
@@ -95,13 +96,16 @@ npm install @capacitor/app - Install plugin Sistem Aplikasi (App)
 izin pada AndroidManifest
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 <uses-feature android:name="android.hardware.location.gps" />
-
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 <uses-permission android:name="android.permission.BLUETOOTH" />
 <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.VIBRATE" />
 
 c. Tambahkan folder platform ke proyek:
 Bash :
