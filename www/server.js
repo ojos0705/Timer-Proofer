@@ -7,7 +7,11 @@ require('dotenv').config();
 
 app.use(cors()); // Pastikan file html ada di folder tadinya : 'public'
 
-app.use(express.static('.')); // Pastikan file html ada di folder tadinya : 'public'   
+// CATATAN: Vercel mengabaikan express.static() sepenuhnya untuk project
+// dengan Framework Preset "Express". File statis (index.html, assets, vendor)
+// harus ditaruh di folder public/ agar di-serve otomatis lewat CDN Vercel.
+// Lihat: https://vercel.com/docs/frameworks/backend/express
+// server.js ini HANYA menangani endpoint /api/*.
 
 // server.js (Potongan Penting)
 app.get('/api/weather', async (req, res) => {
