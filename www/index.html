@@ -38,183 +38,41 @@
         .top-nav-left {display: flex; align-items: center; z-index: 10; /* Berada di atas layer judul */}
 
 /* ==========================================
-   USER PROFILE V2
+   USER PROFILE
 ========================================== */
 
-.profile-container{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-}
-
-.profile-card{
-    background:var(--bg-container);
-    border-radius:18px;
-    padding:18px;
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
-    border:1px solid rgba(0,0,0,.06);
-    transition:.25s;
-    border-radius:18px;
-    padding:18px;
-    margin-bottom:16px;
-    box-shadow:0 4px 14px rgba(0,0,0,.08);
-    border:1px solid rgba(255,255,255,.08);
-    transition:.25s;
-}
-
-.profile-card:hover{
-    transform:translateY(-2px);
-}
-
-.profile-header{
-    text-align:center;
-}
-
-.profile-avatar{
-    width:90px;
-    height:90px;
-    margin:auto;
-    border-radius:50%;
-    overflow:hidden;
-    border:4px solid var(--accent);
-}
-
-.profile-avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.profile-name{
-    margin-top:15px;
-    font-size:22px;
-    font-weight:bold;
-    color:var(--chocolate);
-}
-
-.profile-subtitle{
-    color:#777;
-    margin-top:4px;
-}
-
-.profile-badge{
-    display:inline-block;
-    margin-top:12px;
-    padding:6px 14px;
-    border-radius:30px;
-    background:var(--accent);
-    color:#fff;
-    font-size:13px;
-    font-weight:bold;
-}
-
-.profile-section-title{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:15px;
-    color:var(--chocolate);
-}
-
-.profile-grid{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:14px;
-}
-
-.profile-item{
-    background:var(--cream);
-    border-radius:12px;
-    padding:12px;
-}
-
-.profile-label{
-    font-size:12px;
-    color:#777;
-    margin-bottom:5px;
-}
-
-.profile-value{
-    font-weight:bold;
-    color:var(--chocolate);
-}
-
-.profile-summary-grid{
-    margin-top:18px;
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-}
-
-.profile-summary-item{
-    background:var(--cream);
-    border-radius:14px;
-    padding:14px;
-    text-align:center;
-    transition:.25s;
-}
-
-.profile-summary-item:hover{
-    transform:translateY(-2px);
-}
-
-.summary-icon{
-    font-size:24px;
-}
-
-.summary-title{
-    margin-top:6px;
-    font-size:12px;
-    color:#777;
-}
-
-.summary-value{
-    margin-top:4px;
-    font-weight:bold;
-}
-
-.bakery-stats-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    margin-top:15px;
-}
-
-.bakery-stat-item{
-
-    background:var(--bg-card);
-
-    border-radius:14px;
-
-    padding:18px;
-
-    text-align:center;
-
-    border:1px solid rgba(0,0,0,.05);
-
-}
-
-.stat-value{
-
-    font-size:1.7rem;
-
-    font-weight:bold;
-
-    color:var(--accent);
-
-}
-
-.stat-label{
-
-    margin-top:6px;
-
-    font-size:.85rem;
-
-    opacity:.75;
-
-}
+.profile-container {display: flex; flex-direction: column; gap: 14px;}
+.profile-card {background: var(--bg-container); border: 1px solid rgba(78, 52, 46, 0.08); border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(78, 52, 46, 0.08);}
+.profile-header {text-align: center;}
+.profile-avatar {width: 88px; height: 88px; margin: 0 auto; border-radius: 50%; overflow: hidden; border: 4px solid rgba(230, 126, 34, 0.85); box-shadow: 0 8px 18px rgba(230, 126, 34, 0.22);}
+.profile-avatar img {width: 100%; height: 100%; object-fit: cover; display: block;}
+#user-greeting {margin-top: 12px; font-size: 0.86rem; color: rgba(78, 52, 46, 0.72); font-weight: 700;}
+.profile-name {margin-top: 4px; font-size: 1.35rem; line-height: 1.2; font-weight: 800; color: var(--chocolate); overflow-wrap: anywhere;}
+.profile-subtitle {margin-top: 5px; color: rgba(78, 52, 46, 0.72); font-weight: 600; overflow-wrap: anywhere;}
+.profile-badge {display: inline-flex; align-items: center; justify-content: center; gap: 6px; margin-top: 12px; padding: 7px 14px; border-radius: 999px; background: rgba(230, 126, 34, 0.12); color: var(--accent); font-size: 0.78rem; font-weight: 800; border: 1px solid rgba(230, 126, 34, 0.22);}
+.profile-section-title {display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 800; margin: 0 0 14px; color: var(--chocolate);}
+.profile-info-list {margin-top: 16px; background: rgba(242, 210, 169, 0.32); border-radius: 14px; overflow: hidden; border: 1px solid rgba(78, 52, 46, 0.06);}
+.profile-info-row {display: grid; grid-template-columns: minmax(96px, auto) 1fr; gap: 10px; align-items: center; padding: 12px 14px; border-bottom: 1px solid rgba(78, 52, 46, 0.08); text-align: left;}
+.profile-info-row:last-child {border-bottom: none;}
+.profile-info-row span {font-size: 0.82rem; color: rgba(78, 52, 46, 0.72); font-weight: 700;}
+.profile-info-row strong {font-weight: 800; color: var(--chocolate); text-align: right; overflow-wrap: anywhere;}
+.profile-summary-grid, .bakery-stats-grid {display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px;}
+.profile-summary-item, .bakery-stat-item {min-width: 0; background: var(--cream); border: 1px solid rgba(78, 52, 46, 0.06); border-radius: 14px; padding: 13px 10px; text-align: center;}
+.summary-icon {font-size: 1.35rem; line-height: 1;}
+.summary-title, .stat-label {margin-top: 6px; font-size: 0.72rem; color: rgba(78, 52, 46, 0.68); font-weight: 800;}
+.summary-value {margin-top: 5px; min-height: 20px; font-size: 0.86rem; font-weight: 800; color: var(--chocolate); overflow-wrap: anywhere;}
+.summary-value small {display: block; margin-bottom: 3px; font-size: 0.66rem; line-height: 1.25; color: rgba(78, 52, 46, 0.55) !important;}
+.stat-value {font-size: 1.55rem; line-height: 1; font-weight: 900; color: var(--accent);}
+.profile-button {margin-top: 2px; border-radius: 16px;}
+.profile-info-group {background: var(--bg-container); border: 1px solid rgba(78, 52, 46, 0.08); border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(78, 52, 46, 0.08);}
+.profile-toggle-row {display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 12px; margin-top: 12px; border-top: 1px solid rgba(78, 52, 46, 0.08); font-size: 0.9rem; font-weight: 700;}
+.profile-form {display: flex; flex-direction: column; gap: 12px;}
+.profile-form label {font-size: 0.82rem; font-weight: 800; color: var(--chocolate);}
+.profile-form input, .profile-info-group select {width: 100%; box-sizing: border-box; border: 1px solid rgba(78, 52, 46, 0.18); border-radius: 12px; padding: 12px 13px; background: #fff; color: var(--chocolate); font: inherit;}
+.edit-profile-avatar {width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--accent); object-fit: cover; box-shadow: 0 8px 18px rgba(230, 126, 34, 0.2);}
+.profile-modal-title {text-align: center; color: var(--accent); margin: 0 0 18px;}
+.save-btn {background: var(--accent); color: white; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; box-shadow: 0 4px 10px rgba(230, 126, 34, 0.18);}
+@media (max-width: 360px) {.profile-info-row {grid-template-columns: 1fr;} .profile-info-row strong {text-align: left;} .profile-summary-grid, .bakery-stats-grid {gap: 8px;} .profile-card, .profile-info-group {padding: 14px;}}
 
         /* Judul Aplikasi (Mengunci Tepat di Tengah Layar) */
         .top-nav-title {font-size: 1.2rem; font-weight: bold;margin: 0; white-space: nowrap; color: #E67E22;}
@@ -1051,187 +909,127 @@
     <!-- MODAL USER -->
 <div class="page-modal" id="user-modal">
     <div class="modal-scroll-content">
-        <div class="profile-card profile-header">
+        <div class="profile-container">
+            <div class="profile-card profile-header">
+                <div class="profile-avatar">
+                    <img src="logo donat.png" id="profile-avatar-img" alt="Foto profil">
+                </div>
 
-    <div class="profile-avatar">
-        <img src="logo donat.png" id="profile-avatar-img">
-    </div>
+                <div id="user-greeting">Selamat Datang</div>
+                <div class="profile-name" id="profile-name">Joko Prasetyo</div>
+                <div class="profile-subtitle" id="profile-bakery">Kedai Mak-er</div>
+                <div class="profile-badge">Premium Member</div>
 
-    <div id="user-greeting">
-        Selamat Datang
-    </div>
+                <div class="profile-info-list">
+                    <div class="profile-info-row">
+                        <span>WhatsApp</span>
+                        <strong id="profile-phone">-</strong>
+                    </div>
+                    <div class="profile-info-row">
+                        <span>Email</span>
+                        <strong id="profile-email">-</strong>
+                    </div>
+                </div>
 
-    <div class="profile-name" id="profile-name">
-        Joko Prasetyo
-    </div>
+                <div class="profile-summary-grid">
+                    <div class="profile-summary-item">
+                        <div class="summary-icon">📍</div>
+                        <div class="summary-title">Lokasi</div>
+                        <div class="summary-value" id="summary-location">
+                            <small id="prof-coords">Lat: -7.4475, Lon: 112.7183</small>
+                            Memuat...
+                        </div>
+                    </div>
 
-    <div class="profile-subtitle" id="profile-bakery">
-        Kedai Mak-er
-    </div>
+                    <div class="profile-summary-item">
+                        <div class="summary-icon">🌤</div>
+                        <div class="summary-title">Cuaca</div>
+                        <div class="summary-value" id="summary-weather">--</div>
+                    </div>
 
-    <div class="profile-badge">
-        ⭐ Premium Member
-    </div>
-<div class="profile-summary-grid">
+                    <div class="profile-summary-item">
+                        <div class="summary-icon">💧</div>
+                        <div class="summary-title">RH</div>
+                        <div class="summary-value" id="summary-humidity">--</div>
+                    </div>
 
-    <div class="profile-summary-item">
-        <div class="summary-icon">📍</div>
-        <div class="summary-title">Lokasi</div>
-        <div class="summary-value" id="summary-location">
-        <small id="prof-coords" style="color: gray;">Lat: -7.4475, Lon: 112.7183</small>
-            Memuat...
+                    <div class="profile-summary-item">
+                        <div class="summary-icon">📅</div>
+                        <div class="summary-title">Tanggal</div>
+                        <div class="summary-value" id="summary-date">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <h3 class="profile-section-title">📊 Statistik Bakery</h3>
+                <div class="bakery-stats-grid">
+                    <div class="bakery-stat-item">
+                        <div class="stat-value" id="stat-recipes">0</div>
+                        <div class="stat-label">Resep</div>
+                    </div>
+                    <div class="bakery-stat-item">
+                        <div class="stat-value" id="stat-ingredients">0</div>
+                        <div class="stat-label">Bahan</div>
+                    </div>
+                    <div class="bakery-stat-item">
+                        <div class="stat-value" id="stat-proofing">0</div>
+                        <div class="stat-label">Proofing</div>
+                    </div>
+                    <div class="bakery-stat-item">
+                        <div class="stat-value" id="stat-timers">0</div>
+                        <div class="stat-label">Timer</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-info-group">
+                <label for="preferensi" style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">⚙️ Preferensi</label>
+                <select id="preferensi" name="preferensi">
+                    <option value="default">Pengaturan Default</option>
+                </select>
+                <div class="profile-toggle-row">
+                    <span>Notifikasi Suara Proofer</span>
+                    <input type="checkbox" checked>
+                </div>
+            </div>
+
+            <button class="btn btn-primary profile-button" onclick="openEditProfile()">
+                Edit Profil
+            </button>
         </div>
     </div>
-
-    <div class="profile-summary-item">
-        <div class="summary-icon">🌤</div>
-        <div class="summary-title">Cuaca</div>
-        <div class="summary-value" id="summary-weather">
-            --
-        </div>
+    <div class="modal-bottom-actions">
+        <button class="about-close-btn" style="margin: 0;" onclick="toggleModal('user-modal')">KEMBALI</button>
     </div>
-
-    <div class="profile-summary-item">
-        <div class="summary-icon">💧</div>
-        <div class="summary-title">RH</div>
-        <div class="summary-value" id="summary-humidity">
-            --
-        </div>
-    </div>
-
-    <div class="profile-summary-item">
-        <div class="summary-icon">📅</div>
-        <div class="summary-title">Tanggal</div>
-        <div class="summary-value" id="summary-date">
-            --
-        </div>
-    </div>
-
-</div>
-
-<div class="profile-card">
-
-    <h3 class="profile-section-title">
-        📊 Statistik Bakery
-    </h3>
-
-    <div class="bakery-stats-grid">
-
-        <div class="bakery-stat-item">
-            <div class="stat-value" id="stat-recipes">0</div>
-            <div class="stat-label">Resep</div>
-        </div>
-
-        <div class="bakery-stat-item">
-            <div class="stat-value" id="stat-ingredients">0</div>
-            <div class="stat-label">Bahan</div>
-        </div>
-
-        <div class="bakery-stat-item">
-            <div class="stat-value" id="stat-proofing">0</div>
-            <div class="stat-label">Proofing</div>
-        </div>
-
-        <div class="bakery-stat-item">
-            <div class="stat-value" id="stat-timers">0</div>
-            <div class="stat-label">Timer</div>
-        </div>
-
-    </div>
-
-</div>
-    <button
-class="btn btn-primary profile-button"
-onclick="openEditProfile()">
-<i class="fas fa-user-edit"></i>
-        Edit Profil
-    </button>
 </div>
 
 <div class="page-modal" id="edit-profile-modal">
-
     <div class="modal-scroll-content">
-
-        <h2 style="text-align:center;color:var(--accent);">
-            <i class="fas fa-user-edit"></i>
-            Edit Profil
-        </h2>
+        <h2 class="profile-modal-title">Edit Profil</h2>
 
         <div style="text-align:center;margin-bottom:20px;">
-
-            <img id="edit-avatar-preview"
-                 src="logo donat.png"
-                 style="width:90px;height:90px;border-radius:50%;border:3px solid var(--accent);object-fit:cover;">
-
+            <img id="edit-avatar-preview" class="edit-profile-avatar" src="logo donat.png" alt="Preview foto profil">
         </div>
 
-        <label for="edit-name">Nama Pengguna</label>
-<input
-    id="edit-name"
-    type="text"
-    placeholder="Nama Pengguna">
+        <div class="profile-form">
+            <label for="edit-name">Nama Pengguna</label>
+            <input id="edit-name" type="text" placeholder="Nama Pengguna">
 
-<label for="edit-bakery">Nama Bakery</label>
-<input
-    id="edit-bakery"
-    type="text"
-    placeholder="Nama Bakery">
+            <label for="edit-bakery">Nama Bakery</label>
+            <input id="edit-bakery" type="text" placeholder="Nama Bakery">
 
-<label for="edit-phone">Nomor WhatsApp</label>
-<input
-    id="edit-phone"
-    type="tel"
-    placeholder="08xxxxxxxxxx">
+            <label for="edit-phone">Nomor WhatsApp</label>
+            <input id="edit-phone" type="tel" placeholder="08xxxxxxxxxx">
 
-<label for="edit-email">Email</label>
-<input
-    id="edit-email"
-    type="email"
-    placeholder="email@contoh.com">
-
-    </div>
-
-    <div class="modal-bottom-actions">
-
-        <button
-            class="about-close-btn"
-            onclick="toggleModal('edit-profile-modal')">
-
-            Batal
-
-        </button>
-
-        <button
-            class="save-btn"
-            onclick="saveProfile()">
-
-            <i class="fas fa-save"></i>
-
-            Simpan
-
-        </button>
-
-    </div>
-
-</div>
-
-    <div class="profile-info-group">
-        <label for="preferensi"
-       style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 5px;">
-  ⚙️ Preferensi
-</label>
-<select id="preferensi" name="preferensi">
-    <!-- options -->
-  </select>
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--dough);">
-            <span>Notifikasi Suara Proofer</span>
-            <input type="checkbox" checked>
+            <label for="edit-email">Email</label>
+            <input id="edit-email" type="email" placeholder="email@contoh.com">
         </div>
     </div>
-    
-    </div>
-    <div class="modal-bottom-actions">    
-        <button class="about-close-btn" style="margin: 0;" onclick="toggleModal('user-modal')">KEMBALI</button>
+
+    <div class="modal-bottom-actions" style="display:flex; gap:10px;">
+        <button class="about-close-btn" style="margin:0; flex:1;" onclick="closeEditProfile()">Batal</button>
+        <button class="save-btn" style="margin:0; flex:1;" onclick="saveProfile()">Simpan</button>
     </div>
 </div>
 
@@ -1773,56 +1571,213 @@ function updateVersion() {
 }
 //==============================================
 
+const ProfileService = {
+
+    getRecipes() {
+        return Array.isArray(window.recipes)
+            ? window.recipes
+            : [];
+    },
+
+    getIngredients() {
+        return Array.isArray(window.bakeryIngredients)
+            ? window.bakeryIngredients
+            : [];
+    },
+
+    getTimers() {
+        return Array.isArray(window.timerHistory)
+            ? window.timerHistory
+            : [];
+    },
+
+    getProofings() {
+        return Array.isArray(window.proofingHistory)
+            ? window.proofingHistory
+            : [];
+    }
+
+};
+
 // FUNGSI BUKA USER PROFILE
-function openEditProfile() {
+async function openEditProfile() {
 
-    const name = document.getElementById("profile-name")?.textContent.trim() || "";
-    const bakery = document.getElementById("profile-bakery")?.textContent.trim() || "";
+    document.getElementById("edit-name").value =
+        await getProfileValue("profile_name", "");
 
-    document.getElementById("edit-name").value = name;
-    document.getElementById("edit-bakery").value = bakery;
+    document.getElementById("edit-bakery").value =
+        await getProfileValue("profile_bakery", "");
 
-    toggleModal("edit-profile-modal");
+    document.getElementById("edit-phone").value =
+        await getProfileValue("profile_phone", "");
+
+    document.getElementById("edit-email").value =
+        await getProfileValue("profile_email", "");
+
+    const userModal = document.getElementById("user-modal");
+    const editModal = document.getElementById("edit-profile-modal");
+
+    userModal?.classList.remove("active");
+    userModal?.setAttribute("inert", "");
+    editModal?.classList.add("active");
+    editModal?.removeAttribute("inert");
+    document.body.style.overflow = "hidden";
 }
+
+function closeEditProfile() {
+    const userModal = document.getElementById("user-modal");
+    const editModal = document.getElementById("edit-profile-modal");
+
+    editModal?.classList.remove("active");
+    editModal?.setAttribute("inert", "");
+    userModal?.classList.add("active");
+    userModal?.removeAttribute("inert");
+    document.body.style.overflow = "hidden";
+}
+
 window.openEditProfile = openEditProfile;
+window.closeEditProfile = closeEditProfile;
 // =============================================
 
+async function getProfileValue(key, defaultValue = "") {
+
+    try {
+
+        if (window.Capacitor?.Plugins?.Preferences) {
+
+            const { value } =
+                await Capacitor.Plugins.Preferences.get({ key });
+
+            if (value !== null && value !== undefined && value !== "") {
+                return value;
+            }
+
+        }
+
+    } catch (e) {
+        console.warn("Preferences GET gagal :", e);
+    }
+
+    return localStorage.getItem(key) || defaultValue;
+}
+
+async function setProfileValue(key, value) {
+
+    try {
+
+        if (window.Capacitor?.Plugins?.Preferences) {
+
+            await Capacitor.Plugins.Preferences.set({
+
+                key,
+
+                value
+
+            });
+
+        }
+
+    } catch (e) {
+
+        console.warn("Preferences SET gagal :", e);
+
+    }
+
+    localStorage.setItem(key, value);
+
+}
+
 // FUNGSI LOAD PROFILE
-function loadProfile() {
+async function loadProfile() {
 
-    const name = localStorage.getItem("profile_name");
-    const bakery = localStorage.getItem("profile_bakery");
+    const profile = {
 
-    if (name) {
-        document.getElementById("profile-name").textContent = name;
-    }
+        name: await getProfileValue(
+            "profile_name",
+            "Pengguna"
+        ),
 
-    if (bakery) {
-        document.getElementById("profile-bakery").textContent = bakery;
-    }
+        bakery: await getProfileValue(
+            "profile_bakery",
+            "Nama Bakery"
+        ),
+
+        phone: await getProfileValue(
+            "profile_phone",
+            "-"
+        ),
+
+        email: await getProfileValue(
+            "profile_email",
+            "-"
+        )
+
+    };
+
+    document.getElementById("profile-name").textContent =
+        profile.name;
+
+    document.getElementById("profile-bakery").textContent =
+        profile.bakery;
+
+    const phone =
+        document.getElementById("profile-phone");
+
+    if (phone)
+        phone.textContent = profile.phone;
+
+    const email =
+        document.getElementById("profile-email");
+
+    if (email)
+        email.textContent = profile.email;
+
 }
 //==============================================
 
 // FUNGSI SIMPAN USER PROFILE
-function saveProfile() {
+async function saveProfile() {
 
-    const name = document.getElementById("edit-name").value.trim();
-    const bakery = document.getElementById("edit-bakery").value.trim();
+    const profile = {
 
-    if (name !== "") {
-        document.getElementById("profile-name").textContent = name;
-        localStorage.setItem("profile_name", name);
-    }
+        name: document.getElementById("edit-name").value.trim() || "Pengguna",
 
-    if (bakery !== "") {
-        document.getElementById("profile-bakery").textContent = bakery;
-        localStorage.setItem("profile_bakery", bakery);
-    }
+        bakery: document.getElementById("edit-bakery").value.trim() || "Nama Bakery",
 
-    toggleModal("edit-profile-modal");
+        phone: document.getElementById("edit-phone").value.trim() || "-",
 
-    showToast("Profil berhasil disimpan.");
+        email: document.getElementById("edit-email").value.trim() || "-"
+
+    };
+
+    await setProfileValue(
+        "profile_name",
+        profile.name
+    );
+
+    await setProfileValue(
+        "profile_bakery",
+        profile.bakery
+    );
+
+    await setProfileValue(
+        "profile_phone",
+        profile.phone
+    );
+
+    await setProfileValue(
+        "profile_email",
+        profile.email
+    );
+
+    await renderUserProfile();
+
+    closeEditProfile();
+
+    showToast("Profil berhasil diperbarui.");
 }
+
+window.saveProfile = saveProfile;
 // =============================================
 
 // FUNGSI SAPAAN
@@ -1857,24 +1812,68 @@ function setStat(id, value) {
     el.textContent = Number.isFinite(value) ? value : 0;
 }
 
+async function renderUserProfile(summaryData = null) {
+
+    // 1. Muat data profil
+    await loadProfile();
+
+    // 2. Perbarui sapaan
+    updateGreeting();
+
+    // 3. Perbarui statistik bakery
+    await waitForStatistics();
+
+    // 4. Perbarui ringkasan lokasi/cuaca bila ada data
+    if (summaryData) {
+        updateProfileSummary(summaryData);
+    }
+
+    // 5. Versi aplikasi
+    updateVersion();
+
+}
+
 function updateBakeryStatistics() {
 
-    const recipeCount =
-        Array.isArray(window.recipes) ? window.recipes.length : 0;
+    const recipes = ProfileService.getRecipes();
+    const ingredients = ProfileService.getIngredients();
+    const timers = ProfileService.getTimers();
+    const proofings = ProfileService.getProofings();
 
-    const ingredientCount =
-        Array.isArray(window.bakeryIngredients) ? window.bakeryIngredients.length : 0;
+    document.getElementById("stat-recipes").textContent =
+        recipes.length;
 
-    const proofingCount =
-        Array.isArray(window.proofingHistory) ? window.proofingHistory.length : 0;
+    document.getElementById("stat-ingredients").textContent =
+        ingredients.length;
 
-    const timerCount =
-        Array.isArray(window.timerHistory) ? window.timerHistory.length : 0;
+    document.getElementById("stat-timers").textContent =
+        timers.length;
 
-    setStat("stat-recipes", recipeCount);
-    setStat("stat-ingredients", ingredientCount);
-    setStat("stat-proofing", proofingCount);
-    setStat("stat-timers", timerCount);
+    document.getElementById("stat-proofing").textContent =
+        proofings.length;
+}
+
+async function waitForStatistics(timeout = 5000) {
+
+    const start = Date.now();
+
+    while (Date.now() - start < timeout) {
+
+        const recipesReady =
+            Array.isArray(window.recipes);
+
+        const ingredientsReady =
+            Array.isArray(window.bakeryIngredients);
+
+        if (recipesReady && ingredientsReady) {
+            break;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    updateBakeryStatistics();
+
 }
 // ==============================================
 // Fungsi untuk menganalisis suhu dan memberikan rekomendasi ragi/proofing
@@ -5772,6 +5771,7 @@ window.addEventListener('DOMContentLoaded', () => {
     inisialisasiFormTambahBahan();
     console.log("✅ Sistem Kalkulator Resep berhasil diinisialisasi tanpa eror.");
     updateVersion();
+    renderUserProfile();
 });
 
 // ========================================================
@@ -7008,6 +7008,90 @@ function showToast(message) {
 
 window.showToast = showToast;
 
+</script>
+<script>
+// Fallback global untuk tombol profil inline bila script module belum selesai dieksekusi.
+(function () {
+    function profileGet(key, fallback) {
+        return localStorage.getItem(key) || fallback || "";
+    }
+
+    function profileSet(key, value) {
+        localStorage.setItem(key, value);
+    }
+
+    function showProfileToast(message) {
+        if (typeof window.showToast === "function") {
+            window.showToast(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    if (typeof window.openEditProfile !== "function") {
+        window.openEditProfile = function () {
+            const name = document.getElementById("edit-name");
+            const bakery = document.getElementById("edit-bakery");
+            const phone = document.getElementById("edit-phone");
+            const email = document.getElementById("edit-email");
+            const userModal = document.getElementById("user-modal");
+            const editModal = document.getElementById("edit-profile-modal");
+
+            if (name) name.value = profileGet("profile_name", "");
+            if (bakery) bakery.value = profileGet("profile_bakery", "");
+            if (phone) phone.value = profileGet("profile_phone", "");
+            if (email) email.value = profileGet("profile_email", "");
+
+            userModal?.classList.remove("active");
+            userModal?.setAttribute("inert", "");
+            editModal?.classList.add("active");
+            editModal?.removeAttribute("inert");
+            document.body.style.overflow = "hidden";
+        };
+    }
+
+    if (typeof window.closeEditProfile !== "function") {
+        window.closeEditProfile = function () {
+            const userModal = document.getElementById("user-modal");
+            const editModal = document.getElementById("edit-profile-modal");
+
+            editModal?.classList.remove("active");
+            editModal?.setAttribute("inert", "");
+            userModal?.classList.add("active");
+            userModal?.removeAttribute("inert");
+            document.body.style.overflow = "hidden";
+        };
+    }
+
+    if (typeof window.saveProfile !== "function") {
+        window.saveProfile = function () {
+            const profile = {
+                name: document.getElementById("edit-name")?.value.trim() || "Pengguna",
+                bakery: document.getElementById("edit-bakery")?.value.trim() || "Nama Bakery",
+                phone: document.getElementById("edit-phone")?.value.trim() || "-",
+                email: document.getElementById("edit-email")?.value.trim() || "-"
+            };
+
+            profileSet("profile_name", profile.name);
+            profileSet("profile_bakery", profile.bakery);
+            profileSet("profile_phone", profile.phone);
+            profileSet("profile_email", profile.email);
+
+            const profileName = document.getElementById("profile-name");
+            const profileBakery = document.getElementById("profile-bakery");
+            const profilePhone = document.getElementById("profile-phone");
+            const profileEmail = document.getElementById("profile-email");
+
+            if (profileName) profileName.textContent = profile.name;
+            if (profileBakery) profileBakery.textContent = profile.bakery;
+            if (profilePhone) profilePhone.textContent = profile.phone;
+            if (profileEmail) profileEmail.textContent = profile.email;
+
+            window.closeEditProfile();
+            showProfileToast("Profil berhasil diperbarui.");
+        };
+    }
+})();
 </script>
 </body>
 </html>
