@@ -7,7 +7,7 @@ require('dotenv').config();
 
 app.use(cors()); // Pastikan file html ada di folder tadinya : 'public'
 
-app.use(express.static('.')); // Pastikan file html ada di folder tadinya : 'public'   
+app.use(express.static('www')); // Serve file statis (index.html, assets, dll) dari folder www/
 
 // server.js (Potongan Penting)
 app.get('/api/weather', async (req, res) => {
