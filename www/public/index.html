@@ -29,6 +29,10 @@
         body {font-family: 'Segoe UI', sans-serif; background-color: var(--cream); color: var(--chocolate); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding-bottom: 0px; overflow: hidden; overscroll-behavior:none;}
         
         .container {--bg-container: #ffffff; --card-bg: rgba(0, 0, 0, 0.04); background: var(--bg-container); width: 100%; max-width: 480px; /* Ukuran maksimal hp */ height: 100vh;    /* Memaksa container setinggi layar */ display: flex; flex-direction: column; /* Menyusun konten dari atas ke bawah */ position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.05); transition: background 0.8s ease, color 0.8s ease, box-shadow 0.3s ease; overscroll-behavior:none; }
+        /* Saat dibuka sebagai PWA terinstall (bukan tab browser biasa), isi penuh window agar tidak ada gradient kosong di kiri-kanan */
+        @media (display-mode: standalone) {
+            .container { max-width: 100%; box-shadow: none; }
+        }
 
         /* ========================================================== */
         /* ----------------- TOP NAVIGATION BAR --------------------- */
