@@ -21,7 +21,6 @@
     -->
     <script src="assets/js/html2pdf.bundle.min.js"></script>
     <link rel="apple-touch-icon" href="logo donat.png">
-    <link rel="manifest" href="manifest.json">
     <title>Timer Proofer</title>
     <style>
         :root {--cream: #FDF5E6; --dough: #F2D2A9; --chocolate: #4E342E; --accent: #E67E22; -webkit-tap-highlight-color: transparent; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Fallback untuk beberapa browser */ outline: none;}
@@ -29,10 +28,6 @@
         body {font-family: 'Segoe UI', sans-serif; background-color: var(--cream); color: var(--chocolate); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding-bottom: 0px; overflow: hidden; overscroll-behavior:none;}
         
         .container {--bg-container: #ffffff; --card-bg: rgba(0, 0, 0, 0.04); background: var(--bg-container); width: 100%; max-width: 480px; /* Ukuran maksimal hp */ height: 100vh;    /* Memaksa container setinggi layar */ display: flex; flex-direction: column; /* Menyusun konten dari atas ke bawah */ position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.05); transition: background 0.8s ease, color 0.8s ease, box-shadow 0.3s ease; overscroll-behavior:none; }
-        /* Saat dibuka sebagai PWA terinstall (bukan tab browser biasa), isi penuh window agar tidak ada gradient kosong di kiri-kanan */
-        @media (display-mode: standalone) {
-            .container { max-width: 100%; box-shadow: none; }
-        }
 
         /* ========================================================== */
         /* ----------------- TOP NAVIGATION BAR --------------------- */
@@ -913,11 +908,6 @@
 <!---------------------------------------->
     <!-- MODAL USER -->
 <div class="page-modal" id="user-modal">
-    <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2);">
-    <h3 id="user-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
-        <span>👤</span> Profil Pengguna
-    </h3>
-</div>
     <div class="modal-scroll-content">
         <div class="profile-container">
             <div class="profile-card profile-header">
@@ -993,52 +983,16 @@
                 </div>
             </div>
 
-            <hr class="modal-divider">
-
-        <!-- NEW: Fitur Riwayat & Log Aktivitas Proofing -->
-        <div class="profile-section animation-fade">
-            <h4>📜 Riwayat & Log Aktivitas Proofing</h4>
-            <div class="log-container" style="max-height: 150px; overflow-y: auto;">
-                <ul class="log-list" style="list-style: none; padding: 0; margin: 0;">
-                    <li style="padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
-                        <span>🍞 Sourdough Donut (Batch #42)</span>
-                        <span class="badge success" style="color: green;">Berhasil</span>
-                    </li>
-                    <li style="padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
-                        <span>🍩 Brioche Donut (Batch #41)</span>
-                        <span class="badge warning" style="color: orange;">Over-proofed</span>
-                    </li>
-                </ul>
+            <div class="profile-info-group">
+                <label for="preferensi" style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">⚙️ Preferensi</label>
+                <select id="preferensi" name="preferensi">
+                    <option value="default">Pengaturan Default</option>
+                </select>
+                <div class="profile-toggle-row">
+                    <span>Notifikasi Suara Proofer</span>
+                    <input type="checkbox" checked>
+                </div>
             </div>
-        </div>
-
-        <br>
-
-        <!-- NEW: Fitur Manajemen Inventaris Bahan Baku (Kedai Mak-er) -->
-        <div class="profile-section animation-fade">
-            <h4>📦 Inventaris Bahan Baku</h4>
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
-                <thead>
-                    <tr style="border-bottom: 2px solid #ccc;">
-                        <th style="padding: 6px;">Bahan</th>
-                        <th style="padding: 6px; text-align: right;">Stok</th>
-                        <th style="padding: 6px; text-align: center;">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 6px;">Tepung Protein Tinggi</td>
-                        <td style="padding: 6px; text-align: right;">25 kg</td>
-                        <td style="padding: 6px; text-align: center;"><span style="color: green;">Aman</span></td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 6px;">Ragi Instan / Sourdough Starter</td>
-                        <td style="padding: 6px; text-align: right;">500 g</td>
-                        <td style="padding: 6px; text-align: center;"><span style="color: red;">Menipis</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
 
             <button class="btn btn-primary profile-button" onclick="openEditProfile()">
                 Edit Profil
@@ -1082,12 +1036,10 @@
 <!-- MODAL BANTUAN -->
 <div class="page-modal" id="help-modal">
     <div class="modal-scroll-content">
-        <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2);">
-    <h3 id="help-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
-        <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.4rem; height: 1.4rem; object-fit: contain;"> 
-        Pusat Bantuan
-    </h3>
-</div>
+        <h2 style="color: var(--chocolate); text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+    <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.8rem; height: 1.8rem; object-fit: contain;"> 
+    Pusat Bantuan
+        </h2>
         <div class="help-section">
     <h3>Panduan & Tentang Aplikasi</h3>
     
@@ -1137,11 +1089,7 @@
 <!-- MODAL PENGATURAN -->
 <div class="page-modal" id="settings-modal">
     <div class="modal-scroll-content">
-        <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2); margin-bottom: 15px;">
-            <h3 id="settings-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span>⚙️</span> Pengaturan
-            </h3>
-        </div>
+        <h2 style="color: var(--chocolate); text-align: center;">⚙️ Pengaturan</h2>
         
         <div style="margin-top: 10px; border-top: 1px dashed rgba(78, 52, 46, 0.3); border-bottom: 1px dashed rgba(78, 52, 46, 0.3); padding: 15px 0; margin-bottom: 15px;">
             <h3 style="margin-top: 0;">🌡️ Koneksi Sensor</h3>
@@ -1151,38 +1099,12 @@
             <p id="ble-status" style="font-size: 0.75rem; margin-top: 8px; margin-bottom: 0;">Status: Terputus</p>
         </div>
 
-        <!-- NEW: Fitur Pengelolaan Sensor Tambahan (Multi-device) -->
-            <div class="multi-device-container" style="background: rgba(78, 52, 46, 0.05); padding: 10px; border-radius: 6px; border: 1px solid rgba(78, 52, 46, 0.1);">
-                <span style="font-size: 11px; font-weight: bold; color: var(--chocolate); opacity: 0.8;">Perangkat Terhubung (Multi-Device):</span>
-                <div id="ble-devices-list" style="font-size: 13px; margin-top: 5px;">
-                    <div style="display: flex; justify-content: space-between; padding: 4px 0; align-items: center;">
-                        <span>🟢 Sensor Ruangan (Ruang A)</span>
-                        <button class="about-close-btn" style="padding: 2px 6px; font-size: 11px; margin: 0; background: #c0392b;">Putus</button>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 4px 0; color: #999; align-items: center;">
-                        <span>⚫ Sensor Suhu Adonan</span>
-                        <button class="about-close-btn" style="padding: 2px 6px; font-size: 11px; margin: 0; background: #2980b9;">Pindai</button>
-                    </div>
-                </div>
-            </div>
-
         <div class="content">
             <h3>Preferensi Aplikasi</h3>
             <p>
                 <input type="checkbox" id="set-sound" checked> 
                 <label for="set-sound">Aktifkan Suara Alarm</label>
             </p>
-            <div class="setting-sub-item" style="padding-left: 20px; margin-bottom: 15px; border-left: 2px solid rgba(78, 52, 46, 0.2);">
-                <label for="select-alarm-tone" style="display:block; font-size: 12px; margin-bottom: 4px; color: #666;">Nada Alarm:</label>
-                <select id="select-alarm-tone" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid rgba(78, 52, 46, 0.2); background: #fff; font-size: 13px; margin-bottom: 8px;">
-                    <option value="default">Default Digital Beep</option>
-                    <option value="soft-bell">Soft Bakery Bell</option>
-                    <option value="kitchen-timer">Classic Kitchen Timer</option>
-                </select>
-                
-                <label for="range-alarm-volume" style="display:block; font-size: 12px; margin-bottom: 4px; color: #666;">Volume Alarm:</label>
-                <input type="range" id="range-alarm-volume" min="0" max="100" value="80" style="width: 100%; accent-color: var(--chocolate);">
-            </div>
             <p>
                 <input type="checkbox" id="set-vib" checked> 
                 <label for="set-vib">Aktifkan Getaran (Haptics)</label>
@@ -1227,12 +1149,10 @@
 <div id="recipe" class="tab-content recipe-modal" style="display: none; padding: 0; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: #FDF5E6; font-family: 'Segoe UI', sans-serif;"> 
     
     <div class="recipe-fixed-top" style="padding: 12px 15px; background: #ffffff; box-sizing: border-box; flex-shrink: 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">RESEP
-        <div class="print-header" style="display: flex; flex-direction: column; gap: 2px;">
-        <h3 id="recipe-modal-title" style="margin: 0; color: var(--chocolate); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; font-weight: bold;">
-            <span>🍞</span> KEDAI MAK-ER
-        </h3>
-        <p style="margin: 0; font-size: 0.7rem; color: #64748b; font-weight: 600; letter-spacing: 0.5px;">FORMULA RESEP &amp; ESTIMASI HPP</p>
-    </div>
+        <div class="print-header">
+            <h2 style="margin: 0; color: #4E342E; font-size: 1.1rem; letter-spacing: 0.5px; line-height: 1.2;">KEDAI MAK-ER</h2>
+            <p style="margin: 2px 0 0 0; font-size: 0.7rem; color: #64748b; font-weight: 600;">FORMULA RESEP & ESTIMASI HPP</p>
+        </div>
         <button id="btn-recipe-close-top" class="article-modal-close" style="font-size: 28px; background: none; border: none; color: #4E342E; cursor: pointer; line-height: 1;">&times;</button>
     </div>
 
@@ -1537,7 +1457,6 @@ const RESEP_LIST_KEY = 'premium_saved_recipes';
 const RESEP_LEGACY_KEY = 'premium_saved_recipe';
 const FILE_RESEP_PATH = 'data/resep_sourdough.json';
 const MAX_RESEP_TERSIMPAN = 10;
-window.MAX_RESEP_TERSIMPAN = MAX_RESEP_TERSIMPAN;
 
 async function simpanDaftarResepKePerangkat(daftarResep) {
     const jsonString = JSON.stringify(daftarResep);
@@ -2500,6 +2419,14 @@ function initArticleSlider() {
     startAutoPlay();
 }
 
+
+// Jalankan fungsi inisialisasi setelah seluruh dokumen HTML selesai dimuat
+window.addEventListener('DOMContentLoaded', () => {
+    if (typeof initArticleSlider === 'function') {
+        initArticleSlider();
+    }
+});
+// =========================================================================
 window.handleOfflinePremium = function() {
     console.log('Menjalankan kalkulasi mode luring...');
     
@@ -2525,6 +2452,23 @@ window.handleOfflinePremium = function() {
     console.log('Kalkulasi offline menggunakan data:', { finalTemp, finalHum, finalCondition });
 };
 
+// Pastikan kode ini ditaruh di dalam atau setelah DOM selesai dimuat (DOMContentLoaded)
+document.addEventListener("DOMContentLoaded", () => {
+    const offTempInput = document.getElementById("off-temp");
+    const offHumInput = document.getElementById("off-hum");
+    const offConditionInput = document.getElementById("off-condition");
+
+    // Setiap kali user mengetik/mengubah nilai, jalankan ulang fungsi handleOfflinePremium()
+    if (offTempInput) {
+        offTempInput.addEventListener("input", handleOfflinePremium);
+    }
+    if (offHumInput) {
+        offHumInput.addEventListener("input", handleOfflinePremium);
+    }
+    if (offConditionInput) {
+        offConditionInput.addEventListener("change", handleOfflinePremium);
+    }
+});
 //=======================================================================
 // TOGGLE MODAL (ENTAH INI UNTUK APA DAN KENAPA PALING ATAS DI JAVASCRIPT)
 //=======================================================================
@@ -5028,6 +4972,93 @@ function panggilKembaliAIAgent() {
     if (bubbleBtn) bubbleBtn.style.display = 'none';
 }
 
+// Pemasangan Detektor
+document.addEventListener('DOMContentLoaded', () => {
+    // Jalankan kode pengikat tombol BLE
+    const tombolBle = document.getElementById('btn-ble');
+    if (tombolBle) {
+        tombolBle.addEventListener('click', connectBluetoothThermometer);
+    }
+
+    const scrollArea = document.querySelector('.scrollable-content');
+    const headerSection = document.getElementById('location-section');
+
+    // 1. Deteksi saat layar di-scroll (auto-shrink saat konten di-scroll ke bawah)
+    if (scrollArea && headerSection) {
+        scrollArea.addEventListener('scroll', () => {
+            if (scrollArea.scrollTop > 30) {
+                if (!headerSection.classList.contains('shrunk')) {
+                    headerSection.classList.add('shrunk');
+                    if (typeof updateMiniHeader === 'function') {
+                        updateMiniHeader();
+                    }
+                }
+            } else {
+                headerSection.classList.remove('shrunk');
+            }
+        });
+
+        // 1b. Deteksi gesture sentuh langsung pada location-section (geser ke atas/bawah)
+        let locTouchStartY = 0;
+        let locTouchMoved = false;
+
+        headerSection.addEventListener('touchstart', (e) => {
+            if (!e.touches || !e.touches[0]) return;
+            locTouchStartY = e.touches[0].clientY;
+            locTouchMoved = false;
+        }, { passive: true });
+
+        headerSection.addEventListener('touchmove', (e) => {
+            if (!e.touches || !e.touches[0]) return;
+            const deltaY = e.touches[0].clientY - locTouchStartY;
+            if (Math.abs(deltaY) < 20) return;
+            locTouchMoved = true;
+
+            // Geser ke atas → shrink
+            if (deltaY < -30 && !headerSection.classList.contains('shrunk')) {
+                headerSection.classList.add('shrunk');
+                if (typeof updateMiniHeader === 'function') {
+                    updateMiniHeader();
+                }
+            }
+
+            // Geser ke bawah → expand
+            if (deltaY > 30 && headerSection.classList.contains('shrunk')) {
+                headerSection.classList.remove('shrunk');
+            }
+        }, { passive: true });
+
+        headerSection.addEventListener('touchend', () => {
+            locTouchMoved = false;
+        });
+    }
+
+    // 2. Pantau update cuaca dari API agar mini header selalu sinkron otomatis
+    const headerSectionAlt = document.getElementById('header-id'); // Pastikan ID ini benar
+const tempValEl = document.getElementById('temp-val');
+
+// 1. Observer untuk perubahan kelas pada header (jika header yang memicu update)
+if (headerSectionAlt) {
+    const headerObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class' && headerSection.classList.contains('shrunk')) {
+                if (typeof updateMiniHeader === 'function') updateMiniHeader();
+            }
+        });
+    });
+    headerObserver.observe(headerSection, { attributes: true });
+}
+
+// 2. Observer untuk perubahan nilai suhu (jika suhu yang memicu update)
+if (tempValEl) {
+    const tempObserver = new MutationObserver(() => {
+        // Jika suhu berubah, update juga mini header
+        if (typeof updateMiniHeader === 'function') updateMiniHeader();
+    });
+    tempObserver.observe(tempValEl, { characterData: true, childList: true, subtree: true });
+}
+});
+
 // =========================================================================
 // INTERFAZ PREMIUM KALKULATOR RESEP: DUAL-GROUP AUTO SPREADSHEET
 // =========================================================================
@@ -5729,6 +5760,20 @@ window.switchTab = function(tabId) {
     }
 };
 
+// Eksekusi inisialisasi render saat dokumen selesai dimuat (Siklus Aman)
+window.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderRecipeTableBakuTotal === 'function') {
+        renderRecipeTableBakuTotal();
+    }
+    if (typeof hitungHPPBakeryTotal === 'function') {
+        hitungHPPBakeryTotal();
+    }
+    inisialisasiFormTambahBahan();
+    console.log("✅ Sistem Kalkulator Resep berhasil diinisialisasi tanpa eror.");
+    updateVersion();
+    renderUserProfile();
+});
+
 // ========================================================
 // KETINGGIAN ONLINE - OFFLINE
 //=========================================================
@@ -5811,6 +5856,38 @@ function kirimPesanKeSW(lat, lon) {
         });
     }
 }
+
+// NOTE: tampilkanDaftarResepTersimpan is defined further down (modal-opening
+// implementation) and assigned to window there. The old stub that used to
+// live here was dead code, silently overwritten — removed to avoid confusion.
+
+// =========================================================
+// DAFTARKAN LISTENER (Taruh di bagian paling bawah script)
+// =========================================================
+window.addEventListener('DOMContentLoaded', () => {
+// 1. Cek apakah fungsi checkAndRestoreTimer memang ada
+    if (typeof checkAndRestoreTimer === 'function') {
+        checkAndRestoreTimer(); 
+    } else {
+        console.warn("Peringatan: Fungsi checkAndRestoreTimer() belum dibuat atau tidak ditemukan.");
+    }
+
+    document.querySelectorAll('.article-slide').forEach((slide, index) => {
+        slide.style.cursor = 'pointer';
+        slide.addEventListener('click', () => {
+            // Karena ID artikel Anda dimulai dari 1, 2, 3...
+            bukaArtikelLengkap(index + 1); 
+        });
+    });
+
+    // 2. Jalankan initApp jika fungsinya ada
+    if (typeof initApp === 'function') {
+        initApp();
+    }
+    // JALANKAN PROSES KETERANGAN WAKTU BARU DI SINI:
+    perbaruiKeteranganWaktuShrunk(); // Jalankan sekali saat start awal
+    setInterval(perbaruiKeteranganWaktuShrunk, 30000); // Periksa otomatis setiap 30 detik
+});
 
 window.addEventListener('offline', () => {
     if (typeof handleOfflinePremium === 'function') {
@@ -6126,6 +6203,13 @@ window.switchFolderTab = function(tabId) {
     });
 };
 
+// Inisialisasi default saat halaman pertama kali dimuat
+document.addEventListener("DOMContentLoaded", function() {
+    // Set default folder yang terbuka pertama kali ke 'profit-margin'
+    window.switchFolderTab('profit-margin');
+});
+
+
 // ==========================================
 // FIX SWAPRIGHTSTATS REFERENCE ERROR
 // ==========================================
@@ -6255,195 +6339,24 @@ function tutupHalamanResepSecaraAman() {
     }
 }
 
-/**
- * =========================================================================
- * INISIALISASI UTAMA APLIKASI (SINGLE DOMCONTENTLOADED EVENT)
- * Semua pengikatan elemen UI, Event Listener, dan restore data digabung di sini
- * =========================================================================
- */
-document.addEventListener("DOMContentLoaded", async () => {
-    console.log("🚀 Memulai inisialisasi modul Timer Proofer & Kalkulator HPP...");
-
-    // -----------------------------------------------------------------
-    // 1. INI-AWAL GLOBAL & CORE SYSTEM DISPLAY
-    // -----------------------------------------------------------------
-    if (typeof initArticleSlider === 'function') {
-        initArticleSlider();
-    }
-    if (typeof renderRecipeTableBakuTotal === 'function') {
-        renderRecipeTableBakuTotal();
-    }
-    if (typeof hitungHPPBakeryTotal === 'function') {
-        hitungHPPBakeryTotal();
-    }
-    if (typeof inisialisasiFormTambahBahan === 'function') {
-        inisialisasiFormTambahBahan();
-    }
-    if (typeof updateVersion === 'function') {
-        updateVersion();
-    }
-    if (typeof renderUserProfile === 'function') {
-        renderUserProfile();
-    }
-    if (typeof checkAndRestoreTimer === 'function') {
-        checkAndRestoreTimer(); 
-    } else {
-        console.warn("Peringatan: Fungsi checkAndRestoreTimer() belum dibuat atau tidak ditemukan.");
-    }
-    if (typeof initApp === 'function') {
-        initApp();
-    }
-
-    // Set default folder yang terbuka pertama kali ke 'profit-margin'
-    if (typeof window.switchFolderTab === 'function') {
-        window.switchFolderTab('profit-margin');
-    }
-
-    // Jalankan sistem keterangan waktu shrunk otomatis
-    if (typeof perbaruiKeteranganWaktuShrunk === 'function') {
-        perbaruiKeteranganWaktuShrunk(); // Jalankan sekali saat start awal
-        setInterval(perbaruiKeteranganWaktuShrunk, 30000); // Periksa otomatis setiap 30 detik
-    }
-
-    console.log("✅ Sistem Kalkulator Resep & Core berhasil diinisialisasi tanpa eror.");
-
-    // -----------------------------------------------------------------
-    // 2. INPUT OFFLINE PREMIUM
-    // -----------------------------------------------------------------
-    const offTempInput = document.getElementById("off-temp");
-    const offHumInput = document.getElementById("off-hum");
-    const offConditionInput = document.getElementById("off-condition");
-
-    if (offTempInput && typeof handleOfflinePremium === 'function') {
-        offTempInput.addEventListener("input", handleOfflinePremium);
-    }
-    if (offHumInput && typeof handleOfflinePremium === 'function') {
-        offHumInput.addEventListener("input", handleOfflinePremium);
-    }
-    if (offConditionInput && typeof handleOfflinePremium === 'function') {
-        offConditionInput.addEventListener("change", handleOfflinePremium);
-    }
-
-    // -----------------------------------------------------------------
-    // 3. HARDWARE & HEADER (BLE, SCROLL AREA, GESTURE, MUTATION OBSERVER)
-    // -----------------------------------------------------------------
-    const tombolBle = document.getElementById('btn-ble');
-    if (tombolBle && typeof connectBluetoothThermometer === 'function') {
-        tombolBle.addEventListener('click', connectBluetoothThermometer);
-    }
-
-    const scrollArea = document.querySelector('.scrollable-content');
-    const headerSection = document.getElementById('location-section');
-
-    if (scrollArea && headerSection) {
-        // Auto-shrink saat konten di-scroll ke bawah
-        scrollArea.addEventListener('scroll', () => {
-            if (scrollArea.scrollTop > 30) {
-                if (!headerSection.classList.contains('shrunk')) {
-                    headerSection.classList.add('shrunk');
-                    if (typeof updateMiniHeader === 'function') updateMiniHeader();
-                }
-            } else {
-                headerSection.classList.remove('shrunk');
-            }
-        });
-
-        // Gesture sentuh langsung pada location-section
-        let locTouchStartY = 0;
-        let locTouchMoved = false;
-
-        headerSection.addEventListener('touchstart', (e) => {
-            if (!e.touches || !e.touches[0]) return;
-            locTouchStartY = e.touches[0].clientY;
-            locTouchMoved = false;
-        }, { passive: true });
-
-        headerSection.addEventListener('touchmove', (e) => {
-            if (!e.touches || !e.touches[0]) return;
-            const deltaY = e.touches[0].clientY - locTouchStartY;
-            if (Math.abs(deltaY) < 20) return;
-            locTouchMoved = true;
-
-            if (deltaY < -30 && !headerSection.classList.contains('shrunk')) {
-                headerSection.classList.add('shrunk');
-                if (typeof updateMiniHeader === 'function') updateMiniHeader();
-            }
-            if (deltaY > 30 && headerSection.classList.contains('shrunk')) {
-                headerSection.classList.remove('shrunk');
-            }
-        }, { passive: true });
-
-        headerSection.addEventListener('touchend', () => {
-            locTouchMoved = false;
-        });
-    }
-
-    // Mutation Observer Cuaca Mini Header
-    const headerSectionAlt = document.getElementById('header-id');
-    const tempValEl = document.getElementById('temp-val');
-
-    if (headerSectionAlt && headerSection) {
-        const headerObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.attributeName === 'class' && headerSection.classList.contains('shrunk')) {
-                    if (typeof updateMiniHeader === 'function') updateMiniHeader();
-                }
-            });
-        });
-        headerObserver.observe(headerSection, { attributes: true });
-    }
-
-    if (tempValEl) {
-        const tempObserver = new MutationObserver(() => {
-            if (typeof updateMiniHeader === 'function') updateMiniHeader();
-        });
-        tempObserver.observe(tempValEl, { characterData: true, childList: true, subtree: true });
-    }
-
-    // -----------------------------------------------------------------
-    // 4. MANAGEMENT ARTIKEL & SWAP MINI STATS
-    // -----------------------------------------------------------------
-    document.querySelectorAll('.article-slide').forEach((slide, index) => {
-        slide.style.cursor = 'pointer';
-        slide.addEventListener('click', () => {
-            if (typeof bukaArtikelLengkap === 'function') bukaArtikelLengkap(index + 1); 
-        });
-    });
-
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- KODE REKATAN SWAP STATS YANG SUDAH ADA ---
     const miniMain = document.getElementById('shrunk-main');
     const miniSub = document.getElementById('shrunk-sub');
-    if (miniMain && miniSub && typeof jalankanSwapMini === 'function') {
+    if (miniMain && miniSub) {
         miniMain.addEventListener('click', jalankanSwapMini);
         miniSub.addEventListener('click', jalankanSwapMini);
     }
 
-    const aiToggleBtn = document.getElementById('ai-toggle');
-    if (aiToggleBtn) {
-        aiToggleBtn.addEventListener('click', () => {
-            const box = document.getElementById('ai-analysis');
-            if (box) {
-                box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
-            }
-        });
-    }
 
-    const overlayArtikel = document.querySelector('.article-modal-overlay');
-    if (overlayArtikel) {
-        overlayArtikel.addEventListener('click', function(event) {
-            if (event.target === overlayArtikel) {
-                if (typeof tutupArtikelSecaraAman === 'function') tutupArtikelSecaraAman();
-                else if (typeof tutupArtikelLengkap === 'function') tutupArtikelLengkap();
-            }
-        });
-    }
-
-    // -----------------------------------------------------------------
-    // 5. TIMER CONTROLS & MODE PROSES
-    // -----------------------------------------------------------------
+    // --- KODE BARU: MENANGANI KLIK TOMBOL MODE PROSES ---
     const tombolMode = document.querySelectorAll('.mode-btn[id^="btn-mode-"]');
     tombolMode.forEach(button => {
         button.addEventListener('click', () => {
             const modeDipilih = button.id.replace('btn-mode-', '');
+            
+            // Panggil fungsi setMode internal milik aplikasi Anda
             if (typeof setMode === 'function') {
                 setMode(modeDipilih);
             } else {
@@ -6452,61 +6365,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    const btnSetCustomTime = document.getElementById('set-btn');
-    const inputCustomTime = document.getElementById('custom-time');
-    if (btnSetCustomTime && inputCustomTime) {
-        btnSetCustomTime.addEventListener('click', () => {
-            const waktuMenit = parseInt(inputCustomTime.value, 10);
-            if (!isNaN(waktuMenit) && waktuMenit > 0) {
-                console.log(`Menetapkan waktu proofer kustom secara aman: ${waktuMenit} menit.`);
-                if (typeof setCustomTime === 'function') {
-                    setCustomTime();
-                } else if (typeof updateTimerDisplay === 'function') {
-                    updateTimerDisplay(waktuMenit * 60);
-                }
-            } else {
-                alert("Mohon masukkan durasi menit yang valid (1 - 120 menit).");
-            }
-        });
-    }
-
-    const btnStartProofing = document.getElementById('main-start-btn');
-    if (btnStartProofing) {
-        btnStartProofing.addEventListener('click', async () => {
-            console.log("Tombol Start Proofing dipicu secara aman.");
-            let diizinkan = false;
-            if (typeof requestNotificationPermission === 'function') {
-                diizinkan = await requestNotificationPermission();
-            }
-            if (!diizinkan) {
-                console.warn("Melanjutkan tanpa notifikasi karena izin ditolak OS/User.");
-            }
-            if (typeof triggerMainProofing === 'function') {
-                triggerMainProofing();
-            } else {
-                console.warn("Fungsi triggerMainProofing() utama belum terdeteksi.");
-                if (typeof isProofingActive !== 'undefined') {
-                    isProofingActive = true;
-                    if (typeof startCountdownEngine === 'function') startCountdownEngine();
-                }
-            }
-        });
-    }
-
-    // -----------------------------------------------------------------
-    // 6. MANAGEMENT NOTIFIKASI SYSTEM
-    // -----------------------------------------------------------------
+    // --- KODE BARU: MENANGANI PENUTUP MODAL NOTIFIKASI ---
     const btnCloseNotif = document.getElementById('btn-close-notif');
     if (btnCloseNotif) {
         btnCloseNotif.addEventListener('click', () => {
+            console.log("Modal notifikasi ditutup secara aman dari dalam modul.");
+            
+            // Mencari elemen pembungkus utama (parent modal)
             const modalNotif = btnCloseNotif.closest('.article-modal-header')?.parentElement;
-            if (modalNotif) modalNotif.classList.remove('active');
+            
+            if (modalNotif) {
+                // Sembunyikan modal menggunakan class active (sesuai standar PWA Anda)
+                modalNotif.classList.remove('active');
+                
+                // ATAU jika aplikasi Anda menggunakan style display konvensional, gunakan ini:
+                // modalNotif.style.display = 'none';
+            }
         });
     }
-
+    // --- KODE BARU: MENANGANI AKSI TOMBOL BAGIAN BAWAH MODAL NOTIFIKASI ---
+    
+    // 1. Tombol Baca Semua Notifikasi
     const btnNotifBaca = document.getElementById('btn-notif-baca');
     if (btnNotifBaca) {
         btnNotifBaca.addEventListener('click', () => {
+            // Memanggil class/objek NotifSystem internal aplikasi Anda dengan aman
             if (typeof NotifSystem !== 'undefined' && typeof NotifSystem.bacaSemua === 'function') {
                 NotifSystem.bacaSemua();
             } else {
@@ -6515,6 +6398,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // 2. Tombol Hapus Semua Notifikasi
     const btnNotifHapus = document.getElementById('btn-notif-hapus');
     if (btnNotifHapus) {
         btnNotifHapus.addEventListener('click', () => {
@@ -6528,155 +6412,115 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // 3. Tombol KEMBALI (Menutup Modal)
     const btnNotifKembali = document.getElementById('btn-notif-kembali');
     if (btnNotifKembali) {
         btnNotifKembali.addEventListener('click', () => {
+            // Mencari container modal utama dari tombol kembali lalu menyembunyikannya
             const modalNotif = btnNotifKembali.closest('.modal-bottom-actions')?.parentElement;
             if (modalNotif) {
                 modalNotif.classList.remove('active');
             } else {
-                const altModal = document.getElementById('article-modal');
-                if (altModal) altModal.classList.remove('active');
+                // Alternatif fallback pencarian id langsung jika parentElement terlalu jauh
+                document.getElementById('article-modal')?.classList.remove('active');
             }
         });
     }
+    // --- KODE BARU: MENANGANI INPUT WAKTU KUSTOM (TIMER PROOFER) ---
+    const btnSetCustomTime = document.getElementById('set-btn');
+    const inputCustomTime = document.getElementById('custom-time');
 
-    const notifContainerBox = document.getElementById('notif-list-container');
-    if (notifContainerBox) {
-        notifContainerBox.addEventListener('click', function(event) {
-            const tombolHapus = event.target.closest('.btn-hapus-notif-cepat') || event.target.closest('.btn-hapus-notif');
-            if (tombolHapus) {
-                const idNotif = tombolHapus.getAttribute('data-id');
-                const itemNotif = document.getElementById(`notif-${idNotif}`) || tombolHapus.closest('.notif-item');
-                if (itemNotif) itemNotif.remove();
-
-                const sisaNotif = notifContainerBox.querySelectorAll('.notif-item');
-                if (sisaNotif.length === 0) {
-                    const emptyMsg = document.getElementById('notif-empty-msg');
-                    if (emptyMsg) emptyMsg.style.display = 'block';
-                }
-            }
-        });
-    }
-
-    // Suntik log default ke sistem notifikasi secara aman
-    if (typeof tambahNotifikasi === 'function') {
-        tambahNotifikasi("Kalkulator : Mengubah porsi resep menjadi 50 Pcs. Komposisi terigu otomatis disesuaikan.", "resep", "🧾");
-        tambahNotifikasi("Rekomendasi Adonan: Suhu Sidoarjo terdeteksi berawan. Sistem menyarankan air es bersuhu 4°C.", "resep", "🧾");
-        tambahNotifikasi("Sistem: GPS berhasil mendeteksi posisi di Balonggabus, Candi, Sidoarjo. Tema malam aktif.", "sistem", "⚙️");
-        tambahNotifikasi("Capacitor Native: Izin Push Notification disetujui. Pengingat proofer siap berjalan di latar belakang.", "sistem", "⚙️");
-    }
-
-    // -----------------------------------------------------------------
-    // 7. REAL-TIME KALKULATOR RESEP & DATABASE BINDING
-    // -----------------------------------------------------------------
-    const recipeContainer = document.getElementById('recipe-cards-container');
-    if (recipeContainer) {
-        recipeContainer.addEventListener('input', function(event) {
-            if (event.target.tagName === 'INPUT') {
-                const inputField = event.target;
-                const recipeCard = inputField.closest('.recipe-card[data-id]') || inputField.closest('[data-id]');
+    if (btnSetCustomTime && inputCustomTime) {
+        btnSetCustomTime.addEventListener('click', () => {
+            // Mengambil nilai angka menit dari input element
+            const waktuMenit = parseInt(inputCustomTime.value, 10);
+            
+            if (!isNaN(waktuMenit) && waktuMenit > 0) {
+                console.log(`Menetapkan waktu proofer kustom secara aman: ${waktuMenit} menit.`);
                 
-                if (!recipeCard) {
-                    console.log("Input ditangani langsung oleh Core System.");
-                    return; 
-                }
-
-                const indexBahan = recipeCard.getAttribute('data-id');
-                if (indexBahan === null || indexBahan === undefined) return;
-
-                let dataArray = null;
-                if (typeof bumbuResepList !== 'undefined') dataArray = bumbuResepList;
-                else if (typeof window.bumbuResepList !== 'undefined') dataArray = window.bumbuResepList;
-                else if (typeof bakeryIngredients !== 'undefined') dataArray = bakeryIngredients;
-                else if (typeof window.bakeryIngredients !== 'undefined') dataArray = window.bakeryIngredients;
-
-                if (dataArray && dataArray[indexBahan]) {
-                    const allInputs = recipeCard.querySelectorAll('input');
-                    if (allInputs.length >= 3) {
-                        const nilaiTakaran = parseFloat(allInputs[0].value) || 0;
-                        const hargaBeli = parseFloat(allInputs[1].value) || 0;
-                        const beratPack = parseFloat(allInputs[2].value) || 1;
-
-                        dataArray[indexBahan].ratio = nilaiTakaran;
-                        dataArray[indexBahan].price = hargaBeli;
-                        dataArray[indexBahan].pack = beratPack;
-
-                        const baseFlourInput = document.getElementById('base-flour');
-                        const baseFlourWeight = parseFloat(baseFlourInput?.value) || 1000;
-                        const yieldInput = document.getElementById('recipe-yield');
-                        const totalYield = parseFloat(yieldInput?.value) || 1;
-
-                        let grossWeight = 0;
-                        let costTerpakai = 0;
-                        const ing = dataArray[indexBahan];
-
-                        if (ing.type === "Dough" || ing.category === "Bahan Kering" || ing.category === "Bahan Basah" || ing.category === "Bahan Pengembang") {
-                            let ratio = ing.isFlour ? 100 : nilaiTakaran;
-                            grossWeight = (ratio / 100) * baseFlourWeight;
-                        } else {
-                            grossWeight = nilaiTakaran * totalYield;
-                        }
-                        costTerpakai = (grossWeight / beratPack) * hargaBeli;
-
-                        const idBahan = ing.id !== undefined ? ing.id : indexBahan;
-                        const grossEl = document.getElementById(`gross-${idBahan}`);
-                        if (grossEl) grossEl.innerText = Math.round(grossWeight);
-                        
-                        const costEl = document.getElementById(`cost-${idBahan}`);
-                        if (costEl) costEl.innerText = Math.round(costTerpakai).toLocaleString('id-ID');
-
-                        const grossTabEl = document.getElementById(`gross-table-${idBahan}`);
-                        if (grossTabEl) grossTabEl.innerText = Math.round(grossWeight);
-                        const costTabEl = document.getElementById(`cost-table-${idBahan}`);
-                        if (costTabEl) costTabEl.innerText = Math.round(costTerpakai).toLocaleString('id-ID');
+                // Panggil fungsi setCustomTime asli bawaan modul aplikasi Anda
+                if (typeof setCustomTime === 'function') {
+                    setCustomTime();
+                } else {
+                    // Fallback logika jika fungsi aslinya menggunakan struktur variabel berbeda
+                    // Misalnya langsung mengubah sisa detik timer (misal: countdownSeconds = waktuMenit * 60)
+                    if (typeof updateTimerDisplay === 'function') {
+                        updateTimerDisplay(waktuMenit * 60);
                     }
                 }
-
-                if (typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal();
-                else if (typeof window.hitungHPPBakeryTotal === 'function') window.hitungHPPBakeryTotal();
+            } else {
+                alert("Mohon masukkan durasi menit yang valid (1 - 120 menit).");
             }
         });
     }
+    // --- KODE BARU: MENANGANI TOMBOL UTAMA (START PROOFING) ---
+    const btnStartProofing = document.getElementById('main-start-btn');
 
-    // Tombol DB Simpan/Muat/Impor Resep
-    const btnSimpan = document.getElementById('btn-simpan-resep');
-    if (btnSimpan && typeof simpanResepKeDatabase === 'function') {
-        btnSimpan.addEventListener('click', simpanResepKeDatabase);
-    }
-
-    const btnMuat = document.getElementById('btn-muat-resep');
-    if (btnMuat && typeof window.tampilkanDaftarResepTersimpan === 'function') {
-        btnMuat.addEventListener('click', () => window.tampilkanDaftarResepTersimpan());
-    }
-
-    const inputImpor = document.getElementById('recipe-import-input');
-    if (inputImpor) {
-        inputImpor.addEventListener('change', async (e) => {
-            const file = e.target.files?.[0];
-            if (file && typeof window.imporResepDariFile === 'function') {
-                await window.imporResepDariFile(file);
+    if (btnStartProofing) {
+        btnStartProofing.addEventListener('click', async () => {
+            console.log("Tombol Start Proofing dipicu secara aman dari dalam modul.");
+            
+            // Panggil pengecekan izin native Capacitor terlebih dahulu sebelum lanjut
+            const diizinkan = await requestNotificationPermission();
+            
+            if (!diizinkan) {
+                console.warn("Melanjutkan tanpa notifikasi karena izin ditolak OS/User.");
             }
-            e.target.value = '';
+            
+            // Setelah mengecek izin, jalankan mesin pengingat waktu adonan Anda
+            if (typeof triggerMainProofing === 'function') {
+                triggerMainProofing();
+            } else {
+                // Fallback darurat jika logika fungsi utama Anda menggunakan nama variabel berbeda
+                console.warn("Fungsi triggerMainProofing() utama belum terdeteksi di scope modul.");
+                
+                // Logika dasar penanda status berjalan (jika ada)
+                if (typeof isProofingActive !== 'undefined') {
+                    isProofingActive = true;
+                    if (typeof startCountdownEngine === 'function') startCountdownEngine();
+                }
+            }
         });
     }
-
+    // --- KODE BARU: MENANGANI TOMBOL PENUTUP KALKULATOR RESEP ---
+    
+    // 1. Tombol Close Atas (Kanan Atas)
     const btnRecipeCloseTop = document.getElementById('btn-recipe-close-top');
-    if (btnRecipeCloseTop && typeof tutupHalamanResepSecaraAman === 'function') {
-        btnRecipeCloseTop.addEventListener('click', tutupHalamanResepSecaraAman);
+    if (btnRecipeCloseTop) {
+        btnRecipeCloseTop.addEventListener('click', () => {
+            console.log("Kalkulator resep ditutup dari tombol kanan atas.");
+            tutupHalamanResepSecaraAman();
+        });
     }
 
+    // 2. Tombol Tutup Kalkulator Bawah (Sticky)
     const btnRecipeCloseBottom = document.getElementById('btn-recipe-close-bottom');
-    if (btnRecipeCloseBottom && typeof tutupHalamanResepSecaraAman === 'function') {
-        btnRecipeCloseBottom.addEventListener('click', tutupHalamanResepSecaraAman);
+    if (btnRecipeCloseBottom) {
+        btnRecipeCloseBottom.addEventListener('click', () => {
+            console.log("Kalkulator resep ditutup dari tombol sticky bawah.");
+            tutupHalamanResepSecaraAman();
+        });
     }
-
-    const btnCetak = document.getElementById('btn-cetak-pdf'); // Sesuaikan ID tombol Anda
-    if (btnCetak) {
-        btnCetak.addEventListener('click', () => window.cetakLaporanPdfNative());
-    }
-});
-
+    const aiToggleBtn = document.getElementById('ai-toggle');
+if (aiToggleBtn) {
+    aiToggleBtn.addEventListener('click', () => {
+        const box = document.getElementById('ai-analysis');
+        if (box.style.display === 'none' || box.style.display === '') {
+            box.style.display = 'block';
+        } else {
+            box.style.display = 'none';
+        }
+    });
+}
+const modalOverlay = document.querySelector('.article-modal-overlay');
+if (modalOverlay) {
+    modalOverlay.addEventListener('click', function(event) {
+        // Jika yang diklik adalah background buramnya langsung (bukan kotak putih artikel)
+        if (event.target === modalOverlay) {
+            tutupArtikelLengkap();
+        }
+    });
+}
 // Jalankan fungsi penyaringan aktual terhadap daftar list notifikasi Anda
 function filterNotificationElements(category) {
     // Cari elemen pembungkus list/item notifikasi Anda (sesuaikan dengan class/id asli Anda)
@@ -6819,13 +6663,7 @@ if (recipeContainer) {
 // --- PASANG LISTENER TOMBOL DI SINI ---
     const btnSimpan = document.getElementById('btn-simpan-resep');
     if (btnSimpan) {
-        btnSimpan.addEventListener('click', function() {
-        if (typeof window.simpanResepKeDatabase === 'function') {
-            window.simpanResepKeDatabase();
-        } else {
-            console.error("Modul simpanResepKeDatabase belum siap sepenuhnya.");
-        }
-    });
+        btnSimpan.addEventListener('click', simpanResepKeDatabase);
     }
 
     const btnMuat = document.getElementById('btn-muat-resep');
@@ -6869,13 +6707,15 @@ if (notifContainerBox) {
     });
 }
 
+});
+
 // =========================================================================
 // TARUH DI SINI (Di luar DOMContentLoaded, sebelum tutup
 // =========================================================================
 
 // Pengaman kapasitas maksimum resep jika belum didefinisikan di file lain
 if (typeof MAX_RESEP_TERSIMPAN === 'undefined') {
-    const MAX_RESEP_TERSIMPAN = 10; 
+    const MAX_RESEP_TERSIMPAN = 30; 
 }
 
 // 1. FUNGSI SIMPAN RESEP (Dipertahankan & Dioptimalkan agar tidak double pop-up)
@@ -7104,9 +6944,8 @@ window.imporResepDariFile = async function(file) {
     } catch (e) {
         alert("Gagal mengimpor file: " + e.message);
     }
-};
 
-window.cetakLaporanPdfNative = function() {
+    // Blok kode html2pdf bawaan Anda tetap aman di sini
     const element = document.getElementById('konten-pdf');
     if (element && typeof html2pdf !== 'undefined') {
         html2pdf().from(element).outputPdf('datauristring').then(function(pdfBase64Str) {
@@ -7115,8 +6954,6 @@ window.cetakLaporanPdfNative = function() {
                 simpanPdfNative(base64Murni, 'Laporan_Proofing.pdf');
             }
         });
-    } else {
-        console.warn("Elemen #konten-pdf atau library html2pdf tidak ditemukan.");
     }
 };
 

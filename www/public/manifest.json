@@ -1,23 +1,24 @@
 {
-  "short_name": "DonutProof",
-  "name": "Donut Proofing Agent AI",
+  "name": "Timer Proofer Kedai Mak-er",
+  "short_name": "Timer Proofer",
+  "description": "Asisten pintar pemantau proofing adonan berbasis data cuaca",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FDF5E6",
+  "theme_color": "#E67E22",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3161/3161689.png",
-      "type": "image/png",
+      "src": "logo donat.png",
       "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3161/3161689.png",
-      "type": "image/png",
+      "src": "logo donat.png",
       "sizes": "512x512",
+      "type": "image/png",
       "purpose": "maskable"
     }
-  ],
-  "start_url": "./index.html",
-  "background_color": "#FDF5E6",
-  "theme_color": "#4E342E",
-  "display": "standalone",
-  "orientation": "portrait"
+  ]
 }
