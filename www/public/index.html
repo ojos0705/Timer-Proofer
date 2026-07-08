@@ -3938,21 +3938,12 @@ async function fetchLocationAndWeather(lat, lon, source) {
 
     try {
         // 1. Ambil data dari serverless proxy Vercel
-        const url = `https://timer-proofer.vercel.app/api/weather?lat=${lat}&lon=${lon}`;
-        
+        const url = `https://proofing-donat-2.vercel.app/api/weather?lat=${lat}&lon=${lon}`;
         const response = await fetch(url);
         if (!response.ok) throw new Error("Gagal mengambil data via serverless proxy Vercel");
         
         const data = await response.json();
         
-        // 🛡️ PROTEKSI: Pastikan respon benar-benar JSON sebelum di-parse
-    const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-        const halamanErrorRaw = await response.text();
-        console.error("Isi respon non-JSON dari server:", halamanErrorRaw);
-        throw new Error("Serverless Vercel mengirimkan HTML/Teks (Kemungkinan error internal/404).");
-    }
-    
         // Ekstraksi data OpenWeather
         const weatherData = data.weather;
         const temp = weatherData.main.temp;
