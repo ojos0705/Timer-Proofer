@@ -134,4 +134,24 @@ Bash
 npx cap open ios
 (Xcode akan terbuka, Anda bisa melakukan proses Archiving untuk dikirim ke App Store atau instalasi ke iPhone).
 
+PUSH GITHUB
+# 1. Inisialisasi repositori Git lokal
+git init
+
+# 2. Tambahkan semua file proyek ke staging area
+git add .
+
+# 3. Lakukan commit pertama Anda
+git commit -m "feat: initial commit timer proofer core UI and layout"
+
+# 4. Buat branch utama menjadi 'main' (standar Vercel)
+git branch -M main
+
+# 5. Hubungkan ke remote repositori GitHub Anda 
+# (Ganti URL di bawah dengan URL repositori kosong yang Anda buat di github.com)
+git remote add origin https://github.com/username-github-anda/timer-proofer.git
+
+# 6. Push kode ke GitHub
+git push -u origin main
+
 lanjut refactor halaman uer profile dari chat gpt

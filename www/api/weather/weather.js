@@ -1,6 +1,16 @@
 // api/weather.js
 
 export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Mengizinkan semua origin (termasuk localhost)
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // 2. Tangani Preflight Request (OPTIONS) jika ada
+    if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+    }
+
     // Mengambil parameter query langsung dari objek request bawaan Vercel
     const { lat, lon } = req.query;
     
