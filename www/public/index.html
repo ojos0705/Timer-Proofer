@@ -954,6 +954,12 @@
                     </div>
 
                     <div class="profile-summary-item">
+                        <div class="summary-icon">📅</div>
+                        <div class="summary-title">Tanggal</div>
+                        <div class="summary-value" id="summary-date">--</div>
+                    </div>
+
+                    <div class="profile-summary-item">
                         <div class="summary-icon">🌤</div>
                         <div class="summary-title">Cuaca</div>
                         <div class="summary-value" id="summary-weather">--</div>
@@ -961,14 +967,8 @@
 
                     <div class="profile-summary-item">
                         <div class="summary-icon">💧</div>
-                        <div class="summary-title">RH</div>
+                        <div class="summary-title">Kelembapan</div>
                         <div class="summary-value" id="summary-humidity">--</div>
-                    </div>
-
-                    <div class="profile-summary-item">
-                        <div class="summary-icon">📅</div>
-                        <div class="summary-title">Tanggal</div>
-                        <div class="summary-value" id="summary-date">--</div>
                     </div>
                 </div>
             </div>
@@ -3916,7 +3916,6 @@ function processGeocode(geoData, lat, lon) {
         fullLocationName,
         profileLocation
     };
-
 }
 
 // =========================================================================
@@ -3924,6 +3923,13 @@ function processGeocode(geoData, lat, lon) {
 // =========================================================================
 // 1. Fungsi Utama Mengambil Data Backend Vercel & Distribusi Ke Grid UI Masing-Masing
 async function fetchLocationAndWeather(lat, lon, source) {
+    // Tampilkan pemberitahuan dan aktifkan panel manual secara otomatis sebagai fallback
+    const premiumBox = document.getElementById('premium-box');
+    if (premiumBox) {
+        premiumBox.style.display = 'block'; 
+        document.getElementById('ai-tips').innerText = "Gagal memuat cuaca otomatis. Mengalihkan ke Mode Luring (Manual).";
+    }
+    
     console.log(`Mengambil cuaca dari sumber: ${source} (${lat}, ${lon})`);
     
     // ==========================================
@@ -3933,17 +3939,34 @@ async function fetchLocationAndWeather(lat, lon, source) {
     if (offTempEl && offTempEl.value !== "" && !navigator.onLine) {
         console.log("Fetch dibatalkan karena pengguna menggunakan Mode Luring Premium Manual.");
         if (typeof handleOfflinePremium === "function") handleOfflinePremium();
-        return; 
+        return; // SEKARANG AMAN: Berada di dalam fungsi async
     }
 
     try {
         // 1. Ambil data dari serverless proxy Vercel
-        const url = `https://proofing-donat-2.vercel.app/api/weather?lat=${lat}&lon=${lon}`;
+        const url = `https://timer-proofer.vercel.app/api/weather?lat=${lat}&lon=${lon}`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Gagal mengambil data via serverless proxy Vercel");
+        if (!response.ok) throw new Error(`HTTP ${response.status} - Gagal mengambil data via serverless proxy Vercel`);
         
-        const data = await response.json();
-        
+        // ===== Validasi Content-Type & Parsing JSON =====
+        const contentType = response.headers.get("content-type") || "";
+        let data;
+
+        if (!contentType.includes("application/json")) {
+            const textAlt = await response.text();
+            console.error("Response bukan JSON:", textAlt);
+            throw new Error("Server mengembalikan format yang tidak valid.");
+        }
+
+        // Ambil data teks terlebih dahulu agar aman di-parse
+        const rawText = await response.text();
+        try {
+            data = JSON.parse(rawText);
+        } catch (err) {
+            console.error("Response server gagal di-parse sebagai JSON:", rawText);
+            throw new Error("Server tidak mengembalikan JSON yang valid.");
+        }
+
         // Ekstraksi data OpenWeather
         const weatherData = data.weather;
         const temp = weatherData.main.temp;
@@ -3953,8 +3976,9 @@ async function fetchLocationAndWeather(lat, lon, source) {
         const mainWeather = weatherData.weather[0].main;
         const description = weatherData.weather[0].description || mainWeather;
 
-        // Memanggil fungsi mesin nomor 1 di atas
-        const waktuLokal = dapatkanKeteranganWaktuLokal(); 
+        // Memanggil fungsi keterangan waktu
+        const waktuLokal = typeof dapatkanKeteranganWaktuLokal === 'function' ? dapatkanKeteranganWaktuLokal() : ''; 
+        
         // PROTEKSI: Bersihkan emoji fase bulan jika tidak sengaja terbawa di dalam teks deskripsi cuaca
         let deskripsiBersih = description ? description.replace(/[🌑🌒🌓🌔🌕🌖🌗🌘🌙🌚🌛🌜]/g, '').trim() : '';
 
@@ -4037,14 +4061,17 @@ async function fetchLocationAndWeather(lat, lon, source) {
         }
 
         console.log("Profile Location :", profileLocation);
-        updateProfileSummary({
-            location: profileLocation,
-            weather: {
-                temp: temp,
-                humidity: humidity,
-                description: description
-            }
-        });
+        
+        if (typeof updateProfileSummary === 'function') {
+            updateProfileSummary({
+                location: profileLocation,
+                weather: {
+                    temp: temp,
+                    humidity: humidity,
+                    description: description
+                }
+            });
+        }
                 
         // --- STRATEGI METODE GANDA UNTUK KETINGGIAN ---
         let altitude = null;
@@ -4074,8 +4101,9 @@ async function fetchLocationAndWeather(lat, lon, source) {
         if(document.getElementById('pres-val')) document.getElementById('pres-val').innerText = `${pressure} hPa`;
         if(document.getElementById('alt-val')) document.getElementById('alt-val').innerText = altitude + " m";
 
-        currentLat = lat;
-        currentLon = lon;
+        // Pastikan variabel global ini ada di script Anda agar tidak error:
+        if (typeof currentLat !== 'undefined') currentLat = lat;
+        if (typeof currentLon !== 'undefined') currentLon = lon;
 
         if (typeof updateDynamicTheme === 'function') updateDynamicTheme(weatherId, mainWeather);
         if (typeof processWeatherData === 'function') processWeatherData(temp, humidity);
@@ -4129,7 +4157,7 @@ async function fetchLocationAndWeather(lat, lon, source) {
             }
         }
     }
-}
+} // Tanda kurung penutup fungsi dipindahkan ke baris paling akhir
 //====================================================================================
 
 
@@ -6302,7 +6330,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.log("✅ Sistem Kalkulator Resep & Core berhasil diinisialisasi tanpa eror.");
-
+    //--------------------------------
+    const dateElement = document.getElementById("summary-date");
+    
+    if (dateElement) {
+        // Mengambil data waktu lokal dari perangkat
+        const sekarang = new Date();
+        
+        // Mengatur format tanggal ke Bahasa Indonesia
+        const opsiFormat = { 
+            weekday: 'long', // Menampilkan nama hari (Senin, Selasa, dst)
+            day: 'numeric',   // Menampilkan angka tanggal
+            month: 'long',   // Menampilkan nama bulan (Januari, Februari, dst)
+            year: 'numeric'  // Menampilkan angka tahun
+        };
+        
+        const tanggalLokal = sekarang.toLocaleDateString('id-ID', opsiFormat);
+        
+        // Memasukkan hasilnya ke dalam elemen HTML
+        dateElement.textContent = tanggalLokal;
+    }
     // -----------------------------------------------------------------
     // 2. INPUT OFFLINE PREMIUM
     // -----------------------------------------------------------------

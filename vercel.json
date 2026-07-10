@@ -40,8 +40,7 @@
   },
   "routes": [
     {
-      "src": "/api/weather",
-      "dest": "/api/weather.php"
+      "src": "/api/(.*)", "dest": "/api/$1"
     }
   ]
 }
