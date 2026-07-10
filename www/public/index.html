@@ -3921,6 +3921,37 @@ function processGeocode(geoData, lat, lon) {
 // =========================================================================
 // LOGIK PENGAMBILAN DATA LOKASI & CUACA (MENDUKUNG WEB PWA & ANDROID APK)
 // =========================================================================
+export default async function handler(req, res) {
+  // Jalankan Header CORS agar localhost / production PWA bisa menembus API
+  res.setHeader('Access-Control-Allow-Origin', '*'); 
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Tangani preflight request dari browser
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  // Cek apakah routing benar, jika iya lanjutkan logic Open-Meteo kamu
+  const { lat, lon } = req.query;
+  if (!lat || !lon) {
+    return res.status(400).json({ error: "Missing latitude or longitude" });
+  }
+
+  try {
+    // Logic fetch ke Open-Meteo API di sini...
+    // const weatherData = ...
+    
+    res.status(200).json({
+      temperature: 30, // contoh dummy data hasil fetch
+      humidity: 75
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch weather data" });
+  }
+}
+
 // 1. Fungsi Utama Mengambil Data Backend Vercel & Distribusi Ke Grid UI Masing-Masing
 async function fetchLocationAndWeather(lat, lon, source) {
     // Tampilkan pemberitahuan dan aktifkan panel manual secara otomatis sebagai fallback
@@ -7077,7 +7108,7 @@ window.eksporSemuaResep = async function() {
             return;
         }
         const payload = {
-            app: 'Timer Proofer Donat',
+            app: 'Timer Proofer',
             versi: 1,
             dieksporPada: new Date().toISOString(),
             resep: daftar
