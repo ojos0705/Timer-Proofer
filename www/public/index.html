@@ -686,7 +686,7 @@
         input:disabled, button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         /* FITUR PREMIUM MODE LURING - di versi baru dihilangkan */
-        .premium-offline-box { background: rgba(230, 126, 34, 0.08); border: 2px dashed var(--accent); border-radius: 20px; padding: 15px; margin-bottom: 20px; display: none; text-align: left; color: inherit; }
+        .premium-offline-box { background: rgba(230, 126, 34, 0.08); border: 2px dashed var(--accent); border-radius: 20px; padding: 15px; margin-bottom: 20px; display: none; text-align: left; color: inherit;}
         .premium-offline-box h4 { margin: 0 0 10px 0; color: var(--accent); font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
         .premium-offline-field { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .premium-offline-field label { font-size: 0.75rem; font-weight: bold; display: block; margin-bottom: 4px; }
@@ -839,7 +839,7 @@
         </div>
     </div>
     
-    <div class="premium-offline-box" id="premium-box">
+    <div class="premium-offline-box" id="premium-box" style="display: block;">
         <h4>👑 Fitur Premium: Mode Luring</h4>
         <p style="font-size: 0.75rem; margin: 0 0 12px 0;">Tidak ada internet. <br>Atur parameter secara manual atau sambungkan dengan termometer via bluetooth:</p>
         <div class="premium-offline-field">
@@ -3738,10 +3738,14 @@ async function initApp() {
 
                 await fetchLocationAndWeather(lat, lon, "GPS Perangkat");
                 kirimPesanKeSW(lat, lon);
+                
+                // JAMINAN ONLINE: Sembunyikan kotak luring jika sukses
+                if (premiumBox) premiumBox.style.display = "none";
             } catch (error) {
                 console.warn("Gagal mengambil GPS HP, mencoba mencarinya lewat IP internet...", error);
                 if (typeof fetchLocationByIPFallback === "function") {
                     await fetchLocationByIPFallback();
+                    if (premiumBox) premiumBox.style.display = "none";
                 } else {
                     handleOfflinePremium();
                 }
@@ -3750,7 +3754,6 @@ async function initApp() {
         // --- JIKA BERJALAN DI BROWSER WEB BIASA / PWA ---
         else {
             if (navigator.geolocation) {
-                // MEMAKSA JavaScript untuk menunggu (await) sampai proses GPS Browser selesai
                 await new Promise((resolve) => {
                     navigator.geolocation.getCurrentPosition(
                         async (position) => {
@@ -3758,20 +3761,25 @@ async function initApp() {
                             const lon = position.coords.longitude;
                             await fetchLocationAndWeather(lat, lon, "GPS");
                             kirimPesanKeSW(lat, lon);
-                            resolve(); // Selesai dengan sukses
+
+                            // PENGAMAN ONLINE: Pastikan box premium luring sembunyi!
+                            if (premiumBox) premiumBox.style.display = "none"; 
+
+                            resolve();
                         },
                         async (error) => {
                             console.warn("GPS Browser gagal/ditolak, mencoba jalur cadangan IP...");
                             if (typeof fetchLocationByIPFallback === "function") {
                                 try {
                                     await fetchLocationByIPFallback();
+                                    if (premiumBox) premiumBox.style.display = "none";
                                 } catch (e) {
                                     handleOfflinePremium();
                                 }
                             } else {
                                 handleOfflinePremium();
                             }
-                            resolve(); // Selesai dengan fallback
+                            resolve();
                         },
                         { enableHighAccuracy: true, timeout: 10000 }
                     );
@@ -3779,6 +3787,7 @@ async function initApp() {
             } else {
                 if (typeof fetchLocationByIPFallback === "function") {
                     await fetchLocationByIPFallback();
+                    if (premiumBox) premiumBox.style.display = "none";
                 } else {
                     handleOfflinePremium();
                 }
@@ -3788,9 +3797,6 @@ async function initApp() {
         console.error("Terjadi kesalahan pada inisialisasi aplikasi:", globalError);
         handleOfflinePremium();
     } finally {
-        // =========================================================================
-        // 4. KUNCI BARU DIBUKA KETIKA SELURUH PROSES DI ATAS SELESAI SEPENUHNYA
-        // =========================================================================
         isFetchingLocation = false;
         if (typeof hideRefreshIndicator === 'function') {
             hideRefreshIndicator();
@@ -3802,48 +3808,54 @@ async function initApp() {
     
 // Listener untuk menerima data cuaca kembali dari Service Worker
 if ('serviceWorker' in navigator) {
-navigator.serviceWorker.addEventListener('message', (event) => {
-    if (event.data.action === 'weatherData') {
-        const cuaca = event.data.data; // Menggunakan variabel 'cuaca' agar sinkron dengan kode bawah Anda
-        
-        if (cuaca && cuaca.main) {
-            // 1. PERTAHANKAN KODE LAMA (Untuk Update Tampilan UI Aplikasi)
-            const suhu = Math.round(cuaca.main.temp);
-            const kelembaban = cuaca.main.humidity;
-            const tekanan = cuaca.main.pressure;
+    navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data.action === 'weatherData') {
+            const cuaca = event.data.data;
             
-            const tempEl = document.getElementById('temp-val');
-            const humEl = document.getElementById('hum-val');
-            const presEl = document.getElementById('pres-val');
+            if (cuaca && cuaca.main) {
+                const suhu = Math.round(cuaca.main.temp);
+                const kelembaban = cuaca.main.humidity;
+                const tekanan = cuaca.main.pressure;
+                
+                const tempEl = document.getElementById('temp-val');
+                const humEl = document.getElementById('hum-val');
+                const presEl = document.getElementById('pres-val');
+                const premiumBox = document.getElementById('premium-box');
 
-            if (tempEl) tempEl.innerText = suhu;
-            if (humEl) humEl.innerText = kelembaban;
-            if (presEl) presEl.innerText = tekanan;
-            
-            if (typeof hitungEstimasiOtomatis === "function") {
-                hitungEstimasiOtomatis(suhu);
-            }
-            if (typeof hitungKebutuhan === "function") {
-                hitungKebutuhan();
-            }
+                if (tempEl) tempEl.innerText = suhu;
+                if (humEl) humEl.innerText = kelembaban;
+                if (presEl) presEl.innerText = tekanan;
+                
+                // KONDISIONAL UTAMA: Jika data didapat secara online, paksa kotak luring sembunyi
+                if (premiumBox) {
+                    if (navigator.onLine) {
+                        premiumBox.style.display = "none";
+                    } else {
+                        premiumBox.style.display = "block";
+                    }
+                }
+                
+                if (typeof hitungEstimasiOtomatis === "function") {
+                    hitungEstimasiOtomatis(suhu);
+                }
+                if (typeof hitungKebutuhan === "function") {
+                    hitungKebutuhan();
+                }
 
-            // 2. DISINILAH TEMPAT MENYELIPKAN KODE NOTIFIKASI BARU (Agar Masuk Kategori Cuaca)
-            if (typeof NotifSystem !== 'undefined') {
-                // Mengambil nama desa dari geocode, jika tidak ada fallback ke Sidoarjo
-                const namaLokasi = (cuaca.geocode && cuaca.geocode.village) || 'Sidoarjo';
-                // Mengambil deskripsi cuaca (misal: "Clouds", "Rain")
-                const deskripsiCuaca = (cuaca.weather && cuaca.weather[0] && cuaca.weather[0].description) || 'Cerah Berawan';
+                if (typeof NotifSystem !== 'undefined') {
+                    const namaLokasi = (cuaca.geocode && cuaca.geocode.village) || 'Sidoarjo';
+                    const deskripsiCuaca = (cuaca.weather && cuaca.weather[0] && cuaca.weather[0].description) || 'Cerah Berawan';
 
-                NotifSystem.tambah(
-                    'cuaca', 
-                    'Info Cuaca Terkini', 
-                    `Suhu di ${namaLokasi} saat ini ${suhu}°C (${deskripsiCuaca}).`, 
-                    '🌦️'
-                );
+                    NotifSystem.tambah(
+                        'cuaca', 
+                        'Info Cuaca Terkini', 
+                        `Suhu di ${namaLokasi} saat ini ${suhu}°C (${deskripsiCuaca}).`, 
+                        '🌦️'
+                    );
+                }
             }
         }
-    }
-});
+    });
 }
 
 
@@ -4196,9 +4208,30 @@ async function fetchLocationAndWeather(lat, lon, source) {
 // FUNGSI KHUSUS UNTUK MODE PREMIUM LURING (OFFLINE) - MENGGUNAKAN CACHE TERAKHIR ATAU INPUT MANUAL
 //=================================================================================
 function handleOfflinePremium() {
+    const premiumBox = document.getElementById('premium-box');
     const line1 = document.getElementById('loc-line1');
     const line2 = document.getElementById('loc-line2');
-    const premiumBox = document.getElementById('premium-box');
+    const retryBtn = document.getElementById('retry-btn');
+
+    // =========================================================================
+    // VALIDASI UTAMA: Jika online (hanya gagal GPS), sembunyikan kotak & hentikan
+    // =========================================================================
+    if (navigator.onLine) {
+        if (premiumBox) premiumBox.style.display = "none";
+        console.warn("GPS gagal/ditolak, tetapi perangkat tetap online. Kotak premium disembunyikan.");
+        
+        // Tampilkan pesan error GPS ke user agar mereka tahu internet tidak bermasalah
+        if (line1 && line1.innerText === "Mendeteksi lokasi...") {
+            line1.innerText = "Gagal mendapatkan lokasi.";
+            if (line2) line2.innerText = "Silakan aktifkan GPS atau muat ulang halaman.";
+            if (retryBtn) retryBtn.style.display = "block";
+        }
+        return; // Menghentikan fungsi agar tidak menimpa data cuaca online
+    }
+
+    // =========================================================================
+    // JIKA BENAR-BENAR OFFLINE, LOGIKA ASLI ANDA DI BAWAH INI AKAN BERJALAN
+    // =========================================================================
     if (premiumBox) premiumBox.style.display = "block";
     
     // 1. Ambil elemen input HTML
@@ -4217,12 +4250,13 @@ function handleOfflinePremium() {
         }
     }
 
-    // 3. LOGIKA UTAMA: Ambil ketikan user secara real-time. Jika kosong, pakai cache/default
-    let temp = offTempEl && offTempEl.value !== "" ? parseFloat(offTempEl.value) : (cache.temp || 28);
-    let humidity = offHumEl && offHumEl.value !== "" ? parseFloat(offHumEl.value) : (cache.hum || cache.humidity || 70);
-    
-    if (offTempEl && offTempEl.value !== "") temp = parseFloat(offTempEl.value);
-    if (offHumEl && offHumEl.value !== "") humidity = parseFloat(offHumEl.value);
+    // 3. LOGIKA UTAMA: Ambil ketikan user. Jika benar-benar kosong, biarkan kosong agar bisa diketik/dihapus
+    // Kita gunakan nilai fallback (cache/default) HANYA untuk perhitungan kalkulasi, bukan untuk memaksa isi kolom.
+    let tempInputVal = offTempEl ? offTempEl.value : "";
+    let humInputVal = offHumEl ? offHumEl.value : "";
+
+    let temp = tempInputVal !== "" ? parseFloat(tempInputVal) : (cache.temp || 28);
+    let humidity = humInputVal !== "" ? parseFloat(humInputVal) : (cache.hum || cache.humidity || 70);
 
     // Deteksi cuaca dari cache untuk menentukan opsi default jika input kosong
     let teksCuaca = 'clear';
@@ -4243,15 +4277,16 @@ function handleOfflinePremium() {
     
     let condition = offConditionInput && offConditionInput.value !== "" ? offConditionInput.value : defaultCondition;
 
-    // 4. OTOMATIS MENGISI KOLOM INPUT HANYA JIKA MASIH KOSONG (Saat pertama kali beralih ke offline)
-    if (offTempEl && offTempEl.value === "") offTempEl.value = Math.round(temp);
-    if (offHumEl && offHumEl.value === "") offHumEl.value = Math.round(humidity);
-    if (offConditionInput && offConditionInput.value === "") offConditionInput.value = condition;
-
-    // 5. UPDATE WEATHER CARD (UI UTAMA TAMPILAN PENUH) - Diperbarui agar menggunakan nilai input real-time
-    if (document.getElementById('temp-val')) document.getElementById('temp-val').innerText = `${Math.round(temp)}°C`;
-    if (document.getElementById('hum-val')) document.getElementById('hum-val').innerText = `${Math.round(humidity)}%`;
-    if (document.getElementById('pres-val')) document.getElementById('pres-val').innerText = (cache.pres || "1013") + " hPa";
+    // 4. OTOMATIS MENGISI KOLOM INPUT HANYA JIKA localStorage BELUM PERNAH PUNYA DATA INPUT OFFLINE
+    // Ini memastikan pengisian hanya terjadi sekali di awal, tidak mengunci saat dihapus user
+    if (offTempEl && !offTempEl.hasAttribute('data-initialized')) {
+        if (offTempEl.value === "") offTempEl.value = Math.round(temp);
+        if (offHumEl && offHumEl.value === "") offHumEl.value = Math.round(humidity);
+        if (offConditionInput && offConditionInput.value === "") offConditionInput.value = condition;
+        
+        // Tandai bahwa kolom sudah diisi otomatis pertama kali
+        offTempEl.setAttribute('data-initialized', 'true');
+    }
 
     // ==========================================
     // SINKRONISASI KE SHRUNK VIEW (RESPONSIF REAL-TIME)
