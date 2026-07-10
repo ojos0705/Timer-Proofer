@@ -24,22 +24,5 @@
         }
       ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/weather",
-      "destination": "/api/weather.js"
-    }
-  ],
-  "functions": {
-    "api/**/*.php": {
-      "runtime": "vercel-php@0.7.1"
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/(.*)", 
-      "dest": "/api/$1"
-    }
   ]
 }
