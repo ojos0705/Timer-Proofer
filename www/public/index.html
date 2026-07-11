@@ -7059,7 +7059,7 @@ async function simpanResepKeLokal(dataResep) {
       window.DEBUG && console.warn('Gagal writeFile native, fallback ke simpanDaftarResepKePerangkat:', err);
     }
   }
-  // Fallback: simpan ke daftar resep (localStorage / Preferences)
+  // Fallback: simpan ke daftar resep (localStorage / Preferences) dan tawarkan unduh JSON sebagai backup
   try {
     let daftar = await bacaSemuaResepDariPerangkat();
     const idx = daftar.findIndex(r => r.id === dataResep.id);
@@ -7067,6 +7067,25 @@ async function simpanResepKeLokal(dataResep) {
     if (daftar.length > MAX_RESEP_TERSIMPAN) daftar = daftar.slice(0, MAX_RESEP_TERSIMPAN);
     await simpanDaftarResepKePerangkat(daftar);
     window.DEBUG && console.log('File resep disimpan ke localStorage sebagai fallback.');
+
+    // Buat file JSON untuk diunduh sebagai cadangan user (non-intrusive)
+    try {
+      const blob = new Blob([JSON.stringify(dataResep, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const namaFile = (dataResep && dataResep.id) ? `resep-${dataResep.id}.json` : `resep-${Date.now()}.json`;
+      a.href = url;
+      a.download = namaFile;
+      // Jangan otomatis menambahkan/klik jika user agent mencegahnya — bungkus dalam timeouts kecil untuk kompatibilitas
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      window.DEBUG && console.log('Cadangan resep telah diunduh sebagai', namaFile);
+    } catch (dlErr) {
+      // Jika unduhan gagal, hanya log saja — jangan ganggu alur utama
+      window.DEBUG && console.warn('Gagal membuat unduhan cadangan JSON:', dlErr);
+    }
   } catch (err) {
     console.error('Gagal menyimpan resep di fallback:', err);
     throw err;
