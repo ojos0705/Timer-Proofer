@@ -716,25 +716,25 @@
     <!-- TOP NAVIGATION BAR -->
 <div class="top-nav-bar">
     <div class="top-nav-left">
-        <button class="nav-icon-btn" onclick="toggleModal('user-modal')" title="Profil Pengguna">👤</button>
+        <button class="nav-icon-btn"  data-onclick="toggleModal('user-modal')" title="Profil Pengguna">👤</button>
         <h1 class="top-nav-title">Timer Proofer</h1>
     </div>
 
     <div class="top-nav-right">
         <span style="display: inline-flex; align-items: center; gap: 6px; margin-right: 8px;">
-    <button onclick="window.location.reload();" title="Refresh Halaman" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; padding: 0; display: flex; align-items: center; opacity: 0.7;">
+    <button  data-onclick="window.location.reload();" title="Refresh Halaman" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; padding: 0; display: flex; align-items: center; opacity: 0.7;">
         🔄
     </button>
-    <small style="font-size: 0.7rem; opacity: 0.7; cursor: pointer;" onclick="openInGoogleMaps()"></small>
+    <small style="font-size: 0.7rem; opacity: 0.7; cursor: pointer;"  data-onclick="openInGoogleMaps()"></small>
 </span>
-        <button class="nav-icon-btn" onclick="toggleModal('help-modal')" title="Pusat Bantuan">
+        <button class="nav-icon-btn"  data-onclick="toggleModal('help-modal')" title="Pusat Bantuan">
             <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.35rem; height: 1.35rem; object-fit: contain;">
         </button>
-        <button class="nav-icon-btn" onclick="toggleModal('notif-modal')" title="Notifikasi" style="position:relative;">
+        <button class="nav-icon-btn"  data-onclick="toggleModal('notif-modal')" title="Notifikasi" style="position:relative;">
             🔔
             <span class="notif-badge" id="global-notif-badge"></span>
         </button>
-        <button class="nav-icon-btn" onclick="toggleModal('settings-modal')" title="Pengaturan">⚙️</button>
+        <button class="nav-icon-btn"  data-onclick="toggleModal('settings-modal')" title="Pengaturan">⚙️</button>
     </div>
 </div>
 
@@ -743,7 +743,7 @@
 <div id="location-section">
         <div class="location-row-container">
                 
-                <div class="address-text" style="display: flex !important; flex-direction: column !important; text-align: left; gap: 4px; flex: 1; min-width: 0; clear: both; cursor: pointer;" onclick="openInGoogleMaps()">
+                <div class="address-text" style="display: flex !important; flex-direction: column !important; text-align: left; gap: 4px; flex: 1; min-width: 0; clear: both; cursor: pointer;"  data-onclick="openInGoogleMaps()">
                     <div id="loc-line1" >📍Mencari lokasi...</div>
                     <div id="loc-line2" style="font-size: 0.8rem; font-weight: 500; opacity: 0.75; display: block !important; width: 100% !important; line-height: 1.3; clear: both;">Mendeteksi koordinat...</div>
                 </div>
@@ -754,22 +754,22 @@
         </div>
 
     <div class="weather-grid" style="margin-top: 5px; margin-bottom: 5px;">
-        <div class="weather-card" onclick="refreshSatuData('suhu', this)">
+        <div class="weather-card"  data-onclick="refreshSatuData('suhu', this)">
             <div class="icon">🌡️</div>
             <div>SUHU</div>
             <span id="temp-val">--</span>
         </div>
-        <div class="weather-card" onclick="refreshSatuData('kelembaban', this)">
+        <div class="weather-card"  data-onclick="refreshSatuData('kelembaban', this)">
             <div class="icon">💧</div>
             <div>KELEMBAPAN</div>
             <span id="hum-val">--</span>
         </div>
-        <div class="weather-card" onclick="refreshSatuData('tekanan', this)">
+        <div class="weather-card"  data-onclick="refreshSatuData('tekanan', this)">
             <div class="icon">💨</div>
             <div>TEKANAN</div>
             <span id="pres-val">--</span>
         </div>
-        <div class="weather-card" onclick="refreshSatuData('ketinggian', this)">
+        <div class="weather-card"  data-onclick="refreshSatuData('ketinggian', this)">
             <div class="icon">⛰️</div>
             <div>KETINGGIAN</div>
             <span id="alt-val">--</span>
@@ -785,7 +785,7 @@
             </div>
         </div>
 
-        <div class="shrunk-right-wrapper" onclick="swapRightStats()" style="cursor: pointer; user-select: none;">
+        <div class="shrunk-right-wrapper"  data-onclick="swapRightStats()" style="cursor: pointer; user-select: none;">
             <div id="shrunk-right-container" class="show-time">
                 <div id="shrunk-time-status" class="shrunk-badge-item">
             <span id="shrunk-time-emoji">🕒</span>
@@ -803,23 +803,23 @@
 
 <!-- BAGIAN UTAMA SCROLLABLE -->
 <div class="scrollable-content">
-    <button id="retry-btn" onclick="initApp()" style="display:none; margin: 10px auto; padding: 5px 15px; cursor: pointer;">
+    <button id="retry-btn"  data-onclick="initApp()" style="display:none; margin: 10px auto; padding: 5px 15px; cursor: pointer;">
         Coba Deteksi Ulang Lokasi
     </button>
 
     <div class="article-slider-container">
         <div class="article-slider-wrapper" id="article-wrapper">
-            <div class="article-slide" onclick="bukaArtikelLengkap(1)" style="cursor: pointer;">
+            <div class="article-slide"  data-onclick="bukaArtikelLengkap(1)" style="cursor: pointer;">
                 <span class="article-badge">💡 Tips Proofer</span>
                 <h4>Kunci Fermentasi Donat Konsisten</h4>
                 <p>Suhu ideal proofer berkisar antara 28°C - 35°C dengan kelembaban 70-80%... <strong style="color: var(--accent);">Baca Selengkapnya →</strong></p>
             </div>
-            <div class="article-slide" onclick="bukaArtikelLengkap(2)" style="cursor: pointer;">
+            <div class="article-slide"  data-onclick="bukaArtikelLengkap(2)" style="cursor: pointer;">
                 <span class="article-badge">🍩 Sains Adonan</span>
                 <h4>Mengenal Proses Autolisis</h4>
                 <p>Mendiamkan campuran tepung dan air sebelum ragi/garam masuk membantu terbentuknya gluten... <strong style="color: var(--accent);">Baca Selengkapnya →</strong></p>
             </div>
-            <div class="article-slide" onclick="bukaArtikelLengkap(3)" style="cursor: pointer;">
+            <div class="article-slide"  data-onclick="bukaArtikelLengkap(3)" style="cursor: pointer;">
                 <span class="article-badge">⚠️ Solusi Over-proofing</span>
                 <h4>Tanda Adonan Terlalu Lama Mengembang</h4>
                 <p>Jika adonan donat dikempiskan lalu keriput atau langsung ambles, itu tanda over-proof... <strong style="color: var(--accent);">Baca Selengkapnya →</strong></p>
@@ -832,29 +832,29 @@
         <div class="article-modal-content">
             <div class="article-modal-header">
                 <span id="modal-badge" class="article-badge">Badge</span>
-                <button class="article-modal-close" onclick="tutupArtikelSecaraAman()">✕</button>
+                <button class="article-modal-close"  data-onclick="tutupArtikelSecaraAman()">✕</button>
             </div>
             <h3 id="modal-title">Judul Artikel Lengkap</h3>
             <div class="article-modal-body" id="modal-body"></div>
         </div>
     </div>
     
-    <div class="premium-offline-box" id="premium-box" style="display: block;">
+    <div class="premium-offline-box" id="premium-box" style="display: none !important;">
         <h4>👑 Fitur Premium: Mode Luring</h4>
         <p style="font-size: 0.75rem; margin: 0 0 12px 0;">Tidak ada internet. <br>Atur parameter secara manual atau sambungkan dengan termometer via bluetooth:</p>
         <div class="premium-offline-field">
             <div>
                 <label for="off-temp">Suhu (°C)</label>
-                <input type="number" id="off-temp" onchange="handleOfflinePremium()">
+                <input type="number" id="off-temp"  data-onchange="handleOfflinePremium()">
             </div>
             <div>
                 <label for="off-hum">Kelembaban (%)</label>
-                <input type="number" id="off-hum" onchange="handleOfflinePremium()">
+                <input type="number" id="off-hum"  data-onchange="handleOfflinePremium()">
             </div>
         </div>
         <div style="margin-top: 10px;">
             <label for="off-condition" style="font-size: 0.75rem; font-weight: bold;">Simulasi Cuaca Manual:</label>
-            <select id="off-condition" onchange="handleOfflinePremium()" style="width:100%; padding:5px; margin-top:4px; border-radius:5px;">
+            <select id="off-condition"  data-onchange="handleOfflinePremium()" style="width:100%; padding:5px; margin-top:4px; border-radius:5px;">
                 <option value="clear">Cerah / Normal</option>
                 <option value="panas">Panas</option>
                 <option value="clouds">Berawan</option>
@@ -862,11 +862,11 @@
                 <option value="hujan">Hujan</option>
             </select>
         </div>
-</div>
+    </div>
 
         <!-- Bagian Analisis AI -->
         <div id="ai-analysis-wrapper">
-            <div id="ai-toggle" style="color: #E67E22; font-weight: bold; text-align: center;" onclick="toggleAI()">🔍 Analisis Kondisi Adonan</div>
+            <div id="ai-toggle" style="color: #E67E22; font-weight: bold; text-align: center;"  data-onclick="toggleAI()">🔍 Analisis Kondisi Adonan</div>
     
             <div class="ai-analysis-box" id="ai-analysis">
                 <h3>Analisis Kondisi Adonan</h3>
@@ -891,7 +891,7 @@
             </svg>
             <div class="timer-content-wrapper">
                 <div class="time-info" id="time-duration"></div>
-                <div id="countdown" onclick="handleTimerClick()">00:00</div>
+                <div id="countdown"  data-onclick="handleTimerClick()">00:00</div>
                 <div class="time-info" id="time-eta"></div>
             </div>
         </div>
@@ -914,12 +914,13 @@
 <!------------- TOP BAR ------------------>
 <!---------------------------------------->
     <!-- MODAL USER -->
+<!-- MODAL USER (PROFIL DINAMIS) -->
 <div class="page-modal" id="user-modal">
     <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2);">
-    <h3 id="user-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
-        <span>👤</span> Profil Pengguna
-    </h3>
-</div>
+        <h3 id="user-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>👤</span> Profil Pengguna
+        </h3>
+    </div>
     <div class="modal-scroll-content">
         <div class="profile-container">
             <div class="profile-card profile-header">
@@ -928,9 +929,9 @@
                 </div>
 
                 <div id="user-greeting">Selamat Datang</div>
-                <div class="profile-name" id="profile-name">Joko Prasetyo</div>
-                <div class="profile-subtitle" id="profile-bakery">Kedai Mak-er</div>
-                <div class="profile-badge">Premium Member</div>
+                <div class="profile-name" id="profile-name">Memuat nama...</div>
+                <div class="profile-subtitle" id="profile-bakery">Memuat data kedai...</div>
+                <div class="profile-badge" id="profile-status-badge">Premium Member</div>
 
                 <div class="profile-info-list">
                     <div class="profile-info-row">
@@ -948,15 +949,15 @@
                         <div class="summary-icon">📍</div>
                         <div class="summary-title">Lokasi</div>
                         <div class="summary-value" id="summary-location">
-                            <small id="prof-coords">Lat: -7.4475, Lon: 112.7183</small>
-                            Memuat...
+                            <small id="prof-coords">Mendeteksi GPS...</small>
+                            <span id="prof-address">Memuat Alamat...</span>
                         </div>
                     </div>
 
                     <div class="profile-summary-item">
                         <div class="summary-icon">📅</div>
                         <div class="summary-title">Tanggal</div>
-                        <div class="summary-value" id="summary-date">--</div>
+                        <div class="summary-value" id="summary-date">--:--</div>
                     </div>
 
                     <div class="profile-summary-item">
@@ -973,6 +974,7 @@
                 </div>
             </div>
 
+            <!-- STATISTIK REAL-TIME -->
             <div class="profile-card">
                 <h3 class="profile-section-title">📊 Statistik Bakery</h3>
                 <div class="bakery-stats-grid">
@@ -990,102 +992,94 @@
                     </div>
                     <div class="bakery-stat-item">
                         <div class="stat-value" id="stat-timers">0</div>
-                        <div class="stat-label">Timer</div>
+                        <div class="stat-label">Timer Log</div>
                     </div>
                 </div>
             </div>
 
-            <hr class="modal-divider">
-
-        <!-- NEW: Fitur Riwayat & Log Aktivitas Proofing -->
-        <div class="profile-section animation-fade">
-            <h4>📜 Riwayat & Log Aktivitas Proofing</h4>
-            <div class="log-container" style="max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch;">
-                <ul class="log-list" style="list-style: none; padding: 0; margin: 0;">
-                    <li style="padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
-                        <span>🍞 Sourdough Donut (Batch #42)</span>
-                        <span class="badge success" style="color: green;">Berhasil</span>
-                    </li>
-                    <li style="padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
-                        <span>🍩 Brioche Donut (Batch #41)</span>
-                        <span class="badge warning" style="color: orange;">Over-proofed</span>
-                    </li>
-                </ul>
+            <!-- LOG AKTIVITAS DINAMIS -->
+            <div class="profile-card animation-fade">
+                <h3 class="profile-section-title">📜 Riwayat Aktivitas Proofing</h3>
+                <div class="log-container" style="max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+                    <ul class="log-list" id="dynamic-proofing-logs" style="list-style: none; padding: 0; margin: 0;">
+                        <!-- Data diinjeksi via JavaScript -->
+                    </ul>
+                </div>
             </div>
-        </div>
 
-        <br>
+            <!-- INVENTARIS BAHAN BAKU DINAMIS -->
+            <div class="profile-card animation-fade">
+                <h3 class="profile-section-title">📦 Inventaris Bahan Baku</h3>
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--dough);">
+                            <th style="padding: 6px;">Bahan</th>
+                            <th style="padding: 6px; text-align: right;">Stok</th>
+                            <th style="padding: 6px; text-align: center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dynamic-inventory-rows">
+                        <!-- Data diinjeksi via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
 
-        <!-- NEW: Fitur Manajemen Inventaris Bahan Baku (Kedai Mak-er) -->
-        <div class="profile-section animation-fade">
-            <h4>📦 Inventaris Bahan Baku</h4>
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
-                <thead>
-                    <tr style="border-bottom: 2px solid #ccc;">
-                        <th style="padding: 6px;">Bahan</th>
-                        <th style="padding: 6px; text-align: right;">Stok</th>
-                        <th style="padding: 6px; text-align: center;">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 6px;">Tepung Protein Tinggi</td>
-                        <td style="padding: 6px; text-align: right;">25 kg</td>
-                        <td style="padding: 6px; text-align: center;"><span style="color: green;">Aman</span></td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 6px;">Ragi Instan / Sourdough Starter</td>
-                        <td style="padding: 6px; text-align: right;">500 g</td>
-                        <td style="padding: 6px; text-align: center;"><span style="color: red;">Menipis</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-            <button class="btn btn-primary profile-button" onclick="openEditProfile()">
+            <button class="btn btn-primary profile-button"  data-onclick="openEditProfile()">
                 Edit Profil
             </button>
         </div>
     </div>
     <div class="modal-bottom-actions">
-        <button class="about-close-btn" style="margin: 0;" onclick="toggleModal('user-modal')">KEMBALI</button>
+        <button class="about-close-btn" style="margin: 0; width: 100%;"  data-onclick="toggleModal('user-modal')">KEMBALI</button>
     </div>
 </div>
+<!-- AKHIR MODAL USER -->
 
+<!-- MODAL EDIT PROFIL -->
 <div class="page-modal" id="edit-profile-modal">
+    <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2);">
+        <h3 class="profile-modal-title" style="margin:0;">📝 Edit Profil Kedai</h3>
+    </div>
+    
     <div class="modal-scroll-content">
-        <h2 class="profile-modal-title">Edit Profil</h2>
-
-        <div style="text-align:center;margin-bottom:20px;">
-            <img id="edit-avatar-preview" class="edit-profile-avatar" src="logo donat.png" alt="Preview foto profil">
-        </div>
-
-        <div class="profile-form">
-            <label for="edit-name">Nama Pengguna</label>
-            <input id="edit-name" type="text" placeholder="Nama Pengguna">
-
-            <label for="edit-bakery">Nama Bakery</label>
-            <input id="edit-bakery" type="text" placeholder="Nama Bakery">
-
-            <label for="edit-phone">Nomor WhatsApp</label>
-            <input id="edit-phone" type="tel" placeholder="08xxxxxxxxxx">
-
-            <label for="edit-email">Email</label>
-            <input id="edit-email" type="email" placeholder="email@contoh.com">
+        <div class="profile-card">
+            <form id="form-edit-profil" class="profile-form"  data-onsubmit="event.preventDefault(); saveProfile();">
+                <div class="profile-form-group" style="margin-bottom: 12px;">
+                    <label for="edit-name">Nama Pengguna</label>
+                    <input type="text" id="edit-name" required placeholder="Nama Anda">
+                </div>
+                
+                <div class="profile-form-group" style="margin-bottom: 12px;">
+                    <label for="edit-bakery">Nama Kedai / Bakery</label>
+                    <input type="text" id="edit-bakery" required placeholder="Nama Bakery">
+                </div>
+                
+                <div class="profile-form-group" style="margin-bottom: 12px;">
+                    <label for="edit-phone">Nomor WhatsApp</label>
+                    <input type="tel" id="edit-phone" placeholder="08xxxxxxxxxx">
+                </div>
+                
+                <div class="profile-form-group" style="margin-bottom: 12px;">
+                    <label for="edit-email">Email</label>
+                    <input type="email" id="edit-email" placeholder="email@domain.com">
+                </div>
+                
+                <button type="submit" class="save-btn" style="margin-top: 10px;">SIMPAN PERUBAHAN</button>
+            </form>
         </div>
     </div>
-
-    <div class="modal-bottom-actions" style="display:flex; gap:10px;">
-        <button class="about-close-btn" style="margin:0; flex:1;" onclick="closeEditProfile()">Batal</button>
-        <button class="save-btn" style="margin:0; flex:1;" onclick="saveProfile()">Simpan</button>
+    
+    <div class="modal-bottom-actions">
+        <button class="about-close-btn" style="margin: 0; width: 100%; background: #bdc3c7;"  data-onclick="closeEditProfile()">BATAL</button>
     </div>
 </div>
+<!-- AKHIR MODAL EDIT PROFIL -->
 
 <!-- MODAL BANTUAN -->
 <div class="page-modal" id="help-modal">
     <div class="modal-scroll-content">
         <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2);">
-    <h3 id="help-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <h3 id="help-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
         <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.4rem; height: 1.4rem; object-fit: contain;"> 
         Pusat Bantuan
     </h3>
@@ -1107,22 +1101,22 @@
 </div>
         </div>
     <div class="modal-bottom-actions">
-        <button class="about-close-btn" style="margin: 0;" onclick="toggleModal('help-modal')">KEMBALI</button>
+        <button class="about-close-btn" style="margin: 0;"  data-onclick="toggleModal('help-modal')">KEMBALI</button>
     </div>
 </div>
 
 <!-- MODAL NOTIFIKASI -->
 <div class="page-modal" id="notif-modal">
     <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
-        <h3 id="modal-title" style="margin: 0;">🔔 Notifikasi</h3>
+        <h3 id="modal-title-notif" style="margin: 0;">🔔 Notifikasi</h3>
         <button class="article-modal-close" id="btn-close-notif">×</button>
     </div>
     <div style="display:flex; gap:6px; padding:10px 14px 8px; border-bottom:1px dashed rgba(78,52,46,0.2); overflow-x:auto; flex-shrink:0;">
-        <button class="notif-tab-btn active" onclick="filterNotif('semua',this)">Semua</button>
-        <button class="notif-tab-btn" onclick="filterNotif('timer',this)">⏱️ Timer</button>
-        <button class="notif-tab-btn" onclick="filterNotif('cuaca',this)">🌡️ Cuaca</button>
-        <button class="notif-tab-btn" onclick="filterNotif('resep',this)">🧾 Resep</button>
-        <button class="notif-tab-btn" onclick="filterNotif('sistem',this)">⚙️ Sistem</button>
+        <button class="notif-tab-btn active"  data-onclick="filterNotif('semua',this)">Semua</button>
+        <button class="notif-tab-btn"  data-onclick="filterNotif('timer',this)">⏱️ Timer</button>
+        <button class="notif-tab-btn"  data-onclick="filterNotif('cuaca',this)">🌡️ Cuaca</button>
+        <button class="notif-tab-btn"  data-onclick="filterNotif('resep',this)">🧾 Resep</button>
+        <button class="notif-tab-btn"  data-onclick="filterNotif('sistem',this)">⚙️ Sistem</button>
     </div>
     <div class="modal-scroll-content" id="notif-list-container" style="padding-top:0;">
         <div id="notif-empty-msg" style="text-align:center; padding:50px 20px; opacity:0.5; font-style:italic;">
@@ -1147,7 +1141,7 @@
         
         <div style="margin-top: 10px; border-top: 1px dashed rgba(78, 52, 46, 0.3); border-bottom: 1px dashed rgba(78, 52, 46, 0.3); padding: 15px 0; margin-bottom: 15px;">
             <h3 style="margin-top: 0;">🌡️ Koneksi Sensor</h3>
-            <button id="btn-ble" class="about-close-btn" style="background: #27ae60; margin-top: 10px;" onclick="connectBluetoothThermometer()">
+            <button id="btn-ble" class="about-close-btn" style="background: #27ae60; margin-top: 10px;"  data-onclick="connectBluetoothThermometer()">
                 Hubungkan Termometer BLE
             </button>
             <p id="ble-status" style="font-size: 0.75rem; margin-top: 8px; margin-bottom: 0;">Status: Terputus</p>
@@ -1209,17 +1203,17 @@
         </div>
         </div>
     <div class="modal-bottom-actions">
-        <button class="about-close-btn" style="margin: 0;" onclick="toggleModal('settings-modal')">SIMPAN & KEMBALI</button>
+        <button class="about-close-btn" style="margin: 0;"  data-onclick="toggleModal('settings-modal')">SIMPAN & KEMBALI</button>
     </div>
 </div>
 
     <!-- Bagian Bottom Navbar -->
     <div class="bottom-bar">
-        <div class="bottom-item" id="tab-timer" onclick="switchTab('timer')">
+        <div class="bottom-item" id="tab-timer"  data-onclick="switchTab('timer')">
             <span class="icon-bar">⏱️</span>
             <span>Timer</span>
         </div>
-        <div class="bottom-item" id="tab-recipe" onclick="switchTab('recipe')">
+        <div class="bottom-item" id="tab-recipe"  data-onclick="switchTab('recipe')">
             <span class="icon-bar">🧾</span>
             <span>Resep</span>
         </div>
@@ -1251,9 +1245,9 @@
             <label for="recipe-save-name" style="display: block; font-size: 0.68rem; font-weight: 600; color: #718096; margin-bottom: 4px;">Nama Resep (Opsional):</label>
             <input type="text" id="recipe-save-name" placeholder="Contoh: Donat Coklat Premium" maxlength="60" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.8rem; box-sizing: border-box; margin-bottom: 8px; color: #4E342E;">
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
-                <button type="button" class="btn" id="btn-muat-resep" onclick="window.tampilkanDaftarResepTersimpan()" style="background: #E67E22; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📂 DATABASES</button>
-                <button type="button" class="btn" onclick="window.eksporSemuaResep()" style="background: #2980b9; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📤 EKSPOR</button>
-                <button type="button" class="btn" onclick="document.getElementById('recipe-import-input').click()" style="background: #27ae60; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📥 IMPOR FILE</button>
+                <button type="button" class="btn" id="btn-muat-resep"  data-onclick="window.tampilkanDaftarResepTersimpan()" style="background: #E67E22; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📂 DATABASES</button>
+                <button type="button" class="btn"  data-onclick="window.eksporSemuaResep()" style="background: #2980b9; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📤 EKSPOR</button>
+                <button type="button" class="btn"  data-onclick="document.getElementById('recipe-import-input').click()" style="background: #27ae60; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📥 IMPOR FILE</button>
             </div>
             <input type="file" id="recipe-import-input" accept=".json,application/json" style="display: none;">
         </div>
@@ -1266,11 +1260,11 @@
         <div style="background: white; padding: 12px; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border: 1px solid #e2e8f0;">
             <div>
                 <label for="base-flour" style="font-size: 0.7rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Tepung Utama (gr)</label>
-                <input type="number" id="base-flour" value="1000" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.9rem;" oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+                <input type="number" id="base-flour" value="1000" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.9rem;"  data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
             </div>
             <div>
                 <label for="recipe-yield" style="font-size: 0.7rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Total Porsi (Pcs)</label>
-                <input type="number" id="recipe-yield" value="34" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.9rem;" oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+                <input type="number" id="recipe-yield" value="34" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.9rem;"  data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
             </div>
         </div>
 
@@ -1340,8 +1334,8 @@
 
         <!-- Tombol Aksi Multi-fungsi -->
         <div style="display: flex; gap: 8px; margin-top: 4px;">
-            <button type="button" onclick="window.tambahBahanBakeryDinamis(true)" style="flex: 1; padding: 10px; background: #8D6E63; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem;">➕ Simpan & Isi Lagi</button>
-            <button type="button" onclick="window.tambahBahanBakeryDinamis(false)" style="flex: 1; padding: 10px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem;">Simpan & Tutup</button>
+            <button type="button"  data-onclick="window.tambahBahanBakeryDinamis(true)" style="flex: 1; padding: 10px; background: #8D6E63; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem;">➕ Simpan & Isi Lagi</button>
+            <button type="button"  data-onclick="window.tambahBahanBakeryDinamis(false)" style="flex: 1; padding: 10px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem;">Simpan & Tutup</button>
         </div>
         
         <div id="new-ing-error" style="color: red; font-size: 0.7rem; text-align: center; display: none;"></div>
@@ -1355,8 +1349,8 @@
         <!-- FOLDER TABS KHUSUS UNTUK METODE PEMBUATAN -->
 <div class="recipe-method-section" style="margin-top: 15px;">
     <div class="method-tabs" style="display: flex; gap: 4px; margin-bottom: 10px; font-size: 0.75rem; font-weight: bold;">
-        <button type="button" id="btn-tab-bahan" onclick="gantiTabMetode('bahan')" style="flex: 1; padding: 10px; background: #4E342E; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">📋 Bahan & HPP</button>
-        <button type="button" id="btn-tab-cara" onclick="gantiTabMetode('cara')" style="flex: 1; padding: 10px; background: #F2D2A9; color: #4E342E; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">🍩 Cara Pembuatan</button>
+        <button type="button" id="btn-tab-bahan"  data-onclick="gantiTabMetode('bahan')" style="flex: 1; padding: 10px; background: #4E342E; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">📋 Bahan & HPP</button>
+        <button type="button" id="btn-tab-cara"  data-onclick="gantiTabMetode('cara')" style="flex: 1; padding: 10px; background: #F2D2A9; color: #4E342E; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">🍩 Cara Pembuatan</button>
     </div>
     
     <!-- Konten Cara Pembuatan (Tersembunyi secara default, akan muncul saat tab diklik) -->
@@ -1427,10 +1421,10 @@
                     <label for="input-harga-jual" style="display: block; font-size: 0.65rem; font-weight: 600; color: #27ae60; margin-bottom: 2px;">Harga Jual / Pcs:</label>
                     <div style="display: flex; align-items: center; gap: 2px;">
                         <span style="font-size: 0.8rem; font-weight: 700; color: #27ae60;">Rp</span>
-                        <input type="number" id="input-harga-jual" value="4500" step="100" style="width: 100%; border: none; font-size: 0.85rem; font-weight: 700; color: #27ae60; outline: none; padding: 0;" oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+                        <input type="number" id="input-harga-jual" value="4500" step="100" style="width: 100%; border: none; font-size: 0.85rem; font-weight: 700; color: #27ae60; outline: none; padding: 0;"  data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
                     </div>
                 </div>
-                <div id="tab-profit-margin" class="folder-trigger" onclick="switchFolderTab('profit-margin')" style="background: #f4fbf7; border: 1px solid #d1f2e1; padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s;">
+                <div id="tab-profit-margin" class="folder-trigger"  data-onclick="switchFolderTab('profit-margin')" style="background: #f4fbf7; border: 1px solid #d1f2e1; padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s;">
                     <span style="display: block; font-size: 0.58rem; font-weight: 700; color: #218c4e;">PROFIT MARGIN</span>
                     <span id="sum-profit-margin" style="font-size: 0.95rem; font-weight: 800; color: #27ae60;">0%</span>
                 </div>
@@ -1438,11 +1432,11 @@
 
             <!-- Pemicu Tab Food Cost & Badge -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.70rem;">
-                <div id="tab-food-cost" class="folder-trigger" onclick="switchFolderTab('food-cost')" style="background: #f4fbf7; border: 1px solid #d1f2e1; padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s;">
+                <div id="tab-food-cost" class="folder-trigger"  data-onclick="switchFolderTab('food-cost')" style="background: #f4fbf7; border: 1px solid #d1f2e1; padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s;">
                     <span style="display: block; font-size: 0.55rem; font-weight: 700; color: #1e7e4a;">FOOD COST RATIO</span>
                     <span id="food-cost-percent" style="font-size: 1rem; font-weight: 900; color: #34495e;">0%</span>
                 </div>
-                <div id="fc-badge" class="folder-trigger" onclick="switchFolderTab('unilever-badge')" style="display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800; color: white; background: #7f8c8d; padding: 4px; border-radius: 8px; text-transform: uppercase; text-align: center; cursor: pointer; transition: all 0.2s;">
+                <div id="fc-badge" class="folder-trigger"  data-onclick="switchFolderTab('unilever-badge')" style="display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800; color: white; background: #7f8c8d; padding: 4px; border-radius: 8px; text-transform: uppercase; text-align: center; cursor: pointer; transition: all 0.2s;">
                     MENUNGGU DATA
                 </div>
             </div>
@@ -1450,9 +1444,9 @@
             <!-- WADAH ARSIP FOLDER BERBENTUK KLIP/TUMPUK -->
             <div id="biz-analysis-insight" class="folder-archive-container" style="margin-top: 6px; position: relative;">
                 <div class="folder-stacked-tabs" style="display: flex; gap: 4px; margin-bottom: -1px; padding-left: 5px; font-size: 0.6rem; font-weight: bold;">
-                    <div id="inner-tab-pm" onclick="switchFolderTab('profit-margin')" style="background: #e8f8f5; border: 1px solid #27ae60; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; padding: 4px 8px; cursor: pointer; color: #218c4e;">📁 Profit Margin</div>
-                    <div id="inner-tab-fc" onclick="switchFolderTab('food-cost')" style="background: #f4fbf7; border: 1px solid #d1f2e1; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; padding: 4px 8px; cursor: pointer; color: #1e7e4a;">📁 Food Cost</div>
-                    <div id="inner-tab-ub" onclick="switchFolderTab('unilever-badge')" style="background: #7f8c8d; border: 1px solid #7f8c8d; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; padding: 4px 8px; cursor: pointer; color: white;">📁 Unilever Badge</div>
+                    <div id="inner-tab-pm"  data-onclick="switchFolderTab('profit-margin')" style="background: #e8f8f5; border: 1px solid #27ae60; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; padding: 4px 8px; cursor: pointer; color: #218c4e;">📁 Profit Margin</div>
+                    <div id="inner-tab-fc"  data-onclick="switchFolderTab('food-cost')" style="background: #f4fbf7; border: 1px solid #d1f2e1; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; padding: 4px 8px; cursor: pointer; color: #1e7e4a;">📁 Food Cost</div>
+                    <div id="inner-tab-ub"  data-onclick="switchFolderTab('unilever-badge')" style="background: #7f8c8d; border: 1px solid #7f8c8d; border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; padding: 4px 8px; cursor: pointer; color: white;">📁 Unilever Badge</div>
                 </div>
 
                 <div class="folder-body" style="background: #fff9f0; border: 1px solid #ffe8cc; padding: 12px; border-radius: 8px; border-top-left-radius: 0; font-size: 0.75rem; color: #4E342E; min-height: 70px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
@@ -1477,8 +1471,8 @@
 
         <!-- UTILITY ACTIONS BUTTONS -->
         <div class="action-buttons-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-            <button type="button" class="btn" id="btn-simpan-resep" onclick="window.simpanResepKeDatabase()" style="background: #2c3e50; color: white; padding: 10px; border: none; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer;">💾 SIMPAN RESEP</button>
-            <button type="button" onclick="window.eksekusiCetakPremium()" style="background: #c0392b; color: white; border: none; padding: 10px; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">📄 CETAK PDF</button>
+            <button type="button" class="btn" id="btn-simpan-resep"  data-onclick="window.simpanResepKeDatabase()" style="background: #2c3e50; color: white; padding: 10px; border: none; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer;">💾 SIMPAN RESEP</button>
+            <button type="button"  data-onclick="window.eksekusiCetakPremium()" style="background: #c0392b; color: white; border: none; padding: 10px; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">📄 CETAK PDF</button>
         </div>
         <div class="sticky-bottom-action" style="position: sticky; bottom: 0; background-color: var(--cream); padding: 12px 15px; box-shadow: 0 -4px 10px rgba(0,0,0,0.06); z-index: 101; flex-shrink: 0;">
         <button id="btn-recipe-close-bottom" class="about-close-btn" style="margin: 0; width: 100%; display: block;">TUTUP KALKULATOR</button>
@@ -1487,11 +1481,11 @@
     <div id="recipe-list-modal" class="page-modal" style="z-index: 200;">
         <div style="padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
             <h3 style="margin: 0; color: var(--chocolate); font-size: 1rem;">📂 Resep Tersimpan di Perangkat</h3>
-            <button type="button" onclick="window.tutupDaftarResepTersimpan()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--chocolate);">&times;</button>
+            <button type="button"  data-onclick="window.tutupDaftarResepTersimpan()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--chocolate);">&times;</button>
         </div>
         <div id="recipe-list-container" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 15px;"></div>
         <div style="padding: 12px 15px; border-top: 1px solid rgba(0,0,0,0.06); flex-shrink: 0;">
-            <button type="button" class="about-close-btn" style="margin: 0; width: 100%;" onclick="window.tutupDaftarResepTersimpan()">TUTUP</button>
+            <button type="button" class="about-close-btn" style="margin: 0; width: 100%;"  data-onclick="window.tutupDaftarResepTersimpan()">TUTUP</button>
         </div>
     </div>
     </div>
@@ -1660,6 +1654,59 @@ function updateVersion() {
 }
 //==============================================
 
+// Data Default Profil (Fallback jika storage kosong)
+const defaultProfile = {
+    name: "name",
+    bakery: "baker",
+    phone: "_",
+    email: "_"
+};
+
+// Fungsi memuat data profil secara dinamis saat aplikasi dibuka / modal diakses
+async function loadDynamicProfile() {
+    try {
+        // Menggunakan fungsi wrapper getProfileValue Anda yang sudah aman
+        const savedProfileRaw = await getProfileValue('user_profile', null);
+        
+        let savedProfile = defaultProfile;
+        if (savedProfileRaw) {
+            savedProfile = JSON.parse(savedProfileRaw);
+        }
+
+        // Injeksi ke HTML profil
+        document.getElementById('profile-name').innerText = savedProfile.name;
+        document.getElementById('profile-bakery').innerText = savedProfile.bakery;
+        document.getElementById('profile-phone').innerText = savedProfile.phone || "-";
+        document.getElementById('profile-email').innerText = savedProfile.email || "-";
+        
+        // Sinkronisasi ke Form Edit jika ada
+        if(document.getElementById('edit-name')) {
+            document.getElementById('edit-name').value = savedProfile.name;
+            document.getElementById('edit-bakery').value = savedProfile.bakery;
+            document.getElementById('edit-phone').value = savedProfile.phone;
+            document.getElementById('edit-email').value = savedProfile.email;
+        }
+
+        // Jalankan fungsi update cuaca, tanggal, dan tabel stok
+        renderAktivitasDanStok();
+
+    } catch (error) {
+        console.error("Gagal memuat profil dinamis:", error);
+    }
+}
+
+// Kaitkan pemanggilan fungsi dinamis ini saat tombol User (👤) di Top Bar ditekan
+const originalToggleModal = window.toggleModal;
+window.toggleModal = function(modalId) {
+    if (modalId === 'user-modal') {
+        loadDynamicProfile();
+    }
+    // Panggil fungsi toggle asli bawaan PWA Anda
+    const targetModal = document.getElementById(modalId);
+    if(targetModal) targetModal.classList.toggle('active');
+};
+// =============================================
+
 const ProfileService = {
 
     getRecipes() {
@@ -1690,27 +1737,37 @@ const ProfileService = {
 
 // FUNGSI BUKA USER PROFILE
 async function openEditProfile() {
+    // Ambil data terlebih dahulu
+    const nameVal = await getProfileValue("profile_name", "");
+    const bakeryVal = await getProfileValue("profile_bakery", "");
+    const phoneVal = await getProfileValue("profile_phone", "");
+    const emailVal = await getProfileValue("profile_email", "");
 
-    document.getElementById("edit-name").value =
-        await getProfileValue("profile_name", "");
+    // Ambil elemen input (gunakan optional chaining untuk mencegah error null)
+    const editName = document.getElementById("edit-name");
+    const editBakery = document.getElementById("edit-bakery");
+    const editPhone = document.getElementById("edit-phone");
+    const editEmail = document.getElementById("edit-email");
 
-    document.getElementById("edit-bakery").value =
-        await getProfileValue("profile_bakery", "");
+    if (editName) editName.value = nameVal;
+    if (editBakery) editBakery.value = bakeryVal;
+    if (editPhone) editPhone.value = phoneVal;
+    if (editEmail) editEmail.value = emailVal;
 
-    document.getElementById("edit-phone").value =
-        await getProfileValue("profile_phone", "");
-
-    document.getElementById("edit-email").value =
-        await getProfileValue("profile_email", "");
-
+    // Manajemen tampilan modal
     const userModal = document.getElementById("user-modal");
     const editModal = document.getElementById("edit-profile-modal");
 
     userModal?.classList.remove("active");
     userModal?.setAttribute("inert", "");
-    editModal?.classList.add("active");
-    editModal?.removeAttribute("inert");
-    document.body.style.overflow = "hidden";
+    
+    if (editModal) {
+        editModal.classList.add("active");
+        editModal.removeAttribute("inert");
+        document.body.style.overflow = "hidden";
+    } else {
+        console.error("Error: Elemen #edit-profile-modal tidak ditemukan di HTML!");
+    }
 }
 
 function closeEditProfile() {
@@ -2097,7 +2154,7 @@ function terapkanResepKeKalkulator(resep) {
 }
 async function jadwalkanAlarmProofing(menitDurasi) {
     if (!window.Capacitor) {
-        console.log("Berjalan di browser biasa, mengabaikan alarm native.");
+        window.DEBUG && console.log("Berjalan di browser biasa, mengabaikan alarm native.");
         return;
     }
 
@@ -2132,7 +2189,7 @@ async function jadwalkanAlarmProofing(menitDurasi) {
                 }
             ]
         });
-        console.log("✅ Alarm Capacitor berhasil dijadwalkan untuk " + menitDurasi + " menit.");
+        window.DEBUG && console.log("✅ Alarm Capacitor berhasil dijadwalkan untuk " + menitDurasi + " menit.");
     } catch (error) {
         console.error("Gagal mengatur notifikasi lewat Capacitor:", error);
     }
@@ -2233,14 +2290,14 @@ const NotifSystem = (() => {
             // Menggabungkan string literal HTML secara utuh dalam satu backtick
             div.innerHTML = `
                 <div class="notif-icon-box" style="cursor:default">${n.ikon || '🔔'}</div>
-                <div class="notif-body" style="cursor:pointer" onclick="NotifSystem.baca(this.closest('.notif-item').dataset.id)">
+                <div class="notif-body" style="cursor:pointer"  data-onclick="NotifSystem.baca(this.closest('.notif-item').dataset.id)">
                     <div class="notif-title">${n.judul}</div>
                     <div class="notif-desc">${n.deskripsi}</div>
                     <div class="notif-time">${n.waktu || ''}</div>
                 </div>
                 <button class="btn-hapus-notif-cepat" data-id="${n.id}" title="Hapus notifikasi ini"
                     style="background:none;border:none;font-size:1rem;color:#bbb;cursor:pointer;padding:4px 6px;align-self:flex-start;flex-shrink:0;line-height:1;"
-                    onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#bbb'">✕</button>
+                     data-onmouseover="this.style.color='#e74c3c'"  data-onmouseout="this.style.color='#bbb'">✕</button>
             `;
             container.appendChild(div);
         });
@@ -2394,7 +2451,7 @@ function bukaArtikelLengkap(id) {
 // FUNGSI UNTUK MENUTUP KEMBALI HALAMAN ARTIKEL
 // Cukup gunakan satu fungsi ini saja di dalam <script type="module"> Anda:
 function tutupArtikelSecaraAman() {
-    console.log("Menutup artikel dan membersihkan efek buram...");
+    window.DEBUG && console.log("Menutup artikel dan membersihkan efek buram...");
     const articleModal = document.getElementById('article-modal');
     const modalOverlay = document.querySelector('.article-modal-overlay');
     
@@ -2509,7 +2566,7 @@ function initArticleSlider() {
 }
 
 window.handleOfflinePremium = function() {
-    console.log('Menjalankan kalkulasi mode luring...');
+    window.DEBUG && console.log('Menjalankan kalkulasi mode luring...');
     
     // 1. Coba ambil data cuaca terakhir dari localStorage jika input kosong
     const inputTemp = document.getElementById('off-temp');
@@ -2530,7 +2587,7 @@ window.handleOfflinePremium = function() {
     }
     const finalCondition = inputCondition?.value;
     
-    console.log('Kalkulasi offline menggunakan data:', { finalTemp, finalHum, finalCondition });
+    window.DEBUG && console.log('Kalkulasi offline menggunakan data:', { finalTemp, finalHum, finalCondition });
 };
 
 //=======================================================================
@@ -2596,7 +2653,7 @@ if (typeof globalInitialSeconds === 'undefined') var globalInitialSeconds = 0;
 // FUNGSI REFRESH MANDIRI PER PARAMETER CUACA
 // =========================================================
 async function refreshSatuData(jenis, element) {
-    console.log(`Memperbarui data ${jenis}...`);
+    window.DEBUG && console.log(`Memperbarui data ${jenis}...`);
 
     // Berikan efek animasi visual loading jika elemen kartu dikirim
     if (element) {
@@ -2632,7 +2689,7 @@ async function refreshSatuData(jenis, element) {
                 
                 // --- STRATEGI CADANGAN (FALLBACK) JIKA TIMEOUT ---
                 if (error.code === error.TIMEOUT || error.code === 3) {
-                    console.log("Pencarian GPS Akurat Timeout. Mencoba mengambil data koordinat cepat...");
+                    window.DEBUG && console.log("Pencarian GPS Akurat Timeout. Mencoba mengambil data koordinat cepat...");
                     
                     // Coba sekali lagi dengan menonaktifkan HighAccuracy agar instan didapat dari BTS/Wifi
                     navigator.geolocation.getCurrentPosition(
@@ -2830,7 +2887,7 @@ function updateSensorUI(elementId, valueText) {
 function onDisconnected() {
     const statusEl = document.getElementById('ble-status');
     if (statusEl) statusEl.innerText = "Status: Terputus (Periksa Sensor)";
-    console.log("Perangkat Bluetooth terputus!");
+    window.DEBUG && console.log("Perangkat Bluetooth terputus!");
 }
 // ===================================================================================
 
@@ -3546,7 +3603,7 @@ function updateDynamicTheme(weatherId, mainWeather) {
     else if (currentTemp >= 33) condition = "panas";
     else condition = "cerah";
 
-    console.log(`Mengubah tema berdasarkan waktu: ${timeOfDay} dan cuaca: ${mainWeather}`);
+    window.DEBUG && console.log(`Mengubah tema berdasarkan waktu: ${timeOfDay} dan cuaca: ${mainWeather}`);
 
     // 3. PENGONDISIAN WARNA GLOBAL (Aplikasi / Body)
     if (weatherId >= 200 && weatherId < 600) { 
@@ -3702,7 +3759,7 @@ async function initApp() {
 
     // 2. Pengaman Luring: Mencegah error / reset data saat tidak ada internet
     if (!navigator.onLine) {
-        console.log("initApp dihentikan karena aplikasi sedang offline.");
+        window.DEBUG && console.log("initApp dihentikan karena aplikasi sedang offline.");
         if (typeof handleOfflinePremium === 'function') {
             handleOfflinePremium();
         }
@@ -3830,6 +3887,9 @@ if ('serviceWorker' in navigator) {
                 if (premiumBox) {
                     if (navigator.onLine) {
                         premiumBox.style.display = "none";
+                    } else if (typeof handleOfflinePremium === 'function') {
+                        // Alihkan ke fungsi standard penanganan luring Anda agar UI sinkron
+                        handleOfflinePremium();
                     } else {
                         premiumBox.style.display = "block";
                     }
@@ -3869,7 +3929,7 @@ async function fetchLocationByIPFallback() {
             document.getElementById('loc-line1').innerText = "Mendeteksi Lokasi via Jaringan...";
         }
         // Gunakan HTTPS (ipapi.co) agar aman dan tidak diblokir browser/sistem
-        console.log("Mencari lokasi berdasarkan IP Internet (HTTPS)...");
+        window.DEBUG && console.log("Mencari lokasi berdasarkan IP Internet (HTTPS)...");
         const res = await fetch('https://ipapi.co/json/');
         const ipData = await res.json();
         
@@ -3908,7 +3968,7 @@ function processGeocode(geoData, lat, lon) {
 
         const addr = geoData.address;
 
-        console.log("DEBUG GEOCODE LENGKAP:", JSON.stringify(addr, null, 2));
+        window.DEBUG && console.log("DEBUG GEOCODE LENGKAP:", JSON.stringify(addr, null, 2));
 
         profileLocation =
             addr.county ||
@@ -3966,23 +4026,16 @@ export default async function handler(req, res) {
 
 // 1. Fungsi Utama Mengambil Data Backend Vercel & Distribusi Ke Grid UI Masing-Masing
 async function fetchLocationAndWeather(lat, lon, source) {
-    // Tampilkan pemberitahuan dan aktifkan panel manual secara otomatis sebagai fallback
-    const premiumBox = document.getElementById('premium-box');
-    if (premiumBox) {
-        premiumBox.style.display = 'block'; 
-        document.getElementById('ai-tips').innerText = "Gagal memuat cuaca otomatis. Mengalihkan ke Mode Luring (Manual).";
-    }
-    
-    console.log(`Mengambil cuaca dari sumber: ${source} (${lat}, ${lon})`);
+    window.DEBUG && console.log(`Mengambil cuaca dari sumber: ${source} (${lat}, ${lon})`);
     
     // ==========================================
     // PENCEGAH INTERNET FETCH SAAT MODE LURING
     // ==========================================
     const offTempEl = document.getElementById('off-temp');
     if (offTempEl && offTempEl.value !== "" && !navigator.onLine) {
-        console.log("Fetch dibatalkan karena pengguna menggunakan Mode Luring Premium Manual.");
+        window.DEBUG && console.log("Fetch dibatalkan karena pengguna menggunakan Mode Luring Premium Manual.");
         if (typeof handleOfflinePremium === "function") handleOfflinePremium();
-        return; // SEKARANG AMAN: Berada di dalam fungsi async
+        return; 
     }
 
     try {
@@ -4001,7 +4054,6 @@ async function fetchLocationAndWeather(lat, lon, source) {
             throw new Error("Server mengembalikan format yang tidak valid.");
         }
 
-        // Ambil data teks terlebih dahulu agar aman di-parse
         const rawText = await response.text();
         try {
             data = JSON.parse(rawText);
@@ -4022,15 +4074,13 @@ async function fetchLocationAndWeather(lat, lon, source) {
         // Memanggil fungsi keterangan waktu
         const waktuLokal = typeof dapatkanKeteranganWaktuLokal === 'function' ? dapatkanKeteranganWaktuLokal() : ''; 
         
-        // PROTEKSI: Bersihkan emoji fase bulan jika tidak sengaja terbawa di dalam teks deskripsi cuaca
+        // PROTEKSI: Bersihkan emoji
         let deskripsiBersih = description ? description.replace(/[🌑🌒🌓🌔🌕🌖🌗🌘🌙🌚🌛🌜]/g, '').trim() : '';
-
-        // Jika setelah dihapus emojinya menyisakan tanda titik/koma menggantung di depan, kita rapikan
         if (deskripsiBersih.startsWith('•')) {
             deskripsiBersih = deskripsiBersih.replace('•', '').trim();
         }
         
-        // Mencetak hasilnya ke layar HTML
+        // Cetak hasil ke HTML
         if(document.getElementById('loc-line-weather')) {
             document.getElementById('loc-line-weather').innerHTML = `
                 <div class="weather-time-line"></div>
@@ -4043,45 +4093,26 @@ async function fetchLocationAndWeather(lat, lon, source) {
             }
         }
 
-        // --- BAGIAN ALAMAT 2 BARIS AMAN (DEKLARASI AWAL) ---
+        // --- BAGIAN ALAMAT 2 BARIS ---
         let baris1 = "Lokasi Tidak Diketahui";
         let baris2 = `Koordinat: ${parseFloat(lat).toFixed(4)}, ${parseFloat(lon).toFixed(4)}`;
         let fullLocationName = "Lokasi Tidak Diketahui";
         let profileLocation = "Lokasi Tidak Diketahui";
 
         const geoData = data.geocode;
-
         if (geoData && geoData.address) {
             const addr = geoData.address;
-
-            profileLocation =
-                addr.county ||
-                addr.city ||
-                addr.municipality ||
-                addr.village ||
-                addr.state ||
-                "Tidak diketahui";
+            profileLocation = addr.county || addr.city || addr.municipality || addr.village || addr.state || "Tidak diketahui";
 
             const jalan = addr.road || addr.neighbourhood || "";
-            const desa = addr.village || addr.hamlet ||"";
+            const desa = addr.village || addr.hamlet || "";
+            let kecamatan = addr.subdistrict || addr.municipality || addr.city_district || addr.quarter || 
+                            ((!jalan && addr.suburb && addr.suburb.toLowerCase() !== (desa || "").toLowerCase()) ? addr.suburb : "") || addr.town || "";
 
-            let kecamatan =
-                addr.subdistrict ||
-                addr.municipality ||
-                addr.city_district ||
-                addr.quarter ||
-                ((!jalan && addr.suburb && addr.suburb.toLowerCase() !== (desa || "").toLowerCase()) ? addr.suburb : "") ||
-                addr.town ||
-                "";
-
-            if (kecamatan) {
-                kecamatan = kecamatan.replace(/(kecamatan|subdistrict)/gi, '').trim();
-            }
+            if (kecamatan) kecamatan = kecamatan.replace(/(kecamatan|subdistrict)/gi, '').trim();
 
             let kabupaten = addr.city || addr.regency || addr.county || "";
-            if (kabupaten) {
-                kabupaten = kabupaten.replace(/(kabupaten|regency|county|city|kota)/gi, '').trim();
-            }
+            if (kabupaten) kabupaten = kabupaten.replace(/(kabupaten|regency|county|city|kota)/gi, '').trim();
 
             const provinsi = addr.state || "";
             const negara = addr.country || "";
@@ -4098,53 +4129,38 @@ async function fetchLocationAndWeather(lat, lon, source) {
             if (negara) komponenBaris2.push(negara);
             baris2 = komponenBaris2.length > 0 ? komponenBaris2.join(', ') : "Indonesia";
 
-            fullLocationName = kecamatan && kabupaten
-                ? `${kecamatan}, ${kabupaten}`
-                : (kabupaten || "Lokasi Terdeteksi");
+            fullLocationName = kecamatan && kabupaten ? `${kecamatan}, ${kabupaten}` : (kabupaten || "Lokasi Terdeteksi");
         }
 
-        console.log("Profile Location :", profileLocation);
-        
         if (typeof updateProfileSummary === 'function') {
             updateProfileSummary({
                 location: profileLocation,
-                weather: {
-                    temp: temp,
-                    humidity: humidity,
-                    description: description
-                }
+                weather: { temp: temp, humidity: humidity, description: description }
             });
         }
                 
-        // --- STRATEGI METODE GANDA UNTUK KETINGGIAN ---
         let altitude = null;
         if (typeof dapatkanKetinggianAkurat === 'function') {
             altitude = await dapatkanKetinggianAkurat(lat, lon);
         }
-        
         if (altitude === null || altitude === undefined) {
             altitude = Math.round(44330 * (1 - Math.pow((pressure / 1013.25), 0.190284)));
         }
 
-        // Tampilkan Notifikasi Sukses Pembaruan Cuaca
         if (typeof NotifSystem !== 'undefined' && NotifSystem.tambah) {
             NotifSystem.tambah('cuaca', 'Data cuaca diperbarui', `${fullLocationName} — ${Math.round(temp)}°C`, '🌡️');
         }
 
-        // --- SUNTIKKAN TEKS KE ELEMENT ADDRESS CARD ---
         const elLine1 = document.getElementById('loc-line1');
         const elLine2 = document.getElementById('loc-line2');
-
         if (elLine1) elLine1.innerText = baris1; 
         if (elLine2) elLine2.innerText = baris2;
 
-        // Pembaruan elemen cuaca lainnya
         if(document.getElementById('temp-val')) document.getElementById('temp-val').innerText = `${Math.round(temp)} °C`;
         if(document.getElementById('hum-val')) document.getElementById('hum-val').innerText = `${humidity} %`;
         if(document.getElementById('pres-val')) document.getElementById('pres-val').innerText = `${pressure} hPa`;
         if(document.getElementById('alt-val')) document.getElementById('alt-val').innerText = altitude + " m";
 
-        // Pastikan variabel global ini ada di script Anda agar tidak error:
         if (typeof currentLat !== 'undefined') currentLat = lat;
         if (typeof currentLon !== 'undefined') currentLon = lon;
 
@@ -4153,15 +4169,8 @@ async function fetchLocationAndWeather(lat, lon, source) {
 
         // --- SIMPAN CACHE LOKAL ---
         localStorage.setItem('donut_weather_cache', JSON.stringify({
-            temp: Math.round(temp),
-            hum: humidity,
-            pres: pressure,
-            weatherId: weatherId,
-            mainWeather: mainWeather,
-            locationName: `${baris1} | ${baris2}`,
-            lat: lat,
-            lon: lon,
-            timestamp: Date.now()
+            temp: Math.round(temp), hum: humidity, pres: pressure, weatherId: weatherId,
+            mainWeather: mainWeather, locationName: `${baris1} | ${baris2}`, lat: lat, lon: lon, timestamp: Date.now()
         }));
         
         localStorage.setItem('cache_suhu', temp);
@@ -4173,9 +4182,18 @@ async function fetchLocationAndWeather(lat, lon, source) {
     } catch (error) {
         console.error("Gagal sinkronisasi data:", error);
         
-        // ==========================================
-        // PREVENTER EROR: Alihkan ke UI Manual jika Luring
-        // ==========================================
+        // =============================================================
+        // PERBAIKAN: UI FALLBACK DIPINDAHKAN KE SINI (SAAT BENAR-BENAR EROR)
+        // =============================================================
+        const premiumBox = document.getElementById('premium-box');
+        if (premiumBox) {
+            // Gunakan setProperty 'important' untuk menembus inline-style CSS bawaan HTML
+            premiumBox.style.setProperty('display', 'block', 'important'); 
+            if(document.getElementById('ai-tips')) {
+                document.getElementById('ai-tips').innerText = "Gagal memuat cuaca otomatis. Mengalihkan ke Mode Luring (Manual).";
+            }
+        }
+
         if (!navigator.onLine || error.message === "Failed to fetch") {
             if (typeof handleOfflinePremium === "function") {
                 handleOfflinePremium();
@@ -4645,7 +4663,7 @@ function triggerMainProofing() {
             mainBtn.innerText = "START PROOFING";
             mainBtn.style.background = "var(--chocolate)";
             if (window.Capacitor) {
-    LocalNotifications.cancel({ notifications: [{ id: 1 }] }).catch(err => console.log(err));
+    LocalNotifications.cancel({ notifications: [{ id: 1 }] }).catch(err => window.DEBUG && console.log(err));
 }
         }
         document.getElementById('countdown').style.color = "var(--chocolate)";
@@ -5013,7 +5031,7 @@ document.addEventListener('click', () => {
     // Berikan argumen 'true' untuk menandakan bahwa ini dipicu langsung oleh klik user
     const ctx = dapatkanAudioContext(true);
     if (ctx) {
-        console.log("AudioContext berhasil dibuka secara aman. State:", ctx.state);
+        window.DEBUG && console.log("AudioContext berhasil dibuka secara aman. State:", ctx.state);
     }
 }, { once: true }); // 'once: true' memastikan ini hanya berjalan satu kali pada ketukan pertama
 
@@ -5298,9 +5316,9 @@ function tambahBahanBakuKustom() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
         <td>${name}</td>
-        <td><input type="number" class="ing-ratio" value="${ratio}" oninput="hitungHPP()"></td>
+        <td><input type="number" class="ing-ratio" value="${ratio}"  data-oninput="hitungHPP()"></td>
         <td><span class="ing-weight">0</span> gr</td>
-        <td><input type="number" class="ing-price" value="${price}" oninput="hitungHPP()"></td>
+        <td><input type="number" class="ing-price" value="${price}"  data-oninput="hitungHPP()"></td>
         <td>Rp <span class="ing-total">0</span></td>
     `;
     tbody.appendChild(tr);
@@ -5358,7 +5376,7 @@ window.toggleCollapseKategori = function(namaKategori) {
 };
 
 window.gantiTabMetode = function(metode) {
-    console.log("Tab changed to:", metode);
+    window.DEBUG && console.log("Tab changed to:", metode);
     
     // Ambil elemen tombol dan konten
     const tabBahan = document.getElementById('btn-tab-bahan');
@@ -5439,7 +5457,7 @@ function renderRecipeTableBakuTotal() {
 
             // 2. BUAT HEADER SEPARATOR UNTUK FORMAT KARTU MOBILE
             htmlContentCards += `
-                <div onclick="toggleCollapseKategori('${kat.nama}')" style="background: #e2e8f0; cursor: pointer; user-select: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; font-size: 0.72rem; color: ${kat.warnaTeks}; display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <div  data-onclick="toggleCollapseKategori('${kat.nama}')" style="background: #e2e8f0; cursor: pointer; user-select: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; font-size: 0.72rem; color: ${kat.warnaTeks}; display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
                     <span>${indikatorPanah} ${kat.emoji} ${kat.nama.toUpperCase()} <small style="font-weight:500; color:#64748b; font-size:0.6rem;">${kat.info}</small></span>
                     <span style="background: #fff; padding: 1px 6px; border-radius: 10px; font-size: 0.65rem;">${items.length} item</span>
                 </div>
@@ -5473,7 +5491,7 @@ function renderRecipeTableBakuTotal() {
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">
                                 <span style="font-weight: 700; font-size: 0.8rem; color: var(--chocolate);">${ing.name}</span>
                                 ${ing.isFlour ? '<span style="font-size:0.65rem; font-weight:700; color:#3498db;">🔑 Utama</span>' : 
-                                `<button type="button" onclick="window.hapusBahanBakeryDinamis(${indexAsli})" style="background: #fee2e2; color: #ef4444; border: none; padding: 3px 8px; font-weight: bold; border-radius: 6px; font-size: 0.68rem; cursor: pointer;">Hapus</button>`}
+                                `<button type="button"  data-onclick="window.hapusBahanBakeryDinamis(${indexAsli})" style="background: #fee2e2; color: #ef4444; border: none; padding: 3px 8px; font-weight: bold; border-radius: 6px; font-size: 0.68rem; cursor: pointer;">Hapus</button>`}
                             </div>
                             
                             <div style="display: grid; grid-template-columns: 1fr 1.2fr 1.2fr; gap: 6px; align-items: center;">
@@ -5485,7 +5503,7 @@ function renderRecipeTableBakuTotal() {
                                                 name="ing_${ing.id}_ratio" 
                                                 value="${ing.ratio}" 
                                                 step="0.1" 
-                                                oninput="perbaruiKomponenBahan('${ing.id}', 'ratio', this.value)" 
+                                                 data-oninput="perbaruiKomponenBahan('${ing.id}', 'ratio', this.value)" 
                                                 style="width:40px; font-size:0.75rem; text-align:center; font-weight:700; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0;" 
                                                 ${ing.isFlour ? 'disabled' : ''}>
                                         <span style="font-size:0.7rem; font-weight:600; color:#64748b;">${unitSymbol}</span>
@@ -5499,7 +5517,7 @@ function renderRecipeTableBakuTotal() {
                                                 id="ing-${ing.id}-price" 
                                                 name="ing_${ing.id}_price" 
                                                 value="${ing.price}" 
-                                                oninput="perbaruiKomponenBahan('${ing.id}', 'price', this.value)" 
+                                                 data-oninput="perbaruiKomponenBahan('${ing.id}', 'price', this.value)" 
                                                 style="width:55px; font-size:0.75rem; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0; font-weight:600;">
                                     </div>
                                 </div>
@@ -5509,7 +5527,7 @@ function renderRecipeTableBakuTotal() {
                                             id="ing-${ing.id}-pack" 
                                             name="ing_${ing.id}_pack" 
                                             value="${ing.pack}" 
-                                            oninput="perbaruiKomponenBahan('${ing.id}', 'pack', this.value)" 
+                                             data-oninput="perbaruiKomponenBahan('${ing.id}', 'pack', this.value)" 
                                             style="width:55px; font-size:0.75rem; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0; font-weight:600;">
                                 </div>
                             </div>
@@ -5847,7 +5865,7 @@ if (!window.Capacitor) {
     window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
         .then(reg => {
-            console.log('Service Worker terdaftar:', reg.scope);
+            window.DEBUG && console.log('Service Worker terdaftar:', reg.scope);
 
             // Logika auto-update lanjutan
             reg.addEventListener('updatefound', () => {
@@ -5859,7 +5877,7 @@ if (!window.Capacitor) {
                 });
             });
         })
-        .catch(err => console.log('Pendaftaran gagal:', err));
+        .catch(err => window.DEBUG && console.log('Pendaftaran gagal:', err));
 });
 }
 } else {
@@ -5868,7 +5886,7 @@ if (!window.Capacitor) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
             for (let registration of registrations) {
                 registration.unregister();
-                console.log('Service Worker lama berhasil dihapus dari lingkungan native Capacitor');
+                window.DEBUG && console.log('Service Worker lama berhasil dihapus dari lingkungan native Capacitor');
             }
         });
     }
@@ -5878,7 +5896,7 @@ if (!window.Capacitor) {
 function kirimPesanKeSW(lat, lon) {
     if (!('serviceWorker' in navigator)) {
         // Native Capacitor atau browser/WebView lama tanpa dukungan Service Worker
-        console.log('Service Worker tidak tersedia di lingkungan ini, lewati kirim pesan cuaca via SW.');
+        window.DEBUG && console.log('Service Worker tidak tersedia di lingkungan ini, lewati kirim pesan cuaca via SW.');
         return;
     }
     if (navigator.serviceWorker.controller) {
@@ -6094,7 +6112,7 @@ window.hubungkanKeSensorBluetoothProofer = async function() {
         window.lastDetectedTemp = suhuHardware;
         window.jalankanAnalisisAIAgent(); // Perbarui rekomendasi AI otomatis
     } catch(error) {
-        console.log("Koneksi Bluetooth dibatalkan / gagal: " + error);
+        window.DEBUG && console.log("Koneksi Bluetooth dibatalkan / gagal: " + error);
     }
 };
 
@@ -6136,7 +6154,7 @@ function renderIngredientsTable() {
                     <span style="font-weight: 700; font-size: 0.85rem; color: var(--chocolate);">${item.name}</span>
                     <span style="font-size: 0.65rem; background: #f1f5f9; padding: 1px 6px; border-radius: 4px; margin-left: 4px; color: #64748b;">${item.type}</span>
                 </div>
-                <button type="button" onclick="hapusBahanBakeryDinamis(${index})" style="background: #fee2e2; color: #ef4444; border: none; padding: 4px 8px; font-weight: bold; border-radius: 6px; font-size: 0.7rem; cursor: pointer;">Hapus</button>
+                <button type="button"  data-onclick="hapusBahanBakeryDinamis(${index})" style="background: #fee2e2; color: #ef4444; border: none; padding: 4px 8px; font-weight: bold; border-radius: 6px; font-size: 0.7rem; cursor: pointer;">Hapus</button>
             </div>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); font-size: 0.72rem; color: #475569; gap: 4px;">
                 <div><b>Rasio:</b> ${item.ratio}%</div>
@@ -6154,7 +6172,7 @@ function renderIngredientsTable() {
  * @param {string} tabId - Nama tab target ('profit-margin', 'food-cost', atau 'unilever-badge')
  */
 window.switchFolderTab = function(tabId) {
-    console.log('Switching to folder:', tabId);
+    window.DEBUG && console.log('Switching to folder:', tabId);
     
     // 1. Definisikan pemetaan elemen beserta warna aktif vs pasifnya
     const tabs = {
@@ -6266,7 +6284,7 @@ function tambahNotifikasi(pesan, kategori, icon) {
             </div>
             <button class="btn-hapus-notif-cepat" data-id="${notifId}" title="Hapus"
                 style="background:none; border:none; font-size:0.9rem; color:#bbb; cursor:pointer; padding:4px; align-self:flex-start; flex-shrink:0; line-height:1; position:absolute; right:8px; top:12px; transition: color 0.2s;"
-                onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#bbb'">✕</button>
+                 data-onmouseover="this.style.color='#e74c3c'"  data-onmouseout="this.style.color='#bbb'">✕</button>
         </div>
     `;
     
@@ -6276,7 +6294,7 @@ window.tambahNotifikasi = tambahNotifikasi;
 
 // Fungsi internal modul untuk menukar tampilan data cuaca proofer
 function jalankanSwapMini() {
-    console.log("Mini stats swapped secara aman di dalam modul!");
+    window.DEBUG && console.log("Mini stats swapped secara aman di dalam modul!");
     
     if (typeof isTempMain !== 'undefined') {
         // Balikkan status penanda tampilan utama
@@ -6311,7 +6329,7 @@ async function requestNotificationPermission() {
         if (check.display !== 'granted') {
             let request = await LocalNotifications.requestPermissions();
             if (request.display === 'granted') {
-                console.log("Izin notifikasi native berhasil diberikan oleh pengguna.");
+                window.DEBUG && console.log("Izin notifikasi native berhasil diberikan oleh pengguna.");
                 return true;
             } else {
                 console.warn("Pengguna menolak izin notifikasi native.");
@@ -6327,7 +6345,7 @@ async function requestNotificationPermission() {
 
 // Fungsi Penutup Aman (Diletakkan DI LUAR document.addEventListener('DOMContentLoaded'))
 function tutupHalamanResepSecaraAman() {
-    console.log("Menutup halaman resep secara aman.");
+    window.DEBUG && console.log("Menutup halaman resep secara aman.");
     
     // GANTI 'recipe-page' MENJADI 'recipe' Sesuai ID HTML Utama
     const resepPage = document.getElementById('recipe'); 
@@ -6352,7 +6370,7 @@ function tutupHalamanResepSecaraAman() {
  * =========================================================================
  */
 document.addEventListener("DOMContentLoaded", async () => {
-    console.log("🚀 Memulai inisialisasi modul Timer Proofer & Kalkulator HPP...");
+    window.DEBUG && console.log("🚀 Memulai inisialisasi modul Timer Proofer & Kalkulator HPP...");
 
     // -----------------------------------------------------------------
     // 1. INI-AWAL GLOBAL & CORE SYSTEM DISPLAY
@@ -6395,7 +6413,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         setInterval(perbaruiKeteranganWaktuShrunk, 30000); // Periksa otomatis setiap 30 detik
     }
 
-    console.log("✅ Sistem Kalkulator Resep & Core berhasil diinisialisasi tanpa eror.");
+    window.DEBUG && console.log("✅ Sistem Kalkulator Resep & Core berhasil diinisialisasi tanpa eror.");
     //--------------------------------
     const dateElement = document.getElementById("summary-date");
     
@@ -6567,7 +6585,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         btnSetCustomTime.addEventListener('click', () => {
             const waktuMenit = parseInt(inputCustomTime.value, 10);
             if (!isNaN(waktuMenit) && waktuMenit > 0) {
-                console.log(`Menetapkan waktu proofer kustom secara aman: ${waktuMenit} menit.`);
+                window.DEBUG && console.log(`Menetapkan waktu proofer kustom secara aman: ${waktuMenit} menit.`);
                 if (typeof setCustomTime === 'function') {
                     setCustomTime();
                 } else if (typeof updateTimerDisplay === 'function') {
@@ -6582,7 +6600,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const btnStartProofing = document.getElementById('main-start-btn');
     if (btnStartProofing) {
         btnStartProofing.addEventListener('click', async () => {
-            console.log("Tombol Start Proofing dipicu secara aman.");
+            window.DEBUG && console.log("Tombol Start Proofing dipicu secara aman.");
             let diizinkan = false;
             if (typeof requestNotificationPermission === 'function') {
                 diizinkan = await requestNotificationPermission();
@@ -6619,7 +6637,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (typeof NotifSystem !== 'undefined' && typeof NotifSystem.bacaSemua === 'function') {
                 NotifSystem.bacaSemua();
             } else {
-                console.log("Notifikasi ditandai telah dibaca semua.");
+                window.DEBUG && console.log("Notifikasi ditandai telah dibaca semua.");
             }
         });
     }
@@ -6631,7 +6649,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (typeof NotifSystem !== 'undefined' && typeof NotifSystem.hapusSemua === 'function') {
                     NotifSystem.hapusSemua();
                 } else {
-                    console.log("Semua data riwayat notifikasi dikosongkan.");
+                    window.DEBUG && console.log("Semua data riwayat notifikasi dikosongkan.");
                 }
             }
         });
@@ -6687,7 +6705,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const recipeCard = inputField.closest('.recipe-card[data-id]') || inputField.closest('[data-id]');
                 
                 if (!recipeCard) {
-                    console.log("Input ditangani langsung oleh Core System.");
+                    window.DEBUG && console.log("Input ditangani langsung oleh Core System.");
                     return; 
                 }
 
@@ -6841,7 +6859,7 @@ if (recipeContainer) {
             
             // JIKA tidak ditemukan kartu dengan data-id, biarkan sistem utama bekerja sendirian
             if (!recipeCard) {
-                console.log("Input ditangani langsung oleh Core System.");
+                window.DEBUG && console.log("Input ditangani langsung oleh Core System.");
                 return; 
             }
 
@@ -6996,7 +7014,7 @@ async function simpanResepKeLokal(dataResep) {
     encoding: Encoding.UTF8,
     recursive: true
   });
-  console.log('File resep berhasil diperbarui di storage perangkat.');
+  window.DEBUG && console.log('File resep berhasil diperbarui di storage perangkat.');
 }
 
 window.simpanResepKeDatabase = async function() {
@@ -7116,7 +7134,7 @@ window.renderDaftarResepTersimpan = async function() {
 
 // 5. TOMBOL DATABASES (Menggabungkan Logika Log & Membuka Modal UI)
 window.tampilkanDaftarResepTersimpan = async function() {
-    console.log("Membuka database resep...");
+    window.DEBUG && console.log("Membuka database resep...");
     const modal = document.getElementById('recipe-list-modal');
     if (!modal) {
         console.error("Elemen 'recipe-list-modal' tidak ditemukan di HTML!");
@@ -7135,7 +7153,7 @@ window.tutupDaftarResepTersimpan = function() {
 
 // 7. TOMBOL EKSPOR (Menggunakan Backup File JSON Otomatis)
 window.eksporSemuaResep = async function() {
-    console.log("Memulai proses ekspor...");
+    window.DEBUG && console.log("Memulai proses ekspor...");
     try {
         const daftar = await bacaSemuaResepDariPerangkat();
         if (!daftar.length) {
@@ -7365,5 +7383,88 @@ window.showToast = showToast;
     }
 })();
 </script>
-</body>
+<script>
+(function(){
+    function parseSimpleCall(code, el) {
+        // match patterns like funcName('arg', this, 123)
+        var m = String(code).trim().match(/^\s*(?:window\.)?([A-Za-z_$][\w$]*)\s*\(([\s\S]*)\)\s*;?\s*$/);
+        if (!m) return null;
+        var fnName = m[1];
+        var argsStr = m[2].trim();
+        var args = [];
+        if (argsStr.length > 0) {
+            // split by commas but keep quoted strings together
+            var parts = argsStr.match(/('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*`|[^,]+)/g) || [];
+            for (var i = 0; i < parts.length; i++) {
+                var a = parts[i].trim();
+                if (a === 'this') { args.push(el); continue; }
+                if (/^['"`].*['"`]$/.test(a)) { args.push(a.slice(1, -1)); continue; }
+                if (/^\d+(?:\.\d+)?$/.test(a)) { args.push(Number(a)); continue; }
+                if (/^(true|false|null)$/.test(a)) { args.push(JSON.parse(a)); continue; }
+                // unknown complex expression -> bail out
+                return null;
+            }
+        }
+        var fn = window[fnName];
+        if (typeof fn !== 'function') return null;
+        return { fn: fn, args: args };
+    }
+
+    function executeHandler(code, event, el) {
+        try {
+            var simple = parseSimpleCall(code, el);
+            if (simple !== null) {
+                return simple.fn.apply(el, simple.args);
+            }
+            // fallback to function constructor for complex handlers
+            var fn = new Function('event','el', code);
+            return fn.call(el, event, el);
+        } catch (e) {
+            window.DEBUG && console.error('Handler exec error:', e);
+            return undefined;
+        }
+    }
+
+    function findClosestData(el, key) {
+        while (el && el !== document) {
+            if (el.dataset && el.dataset[key]) return el;
+            el = el.parentElement;
+        }
+        return null;
+    }
+
+    document.addEventListener('click', function(e){
+        var el = findClosestData(e.target, 'onclick');
+        if (el) { executeHandler(el.getAttribute('data-onclick'), e, el); }
+    });
+    document.addEventListener('input', function(e){
+        var el = findClosestData(e.target, 'oninput');
+        if (el) { executeHandler(el.getAttribute('data-oninput'), e, el); }
+    });
+    document.addEventListener('change', function(e){
+        var el = findClosestData(e.target, 'onchange');
+        if (el) { executeHandler(el.getAttribute('data-onchange'), e, el); }
+    });
+    document.addEventListener('mouseover', function(e){
+        var el = findClosestData(e.target, 'onmouseover');
+        if (el) { executeHandler(el.getAttribute('data-onmouseover'), e, el); }
+    }, true);
+    document.addEventListener('mouseout', function(e){
+        var el = findClosestData(e.target, 'onmouseout');
+        if (el) { executeHandler(el.getAttribute('data-onmouseout'), e, el); }
+    }, true);
+    document.addEventListener('submit', function(e){
+        var form = e.target;
+        var code = form.getAttribute && form.getAttribute('data-onsubmit');
+        if (code) {
+            var res = executeHandler(code, e, form);
+            if (res === false) e.preventDefault();
+        }
+    }, true);
+})();
+</script>\r\n</body>
 </html>
+
+
+
+
