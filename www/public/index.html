@@ -7541,11 +7541,11 @@ window.showToast = showToast;
 })();
 </script>
 
-<style id="copilot-toast-style">#copilot-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(0,0,0,.85);color:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:99999;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}</style>
+<style id="copilot-toast-style">#copilot-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(0,0,0,.85);color:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:99999;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}</style>
 
 <script>
 // Minimal toast helper used by storage fallback to inform users about backup downloads
-function showToast(msg, duration = 3500) {
+function showToast(msg, duration = 2000) {
   try {
     let t = document.getElementById('copilot-toast');
     if (!t) {
@@ -7562,7 +7562,7 @@ function showToast(msg, duration = 3500) {
     t._hideTimeout = setTimeout(function () {
       if (t) {
         t.style.opacity = '0';
-        t.style.transform = 'translateX(-50%) translateY(8px)';
+        t.style.transform = 'translateX(-50%) translateY(-8px)';
         t.style.pointerEvents = 'none';
       }
     }, duration);
