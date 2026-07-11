@@ -7054,6 +7054,7 @@ async function simpanResepKeLokal(dataResep) {
         recursive: true
       });
       window.DEBUG && console.log('File resep berhasil diperbarui di storage perangkat (native).');
+      if (typeof showToast === 'function') showToast('Resep berhasil disimpan di perangkat Anda.');
       return;
     } catch (err) {
       window.DEBUG && console.warn('Gagal writeFile native, fallback ke simpanDaftarResepKePerangkat:', err);
