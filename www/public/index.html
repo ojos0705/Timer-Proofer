@@ -1543,28 +1543,64 @@ window.MAX_RESEP_TERSIMPAN = MAX_RESEP_TERSIMPAN;
 
 async function simpanDaftarResepKePerangkat(daftarResep) {
     const jsonString = JSON.stringify(daftarResep);
-    localStorage.setItem(RESEP_LIST_KEY, jsonString);
-    if (window.Capacitor) {
-        await Preferences.set({ key: RESEP_LIST_KEY, value: jsonString });
+    try {
+        localStorage.setItem(RESEP_LIST_KEY, jsonString);
+    } catch (err) {
+        console.warn('Gagal menyimpan ke localStorage:', err);
+        // lanjutkan untuk mencoba Preferences jika tersedia
+    }
+    if (window.Capacitor && typeof Preferences !== 'undefined') {
+        try {
+            await Preferences.set({ key: RESEP_LIST_KEY, value: jsonString });
+        } catch (err) {
+            console.warn('Gagal menyimpan ke Preferences native:', err);
+        }
     }
 }
 
 async function simpanPdfNative(base64Data, namaFile) {
   try {
-    const result = await Filesystem.writeFile({
-      path: namaFile,
-      data: base64Data, 
-      directory: Directory.Documents,
-    });
+    // Jika lingkungan native tersedia, gunakan Filesystem + Share
+    if (window.Capacitor && typeof Filesystem !== 'undefined' && typeof Share !== 'undefined') {
+      const result = await Filesystem.writeFile({
+        path: namaFile,
+        data: base64Data,
+        directory: Directory.Documents,
+      });
+      await Share.share({
+        title: 'Simpan Dokumen Donut Proofing',
+        text: 'Simpan atau bagikan laporan cetak Anda.',
+        url: result.uri,
+        dialogTitle: 'Simpan PDF',
+      });
+      return;
+    }
 
-    await Share.share({
-      title: 'Simpan Dokumen Donut Proofing',
-      text: 'Simpan atau bagikan laporan cetak Anda.',
-      url: result.uri,
-      dialogTitle: 'Simpan PDF',
-    });
+    // Fallback untuk web: buat blob dari base64 dan trigger unduh
+    try {
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = namaFile || 'Laporan_Proofing.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      return;
+    } catch (err) {
+      console.error('Fallback unduh PDF gagal:', err);
+      throw err;
+    }
   } catch (error) {
-    console.error('Gagal menyimpan PDF di mode Native:', error);
+    console.error('Gagal menyimpan PDF di mode Native / fallback:', error);
+    alert('Gagal menyimpan PDF: ' + (error && error.message ? error.message : error));
   }
 }
 
@@ -7007,14 +7043,34 @@ if (typeof MAX_RESEP_TERSIMPAN === 'undefined') {
 
 // 1. FUNGSI SIMPAN RESEP (Dipertahankan & Dioptimalkan agar tidak double pop-up)
 async function simpanResepKeLokal(dataResep) {
-  await Filesystem.writeFile({
-    path: FILE_RESEP_PATH,
-    data: JSON.stringify(dataResep),
-    directory: Directory.Data,
-    encoding: Encoding.UTF8,
-    recursive: true
-  });
-  window.DEBUG && console.log('File resep berhasil diperbarui di storage perangkat.');
+  const json = JSON.stringify(dataResep);
+  if (window.Capacitor && typeof Filesystem !== 'undefined') {
+    try {
+      await Filesystem.writeFile({
+        path: FILE_RESEP_PATH,
+        data: json,
+        directory: Directory.Data,
+        encoding: Encoding.UTF8,
+        recursive: true
+      });
+      window.DEBUG && console.log('File resep berhasil diperbarui di storage perangkat (native).');
+      return;
+    } catch (err) {
+      window.DEBUG && console.warn('Gagal writeFile native, fallback ke simpanDaftarResepKePerangkat:', err);
+    }
+  }
+  // Fallback: simpan ke daftar resep (localStorage / Preferences)
+  try {
+    let daftar = await bacaSemuaResepDariPerangkat();
+    const idx = daftar.findIndex(r => r.id === dataResep.id);
+    if (idx >= 0) daftar[idx] = dataResep; else daftar.unshift(dataResep);
+    if (daftar.length > MAX_RESEP_TERSIMPAN) daftar = daftar.slice(0, MAX_RESEP_TERSIMPAN);
+    await simpanDaftarResepKePerangkat(daftar);
+    window.DEBUG && console.log('File resep disimpan ke localStorage sebagai fallback.');
+  } catch (err) {
+    console.error('Gagal menyimpan resep di fallback:', err);
+    throw err;
+  }
 }
 
 window.simpanResepKeDatabase = async function() {
@@ -7462,9 +7518,5 @@ window.showToast = showToast;
         }
     }, true);
 })();
-</script>\r\n</body>
+</script></body>
 </html>
-
-
-
-
