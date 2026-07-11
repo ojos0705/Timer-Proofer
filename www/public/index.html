@@ -7082,7 +7082,7 @@ async function simpanResepKeLokal(dataResep) {
       a.remove();
       URL.revokeObjectURL(url);
       window.DEBUG && console.log('Cadangan resep telah diunduh sebagai', namaFile);
-      if (typeof showToast === 'function') showToast('Cadangan resep telah diunduh: ' + namaFile);
+      if (typeof showToast === 'function') showToast('Cadangan berhasil diunduh. Terima kasih, file tersimpan di perangkat Anda.');
     } catch (dlErr) {
       // Jika unduhan gagal, hanya log saja — jangan ganggu alur utama
       window.DEBUG && console.warn('Gagal membuat unduhan cadangan JSON:', dlErr);
