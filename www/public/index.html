@@ -71,8 +71,31 @@
 .summary-value small {display: block; margin-bottom: 3px; font-size: 0.66rem; line-height: 1.25; color: rgba(78, 52, 46, 0.55) !important;}
 .stat-value {font-size: 1.55rem; line-height: 1; font-weight: 900; color: var(--accent);}
 .profile-button {margin-top: 2px; border-radius: 16px;}
-.profile-info-group {background: var(--bg-container); border: 1px solid rgba(78, 52, 46, 0.08); border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(78, 52, 46, 0.08);}
-.profile-toggle-row {display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 12px; margin-top: 12px; border-top: 1px solid rgba(78, 52, 46, 0.08); font-size: 0.9rem; font-weight: 700;}
+.profile-modal-header {display: flex; justify-content: space-between; align-items: center; gap: 10px;}
+.profile-subline {margin-top: 8px; color: rgba(78, 52, 46, 0.65); font-size: 0.82rem;}
+.profile-actions {display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 16px 0 0;}
+.profile-chip {background: rgba(230, 126, 34, 0.12); border: 1px solid rgba(230, 126, 34, 0.18); color: var(--accent); padding: 9px 12px; border-radius: 999px; font-size: 0.82rem; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease;}
+.profile-chip:hover {background: rgba(230, 126, 34, 0.18); transform: translateY(-1px);}
+.loading-skeleton {color: transparent !important; position: relative; overflow: hidden;}
+.loading-skeleton::after {content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.55), rgba(255,255,255,0)); animation: loadingShimmer 1.2s ease-in-out infinite;}
+.loading-card {opacity: 0.88;}
+@keyframes loadingShimmer { to { transform: translateX(100%); }}
+.log-list li {padding: 12px 14px; margin-bottom: 10px; border-radius: 14px; background: rgba(242, 210, 169, 0.22); color: var(--chocolate); line-height: 1.4;}
+.log-empty {text-align: center; color: rgba(78, 52, 46, 0.65); padding: 18px 12px;}
+.inventory-status-badge {display: inline-flex; align-items: center; justify-content: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; color: var(--chocolate);}
+.inventory-status-badge.stock-low {background: rgba(239, 68, 68, 0.12); color: #b91c1c;}
+.inventory-status-badge.stock-medium {background: rgba(251, 191, 36, 0.14); color: #78350f;}
+.inventory-status-badge.stock-good {background: rgba(34, 197, 94, 0.14); color: #166534;}
+.profile-card .card-header {display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px;}
+.profile-card .card-header .card-title {font-size: 1rem; font-weight: 800; margin: 0;}
+.profile-card .card-header .card-meta {font-size: 0.76rem; color: rgba(78, 52, 46, 0.7);}
+.profile-info-row strong {text-align: right;}
+.profile-info-row span {font-size: 0.82rem; color: rgba(78, 52, 46, 0.72); font-weight: 700;}
+.profile-summary-item .summary-value {font-size: 0.92rem;}
+.profile-card.animation-fade {animation: fadeInUp 0.35s ease both;}
+@keyframes fadeInUp {from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);}} 
+.profile-refresh-btn {background: none; border: 1px solid rgba(78, 52, 46, 0.16); color: var(--chocolate); padding: 8px 10px; border-radius: 14px; cursor: pointer; font-size: 0.95rem; transition: transform 0.2s ease, background 0.2s ease;}
+.profile-refresh-btn:hover {background: rgba(78, 52, 46, 0.06); transform: translateY(-1px);}
 .profile-form {display: flex; flex-direction: column; gap: 12px;}
 .profile-form label {font-size: 0.82rem; font-weight: 800; color: var(--chocolate);}
 .profile-form input, .profile-info-group select {width: 100%; box-sizing: border-box; border: 1px solid rgba(78, 52, 46, 0.18); border-radius: 12px; padding: 12px 13px; background: #fff; color: var(--chocolate); font: inherit;}
@@ -356,6 +379,14 @@
         .about-content h3 { color: var(--chocolate); margin-bottom: 5px; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px; }
         .about-content p { margin-top: 0; margin-bottom: 15px; }
         /*        .about-close-btn { background: var(--chocolate); color: white; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px;}*/
+
+        /* MODAL SETTING - PENGATURAN */
+        .recipe-fixed-top {
+    position: sticky;
+    top: 0;
+    background: var(--cream);
+    z-index: 10;
+}
 
         /* Modal Resep */
         /*.recipe-modal {display: none; position: absolute; top: 0; left: 0;                                  width: 100%; height: 100%;                                    box-sizing: border-box;                   background: white;   padding: 20px;                                                                 z-index: 99; flex-direction: column; }*/
@@ -915,32 +946,50 @@
 <!---------------------------------------->
     <!-- MODAL USER -->
 <!-- MODAL USER (PROFIL DINAMIS) -->
-<div class="page-modal" id="user-modal">
-    <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2);">
-        <h3 id="user-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
+<!-- MODAL PROFIL PENGGUNA -->
+<div class="page-modal active" id="user-modal" tabindex="-1">
+    
+    <!-- HEADER PROFIL (Sekarang identik dengan modal lainnya) -->
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+        <h3 id="user-modal-title" style="margin: 0; display: flex; align-items: center; gap: 8px;">
             <span>👤</span> Profil Pengguna
         </h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <!-- Tombol Refresh Bawaan Anda Tetap Dipertahankan -->
+            <button class="profile-refresh-btn" data-onclick="window.loadDynamicProfile &amp;&amp; loadDynamicProfile(true)" title="Perbarui profil" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">↻</button>
+            <!-- Tombol Close Silang Baru Yang Selaras -->
+            <button class="article-modal-close" id="btn-close-profile">×</button>
+        </div>
     </div>
-    <div class="modal-scroll-content">
+
+    <!-- KONTEN SCROLL PROFIL -->
+    <div class="modal-scroll-content" style="padding-top: 0;">
         <div class="profile-container">
             <div class="profile-card profile-header">
                 <div class="profile-avatar">
                     <img src="logo donat.png" id="profile-avatar-img" alt="Foto profil">
                 </div>
 
-                <div id="user-greeting">Selamat Datang</div>
-                <div class="profile-name" id="profile-name">Memuat nama...</div>
-                <div class="profile-subtitle" id="profile-bakery">Memuat data kedai...</div>
+                <div id="user-greeting">Selamat Malam,</div>
+                <div class="profile-name" id="profile-name">Pengguna</div>
+                <div class="profile-subtitle" id="profile-bakery">Nama Bakery</div>
                 <div class="profile-badge" id="profile-status-badge">Premium Member</div>
+                <div class="profile-subline" id="profile-last-updated">Terakhir diperbarui: 22.34</div>
+
+                <div class="profile-actions">
+                    <button class="profile-chip" data-onclick="window.openEditProfile &amp;&amp; openEditProfile()">✏️ Edit Profil</button>
+                    <button class="profile-chip" data-onclick="window.tampilkanDaftarResepTersimpan &amp;&amp; tampilkanDaftarResepTersimpan()">📂 Resep</button>
+                    <button class="profile-chip" data-onclick="window.toggleModal('help-modal')">💡 Bantuan</button>
+                </div>
 
                 <div class="profile-info-list">
                     <div class="profile-info-row">
                         <span>WhatsApp</span>
-                        <strong id="profile-phone">-</strong>
+                        <strong id="profile-phone" class="">-</strong>
                     </div>
                     <div class="profile-info-row">
                         <span>Email</span>
-                        <strong id="profile-email">-</strong>
+                        <strong id="profile-email" class="">-</strong>
                     </div>
                 </div>
 
@@ -949,15 +998,15 @@
                         <div class="summary-icon">📍</div>
                         <div class="summary-title">Lokasi</div>
                         <div class="summary-value" id="summary-location">
-                            <small id="prof-coords">Mendeteksi GPS...</small>
-                            <span id="prof-address">Memuat Alamat...</span>
+                            <small id="prof-coords" class="">Mendeteksi GPS...</small>
+                            <span id="prof-address" class="">Memuat Alamat...</span>
                         </div>
                     </div>
 
                     <div class="profile-summary-item">
                         <div class="summary-icon">📅</div>
                         <div class="summary-title">Tanggal</div>
-                        <div class="summary-value" id="summary-date">--:--</div>
+                        <div class="summary-value" id="summary-date">Minggu, 12 Jul 2026</div>
                     </div>
 
                     <div class="profile-summary-item">
@@ -983,7 +1032,7 @@
                         <div class="stat-label">Resep</div>
                     </div>
                     <div class="bakery-stat-item">
-                        <div class="stat-value" id="stat-ingredients">0</div>
+                        <div class="stat-value" id="stat-ingredients">12</div>
                         <div class="stat-label">Bahan</div>
                     </div>
                     <div class="bakery-stat-item">
@@ -1001,9 +1050,7 @@
             <div class="profile-card animation-fade">
                 <h3 class="profile-section-title">📜 Riwayat Aktivitas Proofing</h3>
                 <div class="log-container" style="max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch;">
-                    <ul class="log-list" id="dynamic-proofing-logs" style="list-style: none; padding: 0; margin: 0;">
-                        <!-- Data diinjeksi via JavaScript -->
-                    </ul>
+                    <ul class="log-list" id="dynamic-proofing-logs" style="list-style: none; padding: 0; margin: 0;"><li class="log-empty">Belum ada aktivitas proofing terbaru.</li></ul>
                 </div>
             </div>
 
@@ -1019,18 +1066,45 @@
                         </tr>
                     </thead>
                     <tbody id="dynamic-inventory-rows">
-                        <!-- Data diinjeksi via JavaScript -->
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">Tepung Terigu pro Tinggi</td>
+                            <td style="padding: 8px; text-align: right;">0</td>
+                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">Gula Pasir</td>
+                            <td style="padding: 8px; text-align: right;">0</td>
+                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">Susu Bubuk full cream</td>
+                            <td style="padding: 8px; text-align: right;">0</td>
+                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">Kuning Telur</td>
+                            <td style="padding: 8px; text-align: right;">0</td>
+                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">Air Es</td>
+                            <td style="padding: 8px; text-align: right;">0</td>
+                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; vertical-align: top;">Margarin / Butter</td>
+                            <td style="padding: 8px; text-align: right;">0</td>
+                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-
-            <button class="btn btn-primary profile-button"  data-onclick="openEditProfile()">
-                Edit Profil
-            </button>
         </div>
     </div>
+    
+    <!-- FOOTER TINDAKAN -->
     <div class="modal-bottom-actions">
-        <button class="about-close-btn" style="margin: 0; width: 100%;"  data-onclick="toggleModal('user-modal')">KEMBALI</button>
+        <button class="about-close-btn" style="margin: 0; width: 100%;" data-onclick="toggleModal('user-modal')">KEMBALI</button>
     </div>
 </div>
 <!-- AKHIR MODAL USER -->
@@ -1077,13 +1151,15 @@
 
 <!-- MODAL BANTUAN -->
 <div class="page-modal" id="help-modal">
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+        <h3 id="help-modal-title" style="margin: 0; display: flex; align-items: center; gap: 8px;">
+            <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.4rem; height: 1.4rem; object-fit: contain;"> 
+            Pusat Bantuan
+        </h3>
+        <!-- Tombol Close Unik untuk Pusat Bantuan -->
+        <button class="article-modal-close" id="btn-close-help">×</button>
+    </div>
     <div class="modal-scroll-content">
-        <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2);">
-        <h3 id="help-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
-        <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.4rem; height: 1.4rem; object-fit: contain;"> 
-        Pusat Bantuan
-    </h3>
-</div>
         <div class="help-section">
     <h3>Panduan & Tentang Aplikasi</h3>
     
@@ -1132,13 +1208,12 @@
 
 <!-- MODAL PENGATURAN -->
 <div class="page-modal" id="settings-modal">
-    <div class="modal-scroll-content">
-        <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2); margin-bottom: 15px;">
-            <h3 id="settings-modal-title" style="color: var(--chocolate); margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span>⚙️</span> Pengaturan
-            </h3>
+        <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+            <h3 id="settings-modal-title" style="margin: 0;">⚙️ Pengaturan</h3>
+            <button class="article-modal-close" id="btn-close-setting">×</button>
         </div>
-        
+
+        <div class="modal-scroll-content" style="padding-top: 0;">
         <div style="margin-top: 10px; border-top: 1px dashed rgba(78, 52, 46, 0.3); border-bottom: 1px dashed rgba(78, 52, 46, 0.3); padding: 15px 0; margin-bottom: 15px;">
             <h3 style="margin-top: 0;">🌡️ Koneksi Sensor</h3>
             <button id="btn-ble" class="about-close-btn" style="background: #27ae60; margin-top: 10px;"  data-onclick="connectBluetoothThermometer()">
@@ -1543,28 +1618,64 @@ window.MAX_RESEP_TERSIMPAN = MAX_RESEP_TERSIMPAN;
 
 async function simpanDaftarResepKePerangkat(daftarResep) {
     const jsonString = JSON.stringify(daftarResep);
-    localStorage.setItem(RESEP_LIST_KEY, jsonString);
-    if (window.Capacitor) {
-        await Preferences.set({ key: RESEP_LIST_KEY, value: jsonString });
+    try {
+        localStorage.setItem(RESEP_LIST_KEY, jsonString);
+    } catch (err) {
+        console.warn('Gagal menyimpan ke localStorage:', err);
+        // lanjutkan untuk mencoba Preferences jika tersedia
+    }
+    if (window.Capacitor && typeof Preferences !== 'undefined') {
+        try {
+            await Preferences.set({ key: RESEP_LIST_KEY, value: jsonString });
+        } catch (err) {
+            console.warn('Gagal menyimpan ke Preferences native:', err);
+        }
     }
 }
 
 async function simpanPdfNative(base64Data, namaFile) {
   try {
-    const result = await Filesystem.writeFile({
-      path: namaFile,
-      data: base64Data, 
-      directory: Directory.Documents,
-    });
+    // Jika lingkungan native tersedia, gunakan Filesystem + Share
+    if (window.Capacitor && typeof Filesystem !== 'undefined' && typeof Share !== 'undefined') {
+      const result = await Filesystem.writeFile({
+        path: namaFile,
+        data: base64Data,
+        directory: Directory.Documents,
+      });
+      await Share.share({
+        title: 'Simpan Dokumen Donut Proofing',
+        text: 'Simpan atau bagikan laporan cetak Anda.',
+        url: result.uri,
+        dialogTitle: 'Simpan PDF',
+      });
+      return;
+    }
 
-    await Share.share({
-      title: 'Simpan Dokumen Donut Proofing',
-      text: 'Simpan atau bagikan laporan cetak Anda.',
-      url: result.uri,
-      dialogTitle: 'Simpan PDF',
-    });
+    // Fallback untuk web: buat blob dari base64 dan trigger unduh
+    try {
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = namaFile || 'Laporan_Proofing.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      return;
+    } catch (err) {
+      console.error('Fallback unduh PDF gagal:', err);
+      throw err;
+    }
   } catch (error) {
-    console.error('Gagal menyimpan PDF di mode Native:', error);
+    console.error('Gagal menyimpan PDF di mode Native / fallback:', error);
+    alert('Gagal menyimpan PDF: ' + (error && error.message ? error.message : error));
   }
 }
 
@@ -1609,33 +1720,63 @@ async function bacaSemuaResepDariPerangkat() {
 
 // FUNGSI HALAMAN USER PROFILE SUMMARY
 function updateProfileSummary(data = {}) {
+    data = data || {};
 
     // Lokasi
-    if (data.location) {
-        const summaryLocation = document.getElementById("summary-location");
-        if (summaryLocation) {
-            summaryLocation.textContent = data.location;
+    const coordsEl = document.getElementById("prof-coords");
+    const addressEl = document.getElementById("prof-address");
+    let coordsValue = "Mendeteksi GPS...";
+    let addressValue = "Memuat Alamat...";
+
+    if (data.coords) {
+        if (typeof data.coords === 'object') {
+            const lat = data.coords.latitude ?? data.coords.lat;
+            const lon = data.coords.longitude ?? data.coords.lon ?? data.coords.lng;
+            coordsValue = lat !== undefined && lon !== undefined
+                ? `${lat.toFixed ? lat.toFixed(5) : lat}, ${lon.toFixed ? lon.toFixed(5) : lon}`
+                : JSON.stringify(data.coords);
+        } else {
+            coordsValue = data.coords;
         }
     }
 
+    if (data.address) {
+        if (typeof data.address === 'object') {
+            addressValue = data.address.formatted || data.address.full || JSON.stringify(data.address);
+        } else {
+            addressValue = data.address;
+        }
+    }
+
+    if (coordsEl) {
+        coordsEl.textContent = coordsValue;
+    }
+    if (addressEl) {
+        addressEl.textContent = addressValue;
+    }
+
     // Cuaca
-    if (data.weather) {
+    const weatherEl = document.getElementById("summary-weather");
+    const humidityEl = document.getElementById("summary-humidity");
+    const weatherData = data.weather && typeof data.weather === 'object' ? data.weather : null;
 
-        const weather = document.getElementById("summary-weather");
-        const humidity = document.getElementById("summary-humidity");
+    if (weatherData) {
+        const tempValue = Number(weatherData.temp ?? weatherData.temperature ?? data.temp ?? data.temperature);
+        const humidityValue = Number(weatherData.humidity ?? weatherData.hum ?? data.humidity ?? data.hum);
 
-        if (weather) {
-            weather.textContent = `${Math.round(data.weather.temp)}°C`;
+        if (weatherEl) {
+            weatherEl.textContent = Number.isFinite(tempValue) ? `${Math.round(tempValue)}°C` : "--";
         }
-
-        if (humidity) {
-            humidity.textContent = `${data.weather.humidity}%`;
+        if (humidityEl) {
+            humidityEl.textContent = Number.isFinite(humidityValue) ? `${humidityValue}%` : "--";
         }
+    } else {
+        if (weatherEl) weatherEl.textContent = "--";
+        if (humidityEl) humidityEl.textContent = "--";
     }
 
     // Tanggal
     const date = document.getElementById("summary-date");
-
     if (date) {
         date.textContent = new Date().toLocaleDateString("id-ID", {
             weekday: "long",
@@ -1644,6 +1785,174 @@ function updateProfileSummary(data = {}) {
             year: "numeric"
         });
     }
+}
+
+function updateProfileStatusBadge(statusText) {
+    const badge = document.getElementById('profile-status-badge');
+    if (!badge) return;
+    badge.textContent = statusText || 'Premium Member';
+}
+
+function updateProfileLastUpdated(date = new Date()) {
+    const el = document.getElementById('profile-last-updated');
+    if (!el) return;
+    el.textContent = `Terakhir diperbarui: ${date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+function setProfileLoadingState(isLoading) {
+    const textPlaceholders = [
+        { id: 'profile-name', text: 'Memuat nama...' },
+        { id: 'profile-bakery', text: 'Memuat data kedai...' },
+        { id: 'profile-phone', text: '-' },
+        { id: 'profile-email', text: '-' },
+        { id: 'prof-coords', text: 'Mendeteksi GPS...' },
+        { id: 'prof-address', text: 'Memuat Alamat...' },
+        { id: 'summary-weather', text: '--' },
+        { id: 'summary-humidity', text: '--' },
+        { id: 'summary-date', text: '--:--' },
+        { id: 'profile-last-updated', text: 'Memuat informasi...' }
+    ];
+
+    textPlaceholders.forEach(({ id, text }) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (isLoading) {
+            el.dataset.profileLoading = 'true';
+            el.textContent = text;
+            el.classList.add('loading-skeleton');
+        } else if (el.dataset.profileLoading) {
+            el.removeAttribute('data-profile-loading');
+            el.classList.remove('loading-skeleton');
+        }
+    });
+
+    const cards = document.querySelectorAll('#user-modal .profile-card');
+    cards.forEach(card => card.classList.toggle('loading-card', isLoading));
+
+    const logContainer = document.getElementById('dynamic-proofing-logs');
+    if (logContainer && isLoading) {
+        logContainer.innerHTML = '<li class="log-empty">Memuat riwayat proofing...</li>';
+    }
+
+    const inventoryBody = document.getElementById('dynamic-inventory-rows');
+    if (inventoryBody && isLoading) {
+        inventoryBody.innerHTML = '<tr><td colspan="3" style="padding: 12px; text-align: center; color: rgba(78,52,46,0.7);">Memuat inventaris...</td></tr>';
+    }
+}
+
+function renderProofingLogs() {
+    const container = document.getElementById('dynamic-proofing-logs');
+    if (!container) return;
+
+    const logs = Array.isArray(window.proofingHistory) ? window.proofingHistory.slice(-5).reverse() : [];
+    container.innerHTML = '';
+
+    if (!logs.length) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'log-empty';
+        emptyItem.textContent = 'Belum ada aktivitas proofing terbaru.';
+        container.appendChild(emptyItem);
+        return;
+    }
+
+    logs.forEach((entry) => {
+        const title = entry.title || entry.name || 'Proofing';
+        const details = entry.message || entry.details || entry.note || 'Aktivitas proofing dicatat.';
+        const time = entry.timestamp || entry.time || entry.createdAt || Date.now();
+        const timestamp = new Date(time);
+
+        const item = document.createElement('li');
+        item.className = 'log-item';
+
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.justifyContent = 'space-between';
+        row.style.gap = '10px';
+        row.style.alignItems = 'baseline';
+
+        const titleEl = document.createElement('strong');
+        titleEl.style.fontSize = '0.95rem';
+        titleEl.textContent = title;
+
+        const timeEl = document.createElement('small');
+        timeEl.style.color = 'rgba(78,52,46,0.6)';
+        timeEl.style.fontSize = '0.75rem';
+        timeEl.textContent = timestamp.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+        row.appendChild(titleEl);
+        row.appendChild(timeEl);
+
+        const detailRow = document.createElement('div');
+        detailRow.style.marginTop = '8px';
+        detailRow.style.fontSize = '0.82rem';
+        detailRow.style.color = 'rgba(78,52,46,0.8)';
+        detailRow.textContent = details;
+
+        item.appendChild(row);
+        item.appendChild(detailRow);
+        container.appendChild(item);
+    });
+}
+
+function renderInventoryRows() {
+    const tbody = document.getElementById('dynamic-inventory-rows');
+    if (!tbody) return;
+
+    const ingredients = Array.isArray(window.bakeryIngredients) ? window.bakeryIngredients : [];
+    tbody.innerHTML = '';
+
+    if (!ingredients.length) {
+        const row = document.createElement('tr');
+        row.innerHTML = '<td colspan="3" style="padding: 12px; text-align: center; color: rgba(78,52,46,0.7);">Inventaris kosong. Tambahkan bahan agar stok tampil di sini.</td>';
+        tbody.appendChild(row);
+        return;
+    }
+
+    ingredients.slice(0, 6).forEach(item => {
+        const stock = Number(item.stock ?? item.qty ?? item.quantity ?? 0);
+        let status = 'stock-good';
+        let badgeText = 'Aman';
+
+        if (stock <= 2) {
+            status = 'stock-low';
+            badgeText = 'Rendah';
+        } else if (stock <= 5) {
+            status = 'stock-medium';
+            badgeText = 'Cukup';
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="padding: 8px; vertical-align: top;">${item.name || item.label || 'Bahan'}</td>
+            <td style="padding: 8px; text-align: right;">${stock}</td>
+            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge ${status}">${badgeText}</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+async function renderUserProfile(summaryData = null) {
+
+    // 1. Muat data profil
+    await loadProfile();
+
+    // 2. Perbarui sapaan
+    updateGreeting();
+
+    // 3. Perbarui statistik bakery
+    await waitForStatistics();
+
+    // 4. Perbarui ringkasan lokasi/cuaca lalu metadata dinamis
+    updateProfileSummary(summaryData || {});
+
+    // 5. Perbarui metadata dan widget dinamis
+    updateProfileLastUpdated(new Date());
+    updateProfileStatusBadge((summaryData && summaryData.status) || 'Premium Member');
+    renderProofingLogs();
+    renderInventoryRows();
+
+    // 6. Versi aplikasi
+    updateVersion();
 }
 
 function updateVersion() {
@@ -1663,14 +1972,32 @@ const defaultProfile = {
 };
 
 // Fungsi memuat data profil secara dinamis saat aplikasi dibuka / modal diakses
-async function loadDynamicProfile() {
+async function loadDynamicProfile(showNotifications = false) {
     try {
+        setProfileLoadingState(true);
+
         // Menggunakan fungsi wrapper getProfileValue Anda yang sudah aman
         const savedProfileRaw = await getProfileValue('user_profile', null);
-        
-        let savedProfile = defaultProfile;
+        let savedProfile = null;
+
         if (savedProfileRaw) {
-            savedProfile = JSON.parse(savedProfileRaw);
+            try {
+                const parsedProfile = JSON.parse(savedProfileRaw);
+                if (parsedProfile && typeof parsedProfile === 'object') {
+                    savedProfile = parsedProfile;
+                }
+            } catch (parseError) {
+                console.warn('Data user_profile rusak, fallback ke profile_*:', parseError);
+            }
+        }
+
+        if (!savedProfile) {
+            savedProfile = {
+                name: await getProfileValue('profile_name', 'Pengguna'),
+                bakery: await getProfileValue('profile_bakery', 'Nama Bakery'),
+                phone: await getProfileValue('profile_phone', '-'),
+                email: await getProfileValue('profile_email', '-')
+            };
         }
 
         // Injeksi ke HTML profil
@@ -1678,33 +2005,30 @@ async function loadDynamicProfile() {
         document.getElementById('profile-bakery').innerText = savedProfile.bakery;
         document.getElementById('profile-phone').innerText = savedProfile.phone || "-";
         document.getElementById('profile-email').innerText = savedProfile.email || "-";
-        
+
         // Sinkronisasi ke Form Edit jika ada
-        if(document.getElementById('edit-name')) {
+        if (document.getElementById('edit-name')) {
             document.getElementById('edit-name').value = savedProfile.name;
             document.getElementById('edit-bakery').value = savedProfile.bakery;
             document.getElementById('edit-phone').value = savedProfile.phone;
             document.getElementById('edit-email').value = savedProfile.email;
         }
 
-        // Jalankan fungsi update cuaca, tanggal, dan tabel stok
-        renderAktivitasDanStok();
-
+        // Jalankan fungsi perbarui tampilan profil: statistik, log, dan inventaris
+        await renderUserProfile();
+        if (showNotifications && typeof showToast === 'function') {
+            showToast('Profil diperbarui.');
+        }
     } catch (error) {
         console.error("Gagal memuat profil dinamis:", error);
+        if (showNotifications && typeof showToast === 'function') {
+            showToast('Gagal memuat profil. Coba lagi.');
+        }
+    } finally {
+        setProfileLoadingState(false);
     }
 }
 
-// Kaitkan pemanggilan fungsi dinamis ini saat tombol User (👤) di Top Bar ditekan
-const originalToggleModal = window.toggleModal;
-window.toggleModal = function(modalId) {
-    if (modalId === 'user-modal') {
-        loadDynamicProfile();
-    }
-    // Panggil fungsi toggle asli bawaan PWA Anda
-    const targetModal = document.getElementById(modalId);
-    if(targetModal) targetModal.classList.toggle('active');
-};
 // =============================================
 
 const ProfileService = {
@@ -1956,27 +2280,6 @@ function setStat(id, value) {
     const el = document.getElementById(id);
     if (!el) return;
     el.textContent = Number.isFinite(value) ? value : 0;
-}
-
-async function renderUserProfile(summaryData = null) {
-
-    // 1. Muat data profil
-    await loadProfile();
-
-    // 2. Perbarui sapaan
-    updateGreeting();
-
-    // 3. Perbarui statistik bakery
-    await waitForStatistics();
-
-    // 4. Perbarui ringkasan lokasi/cuaca bila ada data
-    if (summaryData) {
-        updateProfileSummary(summaryData);
-    }
-
-    // 5. Versi aplikasi
-    updateVersion();
-
 }
 
 function updateBakeryStatistics() {
@@ -2610,6 +2913,10 @@ function toggleModal(modalId) {
         setTimeout(() => {
             modal.focus();
         }, 50);
+
+        if (modalId === 'user-modal' && typeof loadDynamicProfile === 'function') {
+            loadDynamicProfile();
+        }
     } else {
         if (document.activeElement && modal.contains(document.activeElement)) {
             document.activeElement.blur();
@@ -6620,6 +6927,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    const btnCloseProfile = document.getElementById('btn-close-profile');
+if (btnCloseProfile) {
+    btnCloseProfile.addEventListener('click', () => {
+        // Menggunakan logika pencarian elemen induk yang sama persis dengan modal lainnya
+        const modalUser = btnCloseProfile.closest('.article-modal-header')?.parentElement;
+        if (modalUser) modalUser.classList.remove('active');
+    });
+}
+
+    const btnCloseHelp = document.getElementById('btn-close-help');
+if (btnCloseHelp) {
+    btnCloseHelp.addEventListener('click', () => {
+        // Logika traversal DOM yang sama persis: cari header lalu hapus class active pada parent modal
+        const modalHelp = btnCloseHelp.closest('.article-modal-header')?.parentElement;
+        if (modalHelp) modalHelp.classList.remove('active');
+    });
+}
     // -----------------------------------------------------------------
     // 6. MANAGEMENT NOTIFIKASI SYSTEM
     // -----------------------------------------------------------------
@@ -6641,6 +6965,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
     }
+    
+    // Tambahkan ini tepat di bawah kode close notifikasi Anda
+const btnCloseSetting = document.getElementById('btn-close-setting');
+if (btnCloseSetting) {
+    btnCloseSetting.addEventListener('click', () => {
+        // Logikanya sekarang 100% sama dengan notifikasi karena strukturnya sudah kembar
+        const modalSettings = btnCloseSetting.closest('.article-modal-header')?.parentElement;
+        if (modalSettings) modalSettings.classList.remove('active');
+    });
+}
+
+    // EVENT LISTENER UNTUK TOMBOL CLOSE PENGATURAN
+const btnCloseSettings = document.getElementById('btn-close-settings');
+if (btnCloseSettings) {
+    btnCloseSettings.addEventListener('click', () => {
+        // Mencari container pembungkus modal pengaturan terdekat (.page-modal)
+        const modalSettings = btnCloseSettings.closest('.page-modal');
+        if (modalSettings) modalSettings.classList.remove('active');
+    });
+}
 
     const btnNotifHapus = document.getElementById('btn-notif-hapus');
     if (btnNotifHapus) {
@@ -7007,14 +7351,55 @@ if (typeof MAX_RESEP_TERSIMPAN === 'undefined') {
 
 // 1. FUNGSI SIMPAN RESEP (Dipertahankan & Dioptimalkan agar tidak double pop-up)
 async function simpanResepKeLokal(dataResep) {
-  await Filesystem.writeFile({
-    path: FILE_RESEP_PATH,
-    data: JSON.stringify(dataResep),
-    directory: Directory.Data,
-    encoding: Encoding.UTF8,
-    recursive: true
-  });
-  window.DEBUG && console.log('File resep berhasil diperbarui di storage perangkat.');
+  const json = JSON.stringify(dataResep);
+  if (window.Capacitor && typeof Filesystem !== 'undefined') {
+    try {
+      await Filesystem.writeFile({
+        path: FILE_RESEP_PATH,
+        data: json,
+        directory: Directory.Data,
+        encoding: Encoding.UTF8,
+        recursive: true
+      });
+      window.DEBUG && console.log('File resep berhasil diperbarui di storage perangkat (native).');
+      if (typeof showToast === 'function') showToast('Resep berhasil disimpan di perangkat Anda.');
+      return;
+    } catch (err) {
+      window.DEBUG && console.warn('Gagal writeFile native, fallback ke simpanDaftarResepKePerangkat:', err);
+    }
+  }
+  // Fallback: simpan ke daftar resep (localStorage / Preferences) dan tawarkan unduh JSON sebagai backup
+  try {
+    let daftar = await bacaSemuaResepDariPerangkat();
+    const idx = daftar.findIndex(r => r.id === dataResep.id);
+    if (idx >= 0) daftar[idx] = dataResep; else daftar.unshift(dataResep);
+    if (daftar.length > MAX_RESEP_TERSIMPAN) daftar = daftar.slice(0, MAX_RESEP_TERSIMPAN);
+    await simpanDaftarResepKePerangkat(daftar);
+    window.DEBUG && console.log('File resep disimpan ke localStorage sebagai fallback.');
+
+    // Buat file JSON untuk diunduh sebagai cadangan user (non-intrusive)
+    try {
+      const blob = new Blob([JSON.stringify(dataResep, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const namaFile = (dataResep && dataResep.id) ? `resep-${dataResep.id}.json` : `resep-${Date.now()}.json`;
+      a.href = url;
+      a.download = namaFile;
+      // Jangan otomatis menambahkan/klik jika user agent mencegahnya — bungkus dalam timeouts kecil untuk kompatibilitas
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      window.DEBUG && console.log('Cadangan resep telah diunduh sebagai', namaFile);
+      if (typeof showToast === 'function') showToast('Cadangan berhasil diunduh. Terima kasih, file tersimpan di perangkat Anda.');
+    } catch (dlErr) {
+      // Jika unduhan gagal, hanya log saja — jangan ganggu alur utama
+      window.DEBUG && console.warn('Gagal membuat unduhan cadangan JSON:', dlErr);
+    }
+  } catch (err) {
+    console.error('Gagal menyimpan resep di fallback:', err);
+    throw err;
+  }
 }
 
 window.simpanResepKeDatabase = async function() {
@@ -7462,5 +7847,38 @@ window.showToast = showToast;
         }
     }, true);
 })();
-</script></body>
+</script>
+
+<style id="copilot-toast-style">#copilot-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(0,0,0,.85);color:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:99999;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}</style>
+
+<script>
+// Minimal toast helper used by storage fallback to inform users about backup downloads
+function showToast(msg, duration = 2000) {
+  try {
+    let t = document.getElementById('copilot-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'copilot-toast';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    // apply style via existing style block; toggle via attribute/class
+    t.style.pointerEvents = 'auto';
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._hideTimeout);
+    t._hideTimeout = setTimeout(function () {
+      if (t) {
+        t.style.opacity = '0';
+        t.style.transform = 'translateX(-50%) translateY(-8px)';
+        t.style.pointerEvents = 'none';
+      }
+    }, duration);
+  } catch (e) {
+    // non-fatal
+    console.warn('showToast error', e);
+  }
+}
+</script>
+</body>
 </html>
