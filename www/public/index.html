@@ -107,13 +107,14 @@
         /* Judul Aplikasi (Mengunci Tepat di Tengah Layar) */
         .top-nav-title {font-size: 1.2rem; font-weight: bold;margin: 0; white-space: nowrap; color: #E67E22;}
         /* Sisi Kanan (Kelompok Tombol Akses: Help, Notif, Settings) */
-        .top-nav-right {display: flex; align-items: center;gap: 12px; /* Jarak antar ikon di sebelah kanan */}
+        .top-nav-right {display: flex; align-items: center; z-index: 10;}
         /* Pengaturan Tombol Navigasi Berbentuk Ikon */
         .top-nav-bar .nav-icon-btn {background: none; border: none; font-size: 1.35rem; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; color: inherit; transition: transform 0.1s ease;}
         /* Efek feedback visual saat tombol ditekan di HP */
         .top-nav-bar .nav-icon-btn:active {transform: scale(0.9);}
-        .top-nav-group {display: flex;gap: 12px;}
-        .nav-icon-btn {background: var(--card-bg, rgba(78, 52, 46, 0.08)); color: var(--chocolate); border: 1px solid rgba(78, 52, 46, 0.1); width: 38px; height: 38px; border-radius: 50%; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: transform 0.2s ease, background 0.2s ease;}
+        .top-nav-group {display: flex;gap: 8px;}
+        .nav-icon-btn {background: var(--card-bg, rgba(78, 52, 46, 0.08)); color: var(--chocolate); border: 1px solid rgba(78, 52, 46, 0.1); width: 38px; height: 38px; border-radius: 50%; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: transform 0.2s ease, background 0.2s ease; padding: 0; /* Menghilangkan padding bawaan agar emoji pas di tengah */
+    box-sizing: border-box;}
         .nav-icon-btn:active {transform: scale(0.9); background: var(--accent); color: white;}
 
         /* CSS untuk menyamakan ukuran semua modal */
@@ -687,7 +688,7 @@
         .notif-title { font-size:0.85rem; font-weight:bold; color:var(--chocolate); margin-bottom:2px; }
         .notif-desc { font-size:0.78rem; color:#777; line-height:1.4; }
         .notif-time { font-size:0.7rem; color:#aaa; margin-top:3px; }
-        .notif-badge { position:absolute; top:-3px; right:-3px; background:var(--accent); color:white; border-radius:50%; width:16px; height:16px; font-size:0.6rem; display:none; align-items:center; justify-content:center; font-weight:bold; }
+        .notif-badge { position:absolute; top:-2px; right:-2px; background:var(--accent); color:white; border-radius:50%; width:16px; height:16px; font-size:0.6rem; display:flex; align-items:center; justify-content:center; font-weight:bold; border: 1.5px solid var(--dough);}
 
         /* MODE SELECTION */
         .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; margin-bottom: 15px; }
@@ -752,20 +753,20 @@
     </div>
 
     <div class="top-nav-right">
-        <span style="display: inline-flex; align-items: center; gap: 6px; margin-right: 8px;">
-    <button  data-onclick="window.location.reload();" title="Refresh Halaman" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; padding: 0; display: flex; align-items: center; opacity: 0.7;">
-        🔄
-    </button>
-    <small style="font-size: 0.7rem; opacity: 0.7; cursor: pointer;"  data-onclick="openInGoogleMaps()"></small>
-</span>
-        <button class="nav-icon-btn"  data-onclick="toggleModal('help-modal')" title="Pusat Bantuan">
-            <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.35rem; height: 1.35rem; object-fit: contain;">
-        </button>
-        <button class="nav-icon-btn"  data-onclick="toggleModal('notif-modal')" title="Notifikasi" style="position:relative;">
-            🔔
-            <span class="notif-badge" id="global-notif-badge"></span>
-        </button>
-        <button class="nav-icon-btn"  data-onclick="toggleModal('settings-modal')" title="Pengaturan">⚙️</button>
+        <div class="top-nav-group">
+            <button class="nav-icon-btn" id="btn-refresh-manual" title="Refresh Halaman">🔄</button>
+            
+            <button class="nav-icon-btn" data-onclick="toggleModal('help-modal')" title="Pusat Bantuan">
+                <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.2rem; height: 1.2rem; object-fit: contain;">
+            </button>
+            
+            <button class="nav-icon-btn" data-onclick="toggleModal('notif-modal')" title="Notifikasi" style="position: relative;">
+                🔔
+                <span class="notif-badge" id="global-notif-badge" style="display: flex;">10</span>
+            </button>
+            
+            <button class="nav-icon-btn" data-onclick="toggleModal('settings-modal')" title="Pengaturan">⚙️</button>
+        </div>
     </div>
 </div>
 
@@ -2516,8 +2517,10 @@ if (window.Capacitor) {
         }
 // 1. TARUH KODE BARU ANDA DI SINI (DI BAGIAN PALING ATAS SCRIPT)
 if ('serviceWorker' in navigator) {
+    let refreshing = false; // Pengunci agar tidak loop
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-        // Reload halaman otomatis agar HTML & JS terbaru langsung dimuat ke layar
+        if (refreshing) return;
+        refreshing = true;
         window.location.reload();
     });
 }
@@ -6259,6 +6262,15 @@ window.addEventListener('popstate', function(event) {
     if (activeModal) {
         toggleModal(activeModal.id);
     }
+});
+
+// Panggil fungsi restore bawaan kamu saat halaman selesai dimuat ulang (refresh)
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+    if (typeof checkAndRestoreTimer === 'function') {
+        checkAndRestoreTimer();
+    }
+    }, 150); // Jeda 100ms biasanya cukup untuk menyelesaikan init bawaan
 });
 
 // 2. FUNGSI EKSPOR PDF MENGGUNAKAN WINDOW PRINT (CLEAN & MOBILE FRIENDLY)
