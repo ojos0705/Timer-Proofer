@@ -1,7 +1,8 @@
 {
-  "name": "www",
-  "version": "1.0.0",
-  "description": "",
+  "name": "Timer Proofing",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A simple timer app for proofing donuts",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
