@@ -135,8 +135,22 @@
 
         /* FITUR PIP - BELUM MAKSIMAL*/
         /* Modifikasi posisi tombol lama agar turun ke bawah Navigasi Baru */
-        .pip-badge { top: 65px !important; right: 15px !important; }
+        .pip-badge {position: absolute;
+    top: 65px !important;
+    right: 15px !important;
+    background: var(--accent);
+    color: white;
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 95;}
 
+    .pip-badge:active {
+    transform: scale(0.95);
+    background: #d35400; /* Warna aksen lebih gelap saat ditekan */
+}
         /* ========================================================= */
         /* EFEK HEADER MENYUSUT & FITUR SWAP STATS (VERSI KIRI)      */
         /* ========================================================= */
@@ -248,7 +262,6 @@
         .mini-mode #countdown { font-size: 1.2rem; margin: 1px 0; }
         .mini-mode .time-info { font-size: 0.5rem; height: auto; }
         .mini-mode .btn { padding: 6px 10px; font-size: 0.7rem; border-radius: 20px; }
-        .pip-badge { position: absolute; top: 12px; right: 10px; background: var(--accent); color: white; font-size: 0.65rem; padding: 4px 8px; border-radius: 10px; cursor: pointer; font-weight: bold; z-index: 95;}
 
         /* LOKASI DAN CUACA */
         .location { word-wrap: break-word; font-size: 0.9rem; line-height: 1.2; padding: 0px; text-align: center;}
@@ -745,6 +758,9 @@
 <!-- AKHIR IKLAN -->
 
 <div class="container" id="app-container">
+    <button id="pip-trigger-btn" class="pip-badge" title="Aktifkan Mode Melayang">
+    📺 PIP Mode
+</button>
     <!-- TOP NAVIGATION BAR -->
 <div class="top-nav-bar">
     <div class="top-nav-left">
@@ -1321,9 +1337,17 @@
             <label for="recipe-save-name" style="display: block; font-size: 0.68rem; font-weight: 600; color: #718096; margin-bottom: 4px;">Nama Resep (Opsional):</label>
             <input type="text" id="recipe-save-name" placeholder="Contoh: Donat Coklat Premium" maxlength="60" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.8rem; box-sizing: border-box; margin-bottom: 8px; color: #4E342E;">
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
-                <button type="button" class="btn" id="btn-muat-resep"  data-onclick="window.tampilkanDaftarResepTersimpan()" style="background: #E67E22; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📂 DATABASES</button>
-                <button type="button" class="btn"  data-onclick="window.eksporSemuaResep()" style="background: #2980b9; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📤 EKSPOR</button>
-                <button type="button" class="btn"  data-onclick="document.getElementById('recipe-import-input').click()" style="background: #27ae60; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📥 IMPOR FILE</button>
+                <!-- Cukup ubah data-onclick menjadi onclick standar agar fungsi aslinya terpanggil -->
+                 <!-- 1. Tombol Database & Ekspor-Impor -->
+<button type="button" class="btn" id="btn-muat-resep" onclick="window.tampilkanDaftarResepTersimpan()" style="background: #E67E22; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📂 DATABASES</button>
+
+<button type="button" class="btn" onclick="window.eksporSemuaResep()" style="background: #2980b9; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📤 EKSPOR</button>
+
+<button type="button" class="btn" onclick="document.getElementById('recipe-import-input').click()" style="background: #27ae60; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📥 IMPOR FILE</button>
+
+<!-- 2. Input File Tersembunyi (SANGAT PENTING!) -->
+<!-- Perhatikan bagian onchange: kita mengirim 'this.files[0]' langsung ke fungsi asli Anda -->
+<input type="file" id="recipe-import-input" accept=".json" onchange="window.imporResepDariFile(this.files[0])" style="display: none;">
             </div>
             <input type="file" id="recipe-import-input" accept=".json,application/json" style="display: none;">
         </div>
@@ -1845,7 +1869,22 @@ function renderProofingLogs() {
     const container = document.getElementById('dynamic-proofing-logs');
     if (!container) return;
 
-    const logs = Array.isArray(window.proofingHistory) ? window.proofingHistory.slice(-5).reverse() : [];
+    // 1. Ambil data dari localStorage (gunakan fallback ke window.proofingHistory jika local tidak ada)
+    let rawLogs = [];
+    try {
+        const stored = localStorage.getItem('proofing_logs');
+        if (stored) {
+            rawLogs = JSON.parse(stored);
+        } else if (Array.isArray(window.proofingHistory)) {
+            rawLogs = window.proofingHistory;
+        }
+    } catch (e) {
+        console.error("Gagal membaca storage proofing logs:", e);
+        if (Array.isArray(window.proofingHistory)) rawLogs = window.proofingHistory;
+    }
+
+    // Ambil maksimal 5 log terbaru dan balik urutannya (terbaru di atas)
+    const logs = Array.isArray(rawLogs) ? rawLogs.slice(-5).reverse() : [];
     container.innerHTML = '';
 
     if (!logs.length) {
@@ -1857,13 +1896,27 @@ function renderProofingLogs() {
     }
 
     logs.forEach((entry) => {
-        const title = entry.title || entry.name || 'Proofing';
-        const details = entry.message || entry.details || entry.note || 'Aktivitas proofing dicatat.';
-        const time = entry.timestamp || entry.time || entry.createdAt || Date.now();
-        const timestamp = new Date(time);
+        // Pemetaan properti yang aman dan fleksibel
+        const title = entry.title || entry.recipe || entry.name || 'Proofing';
+        
+        // Gabungkan durasi & suhu jika format message kosong
+        let details = entry.message || entry.details || entry.note;
+        if (!details && (entry.duration || entry.temp)) {
+            const dur = entry.duration || '0';
+            const temp = entry.temp || '--';
+            const hum = entry.humidity || '--';
+            details = `Durasi: ${dur}m | Suhu: ${temp}°C | Kelembapan: ${hum}%`;
+        }
+        if (!details) details = 'Aktivitas proofing dicatat.';
+
+        // Parsing waktu
+        const timeVal = entry.timestamp || entry.time || entry.createdAt || Date.now();
+        const timestamp = new Date(timeVal);
 
         const item = document.createElement('li');
         item.className = 'log-item';
+        item.style.padding = '8px 0';
+        item.style.borderBottom = '1px dashed rgba(78,52,46,0.15)';
 
         const row = document.createElement('div');
         row.style.display = 'flex';
@@ -1873,18 +1926,18 @@ function renderProofingLogs() {
 
         const titleEl = document.createElement('strong');
         titleEl.style.fontSize = '0.95rem';
-        titleEl.textContent = title;
+        titleEl.textContent = `🍞 ${title}`;
 
         const timeEl = document.createElement('small');
         timeEl.style.color = 'rgba(78,52,46,0.6)';
         timeEl.style.fontSize = '0.75rem';
-        timeEl.textContent = timestamp.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        timeEl.textContent = isNaN(timestamp.getTime()) ? '--:--' : timestamp.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
         row.appendChild(titleEl);
         row.appendChild(timeEl);
 
         const detailRow = document.createElement('div');
-        detailRow.style.marginTop = '8px';
+        detailRow.style.marginTop = '4px';
         detailRow.style.fontSize = '0.82rem';
         detailRow.style.color = 'rgba(78,52,46,0.8)';
         detailRow.textContent = details;
@@ -1973,11 +2026,18 @@ const defaultProfile = {
 };
 
 // Fungsi memuat data profil secara dinamis saat aplikasi dibuka / modal diakses
+/**
+ * Memperbarui data pada halaman profil (user-modal) secara dinamis
+ * Menggabungkan pemuatan data akun (Nama, Bakery, dll) dengan sinkronisasi sensor (Lokasi, Cuaca).
+ * @param {boolean} showNotifications - Jika true, akan memicu toast notifikasi
+ */
 async function loadDynamicProfile(showNotifications = false) {
     try {
-        setProfileLoadingState(true);
+        if (typeof setProfileLoadingState === 'function') setProfileLoadingState(true);
 
-        // Menggunakan fungsi wrapper getProfileValue Anda yang sudah aman
+        // ==========================================
+        // BAGIAN 1: MEMUAT DATA AKUN USER (KODE LAMA)
+        // ==========================================
         const savedProfileRaw = await getProfileValue('user_profile', null);
         let savedProfile = null;
 
@@ -2002,10 +2062,10 @@ async function loadDynamicProfile(showNotifications = false) {
         }
 
         // Injeksi ke HTML profil
-        document.getElementById('profile-name').innerText = savedProfile.name;
-        document.getElementById('profile-bakery').innerText = savedProfile.bakery;
-        document.getElementById('profile-phone').innerText = savedProfile.phone || "-";
-        document.getElementById('profile-email').innerText = savedProfile.email || "-";
+        if (document.getElementById('profile-name')) document.getElementById('profile-name').innerText = savedProfile.name;
+        if (document.getElementById('profile-bakery')) document.getElementById('profile-bakery').innerText = savedProfile.bakery;
+        if (document.getElementById('profile-phone')) document.getElementById('profile-phone').innerText = savedProfile.phone || "-";
+        if (document.getElementById('profile-email')) document.getElementById('profile-email').innerText = savedProfile.email || "-";
 
         // Sinkronisasi ke Form Edit jika ada
         if (document.getElementById('edit-name')) {
@@ -2016,19 +2076,88 @@ async function loadDynamicProfile(showNotifications = false) {
         }
 
         // Jalankan fungsi perbarui tampilan profil: statistik, log, dan inventaris
-        await renderUserProfile();
-        if (showNotifications && typeof showToast === 'function') {
-            showToast('Profil diperbarui.');
+        if (typeof renderUserProfile === 'function') await renderUserProfile();
+
+        // ==========================================
+        // BAGIAN 2: SINKRONISASI CUACA & LOKASI (KODE BARU)
+        // ==========================================
+        const mainLocLine1 = document.getElementById('loc-line1');
+        const mainLocLine2 = document.getElementById('loc-line2');
+        const profAddress = document.getElementById('prof-address');
+        const profCoords = document.getElementById('prof-coords');
+
+        if (profAddress && mainLocLine1) {
+            profAddress.textContent = mainLocLine1.textContent.replace('📍', '').trim();
         }
+        if (profCoords && mainLocLine2) {
+            profCoords.textContent = mainLocLine2.textContent;
+        }
+
+        const mainTempVal = document.getElementById('temp-val');
+        const mainHumVal = document.getElementById('hum-val');
+        const profWeather = document.getElementById('summary-weather');
+        const profHumidity = document.getElementById('summary-humidity');
+
+        if (profWeather && mainTempVal) {
+            profWeather.textContent = mainTempVal.textContent !== '--' ? `${mainTempVal.textContent}°C` : '--';
+        }
+        if (profHumidity && mainHumVal) {
+            profHumidity.textContent = mainHumVal.textContent !== '--' ? `${mainHumVal.textContent}%` : '--';
+        }
+
+        // Perbarui Waktu Pembaruan Terakhir
+        const lastUpdatedElement = document.getElementById('profile-last-updated');
+        if (lastUpdatedElement) {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            lastUpdatedElement.textContent = `Terakhir diperbarui: ${hours}.${minutes}`;
+        }
+
+        // Jalankan feedback visual animasi putar jika parameter bernilai true
+        if (showNotifications) {
+            const refreshBtn = document.querySelector('.profile-refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.style.transform = 'rotate(360deg)';
+                refreshBtn.style.transition = 'transform 0.6s ease';
+                setTimeout(() => {
+                    refreshBtn.style.transform = 'none';
+                    refreshBtn.style.transition = 'none';
+                }, 600);
+            }
+            if (typeof showToast === 'function') showToast('Profil diperbarui.');
+        }
+
     } catch (error) {
         console.error("Gagal memuat profil dinamis:", error);
         if (showNotifications && typeof showToast === 'function') {
             showToast('Gagal memuat profil. Coba lagi.');
         }
     } finally {
-        setProfileLoadingState(false);
+        if (typeof setProfileLoadingState === 'function') setProfileLoadingState(false);
     }
 }
+
+// Daftarkan ke objek window agar aman dipanggil dari inline onclick
+window.loadDynamicProfile = loadDynamicProfile;
+
+// Otomatisasi pemanggilan saat modal dibuka
+function hookProfileModalOpen() {
+    const originalToggleModal = window.toggleModal;
+    window.toggleModal = function(modalId) {
+        if (modalId === 'user-modal') {
+            loadDynamicProfile(false); // dipanggil tanpa memunculkan toast setiap buka modal
+        }
+        if (typeof originalToggleModal === 'function') {
+            originalToggleModal(modalId);
+        }
+    };
+}
+
+// Jalankan hook modal setelah DOM siap
+document.addEventListener('DOMContentLoaded', () => {
+    hookProfileModalOpen();
+});
 
 // =============================================
 
@@ -3537,22 +3666,32 @@ window.suntikPresetBahanCepat = function(nama, kategori, rasio, harga, pack) {
 //===================================================================================
 // FUNGSI BARU: DOCUMENT PICTURE-IN-PICTURE UNTUK PROOFING TIMER DONAT
 //===================================================================================
+// Variabel global untuk menyimpan referensi jendela PiP aktif
+let pipWindowInstance = null;
+let pipIntervalInstance = null;
+
 async function aktifkanModePIP() {
     // 1. Validasi dukungan API Document Picture-in-Picture pada Browser
     if (!('documentPictureInPicture' in window)) {
         if (typeof NotifSystem !== 'undefined') {
             NotifSystem.tambah('sistem', 'Fitur Tidak Didukung', 'Browser Anda belum mendukung Document PIP.', '⚠️');
         } else {
-            alert('Browser Anda belum mendukung Document Picture-in-Picture.');
+            alert('Browser Anda belum mendukung Document Picture-in-Picture. Gunakan browser berbasis Chromium terbaru (Chrome/Edge).');
         }
+        return;
+    }
+
+    // Jika PIP sudah terbuka, fokuskan kembali jendelanya
+    if (pipWindowInstance) {
+        pipWindowInstance.focus();
         return;
     }
 
     try {
         // 2. Buka jendela PIP melayang dengan aspek rasio mini kotak
-        const pipWindow = await window.documentPictureInPicture.requestWindow({
-            width: 260,
-            height: 160,
+        pipWindowInstance = await window.documentPictureInPicture.requestWindow({
+            width: 280,
+            height: 180,
         });
 
         // 3. Salin CSS Stylesheet dari aplikasi utama agar font dan layout rapi
@@ -3561,19 +3700,19 @@ async function aktifkanModePIP() {
                 const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
                 const style = document.createElement('style');
                 style.textContent = cssRules;
-                pipWindow.document.head.appendChild(style);
+                pipWindowInstance.document.head.appendChild(style);
             } catch (e) {
                 const link = document.createElement('link');
                 link.rel = 'stylesheet';
                 link.href = styleSheet.href;
-                pipWindow.document.head.appendChild(link);
+                pipWindowInstance.document.head.appendChild(link);
             }
         });
 
         // 4. Suntikkan struktur HTML khusus ke dalam jendela pop-out PIP
-        pipWindow.document.body.innerHTML = `
+        pipWindowInstance.document.body.innerHTML = `
             <div class="pip-container" style="
-                padding: 10px; 
+                padding: 12px; 
                 text-align: center; 
                 background: #FDF5E6; 
                 height: 100vh; 
@@ -3586,20 +3725,20 @@ async function aktifkanModePIP() {
             ">
                 <div style="font-size: 10px; font-weight: bold; color: #E67E22; margin-bottom: 2px; letter-spacing: 0.5px;">PROOFER TIMER</div>
                 <div id="pip-countdown" style="font-size: 32px; font-weight: bold; color: #4E342E; font-family: monospace; line-height: 1.1;">00:00</div>
-                <div id="pip-status" style="font-size: 9px; margin-top: 4px; color: #5d4037; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px;">Memantau ragi adonan...</div>
+                <div id="pip-status" style="font-size: 9px; margin-top: 4px; color: #5d4037; max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px;">Memantau ragi adonan...</div>
                 
-                <div style="margin-top: 10px; display: flex; gap: 6px;">
-                    <button id="pip-btn-control" style="background: #4E342E; color: white; border: none; padding: 5px 12px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: bold; transition: background 0.2s;">START</button>
-                    <button id="pip-btn-close" style="background: #bdc3c7; color: #4E342E; border: none; padding: 5px 12px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: bold;">Tutup</button>
+                <div style="margin-top: 10px; display: flex; gap: 8px;">
+                    <button id="pip-btn-control" style="background: #4E342E; color: white; border: none; padding: 6px 14px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: bold; transition: background 0.2s;">START</button>
+                    <button id="pip-btn-close" style="background: #bdc3c7; color: #4E342E; border: none; padding: 6px 14px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: bold;">Tutup</button>
                 </div>
             </div>
         `;
 
         // 5. Ambil referensi elemen dari dalam dokumen PiP yang baru disuntikkan
-        const pipBtnControl = pipWindow.document.getElementById('pip-btn-control');
-        const pipBtnClose = pipWindow.document.getElementById('pip-btn-close');
-        const pipCountdown = pipWindow.document.getElementById('pip-countdown');
-        const pipStatus = pipWindow.document.getElementById('pip-status');
+        const pipBtnControl = pipWindowInstance.document.getElementById('pip-btn-control');
+        const pipBtnClose = pipWindowInstance.document.getElementById('pip-btn-close');
+        const pipCountdown = pipWindowInstance.document.getElementById('pip-countdown');
+        const pipStatus = pipWindowInstance.document.getElementById('pip-status');
 
         // 6. Sinkronisasi Data Real-Time secara dua arah dari DOM Aplikasi Utama
         const updatePipDisplay = () => {
@@ -3608,15 +3747,19 @@ async function aktifkanModePIP() {
 
             if (pipCountdown) {
                 pipCountdown.innerText = mainCountdownText;
-                const mainColor = window.getComputedStyle(document.getElementById('countdown')).color;
-                pipCountdown.style.color = mainColor;
+                // Selaraskan warna countdown dari warna aslinya di aplikasi utama
+                const mainCountdownEl = document.getElementById('countdown');
+                if (mainCountdownEl) {
+                    const mainColor = window.getComputedStyle(mainCountdownEl).color;
+                    pipCountdown.style.color = mainColor;
+                }
             }
             if (pipStatus) {
                 pipStatus.innerText = mainStatusText;
             }
             
             // Atur status tombol secara reaktif berdasarkan variabel global isTimerRunning
-            if (pipBtnControl) {
+            if (pipBtnControl && typeof isTimerRunning !== 'undefined') {
                 if (isTimerRunning) {
                     pipBtnControl.innerText = "RESET";
                     pipBtnControl.style.background = "#d32f2f"; 
@@ -3627,19 +3770,28 @@ async function aktifkanModePIP() {
             }
         };
 
-        // Jalankan sinkronisasi DOM secara berkala (250ms) selama jendela terbuka
-        const pipInterval = setInterval(updatePipDisplay, 250);
+        // Jalankan sinkronisasi DOM instan & berkala (200ms) selama jendela terbuka
+        updatePipDisplay();
+        pipIntervalInstance = setInterval(updatePipDisplay, 200);
 
         // 7. Event Listener: Tombol START/RESET di dalam PiP
         if (pipBtnControl) {
             pipBtnControl.addEventListener('click', () => {
-                if (isTimerRunning) {
-                    // Jika timer jalan, picu reset dengan mensimulasikan klik teks countdown Anda
+                if (typeof isTimerRunning !== 'undefined' && isTimerRunning) {
+                    // Simulasikan klik pada elemen countdown utama untuk memicu reset/stop
                     const countdownEl = document.getElementById('countdown');
-                    if (countdownEl) countdownEl.click();
+                    if (countdownEl) {
+                        countdownEl.click();
+                    } else {
+                        // Fallback jika elemen tidak ditemukan, panggil tombol utama
+                        document.getElementById('main-start-btn')?.click();
+                    }
                 } else {
-                    // Jika timer mati, jalankan fungsi proofer utama Anda
-                    if (typeof startProofing === 'function') {
+                    // Jika timer mati, jalankan fungsi start proofing bawaan aplikasi Anda
+                    const mainStartBtn = document.getElementById('main-start-btn');
+                    if (mainStartBtn) {
+                        mainStartBtn.click();
+                    } else if (typeof startProofing === 'function') {
                         startProofing();
                     }
                 }
@@ -3649,13 +3801,15 @@ async function aktifkanModePIP() {
         // 8. Event Listener: Tombol Tutup di dalam PiP
         if (pipBtnClose) {
             pipBtnClose.addEventListener('click', () => {
-                pipWindow.close();
+                pipWindowInstance.close();
             });
         }
 
         // 9. Pembersihan memori interval saat jendela PiP ditutup oleh user
-        pipWindow.addEventListener('pagehide', () => {
-            clearInterval(pipInterval);
+        pipWindowInstance.addEventListener('pagehide', () => {
+            clearInterval(pipIntervalInstance);
+            pipWindowInstance = null;
+            pipIntervalInstance = null;
             if (typeof NotifSystem !== 'undefined') {
                 NotifSystem.tambah('sistem', 'Mode PIP Nonaktif', 'Kembali memantau adonan di halaman utama.', '📱');
             }
@@ -3668,6 +3822,17 @@ async function aktifkanModePIP() {
         }
     }
 }
+
+// Inisialisasi Event Listener pemicu PIP aman setelah DOM selesai dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    const pipTrigger = document.getElementById('pip-trigger-btn');
+    if (pipTrigger) {
+        pipTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            aktifkanModePIP();
+        });
+    }
+});
 // =========================================================
 
 //========================================
@@ -4931,6 +5096,38 @@ function persistProofingState() {
 
 function clearProofingState() {
     localStorage.removeItem('proofing_state');
+    localStorage.removeItem('user_profile_weather_cache'); // jika diperlukan
+    
+    // Hentikan interval timer yang sedang berjalan di background agar tidak menumpuk
+    if (window.proofingInterval) {
+        clearInterval(window.proofingInterval);
+        window.proofingInterval = null;
+    }
+    
+    isTimerRunning = false;
+    alarmTriggered = false;
+}
+
+function handleResetProofing() {
+    clearProofingState();
+    
+    // Kembalikan tombol ke kondisi awal
+    const mainBtn = document.getElementById('main-start-btn');
+    if (mainBtn) {
+        mainBtn.innerText = "START PROOFING";
+        mainBtn.style.background = "var(--chocolate)"; // atau warna default Anda
+    }
+    
+    // PENTING: Cari tab mana yang sedang aktif saat ini (Initial / Rounding / Final)
+    // Jangan langsung paksa ke 30 menit!
+    const activeTab = document.querySelector('.proofing-tab.active'); 
+    if (activeTab) {
+        // Jalankan fungsi untuk set ulang waktu berdasarkan tab yang aktif saat ini
+        setTimerByTab(activeTab); 
+    } else {
+        // Jika tidak ada tab aktif, baru gunakan input manual (misal 30 menit)
+        resetToManualInput();
+    }
 }
 
 function triggerMainProofing() {
@@ -4943,16 +5140,13 @@ function triggerMainProofing() {
             const display = document.getElementById('countdown');
             if (display) checkSeconds = parseCountdownToSeconds(display.innerText);
         }
-        
         if (checkSeconds <= 0) {
             alert("Silakan tentukan waktu sebelum memulai.");
             return;
         }
-
         if (totalDurationMinutes <= 0) {
             totalDurationMinutes = Math.max(1, Math.round(checkSeconds / 60));
         }
-
         isTimerRunning = true;
         mainBtn.innerText = "RESET PROOFING"; 
         mainBtn.style.background = "#d32f2f";
@@ -4966,15 +5160,18 @@ function triggerMainProofing() {
             }
         }
     } else {
-        clearInterval(timerInterval);
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null; // <-- Kunci agar startProofing() selanjutnya bisa berjalan!
+        }
         isTimerRunning = false;
         setControlsDisabled(false); 
         if (mainBtn) {
             mainBtn.innerText = "START PROOFING";
             mainBtn.style.background = "var(--chocolate)";
             if (window.Capacitor) {
-    LocalNotifications.cancel({ notifications: [{ id: 1 }] }).catch(err => window.DEBUG && console.log(err));
-}
+            LocalNotifications.cancel({ notifications: [{ id: 1 }] }).catch(err => window.DEBUG && console.log(err));
+        }
         }
         document.getElementById('countdown').style.color = "var(--chocolate)";
         document.getElementById('countdown').innerText = "00:00";
