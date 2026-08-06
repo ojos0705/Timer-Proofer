@@ -6,7 +6,9 @@ const ASSETS = [
   './assets/css/style.css',
   './assets/js/app.js',
   './logo donat.png',
-  './assets/js/html2pdf.bundle.min.js'
+  './assets/js/html2pdf.bundle.min.js',
+  '/main.js', 
+  '/database-manager.js'
 ];
 
 // 3. Menginstall Service Worker & Langsung Skip Waiting agar update cepat diterapkan

@@ -3,24 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Login & Register - Kedai Mak-er</title>
     <meta name="theme-color" content="#FDF5E6">
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Timer Proofer">
-    <!--
-      Capacitor plugins (App, LocalNotifications, Preferences, Share, Filesystem)
-      are bundled locally at ./vendor/capacitor-plugins.js — built from the same
-      node_modules used by the native Android/iOS project (see package.json /
-      src/capacitor-plugins-entry.js). Do NOT load these from a CDN (e.g. esm.sh):
-      it forces the app to need internet on every launch just to boot its own
-      code, and risks version mismatches with the native shell.
-      Geolocation, Haptics, and Bluetooth LE are accessed natively at runtime via
-      window.Capacitor.Plugins.* and don't need a JS import.
-      Rebuild after changing plugin versions with:
-        npx esbuild src/capacitor-plugins-entry.js --bundle --format=esm --platform=browser --outfile=www/vendor/capacitor-plugins.js --minify
-    -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/html2pdf.bundle.min.js" defer></script>
     <link rel="apple-touch-icon" href="logo donat.png">
     <link rel="manifest" href="manifest.json">
@@ -28,14 +19,233 @@
     <style>
         :root {--cream: #FDF5E6; --dough: #F2D2A9; --chocolate: #4E342E; --accent: #E67E22; -webkit-tap-highlight-color: transparent; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Fallback untuk beberapa browser */ outline: none;}
         /* STYLE SELURUH PAGE*/
-        body {font-family: 'Segoe UI', sans-serif; background-color: var(--cream); color: var(--chocolate); display: flex; justify-content: center; align-items: center; min-height: 100vh; min-height: 100dvh; margin: 0; padding-bottom: 0px; overflow: hidden; overscroll-behavior:none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;}
-        
-        .container {--bg-container: #ffffff; --card-bg: rgba(0, 0, 0, 0.04); background: var(--bg-container); width: 100%; max-width: 480px; /* Ukuran maksimal hp */ height: 100vh; height: 100dvh;    /* Memaksa container setinggi layar */ display: flex; flex-direction: column; /* Menyusun konten dari atas ke bawah */ position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.05); transition: background 0.8s ease, color 0.8s ease, box-shadow 0.3s ease; overscroll-behavior:none; }
-        /* Saat dibuka sebagai PWA terinstall (bukan tab browser biasa), isi penuh window agar tidak ada gradient kosong di kiri-kanan */
-        @media (display-mode: standalone) {
-            .container { max-width: 100%; box-shadow: none; }
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Hanya font yang ditambah */
+    background-color: var(--cream); 
+    color: var(--chocolate);  
+    min-height: 100vh; 
+    min-height: 100dvh; 
+    margin: 0; 
+    padding-bottom: 0px; 
+    overflow: hidden; 
+    overscroll-behavior: none; 
+    -webkit-text-size-adjust: 100%; 
+    text-size-adjust: 100%;
+    }
+    /* CSS untuk kontainer login/register */
+        .auth-container {
+            display: flex;
+    flex-direction: column; /* PENTING: Menyusun elemen di dalamnya ke bawah */
+    background: #ffffff;    /* Warna latar belakang kotak putih */
+    width: 100%;
+    max-width: 480px;       /* Ukuran maksimal agar pas di HP/desktop */
+    padding: 30px;          /* Jarak dalam */
+    border-radius: 20px;    /* Membuat sudut melengkung */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Efek bayangan lembut */
+    box-sizing: border-box;
         }
 
+        .auth-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .auth-header h2 {
+            margin: 0 0 6px 0;
+            color: var(--accent);
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+        .auth-header p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: rgba(78, 52, 46, 0.7);
+        }
+
+        .tab-switch {
+            display: flex;
+            background: rgba(242, 210, 169, 0.3);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--chocolate);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background: #ffffff;
+            color: var(--accent);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--chocolate);
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            outline: none;
+            color: var(--chocolate);
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.12);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.25);
+            margin-top: 6px;
+            transition: transform 0.1s ease;
+        }
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 18px 0;
+            color: rgba(78, 52, 46, 0.4);
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(78, 52, 46, 0.15);
+        }
+        .divider::before { margin-right: .75em; }
+        .divider::after { margin-left: .75em; }
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .social-btn {
+            background: #fff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--chocolate);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.15s;
+        }
+        .social-btn:hover {
+            background: #fff8f0;
+            border-color: var(--accent);
+        }
+        .whatsapp-btn {
+            width: 100%;
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 11px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .auth-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            margin-bottom: 14px;
+            display: none;
+        }
+
+        /* Atur body khusus saat status logged-out agar berada di tengah layar */
+body.logged-out {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: var(--cream);
+}
+        /* Kondisi awal: Pengguna belum login (logged-out) */
+body.logged-out .container {
+    display: none !important;
+}
+body.logged-out .auth-container {
+    display: flex; /* Sesuaikan dengan layout login Anda */
+}
+
+/* Kondisi setelah login berhasil (logged-in) */
+body.logged-in .auth-container {
+    display: none !important;
+}
+body.logged-in .container {
+    display: flex !important;
+    width: 100%;
+}
+/* ========================================================== */
+        .container {--bg-container: #ffffff; 
+    --card-bg: rgba(0, 0, 0, 0.04); 
+    background: var(--bg-container); 
+    width: 100%; 
+    max-width: 480px; 
+    height: 100vh; 
+    height: 100dvh; 
+    display: flex; 
+    flex-direction: column; 
+    position: relative; 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
+    transition: background 0.8s ease, color 0.8s ease, box-shadow 0.3s ease; 
+    overscroll-behavior: none; 
+}
+
+@media (display-mode: standalone) {
+    .container { 
+        max-width: 100%; 
+        box-shadow: none; 
+    }
+}
         /* ========================================================== */
         /* ----------------- TOP NAVIGATION BAR --------------------- */
         /* ========================================================== */
@@ -175,8 +385,25 @@
         .shrunk-left-wrapper {display: flex;flex-direction: column; /* Menyusun nama jalan di atas, data cuaca di bawah */align-items: flex-start; /* Rata kiri */text-align: left;}
 
         /* Nama Jalan (Berada di atas, max-width diperlebar karena space kiri luas) */
-        #shrunk-loc-text {font-size: 0.85rem;font-weight: 600;max-width: 180px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;opacity: 0.9;margin-bottom: 4px; /* Jarak antara nama jalan dengan angka di bawahnya */}
-
+        .marquee-container {
+    overflow: hidden; /* Menyembunyikan teks yang keluar dari batas */
+    white-space: nowrap; /* Memaksa teks tetap satu baris panjang */
+    box-sizing: border-box;
+    width: 100%; /* Menyesuaikan dengan lebar space yang tersedia */
+}
+        #shrunk-loc-text {
+    display: inline-block;
+    padding-left: 100%; /* Memulai teks dari ujung kanan luar */
+    animation: jalan-terusan 15s linear infinite; /* Kecepatan jalan 15 detik */
+}
+@keyframes jalan-terusan {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(-100%, 0, 0);
+    }
+}
         /* Baris data angka (Suhu & Kelembaban bersebelahan) */
         .shrunk-stats-row {display: flex;flex-direction: row;align-items: center; /* Menyejajarkan posisi vertikal tengah antara teks besar & kecil */gap: 10px; /* Jarak horizontal antara shrunk-main dan shrunk-sub */}
 
@@ -739,6 +966,69 @@
     </style>
 </head>
 <body>
+<!-- BAGIAN LOGIN -->
+<!-- Form Login -->
+    <body class="logged-out">
+
+    <!-- Form Login Lengkap -->
+    <div class="auth-container">
+        <div class="auth-header">
+            <h2>Kedai Mak-er</h2>
+            <p id="auth-subtitle">Masuk ke akun kedai Anda</p>
+        </div>
+
+        <!-- Tab Switcher (Login / Register) -->
+        <div class="tab-switch">
+            <button class="tab-btn active" id="btn-tab-login" onclick="switchMode('login')">Masuk</button>
+            <button class="tab-btn" id="btn-tab-register" onclick="switchMode('register')">Daftar</button>
+        </div>
+
+        <div id="auth-error-box" class="auth-error"></div>
+
+        <!-- Form Email & Password -->
+        <form id="auth-form">
+            <div class="form-group" id="group-name" style="display: none;">
+                <label for="input-name">Nama Lengkap / Kedai</label>
+                <input type="text" id="input-name" placeholder="Contoh: Budi Bakery">
+            </div>
+            <div class="form-group">
+                <label for="input-email">Email</label>
+                <input type="email" id="input-email" required placeholder="nama@email.com">
+            </div>
+            <div class="form-group">
+                <label for="input-password">Kata Sandi</label>
+                <input type="password" id="input-password" required placeholder="Minimal 6 karakter">
+            </div>
+            <button type="submit" class="btn-submit" id="btn-submit-main">MASUK</button>
+        </form>
+
+        <div class="divider">ATAU MASUK DENGAN</div>
+
+        <!-- OAuth Social Providers (Google, Facebook, Apple) -->
+        <div class="social-grid">
+            <button class="social-btn" onclick="signInWithProvider('google')">
+                <span>🌐</span> Google
+            </button>
+            <button class="social-btn" onclick="signInWithProvider('facebook')">
+                <span>📘</span> Facebook
+            </button>
+            <button class="social-btn" onclick="signInWithProvider('apple')">
+                <span>🍎</span> Apple
+            </button>
+        </div>
+
+        <!-- WhatsApp Phone Auth / OTP -->
+        <button class="whatsapp-btn" onclick="signInWithWhatsApp()">
+            <span>💬</span> Masuk / Daftar via WhatsApp
+        </button>
+    </div>
+
+    <!-- Dashboard Utama (Isi dashboard aplikasi Anda tetap di sini) -->
+    <div class="container">
+        <!-- ... isi dashboard Anda ... -->
+    </div>
+
+</body>
 <!-- BAGIAN HEADER - TIDAK BISA BERGERAK-->
 <!-- IKLAN MONETIZATION -->
  <!-- 
@@ -825,7 +1115,7 @@
     </div>
 
     <div id="shrunk-view">
-        <div class="shrunk-left-wrapper">
+        <div class="marquee-container">
             <div id="shrunk-loc-text">Mendeteksi Lokasi...</div>
             <div class="shrunk-stats-row">
                 <div id="shrunk-main">🌡️ --</div>
@@ -880,7 +1170,7 @@
         <div class="article-modal-content">
             <div class="article-modal-header">
                 <span id="modal-badge" class="article-badge">Badge</span>
-                <button class="article-modal-close"  data-onclick="tutupArtikelSecaraAman()">✕</button>
+                <button class="article-modal-close" id="btn-close-notif" onclick="closeNotifModal()">×</button>
             </div>
             <h3 id="modal-title">Judul Artikel Lengkap</h3>
             <div class="article-modal-body" id="modal-body"></div>
@@ -995,7 +1285,7 @@
 
                 <div class="profile-actions">
                     <button class="profile-chip" data-onclick="window.openEditProfile &amp;&amp; openEditProfile()">✏️ Edit Profil</button>
-                    <button class="profile-chip" data-onclick="window.tampilkanDaftarResepTersimpan &amp;&amp; tampilkanDaftarResepTersimpan()">📂 Resep</button>
+                    <button type="button" class="profile-chip" id="btn-buka-resep">📂 Resep</button>
                     <button class="profile-chip" data-onclick="window.toggleModal('help-modal')">💡 Bantuan</button>
                 </div>
 
@@ -1202,7 +1492,7 @@
 <div class="page-modal" id="notif-modal">
     <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
         <h3 id="modal-title-notif" style="margin: 0;">🔔 Notifikasi</h3>
-        <button class="article-modal-close" id="btn-close-notif">×</button>
+        <button class="article-modal-close" id="btn-close-notif-modal" onclick="toggleModal('notif-modal')">×</button>
     </div>
     <div style="display:flex; gap:6px; padding:10px 14px 8px; border-bottom:1px dashed rgba(78,52,46,0.2); overflow-x:auto; flex-shrink:0;">
         <button class="notif-tab-btn active"  data-onclick="filterNotif('semua',this)">Semua</button>
@@ -1633,13 +1923,155 @@
 </div>
 -->
 <script type="module">
-import { App, LocalNotifications, Preferences, Share, Filesystem, Directory, Encoding } from './vendor/capacitor-plugins.js';
+    import { App, LocalNotifications, Preferences, Share, Filesystem, Directory, Encoding } from './vendor/capacitor-plugins.js';
+    const RESEP_LIST_KEY = 'premium_saved_recipes';
+    const RESEP_LEGACY_KEY = 'premium_saved_recipe';
+    const FILE_RESEP_PATH = 'data/resep_sourdough.json';
+    const MAX_RESEP_TERSIMPAN = 10;
+    window.MAX_RESEP_TERSIMPAN = MAX_RESEP_TERSIMPAN;
 
-const RESEP_LIST_KEY = 'premium_saved_recipes';
-const RESEP_LEGACY_KEY = 'premium_saved_recipe';
-const FILE_RESEP_PATH = 'data/resep_sourdough.json';
-const MAX_RESEP_TERSIMPAN = 10;
-window.MAX_RESEP_TERSIMPAN = MAX_RESEP_TERSIMPAN;
+    /* FUNGSI HALAMAN LOGIN */
+    // Inisialisasi Klien Supabase (Ganti dengan URL & Anon Key Supabase Anda)
+    const SUPABASE_URL = 'https://rshnirlkjicnklrybjpf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzaG5pcmxramljbmtscnlianBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMjM0NjAsImV4cCI6MjA5OTY5OTQ2MH0.v5FXEfIQ1hLDLQmWgS9tv0f6OD2VqMdgius_cRjV9FI';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Deklarasikan variabel status di luar fungsi agar dikenali secara global
+let isRegisterMode = false; 
+
+// 1. Fungsi tunggal untuk beralih mode antara Masuk (Login) dan Daftar (Register)
+function switchMode(mode) {
+    const title = document.getElementById('auth-subtitle');
+    const nameGroup = document.getElementById('group-name');
+    const submitBtn = document.getElementById('btn-submit-main');
+    const btnLogin = document.getElementById('btn-tab-login');
+    const btnRegister = document.getElementById('btn-tab-register');
+
+    if (mode === 'login') {
+        isRegisterMode = false; // Ubah status ke mode login
+        title.innerText = "Masuk ke akun kedai Anda";
+        if (nameGroup) nameGroup.style.display = "none";
+        document.getElementById('input-name')?.removeAttribute('required');
+        submitBtn.innerText = "MASUK";
+        btnLogin.classList.add('active');
+        btnRegister.classList.remove('active');
+    } else {
+        isRegisterMode = true; // Ubah status ke mode daftar
+        title.innerText = "Daftar akun kedai baru";
+        if (nameGroup) nameGroup.style.display = "block";
+        document.getElementById('input-name')?.setAttribute('required', 'true');
+        submitBtn.innerText = "DAFTAR";
+        btnRegister.classList.add('active');
+        btnLogin.classList.remove('active');
+    }
+}
+
+// ⚠️ WAJIB: Ekspos fungsi agar bisa dibaca oleh atribut onclick="..." di HTML (Cukup dipanggil 1 kali saja)
+window.switchMode = switchMode;
+
+// Fungsi bantuan untuk menampilkan error di kotak pesan
+function showError(message) {
+    const errorBox = document.getElementById('auth-error-box');
+    if (errorBox) {
+        errorBox.innerText = message;
+        errorBox.style.display = 'block';
+    } else {
+        alert(message); // Fallback jika div error tidak ditemukan
+    }
+}
+
+// 2. Handle Form Submit (Email & Password)
+async function handleAuthSubmit(event) {
+    event.preventDefault();
+    const email = document.getElementById('input-email').value.trim();
+    const password = document.getElementById('input-password').value;
+    const name = document.getElementById('input-name') ? document.getElementById('input-name').value.trim() : '';
+    const errorBox = document.getElementById('auth-error-box');
+    
+    if (errorBox) errorBox.style.display = 'none';
+
+    try {
+        if (isRegisterMode) {
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: { full_name: name }
+                }
+            });
+            if (error) throw error;
+            alert('Pendaftaran berhasil! Silakan periksa email Anda untuk verifikasi atau langsung masuk.');
+            
+            // Otomatis pindah ke mode login setelah daftar
+            switchMode('login');
+
+        } else {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+            if (error) throw error;
+            
+            // PENTING: Ganti kelas body, JANGAN reload halaman
+            document.body.classList.remove('logged-out');
+            document.body.classList.add('logged-in');
+        }
+    } catch (err) {
+        showError(err.message);
+    }
+}
+window.handleAuthSubmit = handleAuthSubmit;
+
+// 3. Handle Social Auth (Google, Facebook, Apple)
+async function signInWithProvider(providerName) {
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: providerName,
+            options: {
+                redirectTo: window.location.origin + window.location.pathname
+            }
+        });
+        if (error) throw error;
+    } catch (err) {
+        showError(err.message);
+    }
+}
+window.signInWithProvider = signInWithProvider; // Ekspos ke global
+
+// 4. Handle WhatsApp / Phone Auth (OTP)
+async function signInWithWhatsApp() {
+    const phone = prompt('Masukkan Nomor WhatsApp Anda (Format: +628xxxxxxxxxx):');
+    if (!phone) return;
+
+    try {
+        const { data, error } = await supabase.auth.signInWithOtp({
+            phone: phone,
+            options: {
+                channel: 'whatsapp' // <--- Tambahkan baris ini
+            }
+        });
+        if (error) throw error;
+
+        const token = prompt('Kode OTP telah dikirim via WhatsApp. Masukkan 6 digit kode OTP:');
+        if (!token) return;
+
+        const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
+            phone: phone,
+            token: token,
+            type: 'sms'
+        });
+        if (verifyError) throw verifyError;
+
+        // PENTING: Ganti kelas body, JANGAN reload halaman
+        document.body.classList.remove('logged-out');
+        document.body.classList.add('logged-in');
+
+    } catch (err) {
+        showError('Gagal autentikasi WhatsApp: ' + err.message);
+    }
+}
+window.signInWithWhatsApp = signInWithWhatsApp; // Ekspos ke global
+    /* AKHIR FUNGSI HALAMAN LOGIN */
 
 async function simpanDaftarResepKePerangkat(daftarResep) {
     const jsonString = JSON.stringify(daftarResep);
@@ -1742,6 +2174,21 @@ async function bacaSemuaResepDariPerangkat() {
     }
     return [];
 }
+
+/* FUNGSI HALAMAN LOGIN*/
+document.addEventListener('DOMContentLoaded', function() {
+    const loginBtn = document.getElementById('loginBtn');
+    
+    // Check if element exists to avoid errors (Pengecekan ini sudah sangat bagus)
+    if (loginBtn) {
+        loginBtn.addEventListener('click', function() {
+            // Simulasi proses login berhasil, ubah kelas body
+            document.body.classList.remove('logged-out');
+            document.body.classList.add('logged-in');
+        });
+    }
+});
+/* == AKHIR FUNGSI HALAMAN LOGIN = */
 
 // FUNGSI HALAMAN USER PROFILE SUMMARY
 function updateProfileSummary(data = {}) {
@@ -2402,7 +2849,19 @@ function updateGreeting() {
 }
 
 // Panggil fungsi ini saat inisialisasi aplikasi
-updateGreeting();
+document.addEventListener('DOMContentLoaded', () => {
+    const authForm = document.getElementById('auth-form');
+    if (authForm) {
+        authForm.addEventListener('submit', handleAuthSubmit);
+    }
+
+    // Jalankan sapaan AI & sinkronisasi statistik dengan aman setelah DOM siap
+    updateGreeting();
+    tampilkanSapaanAwalAI();
+    // hookProfileModalOpen() sudah dipanggil sekali di listener DOMContentLoaded lain
+    // (dekat definisinya) — jangan panggil lagi di sini supaya toggleModal tidak
+    // dibungkus dua kali (dobel loadDynamicProfile saat modal profil dibuka).
+});
 //===============================================
 
 // FUNGSI UPDATE BAKERY STATISTIC - DI HALAMAN USER PROFILE
@@ -2493,17 +2952,19 @@ function tampilkanSapaanAwalAI() {
     const elemenSuhu = document.getElementById('temp-val')?.innerText || '--';
     const elemenCuaca = document.getElementById('shrunk-weather-text')?.innerText || 'Mendeteksi Cuaca';
     
-    let infoSuhuCuaca = "";
-    let rekomendasiAI = "";
+    const aiInsightBox = document.getElementById('ai-insight');
+    const aiAnalysisWrapper = document.getElementById('ai-analysis');
 
-    if (elemenSuhu !== '--' && !elemenSuhu.includes('--')) {
-        infoSuhuCuaca = `Saat ini jam menunjukkan pukul <strong>${formatJam} WIB</strong>. Kondisi di sekitar lokasi Anda terpantau <strong>${elemenCuaca}</strong> dengan suhu sekitar <strong>${elemenSuhu}</strong>.`;
-        // Panggil fungsi analisis suhu dinamis
-        rekomendasiAI = analisisKondisiSuhu(elemenSuhu);
-    } else {
-        infoSuhuCuaca = `Saat ini jam menunjukkan pukul <strong>${formatJam} WIB</strong>. Kami sedang menyinkronkan data cuaca dan suhu lokal Anda.`;
-        rekomendasiAI = "Menunggu data indikator lingkungan untuk kalkulasi presisi...";
+    if (elemenSuhu === '--' || elemenSuhu.includes('--') || elemenSuhu === '') {
+        if (aiAnalysisWrapper) {
+            aiAnalysisWrapper.classList.remove('show'); // Sembunyikan jika cuaca belum siap
+        }
+        window.DEBUG && console.log("Analisis AI ditangguhkan: Menunggu sinkronisasi GPS/Sensor.");
+        return; 
     }
+
+    const infoSuhuCuaca = `Saat ini jam menunjukkan pukul <strong>${formatJam} WIB</strong>. Kondisi di sekitar lokasi Anda terpantau <strong>${elemenCuaca}</strong> dengan suhu sekitar <strong>${elemenSuhu}</strong>.`;
+    const rekomendasiAI = analisisKondisiSuhu(elemenSuhu);
 
     // Teks narasi (Memperbaiki bug tanda bintang menjadi tag strong)
     const pesanNarasi = `
@@ -2513,9 +2974,6 @@ function tampilkanSapaanAwalAI() {
         Nah, <strong>hari ini kita mau membuat adonan apa?</strong> 🍩🥖<br>
         Silakan pilih mode <strong>Proofing</strong> (Initial/Rounding/Final) di bawah atau siapkan formula Anda di tab Resep!
     `;
-
-    const aiInsightBox = document.getElementById('ai-insight');
-    const aiAnalysisWrapper = document.getElementById('ai-analysis');
 
     if (aiInsightBox && aiAnalysisWrapper) {
         aiInsightBox.innerHTML = pesanNarasi;
@@ -2653,8 +3111,8 @@ if ('serviceWorker' in navigator) {
         window.location.reload();
     });
 }
-let isFetchingLocation = false;       // Pengunci agar tidak berjalan double
-let locationPermissionDenied = false; // Penanda jika user sudah pernah menolak GPS
+window.isFetchingLocation = window.isFetchingLocation ?? false;       // Pengunci agar tidak berjalan double
+window.locationPermissionDenied = window.locationPermissionDenied ?? false; // Penanda jika user sudah pernah menolak GPS
 // =========================================================
 // SISTEM NOTIFIKASI — TIMER PROOFER
 // =========================================================
@@ -2698,6 +3156,9 @@ const NotifSystem = (() => {
         const empty = document.getElementById('notif-empty-msg');
         if (!container) return;
 
+        // Bersihkan daftar visual lama secara total
+        container.innerHTML = '';
+
         // Sinkronisasi filter kategori secara presisi
         const tampil = filterAktif === 'semua'
             ? notifs
@@ -2705,10 +3166,6 @@ const NotifSystem = (() => {
                 const kat = n.kategori || n.category || '';
                 return kat.toLowerCase() === filterAktif.toLowerCase();
             });
-
-        // Bersihkan daftar visual lama
-        const oldItems = container.querySelectorAll('.notif-item');
-        oldItems.forEach(el => el.remove());
 
         if (tampil.length === 0) {
             if (empty) empty.style.display = 'block';
@@ -2722,23 +3179,22 @@ const NotifSystem = (() => {
             div.id = `notif-${n.id}`;
             div.dataset.id = n.id;
             
-            // Menggabungkan string literal HTML secara utuh dalam satu backtick
+            // Menggabungkan string literal HTML secara utuh & aman
             div.innerHTML = `
                 <div class="notif-icon-box" style="cursor:default">${n.ikon || '🔔'}</div>
-                <div class="notif-body" style="cursor:pointer"  data-onclick="NotifSystem.baca(this.closest('.notif-item').dataset.id)">
+                <div class="notif-body" style="cursor:pointer" onclick="NotifSystem.baca('${n.id}')">
                     <div class="notif-title">${n.judul}</div>
                     <div class="notif-desc">${n.deskripsi}</div>
                     <div class="notif-time">${n.waktu || ''}</div>
                 </div>
-                <button class="btn-hapus-notif-cepat" data-id="${n.id}" title="Hapus notifikasi ini"
+                <button class="btn-hapus-notif-cepat" onclick="event.stopPropagation(); NotifSystem.hapus('${n.id}')" title="Hapus notifikasi ini"
                     style="background:none;border:none;font-size:1rem;color:#bbb;cursor:pointer;padding:4px 6px;align-self:flex-start;flex-shrink:0;line-height:1;"
-                     data-onmouseover="this.style.color='#e74c3c'"  data-onmouseout="this.style.color='#bbb'">✕</button>
+                    onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#bbb'">✕</button>
             `;
             container.appendChild(div);
         });
     }
 
-    // ADOPSI KODE SEBELUMNYA: Fungsi filter tab yang sempat hilang
     function filter(kat, btnEl) {
         filterAktif = kat;
         document.querySelectorAll('.notif-tab-btn').forEach(b => b.classList.remove('active'));
@@ -2754,7 +3210,12 @@ const NotifSystem = (() => {
     function baca(id) {
         const targetId = Number(id);
         const n = notifs.find(x => x.id === targetId || x.id === id);
-        if (n) { n.dibaca = true; simpan(); renderList(); updateBadge(); }
+        if (n) { 
+            n.dibaca = true; 
+            simpan(); 
+            renderList(); 
+            updateBadge(); 
+        }
     }
 
     function hapus(id) {
@@ -2785,37 +3246,61 @@ const NotifSystem = (() => {
     // Inisialisasi awal saat aplikasi dimuat
     setTimeout(() => { updateBadge(); }, 100);
 
-    // Kembalikan semua fungsi agar bisa diakses di luar modul
-    return { tambah, renderList, updateBadge, filter, bacaSemua, baca, hapus, hapusSemua };
+    // Kembalikan semua fungsi lengkap agar bisa diakses di luar modul
+    return { 
+        tambah, 
+        renderList, 
+        updateBadge, 
+        filter, 
+        bacaSemua, 
+        baca, 
+        hapus, 
+        hapusSemua 
+    };
 })();
 
-// Pastikan terdaftar di skop global window
+// Daftarkan ke skop global window agar aman diakses dari atribut onclick HTML
 window.NotifSystem = NotifSystem;
 
 function closeNotifModal() {
     const modal = document.getElementById('notif-modal');
     if (!modal) return;
 
+    // Lepaskan fokus dari elemen aktif di dalam modal
     if (document.activeElement && modal.contains(document.activeElement)) {
         document.activeElement.blur();
     }
+    
+    // Hilangkan class aktif untuk memicu animasi CSS close
     modal.classList.remove('active');
     document.body.style.overflow = '';
 
+    // Sembunyikan modal secara total setelah animasi/delay singkat
     setTimeout(() => {
+        modal.style.display = 'none'; // Fallback aman
         modal.setAttribute('inert', '');
         modal.setAttribute('aria-hidden', 'true');
     }, 50);
 }
 
-
-// Fungsi global yang dipanggil dari HTML — harus di-assign ke window karena berada di dalam <script type="module">
-function filterNotif(kat, btn) { NotifSystem.filter(kat, btn); }
-function bacaSemua() { NotifSystem.bacaSemua(); }
+// Daftarkan ke global window hanya SEKALI di paling bawah file
 window.filterNotif = filterNotif;
 window.bacaSemua = bacaSemua;
 window.closeNotifModal = closeNotifModal;
-//=======================================================================
+
+
+// Fungsi global yang dipanggil dari HTML — harus di-assign ke window karena berada di dalam <script type="module">
+function filterNotif(kat, btn) { 
+    if (typeof NotifSystem !== 'undefined') {
+        NotifSystem.filter(kat, btn); 
+    }
+}
+
+function bacaSemua() { 
+    if (typeof NotifSystem !== 'undefined') {
+        NotifSystem.bacaSemua(); 
+    }
+}
 
 // =========================================================
 // LOGIKA SLIDER ARTIKEL OTOMATIS & SWIPE MANUAL
@@ -3321,6 +3806,7 @@ function updateSensorUI(elementId, valueText) {
     if (typeof processWeatherData === "function") {
         processWeatherData(currentTemp, currentHum);
     }
+    tampilkanSapaanAwalAI();
 }
 
 function onDisconnected() {
@@ -3832,6 +4318,10 @@ document.addEventListener('DOMContentLoaded', () => {
             aktifkanModePIP();
         });
     }
+    const btnResep = document.getElementById('btn-buka-resep');
+    if (btnResep) {
+        btnResep.addEventListener('click', window.tampilkanDaftarResepTersimpan);
+    }
 });
 // =========================================================
 
@@ -4225,6 +4715,7 @@ function updateDynamicTheme(weatherId, mainWeather) {
 //=======================================
 // INIT APP
 //=======================================
+let isFetchingLocation = false;
 async function initApp() {
     // 1. Cek pengunci: Jika sedang memuat data, batalkan request refresh baru
     if (isFetchingLocation) {
@@ -4440,9 +4931,7 @@ function processGeocode(geoData, lat, lon) {
     let profileLocation = "Tidak diketahui";
 
     if (geoData && geoData.address) {
-
         const addr = geoData.address;
-
         window.DEBUG && console.log("DEBUG GEOCODE LENGKAP:", JSON.stringify(addr, null, 2));
 
         profileLocation =
@@ -4453,8 +4942,34 @@ function processGeocode(geoData, lat, lon) {
             addr.state ||
             "Tidak diketahui";
 
-        // <<< DI SINI nanti kita pindahkan isi kode geocode >>>
+        const jalan = addr.road || addr.neighbourhood || "";
+        const desa = addr.village || addr.hamlet || "";
+        let kecamatan = addr.subdistrict || addr.municipality || addr.city_district || addr.quarter || 
+                        ((!jalan && addr.suburb && addr.suburb.toLowerCase() !== (desa || "").toLowerCase()) ? addr.suburb : "") || addr.town || "";
 
+        if (kecamatan) kecamatan = kecamatan.replace(/(kecamatan|subdistrict)/gi, '').trim();
+
+        let kabupaten = addr.city || addr.regency || addr.county || "";
+        if (kabupaten) kabupaten = kabupaten.replace(/(kabupaten|regency|county|city|kota)/gi, '').trim();
+
+        const provinsi = addr.state || "";
+        const negara = addr.country || "";
+
+        const komponenBaris1 = [];
+        if (jalan) komponenBaris1.push(jalan);
+        if (desa && desa.toLowerCase() !== (kecamatan || "").toLowerCase()) komponenBaris1.push(desa);
+        if (kecamatan) komponenBaris1.push(kecamatan);
+        baris1 = komponenBaris1.length > 0 ? komponenBaris1.join(', ') : "Lokasi Terdeteksi";
+
+        const komponenBaris2 = [];
+        if (kabupaten) komponenBaris2.push(kabupaten);
+        if (provinsi) komponenBaris2.push(provinsi);
+        if (negara) komponenBaris2.push(negara);
+        
+        // PERBAIKAN DI SINI (menggunakan operator ternary yang benar):
+        baris2 = komponenBaris2.length > 0 ? komponenBaris2.join(', ') : "Indonesia";
+
+        fullLocationName = kecamatan && kabupaten ? `${kecamatan}, ${kabupaten}` : (kabupaten || "Lokasi Terdeteksi");
     }
 
     return {
@@ -5552,8 +6067,14 @@ if (aiBox) {
 // HAPUS KODE LAMA, GANTI DENGAN KODE BARU INI:
 function toggleAI() {
     const box = document.getElementById('ai-analysis');
-    if (box) {
-        box.classList.toggle('show'); // Menyelaraskan dengan pendeteksi klik luar bawaan Anda
+    if (!box) return;
+
+    if (box.style.display === 'none' || !box.classList.contains('show')) {
+        box.style.display = 'block';
+        box.classList.add('show');
+    } else {
+        box.style.display = 'none';
+        box.classList.remove('show');
     }
 }
 window.toggleAI = toggleAI;
@@ -5642,7 +6163,7 @@ function panggilKembaliAIAgent() {
 // INTERFAZ PREMIUM KALKULATOR RESEP: DUAL-GROUP AUTO SPREADSHEET
 // =========================================================================
 
-let bakeryIngredients = [
+window.bakeryIngredients = [
     // --- 1. BAHAN KERING ---
     { id: "flour_high", name: "Tepung Terigu pro Tinggi", type: "Dough", category: "Bahan Kering", ratio: 100, price: 13000, pack: 1000, isFlour: true },
     { id: "sugar", name: "Gula Pasir", type: "Dough", category: "Bahan Kering", ratio: 18, price: 18000, pack: 1000, isFlour: false },
@@ -5823,9 +6344,9 @@ function tambahBahanBakuKustom() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
         <td>${name}</td>
-        <td><input type="number" class="ing-ratio" value="${ratio}"  data-oninput="hitungHPP()"></td>
+        <td><input type="number" class="ing-ratio" value="${ratio}" oninput="hitungHPP()"></td>
         <td><span class="ing-weight">0</span> gr</td>
-        <td><input type="number" class="ing-price" value="${price}"  data-oninput="hitungHPP()"></td>
+        <td><input type="number" class="ing-price" value="${price}" oninput="hitungHPP()"></td>
         <td>Rp <span class="ing-total">0</span></td>
     `;
     tbody.appendChild(tr);
@@ -6218,6 +6739,14 @@ window.tambahBahanBakeryDinamis = function(tambahLagi = true) {
 
     window.bakeryIngredients.push(dataBahanBaru);
 
+    if (window.dbManager && window.dbManager.db) {
+        window.dbManager.db.saveRecipe({
+            id: dataBahanBaru.id,
+            name: dataBahanBaru.name,
+            ingredients: window.bakeryIngredients // Menyimpan seluruh list bahan resep terupdate
+        }).catch(err => console.error("Gagal backup ke DB lokal:", err));
+    }
+
     nameInp.value = '';
     ratioInp.value = '';
     priceInp.value = '';
@@ -6225,10 +6754,7 @@ window.tambahBahanBakeryDinamis = function(tambahLagi = true) {
     perbaruiPreviewBahanBaru();
 
     if (typeof renderRecipeTableBakuTotal === 'function') renderRecipeTableBakuTotal();
-
-    if (typeof hitungHPPBakeryTotal === 'function') {
-        hitungHPPBakeryTotal();
-    }
+    if (typeof hitungHPPBakeryTotal === 'function') {hitungHPPBakeryTotal();}
 
     const cardsContainer = document.getElementById('recipe-cards-container');
     if (cardsContainer) {
@@ -6888,17 +7414,37 @@ function tutupHalamanResepSecaraAman() {
 document.addEventListener("DOMContentLoaded", async () => {
     window.DEBUG && console.log("🚀 Memulai inisialisasi modul Timer Proofer & Kalkulator HPP...");
 
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (session) {
+            document.body.classList.remove('logged-out');
+            document.body.classList.add('logged-in');
+            console.log('Login terdeteksi untuk:', session.user.email);
+        } else {
+            document.body.classList.remove('logged-in');
+            document.body.classList.add('logged-out');
+        }
+    } catch (err) {
+        console.error('Gagal memeriksa sesi:', err);
+    }
+
+    // Pantau perubahan status login secara real-time
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (session) {
+            document.body.classList.remove('logged-out');
+            document.body.classList.add('logged-in');
+        } else {
+            document.body.classList.remove('logged-in');
+            document.body.classList.add('logged-out');
+        }
+    });
+    
     // -----------------------------------------------------------------
     // 1. INI-AWAL GLOBAL & CORE SYSTEM DISPLAY
     // -----------------------------------------------------------------
     if (typeof initArticleSlider === 'function') {
         initArticleSlider();
-    }
-    if (typeof renderRecipeTableBakuTotal === 'function') {
-        renderRecipeTableBakuTotal();
-    }
-    if (typeof hitungHPPBakeryTotal === 'function') {
-        hitungHPPBakeryTotal();
     }
     if (typeof inisialisasiFormTambahBahan === 'function') {
         inisialisasiFormTambahBahan();
@@ -7398,161 +7944,6 @@ function filterNotificationElements(category) {
     tambahNotifikasi("Sistem: GPS berhasil mendeteksi posisi di Balonggabus, Candi, Sidoarjo. Tema malam aktif.", "sistem", "⚙️");
     tambahNotifikasi("Capacitor Native: Izin Push Notification disetujui. Pengingat proofer siap berjalan di latar belakang.", "sistem", "⚙️");
 
-    // --- REVISI FINAL: KODE SINKRONISASI KONTROLLER KARTU RESEP ---
-    const recipeContainer = document.getElementById('recipe-cards-container');
-
-if (recipeContainer) {
-    recipeContainer.addEventListener('input', function(event) {
-        // Hanya proses jika elemen yang memicu adalah INPUT
-        if (event.target.tagName === 'INPUT') {
-            const inputField = event.target;
-            
-            // Perbaikan Selektor: Cari secara spesifik recipe-card yang memiliki data-id
-            const recipeCard = inputField.closest('.recipe-card[data-id]') || inputField.closest('[data-id]');
-            
-            // JIKA tidak ditemukan kartu dengan data-id, biarkan sistem utama bekerja sendirian
-            if (!recipeCard) {
-                window.DEBUG && console.log("Input ditangani langsung oleh Core System.");
-                return; 
-            }
-
-            // Ambil index array dari atribut HTML
-            const indexBahan = recipeCard.getAttribute('data-id');
-            if (indexBahan === null || indexBahan === undefined) return;
-
-            // Ambil referensi Array data utama aplikasi Anda
-            let dataArray = null;
-            if (typeof bumbuResepList !== 'undefined') {
-                dataArray = bumbuResepList;
-            } else if (typeof window.bumbuResepList !== 'undefined') {
-                dataArray = window.bumbuResepList;
-            } else if (typeof bakeryIngredients !== 'undefined') {
-                dataArray = bakeryIngredients;
-            } else if (typeof window.bakeryIngredients !== 'undefined') {
-                dataArray = window.bakeryIngredients;
-            }
-
-            // Jika array data ditemukan, sinkronisasikan nilainya ke memori sebelum hitung total
-            if (dataArray && dataArray[indexBahan]) {
-                const allInputs = recipeCard.querySelectorAll('input');
-                
-                // Pastikan struktur input di dalam kartu memenuhi syarat minimal data entry
-                if (allInputs.length >= 3) {
-                    const nilaiTakaran = parseFloat(allInputs[0].value) || 0;
-                    const hargaBeli = parseFloat(allInputs[1].value) || 0;
-                    const beratPack = parseFloat(allInputs[2].value) || 1;
-
-                    // 1. Tanam langsung ke Object Memori (Menggantikan fungsi syncDataKeMemori)
-                    dataArray[indexBahan].ratio = nilaiTakaran;
-                    dataArray[indexBahan].price = hargaBeli;
-                    dataArray[indexBahan].pack = beratPack;
-
-                    // 2. HITUNG DAN RENDER ULANG VISUAL KARTU SECARA INSTAN
-                    // Ambil berat tepung utama saat ini sebagai acuan
-                    const baseFlourInput = document.getElementById('base-flour');
-                    const baseFlourWeight = parseFloat(baseFlourInput.value) || 1000;
-                    const yieldInput = document.getElementById('recipe-yield');
-                    const totalYield = parseFloat(yieldInput.value) || 1;
-
-                    let grossWeight = 0;
-                    let costTerpakai = 0;
-                    const ing = dataArray[indexBahan];
-
-                    // Tentukan kalkulasi berdasarkan tipe bahan
-                    if (ing.type === "Dough" || ing.category === "Bahan Kering" || ing.category === "Bahan Basah" || ing.category === "Bahan Pengembang") {
-                        let ratio = ing.isFlour ? 100 : nilaiTakaran;
-                        grossWeight = (ratio / 100) * baseFlourWeight;
-                        costTerpakai = (grossWeight / beratPack) * hargaBeli;
-                    } else {
-                        // Topping & Kemasan dikalikan target yield
-                        grossWeight = nilaiTakaran * totalYield;
-                        costTerpakai = (grossWeight / beratPack) * hargaBeli;
-                    }
-
-                    // Tulis hasil matematika terbaru langsung ke elemen teks di dalam kartu ini
-                    // (Mencari ID elemen gross dan cost yang sesuai dengan bahan Anda)
-                    const idBahan = ing.id !== undefined ? ing.id : indexBahan;
-                    
-                    const grossEl = document.getElementById(`gross-${idBahan}`);
-                    if (grossEl) grossEl.innerText = Math.round(grossWeight);
-                    
-                    const costEl = document.getElementById(`cost-${idBahan}`);
-                    if (costEl) costEl.innerText = Math.round(costTerpakai).toLocaleString('id-ID');
-
-                    // Cari juga elemen tabel PDF tersembunyi jika ada
-                    const grossTabEl = document.getElementById(`gross-table-${idBahan}`);
-                    if (grossTabEl) grossTabEl.innerText = Math.round(grossWeight);
-                    const costTabEl = document.getElementById(`cost-table-${idBahan}`);
-                    if (costTabEl) costTabEl.innerText = Math.round(costTerpakai).toLocaleString('id-ID');
-                }
-            }
-
-            // 3. Picu fungsi kalkulator global untuk menyegarkan ringkasan HPP paling bawah
-            if (typeof hitungHPPBakeryTotal === 'function') {
-                hitungHPPBakeryTotal();
-            } else if (typeof window.hitungHPPBakeryTotal === 'function') {
-                window.hitungHPPBakeryTotal();
-            }
-        }
-    });
-}
-// --- PASANG LISTENER TOMBOL DI SINI ---
-    const btnSimpan = document.getElementById('btn-simpan-resep');
-    if (btnSimpan) {
-        btnSimpan.addEventListener('click', function() {
-        if (typeof window.simpanResepKeDatabase === 'function') {
-            window.simpanResepKeDatabase();
-        } else {
-            console.error("Modul simpanResepKeDatabase belum siap sepenuhnya.");
-        }
-    });
-    }
-
-    const btnMuat = document.getElementById('btn-muat-resep');
-    if (btnMuat) {
-        btnMuat.addEventListener('click', () => window.tampilkanDaftarResepTersimpan());
-    }
-
-    const inputImpor = document.getElementById('recipe-import-input');
-    if (inputImpor) {
-        inputImpor.addEventListener('change', async (e) => {
-            const file = e.target.files?.[0];
-            if (file) await window.imporResepDariFile(file);
-            e.target.value = '';
-        });
-    }
-
-    // Menggunakan getElementById karena modal Anda memakai id="notif-list-container"
-const notifContainerBox = document.getElementById('notif-list-container');
-
-if (notifContainerBox) {
-    notifContainerBox.addEventListener('click', function(event) {
-        // Ambil elemen terdekat yang memicu tombol hapus cepat
-        const tombolHapus = event.target.closest('.btn-hapus-notif-cepat') || event.target.closest('.btn-hapus-notif');
-        
-        if (tombolHapus) {
-            const idNotif = tombolHapus.getAttribute('data-id');
-            
-            // Langsung hilangkan elemen visual dari DOM
-            const itemNotif = document.getElementById(`notif-${idNotif}`) || tombolHapus.closest('.notif-item');
-            if (itemNotif) {
-                itemNotif.remove();
-            }
-
-            // Validasi sisa notifikasi, jika kosong munculkan info teks kosong
-            const sisaNotif = notifContainerBox.querySelectorAll('.notif-item');
-            if (sisaNotif.length === 0) {
-                const emptyMsg = document.getElementById('notif-empty-msg');
-                if (emptyMsg) emptyMsg.style.display = 'block';
-            }
-        }
-    });
-}
-
-// =========================================================================
-// TARUH DI SINI (Di luar DOMContentLoaded, sebelum tutup
-// =========================================================================
-
 // Pengaman kapasitas maksimum resep jika belum didefinisikan di file lain
 if (typeof MAX_RESEP_TERSIMPAN === 'undefined') {
     const MAX_RESEP_TERSIMPAN = 10; 
@@ -7727,16 +8118,62 @@ window.renderDaftarResepTersimpan = async function() {
 };
 
 // 5. TOMBOL DATABASES (Menggabungkan Logika Log & Membuka Modal UI)
-window.tampilkanDaftarResepTersimpan = async function() {
+window.tampilkanDaftarResepTersimpan = function() {
     window.DEBUG && console.log("Membuka database resep...");
     const modal = document.getElementById('recipe-list-modal');
+    const container = document.getElementById('recipe-list-container');
+    
     if (!modal) {
-        console.error("Elemen 'recipe-list-modal' tidak ditemukan di HTML!");
+        console.error("Elemen 'recipe-list-modal' tidak ditemukan!");
         return;
     }
-    await window.renderDaftarResepTersimpan();
+
+    // Ambil data resep dari LocalStorage (menggunakan key 'premium_saved_recipes')
+    try {
+        const rawData = localStorage.getItem('premium_saved_recipes');
+        const recipes = rawData ? JSON.parse(rawData) : [];
+
+        if (container) {
+            if (recipes.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#777; padding:20px;">Belum ada resep yang tersimpan.</p>';
+            } else {
+                let html = '';
+                recipes.forEach((r) => {
+                    html += `
+                        <div style="background:#f9f9f9; border:1px solid #e0e0e0; border-radius:8px; padding:12px; margin-bottom:10px;">
+                            <div style="font-weight:bold; color:var(--chocolate); font-size:1rem; margin-bottom:4px;">${r.nama || 'Tanpa Nama'}</div>
+                            <div style="font-size:0.85rem; color:#555;">
+                                🌾 Tepung: ${r.tepungUtama}g &nbsp;|&nbsp; 🍩 Yield: ${r.targetYield} pcs &nbsp;|&nbsp; 💰 Jual: Rp ${Number(r.hargaJual || 0).toLocaleString('id-ID')}
+                            </div>
+                            <div style="font-size:0.75rem; color:#888; margin-top:6px;">
+                                Dibuat: ${r.waktuSimpan ? new Date(r.waktuSimpan).toLocaleString('id-ID') : '-'}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+        }
+    } catch (e) {
+        console.error("Gagal memuat daftar resep:", e);
+        if (container) {
+            container.innerHTML = '<p style="color:red; text-align:center;">Gagal membaca data resep dari perangkat.</p>';
+        }
+    }
+
+    // Tampilkan modal ke layar
     modal.classList.add('active');
-    window.history.pushState({ recipeListOpen: true }, "");
+    modal.removeAttribute('inert');
+    document.body.style.overflow = 'hidden';
+};
+
+window.tutupDaftarResepTersimpan = function() {
+    const modal = document.getElementById('recipe-list-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.setAttribute('inert', '');
+    }
+    document.body.style.overflow = '';
 };
 
 // 6. TUTUP MODAL
@@ -7886,14 +8323,9 @@ async function generateBusinessInsight(recipeData) {
     insightText.innerText = analysis;
 }
 
-function showToast(message) {
-    alert(message);
-}
+// Catatan: showToast (versi toast bertema, bukan alert) didefinisikan di script
+// biasa paling bawah file (bukan di sini) supaya tidak menimpa versi alert() lama.
 
-window.showToast = showToast;
-
-</script>
-<script>
 // Fallback global untuk tombol profil inline bila script module belum selesai dieksekusi.
 (function () {
     function profileGet(key, fallback) {
@@ -7976,8 +8408,8 @@ window.showToast = showToast;
         };
     }
 })();
-</script>
-<script>
+
+
 (function(){
     function parseSimpleCall(code, el) {
         // match patterns like funcName('arg', this, 123)
@@ -8056,11 +8488,7 @@ window.showToast = showToast;
         }
     }, true);
 })();
-</script>
 
-<style id="copilot-toast-style">#copilot-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(0,0,0,.85);color:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:99999;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}</style>
-
-<script>
 // Minimal toast helper used by storage fallback to inform users about backup downloads
 function showToast(msg, duration = 2000) {
   try {
@@ -8089,5 +8517,8 @@ function showToast(msg, duration = 2000) {
   }
 }
 </script>
+
+<style id="copilot-toast-style">#copilot-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(0,0,0,.85);color:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:99999;font-family:system-ui,-apple-system,"Segoe UI",Roboto,'Helvetica Neue',Arial}</style>
+
 </body>
 </html>
