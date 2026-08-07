@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Login & Register - Kedai Mak-er</title>
     <meta name="theme-color" content="#FDF5E6">
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,11 +12,38 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/html2pdf.bundle.min.js" defer></script>
+    <script type="importmap">
+{
+  "imports": {
+    "idb": "https://cdn.jsdelivr.net/npm/idb@8/+esm"
+  }
+}
+</script>
     <link rel="apple-touch-icon" href="logo donat.png">
     <link rel="manifest" href="manifest.json">
     <title>Timer Proofer</title>
     <style>
-        :root {--cream: #FDF5E6; --dough: #F2D2A9; --chocolate: #4E342E; --accent: #E67E22; -webkit-tap-highlight-color: transparent; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Fallback untuk beberapa browser */ outline: none;}
+        :root {--cream: #FDF5E6;
+    --dough: #F2D2A9;
+    --chocolate: #4E342E;
+    --accent: #E67E22;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    outline: none;
+
+    /* VARIABEL GOLDEN RATIO (φ = 1.618) */
+    --phi: 1.618;
+    --fs-small: 0.618rem;   /* base / φ */
+    --fs-base: 0.875rem;    /* 14px (Base) */
+    --fs-h3: 1.618rem;      /* 14px × φ ≈ 22.6px */
+    --fs-h2: 2.618rem;      /* h3 × φ */
+    --space-xs: 8px;
+    --space-sm: 13px;
+    --space-md: 21px;
+    --space-lg: 34px;
+    --radius-sm: 8px;
+    --radius-md: 13px;
+    --radius-lg: 21px;}
         /* STYLE SELURUH PAGE*/
         body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Hanya font yang ditambah */
     background-color: var(--cream); 
@@ -33,14 +59,14 @@
     }
     /* CSS untuk kontainer login/register */
         .auth-container {
-            display: flex;
-    flex-direction: column; /* PENTING: Menyusun elemen di dalamnya ke bawah */
-    background: #ffffff;    /* Warna latar belakang kotak putih */
+            display: flex;                   /* Tetap dipertahankan agar elemen tersusun rapi */
+    flex-direction: column;          /* Tetap dipertahankan agar susunan mengalir ke bawah */
+    background: #ffffff;             /* Tetap dipertahankan untuk warna latar */
     width: 100%;
-    max-width: 480px;       /* Ukuran maksimal agar pas di HP/desktop */
-    padding: 30px;          /* Jarak dalam */
-    border-radius: 20px;    /* Membuat sudut melengkung */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Efek bayangan lembut */
+    max-width: 420px;                /* Penyesuaian Golden Ratio */
+    padding: 26px;                   /* Penyesuaian Golden Ratio (420 / 16.18) */
+    border-radius: 21px;             /* Penyesuaian Golden Ratio (13 * 1.618) */
+    box-shadow: 0 5px 21px rgba(0, 0, 0, 0.05); /* Skala bayangan berasio 21px */
     box-sizing: border-box;
         }
 
@@ -50,23 +76,23 @@
         }
 
         .auth-header h2 {
-            margin: 0 0 6px 0;
-            color: var(--accent);
-            font-size: 1.4rem;
-            font-weight: 800;
+            margin: 0 0 8px 0;
+    color: var(--accent);
+    font-size: var(--fs-h3);
+    font-weight: 800;
         }
         .auth-header p {
             margin: 0;
-            font-size: 0.85rem;
-            color: rgba(78, 52, 46, 0.7);
+    font-size: 0.875rem;  /* 14px (Base) */
+    color: rgba(78, 52, 46, 0.7);
         }
 
         .tab-switch {
             display: flex;
             background: rgba(242, 210, 169, 0.3);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
+            border-radius: 13px;
+            padding: 5px;
+            margin-bottom: 21px;
         }
 
         .tab-btn {
@@ -92,22 +118,22 @@
         }
         .form-group label {
             display: block;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--chocolate);
-            margin-bottom: 5px;
+    font-size: 0.76rem;   /* 14 / 1.3 ≈ 10.7px atau ~0.76rem */
+    font-weight: 700;
+    color: var(--chocolate);
+    margin-bottom: 5px;
         }
         .form-group input {
             width: 100%;
-            padding: 12px 14px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            box-sizing: border-box;
-            outline: none;
-            color: var(--chocolate);
-            background: #fff;
-            transition: border-color 0.2s;
+    padding: 10px 16px;                     /* Diubah: proporsi 1 : 1.618 */
+    border: 1.5px solid #e2e8f0;            /* Tetap */
+    border-radius: 10px;                    /* Diubah: mengikuti angka Fibonacci */
+    font-size: 0.875rem;                    /* Diubah: 14px base font */
+    box-sizing: border-box;                 /* Tetap */
+    outline: none;                          /* Tetap */
+    color: var(--chocolate);                /* Tetap */
+    background: #fff;                       /* Tetap */
+    transition: border-color 0.2s;          /* Tetap */
         }
         .form-group input:focus {
             border-color: var(--accent);
@@ -119,14 +145,14 @@
             background: var(--accent);
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 0.95rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.25);
-            margin-top: 6px;
-            transition: transform 0.1s ease;
+            padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    font-weight: 800;
+    font-size: 0.875rem;
+    cursor: pointer;
+    box-shadow: 0 4px 13px rgba(230, 126, 34, 0.25);
+    margin-top: 8px;
+    transition: transform 0.1s ease;
         }
         .btn-submit:active {
             transform: scale(0.98);
@@ -135,9 +161,9 @@
             display: flex;
             align-items: center;
             text-align: center;
-            margin: 18px 0;
+            margin: 21px 0;
             color: rgba(78, 52, 46, 0.4);
-            font-size: 0.75rem;
+            font-size: 0.76rem;
             font-weight: 700;
         }
         .divider::before, .divider::after {
@@ -151,7 +177,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 13px;
         }
         .social-btn {
             background: #fff;
@@ -224,12 +250,58 @@ body.logged-in .container {
     display: flex !important;
     width: 100%;
 }
+/* Styling khusus tombol Logout */
+.logout-chip {
+    background: rgba(231, 76, 60, 0.1); /* Merah transparan */
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #c0392b; /* Merah gelap */
+}
+
+.logout-chip:hover {
+    background: rgba(231, 76, 60, 0.2);
+    transform: translateY(-1px);
+}
+
+.btn-danger-outline {
+    background: transparent;
+    color: #c0392b;
+    border: 1px solid #c0392b;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+}
+.btn-danger-outline:active {
+    background: rgba(231, 76, 60, 0.1);
+    transform: scale(0.98);
+}
+.btn-danger-solid {
+    background: #c0392b;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(192, 57, 43, 0.2);
+}
+.btn-danger-solid:active {
+    background: #a93226;
+    transform: scale(0.98);
+}
 /* ========================================================== */
         .container {--bg-container: #ffffff; 
     --card-bg: rgba(0, 0, 0, 0.04); 
     background: var(--bg-container); 
     width: 100%; 
     max-width: 480px; 
+    margin: 0 auto;
     height: 100vh; 
     height: 100dvh; 
     display: flex; 
@@ -246,6 +318,51 @@ body.logged-in .container {
         box-shadow: none; 
     }
 }
+
+/* Mengelompokkan pengaturan lebar agar identik */
+.container, 
+.auth-container {
+    width: 100%;
+    max-width: 480px; /* Sesuaikan dengan max-width yang sedang Anda gunakan */
+    margin: 0 auto;   /* Memastikan posisinya berada tepat di tengah layar */
+    box-sizing: border-box;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Anda tetap bisa memberikan styling spesifik lainnya secara terpisah */
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh; /* Agar form login berada di tengah secara vertikal */
+    padding: 20px;
+}
+
+/* Efek transisi untuk form Nama */
+#group-name {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+#group-name.active-form {
+    max-height: 80px; 
+    opacity: 1;
+    margin-bottom: 15px; /* Jarak antar input */
+    visibility: visible;
+}
+
+.inputs-wrapper {
+    /* Sesuaikan angka 240px ini dengan total tinggi 3 form-group Anda di browser */
+    min-height: 240px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Memastikan input selalu rapat ke atas */
+}
         /* ========================================================== */
         /* ----------------- TOP NAVIGATION BAR --------------------- */
         /* ========================================================== */
@@ -258,32 +375,43 @@ body.logged-in .container {
    USER PROFILE
 ========================================== */
 
-.profile-container {display: flex; flex-direction: column; gap: 14px;}
-.profile-card {background: var(--bg-container); border: 1px solid rgba(78, 52, 46, 0.08); border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(78, 52, 46, 0.08);}
+.profile-container {display: flex; flex-direction: column; gap: 21px;}
+.profile-card {background: var(--bg-container); border: 1px solid rgba(78, 52, 46, 0.08); border-radius: 21px; padding: 26px; margin-bottom: 21px; box-shadow: 0 5px 21px rgba(78, 52, 46, 0.08);}
 .profile-header {text-align: center;}
-.profile-avatar {width: 88px; height: 88px; margin: 0 auto; border-radius: 50%; overflow: hidden; border: 4px solid rgba(230, 126, 34, 0.85); box-shadow: 0 8px 18px rgba(230, 126, 34, 0.22);}
+.profile-avatar {width: 89px !important;  /* Angka Fibonacci */
+    height: 89px !important; /* Angka Fibonacci */
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;        /* Menjaga gambar tetap di dalam lingkaran */
+    border: 3.5px solid rgba(230, 126, 34, 0.85);
+    box-shadow: 0 8px 18px rgba(230, 126, 34, 0.22);
+}
 .profile-avatar img {width: 100%; height: 100%; object-fit: cover; display: block;}
-#user-greeting {margin-top: 12px; font-size: 0.86rem; color: rgba(78, 52, 46, 0.72); font-weight: 700;}
-.profile-name {margin-top: 4px; font-size: 1.35rem; line-height: 1.2; font-weight: 800; color: var(--chocolate); overflow-wrap: anywhere;}
-.profile-subtitle {margin-top: 5px; color: rgba(78, 52, 46, 0.72); font-weight: 600; overflow-wrap: anywhere;}
-.profile-badge {display: inline-flex; align-items: center; justify-content: center; gap: 6px; margin-top: 12px; padding: 7px 14px; border-radius: 999px; background: rgba(230, 126, 34, 0.12); color: var(--accent); font-size: 0.78rem; font-weight: 800; border: 1px solid rgba(230, 126, 34, 0.22);}
-.profile-section-title {display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 800; margin: 0 0 14px; color: var(--chocolate);}
+#user-greeting {margin-top: 13px; font-size: 0.875rem; color: rgba(78, 52, 46, 0.72); font-weight: 700;}
+.profile-name {margin-top: 5px; font-size: 1.42rem; line-height: 1.25; font-weight: 800; color: var(--chocolate); overflow-wrap: anywhere;}
+.profile-subtitle {margin-top: 5px; 
+    font-size: 0.875rem; /* 14px */
+    color: rgba(78, 52, 46, 0.72); 
+    font-weight: 600; 
+    overflow-wrap: anywhere;}
+.profile-badge {display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 13px; padding: 8px 21px; border-radius: 999px; background: rgba(230, 126, 34, 0.12); color: var(--accent); font-size: 0.78rem; font-weight: 800; border: 1px solid rgba(230, 126, 34, 0.22);}
+.profile-section-title {display: flex; align-items: center; gap: 8px; font-size: 1.125rem; font-weight: 800; margin: 0 0 13px; color: var(--chocolate);}
 .profile-info-list {margin-top: 16px; background: rgba(242, 210, 169, 0.32); border-radius: 14px; overflow: hidden; border: 1px solid rgba(78, 52, 46, 0.06);}
 .profile-info-row {display: grid; grid-template-columns: minmax(96px, auto) 1fr; gap: 10px; align-items: center; padding: 12px 14px; border-bottom: 1px solid rgba(78, 52, 46, 0.08); text-align: left;}
 .profile-info-row:last-child {border-bottom: none;}
 .profile-info-row span {font-size: 0.82rem; color: rgba(78, 52, 46, 0.72); font-weight: 700;}
 .profile-info-row strong {font-weight: 800; color: var(--chocolate); text-align: right; overflow-wrap: anywhere;}
-.profile-summary-grid, .bakery-stats-grid {display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px;}
-.profile-summary-item, .bakery-stat-item {min-width: 0; background: var(--cream); border: 1px solid rgba(78, 52, 46, 0.06); border-radius: 14px; padding: 13px 10px; text-align: center;}
+.profile-summary-grid, .bakery-stats-grid {display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; margin-top: 13px;}
+.profile-summary-item, .bakery-stat-item {min-width: 0; background: var(--cream); border: 1px solid rgba(78, 52, 46, 0.06); border-radius: 13px; padding: 16px 10px; text-align: center;}
 .summary-icon {font-size: 1.35rem; line-height: 1;}
-.summary-title, .stat-label {margin-top: 6px; font-size: 0.72rem; color: rgba(78, 52, 46, 0.68); font-weight: 800;}
+.summary-title, .stat-label {margin-top: 5px; font-size: 0.72rem; color: rgba(78, 52, 46, 0.68); font-weight: 800;}
 .summary-value {margin-top: 5px; min-height: 20px; font-size: 0.86rem; font-weight: 800; color: var(--chocolate); overflow-wrap: anywhere;}
 .summary-value small {display: block; margin-bottom: 3px; font-size: 0.66rem; line-height: 1.25; color: rgba(78, 52, 46, 0.55) !important;}
-.stat-value {font-size: 1.55rem; line-height: 1; font-weight: 900; color: var(--accent);}
+.stat-value {font-size: 1.8rem; line-height: 1; font-weight: 900; color: var(--accent);}
 .profile-button {margin-top: 2px; border-radius: 16px;}
 .profile-modal-header {display: flex; justify-content: space-between; align-items: center; gap: 10px;}
 .profile-subline {margin-top: 8px; color: rgba(78, 52, 46, 0.65); font-size: 0.82rem;}
-.profile-actions {display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 16px 0 0;}
+.profile-actions {display: flex; flex-wrap: nowrap; justify-content: center; gap: 10px; margin: 16px 0 0;}
 .profile-chip {background: rgba(230, 126, 34, 0.12); border: 1px solid rgba(230, 126, 34, 0.18); color: var(--accent); padding: 9px 12px; border-radius: 999px; font-size: 0.82rem; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease;}
 .profile-chip:hover {background: rgba(230, 126, 34, 0.18); transform: translateY(-1px);}
 .loading-skeleton {color: transparent !important; position: relative; overflow: hidden;}
@@ -312,8 +440,35 @@ body.logged-in .container {
 .edit-profile-avatar {width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--accent); object-fit: cover; box-shadow: 0 8px 18px rgba(230, 126, 34, 0.2);}
 .profile-modal-title {text-align: center; color: var(--accent); margin: 0 0 18px;}
 .save-btn {background: var(--accent); color: white; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; box-shadow: 0 4px 10px rgba(230, 126, 34, 0.18);}
-@media (max-width: 360px) {.profile-info-row {grid-template-columns: 1fr;} .profile-info-row strong {text-align: left;} .profile-summary-grid, .bakery-stats-grid {gap: 8px;} .profile-card, .profile-info-group {padding: 14px;}}
+/* 1. ATURAN UMUM / LAYAR STANDAR (GOLDEN RATIO - FIBONACCI 21px) */
+.profile-card, 
+.weather-card, 
+.article-modal-content, 
+.recipe-summary-box {
+    border-radius: 13px;
+    padding: 21px;
+}
 
+/* 2. RESPONSIVE LAYAR SEMPIT <= 360px (FIBONACCI 13px / 14px) */
+@media (max-width: 360px) {
+    .profile-info-row {
+        grid-template-columns: 1fr;
+    }
+    .profile-info-row strong {
+        text-align: left;
+    }
+    .profile-summary-grid, 
+    .bakery-stats-grid {
+        gap: 8px;
+    }
+    .profile-card, 
+    .profile-info-group,
+    .weather-card, 
+    .article-modal-content, 
+    .recipe-summary-box {
+        padding: 13px !important; /* Disesuaikan ke skala Fibonacci kecil agar tidak sempit */
+    }
+}
         /* Judul Aplikasi (Mengunci Tepat di Tengah Layar) */
         .top-nav-title {font-size: 1.2rem; font-weight: bold;margin: 0; white-space: nowrap; color: #E67E22;}
         /* Sisi Kanan (Kelompok Tombol Akses: Help, Notif, Settings) */
@@ -480,7 +635,25 @@ body.logged-in .container {
         .mini-mode h1, .mini-mode .location, .mini-mode #retry-btn, .mini-mode .premium-offline-box, 
         .mini-mode .weather-grid, .mini-mode #ai-analysis-wrapper, .mini-mode .mode-grid, 
         .mini-mode style, .mini-mode label, .mini-mode div:has(#custom-time), .mini-mode .tips, .mini-mode .about-btn, .mini-mode .bottom-bar{ display: none !important; }
-        
+        .mode-grid, 
+.bakery-stats-grid, 
+.action-buttons-wrapper {
+    gap: 13px !important;
+}
+
+.recipe-input-grid {
+    display: flex !important;
+    gap: 13px !important;
+}
+
+.recipe-input-grid > div:first-child {
+    flex: 1.618 !important; /* Column Utama (Tepung) */
+}
+
+.recipe-input-grid > div:last-child {
+    flex: 1 !important;     /* Column Sekunder (Porsi) */
+}
+
         /* TIMER CIRCLE*/
         .mini-mode .timer-circle { width: 110px; height: 110px; margin: 5px auto; }
         .mini-mode svg { width: 110px; height: 110px; }
@@ -607,7 +780,18 @@ body.logged-in .container {
          /* TIMER DAN ANALISIS AI - ada perubaha */
         .timer-circle { position: relative; width: 200px; height: 200px; margin: 15px auto; display: flex; justify-content: center; align-items: center; flex-shrink: 0;}
         .timer-content-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; z-index: 5; }
-        #countdown { font-size: 2.2rem; font-weight: bold; color: var(--chocolate); transition: opacity 0.1s ease; margin: 5px 0; pointer-events: auto; cursor: pointer; }
+        .timer-circle svg {
+    width: 233px !important; /* Fibonacci Number */
+    height: 233px !important;
+}
+        #countdown {font-size: var(--fs-h2, 2.29rem); 
+    font-weight: 800; 
+    color: var(--chocolate); 
+    transition: opacity 0.1s ease; 
+    margin: 5px 0; 
+    pointer-events: auto; 
+    cursor: pointer;
+}
         #progress-circle { transition: stroke-dashoffset 1s linear, stroke 0.5s ease; transform: scaleX(-1) rotate(-90deg); transform-origin: 100px 100px; }
         .time-info { font-size: 0.75rem; color: inherit; opacity: 0.8; font-weight: 600; height: 16px; line-height: 16px; text-align: center; }
 
@@ -965,70 +1149,69 @@ body.logged-in .container {
         .premium-offline-field input { width: 80%; padding: 8px; border: 1px solid #f2d2a9; border-radius: 10px; text-align: center; }
     </style>
 </head>
-<body>
+<body class="logged-out">
 <!-- BAGIAN LOGIN -->
-<!-- Form Login -->
-    <body class="logged-out">
-
     <!-- Form Login Lengkap -->
-    <div class="auth-container">
-        <div class="auth-header">
-            <h2>Kedai Mak-er</h2>
-            <p id="auth-subtitle">Masuk ke akun kedai Anda</p>
-        </div>
+    <div class="auth-container" id="auth-wrapper">
+    <div class="auth-header">
+        <h2>Kedai Mak-er</h2>
+        <p id="auth-subtitle">Masuk ke akun kedai Anda</p>
+    </div>
 
-        <!-- Tab Switcher (Login / Register) -->
-        <div class="tab-switch">
-            <button class="tab-btn active" id="btn-tab-login" onclick="switchMode('login')">Masuk</button>
-            <button class="tab-btn" id="btn-tab-register" onclick="switchMode('register')">Daftar</button>
-        </div>
+    <!-- Tab Switcher (Login / Register) -->
+    <div class="tab-switch">
+        <button class="tab-btn active" id="btn-tab-login" onclick="switchMode('login')">Masuk</button>
+        <button class="tab-btn" id="btn-tab-register" onclick="switchMode('register')">Daftar</button>
+    </div>
 
-        <div id="auth-error-box" class="auth-error"></div>
+    <div id="auth-error-box" class="auth-error"></div>
 
-        <!-- Form Email & Password -->
-        <form id="auth-form">
-            <div class="form-group" id="group-name" style="display: none;">
+    <!-- Form Email & Password -->
+    <form id="auth-form">
+        
+        <!-- WADAH INPUT: Ditambahkan di sini untuk mengunci tinggi form -->
+        <div class="inputs-wrapper">
+            <div class="form-group" id="group-name">
                 <label for="input-name">Nama Lengkap / Kedai</label>
                 <input type="text" id="input-name" placeholder="Contoh: Budi Bakery">
             </div>
+            
             <div class="form-group">
                 <label for="input-email">Email</label>
                 <input type="email" id="input-email" required placeholder="nama@email.com">
             </div>
+            
             <div class="form-group">
                 <label for="input-password">Kata Sandi</label>
                 <input type="password" id="input-password" required placeholder="Minimal 6 karakter">
             </div>
-            <button type="submit" class="btn-submit" id="btn-submit-main">MASUK</button>
-        </form>
-
-        <div class="divider">ATAU MASUK DENGAN</div>
-
-        <!-- OAuth Social Providers (Google, Facebook, Apple) -->
-        <div class="social-grid">
-            <button class="social-btn" onclick="signInWithProvider('google')">
-                <span>🌐</span> Google
-            </button>
-            <button class="social-btn" onclick="signInWithProvider('facebook')">
-                <span>📘</span> Facebook
-            </button>
-            <button class="social-btn" onclick="signInWithProvider('apple')">
-                <span>🍎</span> Apple
-            </button>
         </div>
+        <!-- AKHIR WADAH INPUT -->
 
-        <!-- WhatsApp Phone Auth / OTP -->
-        <button class="whatsapp-btn" onclick="signInWithWhatsApp()">
-            <span>💬</span> Masuk / Daftar via WhatsApp
+        <button type="submit" class="btn-submit" id="btn-submit-main">MASUK</button>
+    </form>
+
+    <div class="divider">ATAU MASUK DENGAN</div>
+
+    <!-- OAuth Social Providers (Google, Facebook, Apple) -->
+    <div class="social-grid">
+        <button class="social-btn" onclick="signInWithProvider('google')">
+            <span>🌐</span> Google
+        </button>
+        <button class="social-btn" onclick="signInWithProvider('facebook')">
+            <span>📘</span> Facebook
+        </button>
+        <button class="social-btn" onclick="signInWithProvider('apple')">
+            <span>🍎</span> Apple
         </button>
     </div>
 
-    <!-- Dashboard Utama (Isi dashboard aplikasi Anda tetap di sini) -->
-    <div class="container">
-        <!-- ... isi dashboard Anda ... -->
-    </div>
+    <!-- WhatsApp Phone Auth / OTP -->
+    <button class="whatsapp-btn" onclick="signInWithWhatsApp()">
+        <span>💬</span> Masuk / Daftar via WhatsApp
+    </button>
+</div>
 
-</body>
 <!-- BAGIAN HEADER - TIDAK BISA BERGERAK-->
 <!-- IKLAN MONETIZATION -->
  <!-- 
@@ -1068,7 +1251,7 @@ body.logged-in .container {
             
             <button class="nav-icon-btn" data-onclick="toggleModal('notif-modal')" title="Notifikasi" style="position: relative;">
                 🔔
-                <span class="notif-badge" id="global-notif-badge" style="display: flex;">10</span>
+                <span class="notif-badge" id="global-notif-badge" style="display: none;">0</span>
             </button>
             
             <button class="nav-icon-btn" data-onclick="toggleModal('settings-modal')" title="Pengaturan">⚙️</button>
@@ -1170,7 +1353,7 @@ body.logged-in .container {
         <div class="article-modal-content">
             <div class="article-modal-header">
                 <span id="modal-badge" class="article-badge">Badge</span>
-                <button class="article-modal-close" id="btn-close-notif" onclick="closeNotifModal()">×</button>
+                <button class="article-modal-close" id="btn-close-article" onclick="tutupArtikelSecaraAman()">×</button>
             </div>
             <h3 id="modal-title">Judul Artikel Lengkap</h3>
             <div class="article-modal-body" id="modal-body"></div>
@@ -1223,10 +1406,12 @@ body.logged-in .container {
         <!-- Bagian Timer Circle-->
         <div class="timer-circle">
             <svg width="200" height="200" id="timer-svg">
-                <circle cx="100" cy="100" r="90" stroke="rgba(0,0,0,0.05)" stroke-width="10" fill="transparent"/>
-                <circle id="progress-circle" cx="100" cy="100" r="90" stroke="#E67E22" stroke-width="10" fill="transparent" 
-                stroke-dasharray="565.48" stroke-dashoffset="0"/>
-            </svg>
+    <!-- Lingkaran Background (Jalur statis) -->
+    <circle cx="100" cy="100" r="89" stroke="rgba(0,0,0,0.05)" stroke-width="8" fill="transparent"/>
+    
+    <!-- Lingkaran Progress (Jalur yang bergerak) -->
+    <circle id="progress-circle" cx="100" cy="100" r="89" stroke="#E67E22" stroke-width="8" fill="transparent" stroke-dasharray="559.20" stroke-dashoffset="0" style="stroke-dashoffset: 0; stroke: var(--accent);"></circle>
+</svg>
             <div class="timer-content-wrapper">
                 <div class="time-info" id="time-duration"></div>
                 <div id="countdown"  data-onclick="handleTimerClick()">00:00</div>
@@ -1254,7 +1439,7 @@ body.logged-in .container {
     <!-- MODAL USER -->
 <!-- MODAL USER (PROFIL DINAMIS) -->
 <!-- MODAL PROFIL PENGGUNA -->
-<div class="page-modal" id="user-modal" tabindex="-1">
+<div class="page-modal" id="user-modal" tabindex="-1" inert>
     
     <!-- HEADER PROFIL (Sekarang identik dengan modal lainnya) -->
     <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
@@ -1263,9 +1448,9 @@ body.logged-in .container {
         </h3>
         <div style="display: flex; align-items: center; gap: 10px;">
             <!-- Tombol Refresh Bawaan Anda Tetap Dipertahankan -->
-            <button class="profile-refresh-btn" data-onclick="window.loadDynamicProfile &amp;&amp; loadDynamicProfile(true)" title="Perbarui profil" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">↻</button>
+            <button class="profile-refresh-btn" data-onclick="loadDynamicProfile(true)" title="Perbarui profil" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">↻</button>
             <!-- Tombol Close Silang Baru Yang Selaras -->
-            <button class="article-modal-close" id="btn-close-profile">×</button>
+            <button class="article-modal-close" id="btn-close-profile" data-onclick="toggleModal('user-modal')">×</button>
         </div>
     </div>
 
@@ -1281,12 +1466,13 @@ body.logged-in .container {
                 <div class="profile-name" id="profile-name">Pengguna</div>
                 <div class="profile-subtitle" id="profile-bakery">Nama Bakery</div>
                 <div class="profile-badge" id="profile-status-badge">Premium Member</div>
-                <div class="profile-subline" id="profile-last-updated">Terakhir diperbarui: 22.34</div>
+                <div class="profile-subline" id="profile-last-updated">Terakhir diperbarui: --:--</div>
+                <div class="profile-subline" id="profile-version" style="font-size: 0.72rem; opacity: 0.55; margin-top: 4px;"></div>
 
                 <div class="profile-actions">
-                    <button class="profile-chip" data-onclick="window.openEditProfile &amp;&amp; openEditProfile()">✏️ Edit Profil</button>
+                    <button class="profile-chip" data-onclick="openEditProfile()">✏️ Edit Profil</button>
                     <button type="button" class="profile-chip" id="btn-buka-resep">📂 Resep</button>
-                    <button class="profile-chip" data-onclick="window.toggleModal('help-modal')">💡 Bantuan</button>
+                    <button class="profile-chip" data-onclick="openHelpFromProfile()">💡 Bantuan</button>
                 </div>
 
                 <div class="profile-info-list">
@@ -1410,16 +1596,18 @@ body.logged-in .container {
     </div>
     
     <!-- FOOTER TINDAKAN -->
-    <div class="modal-bottom-actions">
+    <div class="modal-bottom-actions" style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn" style="background: rgba(231, 76, 60, 0.1); color: #c0392b; border: 1px solid rgba(231, 76, 60, 0.3); margin: 0; width: 100%;" onclick="handleLogout()">🚪 KELUAR AKUN</button>
         <button class="about-close-btn" style="margin: 0; width: 100%;" data-onclick="toggleModal('user-modal')">KEMBALI</button>
     </div>
 </div>
 <!-- AKHIR MODAL USER -->
 
 <!-- MODAL EDIT PROFIL -->
-<div class="page-modal" id="edit-profile-modal">
-    <div class="recipe-fixed-top" style="padding: 10px 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2);">
+<div class="page-modal" id="edit-profile-modal" inert>
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
         <h3 class="profile-modal-title" style="margin:0;">📝 Edit Profil Kedai</h3>
+        <button class="article-modal-close" id="btn-close-edit-profile" data-onclick="closeEditProfile()">×</button>
     </div>
     
     <div class="modal-scroll-content">
@@ -1446,6 +1634,16 @@ body.logged-in .container {
                 </div>
                 
                 <button type="submit" class="save-btn" style="margin-top: 10px;">SIMPAN PERUBAHAN</button>
+                <hr style="border: 0; border-top: 1px dashed rgba(231, 76, 60, 0.4); margin: 24px 0 16px;">
+<div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 12px;">
+    <h4 style="color: #b91c1c; margin: 0 0 10px 0; font-size: 0.85rem; font-weight: 800;">⚠️ Zona Berbahaya</h4>
+    <p style="font-size: 0.7rem; color: #991b1b; margin: 0 0 12px 0;">Tindakan di bawah ini akan menghapus data Anda secara permanen dari sistem Kedai Mak-er.</p>
+    
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button type="button" class="btn-danger-outline" onclick="hapusDataProfilLokal()">🗑️ Bersihkan Data Profil</button>
+        <button type="button" class="btn-danger-solid" onclick="hapusAkunPermanen()">🚨 Hapus Akun Permanen</button>
+    </div>
+</div>
             </form>
         </div>
     </div>
@@ -1457,14 +1655,14 @@ body.logged-in .container {
 <!-- AKHIR MODAL EDIT PROFIL -->
 
 <!-- MODAL BANTUAN -->
-<div class="page-modal" id="help-modal">
+<div class="page-modal" id="help-modal" inert>
     <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
         <h3 id="help-modal-title" style="margin: 0; display: flex; align-items: center; gap: 8px;">
             <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.4rem; height: 1.4rem; object-fit: contain;"> 
             Pusat Bantuan
         </h3>
         <!-- Tombol Close Unik untuk Pusat Bantuan -->
-        <button class="article-modal-close" id="btn-close-help">×</button>
+        <button class="article-modal-close" id="btn-close-help" data-onclick="toggleModal('help-modal')">×</button>
     </div>
     <div class="modal-scroll-content">
         <div class="help-section">
@@ -1605,10 +1803,10 @@ body.logged-in .container {
 <div id="recipe" class="tab-content recipe-modal" style="display: none; padding: 0; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: #FDF5E6; font-family: 'Segoe UI', sans-serif;"> 
     
     <!-- HEADER HALAMAN RESEP (Seragam dengan Modal Notifikasi) -->
-<div class="article-modal-header" style="padding: 15px 20px 5px 20px; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
-    <h3 id="recipe-modal-title" style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 8px;">
-        <span>🍞</span> Resep Formula
-    </h3>
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+        <h3 id="recipe-modal-title" style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 13px; line-height: 1.618;">
+            <span style="font-size: 1.618em; transform: translateY(-5%);">🍞</span> Resep Formula
+        </h3>
 
     <!-- HEADER KHUSUS CETAK PRINT/PDF (Tetap dipertahankan untuk kompatibilitas cetak) -->
     <div class="print-header" style="display: none; flex-direction: column; gap: 2px;">
@@ -1637,9 +1835,8 @@ body.logged-in .container {
 
 <!-- 2. Input File Tersembunyi (SANGAT PENTING!) -->
 <!-- Perhatikan bagian onchange: kita mengirim 'this.files[0]' langsung ke fungsi asli Anda -->
-<input type="file" id="recipe-import-input" accept=".json" onchange="window.imporResepDariFile(this.files[0])" style="display: none;">
+<input type="file" id="recipe-import-input" accept=".json,application/json" onchange="window.imporResepDariFile(this.files[0])" style="display: none;">
             </div>
-            <input type="file" id="recipe-import-input" accept=".json,application/json" style="display: none;">
         </div>
 
         <div class="print-meta-grid" style="display: none;">
@@ -1647,16 +1844,16 @@ body.logged-in .container {
         </div>
 
         <!-- INPUT ACUAN TEPUNG & PORSI -->
-        <div style="background: white; padding: 12px; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); margin-bottom: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border: 1px solid #e2e8f0;">
-            <div>
-                <label for="base-flour" style="font-size: 0.7rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Tepung Utama (gr)</label>
-                <input type="number" id="base-flour" value="1000" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.9rem;"  data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
-            </div>
-            <div>
-                <label for="recipe-yield" style="font-size: 0.7rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Total Porsi (Pcs)</label>
-                <input type="number" id="recipe-yield" value="34" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.9rem;"  data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
-            </div>
-        </div>
+        <div style="background: white; padding: 13px; border-radius: 13px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); margin-bottom: 13px; display: flex; gap: 13px; border: 1px solid #e2e8f0;">
+    <div style="flex: 1.618;">
+        <label for="base-flour" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Tepung Utama (gr)</label>
+        <input type="number" id="base-flour" value="1000" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+    </div>
+    <div style="flex: 1;">
+        <label for="recipe-yield" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Total Porsi (Pcs)</label>
+        <input type="number" id="recipe-yield" value="34" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+    </div>
+</div>
 
         <!-- AI AGENT PREMIUM ANALYTICS BOX -->
         <details id="premium-ai-analysis-box" class="premium-ai-accordion" style="background: linear-gradient(135deg, #fffcf7 0%, #fcf3e8 100%); border: 2px solid var(--accent, #E67E22); border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.08); overflow: hidden; display: none;" open>
@@ -1761,7 +1958,6 @@ body.logged-in .container {
             </div>
         </div>
     </div>
-</div>
 
         <!-- DAFTAR KOMPOSISI BAHAN UTAMA -->
         <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
@@ -1924,17 +2120,133 @@ body.logged-in .container {
 -->
 <script type="module">
     import { App, LocalNotifications, Preferences, Share, Filesystem, Directory, Encoding } from './vendor/capacitor-plugins.js';
+    import { openDB } from 'idb';
+
     const RESEP_LIST_KEY = 'premium_saved_recipes';
     const RESEP_LEGACY_KEY = 'premium_saved_recipe';
     const FILE_RESEP_PATH = 'data/resep_sourdough.json';
     const MAX_RESEP_TERSIMPAN = 10;
     window.MAX_RESEP_TERSIMPAN = MAX_RESEP_TERSIMPAN;
 
+    async function initDatabase() {
+        const isNative = window.Capacitor && window.Capacitor.isNativePlatform();
+
+        if (isNative) {
+            console.log("Berjalan di Native - Menggunakan SQLite");
+            // Tambahkan logika SQLite native Anda di sini jika pluginnya sudah tersedia
+        } else {
+            console.log("Berjalan di Browser Web - Menggunakan IndexedDB");
+            const db = await openDB('KedaiMakerDB', 1, {
+                upgrade(db) {
+                    if (!db.objectStoreNames.contains('recipes')) {
+                        db.createObjectStore('recipes', { keyPath: 'id', autoIncrement: true });
+                    }
+                },
+            });
+            return db;
+        }
+    }
+
+    // Jalankan inisialisasi database
+    initDatabase();
+
+    // Inisialisasi Database dan Object Store (Tabel)
+    async function initDB() {
+    return openDB('KedaiMakerDB', 1, {
+        upgrade(db) {
+        if (!db.objectStoreNames.contains('recipes')) {
+            db.createObjectStore('recipes', { keyPath: 'id', autoIncrement: true });
+        }
+        },
+    });
+    }
+
+    // Menyimpan Data
+    async function saveRecipe(recipe) {
+    const db = await initDB();
+    await db.add('recipes', recipe);
+    }
+
+    // Mengambil Semua Data
+    async function getAllRecipes() {
+    const db = await initDB();
+    return await db.getAll('recipes');
+    }
+/* ========================================= */
+
+async function initSQLite() {
+  try {
+    // Membuat atau membuka koneksi database
+    const db = await sqlite.createConnection('kedaifaker', false, 'no-encryption', 1, false);
+    await db.open();
+
+    // Membuat Tabel
+    const schema = `
+      CREATE TABLE IF NOT EXISTS recipes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        details TEXT
+      );
+    `;
+    await db.execute(schema);
+    return db;
+  } catch (err) {
+    console.error('Gagal menginisialisasi SQLite', err);
+  }
+}
+
+// Menyimpan Data ke SQLite
+async function saveRecipeSQLite(name, details) {
+  const db = await initSQLite();
+  const query = `INSERT INTO recipes (name, details) VALUES (?, ?);`;
+  await db.run(query, [name, details]);
+}
+/* ========================================= */
+
     /* FUNGSI HALAMAN LOGIN */
     // Inisialisasi Klien Supabase (Ganti dengan URL & Anon Key Supabase Anda)
     const SUPABASE_URL = 'https://rshnirlkjicnklrybjpf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzaG5pcmxramljbmtscnlianBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMjM0NjAsImV4cCI6MjA5OTY5OTQ2MH0.v5FXEfIQ1hLDLQmWgS9tv0f6OD2VqMdgius_cRjV9FI';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        window.addEventListener('online', async () => {
+        console.log("Koneksi pulih! Memulai sinkronisasi data lokal ke Supabase...");
+        await syncLocalDataToSupabase();
+    });
+
+    async function saveDataLocallyOrOnline(payload) {
+        if (navigator.onLine) {
+            const { data, error } = await supabase
+                .from('nama_tabel')
+                .insert([payload]);
+                
+            if (!error) {
+                console.log("Data berhasil disimpan ke Supabase secara online.");
+                return;
+            }
+        }
+        
+        let offlineQueue = JSON.parse(localStorage.getItem('offline_queue') || '[]');
+        offlineQueue.push(payload);
+        localStorage.setItem('offline_queue', JSON.stringify(offlineQueue));
+        console.log("Perangkat offline. Data diamankan ke penyimpanan lokal sementara.");
+    }
+
+    async function syncLocalDataToSupabase() {
+        let offlineQueue = JSON.parse(localStorage.getItem('offline_queue') || '[]');
+        if (offlineQueue.length === 0) return;
+
+        for (let item of offlineQueue) {
+            const { error } = await supabase.from('nama_tabel').insert([item]);
+            if (error) {
+                console.error("Gagal sinkronisasi item:", error);
+                return; 
+            }
+        }
+        
+        localStorage.removeItem('offline_queue');
+        console.log("Sinkronisasi ke Supabase selesai! Data lokal aman di cloud.");
+    }
 
     // Deklarasikan variabel status di luar fungsi agar dikenali secara global
 let isRegisterMode = false; 
@@ -1948,26 +2260,67 @@ function switchMode(mode) {
     const btnRegister = document.getElementById('btn-tab-register');
 
     if (mode === 'login') {
-        isRegisterMode = false; // Ubah status ke mode login
+        isRegisterMode = false; 
         title.innerText = "Masuk ke akun kedai Anda";
-        if (nameGroup) nameGroup.style.display = "none";
+        
+        // HAPUS CLASS ACTIVE
+        if (nameGroup) nameGroup.classList.remove('active-form'); 
+        
         document.getElementById('input-name')?.removeAttribute('required');
         submitBtn.innerText = "MASUK";
         btnLogin.classList.add('active');
         btnRegister.classList.remove('active');
     } else {
-        isRegisterMode = true; // Ubah status ke mode daftar
+        isRegisterMode = true; 
         title.innerText = "Daftar akun kedai baru";
-        if (nameGroup) nameGroup.style.display = "block";
+        
+        // TAMBAHKAN CLASS ACTIVE
+        if (nameGroup) nameGroup.classList.add('active-form'); 
+        
         document.getElementById('input-name')?.setAttribute('required', 'true');
         submitBtn.innerText = "DAFTAR";
         btnRegister.classList.add('active');
         btnLogin.classList.remove('active');
     }
 }
-
 // ⚠️ WAJIB: Ekspos fungsi agar bisa dibaca oleh atribut onclick="..." di HTML (Cukup dipanggil 1 kali saja)
 window.switchMode = switchMode;
+
+// ==========================================
+// FUNGSI LOGOUT (KELUAR AKUN)
+// ==========================================
+async function handleLogout() {
+    // 1. Tampilkan dialog konfirmasi (Mencegah klik tidak sengaja)
+    const confirmLogout = confirm("Apakah Anda yakin ingin keluar dari akun Kedai Mak-er?");
+    if (!confirmLogout) return;
+
+    try {
+        // 2. Eksekusi Sign Out dari Supabase
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+
+        // 3. Kembalikan UI ke halaman Login
+        document.body.classList.remove('logged-in');
+        document.body.classList.add('logged-out');
+
+        // 4. Tutup modal profil jika sedang terbuka
+        const userModal = document.getElementById('user-modal');
+        if (userModal) {
+            userModal.classList.remove('active');
+            document.body.style.overflow = ''; // Kembalikan scroll
+        }
+
+        // 5. (Opsional) Hapus cache data user yang sensitif di LocalStorage
+        // Jangan hapus data resep (RESEP_LIST_KEY), cukup data sesi jika ada
+        
+    } catch (err) {
+        console.error("Gagal logout:", err.message);
+        alert("Terjadi kesalahan saat keluar: " + err.message);
+    }
+}
+
+// WAJIB: Ekspos fungsi ke global window agar bisa dipanggil oleh onclick di HTML
+window.handleLogout = handleLogout;
 
 // Fungsi bantuan untuk menampilkan error di kotak pesan
 function showError(message) {
@@ -2073,6 +2426,99 @@ async function signInWithWhatsApp() {
 window.signInWithWhatsApp = signInWithWhatsApp; // Ekspos ke global
     /* AKHIR FUNGSI HALAMAN LOGIN */
 
+// ==========================================
+// EKSEKUSI HAPUS DATA PROFIL (LOKAL)
+// ==========================================
+async function hapusDataProfilLokal() {
+    const konfirmasi = confirm("Apakah Anda yakin ingin menghapus nama, kedai, dan riwayat di perangkat ini? Akun login Anda akan tetap aktif.");
+    if (!konfirmasi) return;
+
+    try {
+        // Membersihkan data preferensi yang tersimpan di memori perangkat
+        const keysToRemove = [
+            'profile_name', 'profile_bakery', 'profile_phone', 'profile_email', 'user_profile',
+            'proofing_state', 'proofing_logs', 'activeMode', 'timerDuration', 'tp_notifs',
+            'terakhir_sukses_cuaca', 'donut_weather_cache'
+        ];
+
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        
+        // Memanfaatkan Capacitor Preferences jika tersedia
+        if (window.Capacitor && window.Capacitor.Plugins.Preferences) {
+            for (const key of keysToRemove) {
+                await Capacitor.Plugins.Preferences.remove({ key });
+            }
+        }
+
+        alert("Data profil lokal berhasil dibersihkan.");
+        
+        // Memaksa UI untuk render ulang dengan state kosong
+        loadDynamicProfile(); 
+        closeEditProfile();
+    } catch (err) {
+        console.error("Gagal menghapus profil lokal:", err);
+        alert("Terjadi kesalahan saat membersihkan profil.");
+    }
+}
+
+// ==========================================
+// EKSEKUSI HAPUS AKUN PERMANEN (SUPABASE)
+// ==========================================
+async function hapusAkunPermanen() {
+    const konfirmasiUtama = confirm("PERINGATAN KERAS: Aksi ini akan menghapus akun login dan semua resep yang dicadangkan di server secara permanen. Apakah Anda yakin?");
+    if (!konfirmasiUtama) return;
+    
+    // Verifikasi ganda untuk keamanan UI
+    const verifikasiKedua = prompt("Ketik 'HAPUS' untuk mengonfirmasi penghapusan akun secara permanen:");
+    if (verifikasiKedua !== 'HAPUS') {
+        alert("Penghapusan akun dibatalkan.");
+        return;
+    }
+
+    try {
+        // 1. Cek User yang sedang login
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) throw new Error("Gagal mengautentikasi pengguna saat ini.");
+
+        // 2. Eksekusi penghapusan akun di sisi Server (Via RPC)
+        // Syarat: Anda harus membuat function 'delete_user' di Database Postgres Supabase Anda
+        const { error: rpcError } = await supabase.rpc('delete_user');
+        
+        if (rpcError) {
+            console.error("RPC Error:", rpcError);
+            throw new Error("Gagal menghapus akun di server. Pastikan RPC 'delete_user' telah dikonfigurasi.");
+        }
+
+        // 3. Bersihkan memori aplikasi dari semua residu cache
+        localStorage.clear();
+        if (window.Capacitor && window.Capacitor.Plugins.Preferences) {
+            await Capacitor.Plugins.Preferences.clear();
+        }
+
+        // 4. Keluarkan (Sign Out) paksa
+        await supabase.auth.signOut();
+
+        alert("Akun Kedai Mak-er Anda telah berhasil dihapus.");
+
+        // 5. Kembalikan State UI ke Halaman Login awal
+        document.body.classList.remove('logged-in');
+        document.body.classList.add('logged-out');
+        
+        // Tutup semua modal aktif
+        const activeModals = document.querySelectorAll('.page-modal.active');
+        activeModals.forEach(modal => modal.classList.remove('active'));
+
+    } catch (err) {
+        console.error("Gagal eksekusi hapus akun:", err);
+        alert("Pesan Sistem: " + err.message);
+    }
+}
+
+// Ekspos ke global object agar dapat diakses oleh Atribut onclick di HTML
+window.hapusDataProfilLokal = hapusDataProfilLokal;
+window.hapusAkunPermanen = hapusAkunPermanen;
+
+/* FUNGSI PENYIMPANAN RESEP KE PERANGKAT (LOCALSTORAGE / PREFERENCES) */
 async function simpanDaftarResepKePerangkat(daftarResep) {
     const jsonString = JSON.stringify(daftarResep);
     try {
@@ -2410,26 +2856,77 @@ function renderInventoryRows() {
     }
 
     ingredients.slice(0, 6).forEach(item => {
-        const stock = Number(item.stock ?? item.qty ?? item.quantity ?? 0);
+        const hasStock = item.stock != null || item.qty != null || item.quantity != null;
+        const stock = Number(item.stock ?? item.qty ?? item.quantity ?? NaN);
         let status = 'stock-good';
-        let badgeText = 'Aman';
+        let badgeText = 'Standar';
+        let stockLabel = item.pack ? `${item.pack} ${item.packUnit || 'g'}` : '—';
 
-        if (stock <= 2) {
-            status = 'stock-low';
-            badgeText = 'Rendah';
-        } else if (stock <= 5) {
-            status = 'stock-medium';
-            badgeText = 'Cukup';
+        if (hasStock && Number.isFinite(stock)) {
+            stockLabel = String(stock);
+            if (stock <= 2) {
+                status = 'stock-low';
+                badgeText = 'Rendah';
+            } else if (stock <= 5) {
+                status = 'stock-medium';
+                badgeText = 'Cukup';
+            } else {
+                badgeText = 'Aman';
+            }
         }
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td style="padding: 8px; vertical-align: top;">${item.name || item.label || 'Bahan'}</td>
-            <td style="padding: 8px; text-align: right;">${stock}</td>
+            <td style="padding: 8px; text-align: right;">${stockLabel}</td>
             <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge ${status}">${badgeText}</span></td>
         `;
         tbody.appendChild(tr);
     });
+}
+
+/** Catat aktivitas proofing ke localStorage untuk riwayat profil */
+function appendProofingLog(entry) {
+    let logs = [];
+    try {
+        const stored = localStorage.getItem('proofing_logs');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) logs = parsed;
+        }
+    } catch (e) {
+        console.warn('Gagal baca proofing_logs:', e);
+    }
+    logs.push({ ...entry, timestamp: entry.timestamp || Date.now() });
+    if (logs.length > 50) logs = logs.slice(-50);
+    localStorage.setItem('proofing_logs', JSON.stringify(logs));
+    window.proofingHistory = logs;
+}
+
+function readProofingLogsFromStorage() {
+    try {
+        const stored = localStorage.getItem('proofing_logs');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) return parsed;
+        }
+    } catch (e) {
+        console.warn('Gagal parse proofing_logs:', e);
+    }
+    return Array.isArray(window.proofingHistory) ? window.proofingHistory : [];
+}
+
+function readRecipesFromStorage() {
+    try {
+        const raw = localStorage.getItem('premium_saved_recipes');
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) return parsed;
+        }
+    } catch (e) {
+        console.warn('Gagal parse premium_saved_recipes:', e);
+    }
+    return Array.isArray(window.recipes) ? window.recipes : [];
 }
 
 async function renderUserProfile(summaryData = null) {
@@ -2458,9 +2955,15 @@ async function renderUserProfile(summaryData = null) {
 
 function updateVersion() {
     const el = document.getElementById("profile-version");
-    if (el) {
-        el.textContent = "v3.2.0";
-    }
+    if (!el) return;
+    fetch('./version.json')
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+            el.textContent = data?.version ? `Versi ${data.version}` : 'Versi 3.2.0';
+        })
+        .catch(() => {
+            el.textContent = 'Versi 3.2.0';
+        });
 }
 //==============================================
 
@@ -2506,6 +3009,21 @@ async function loadDynamicProfile(showNotifications = false) {
                 phone: await getProfileValue('profile_phone', '-'),
                 email: await getProfileValue('profile_email', '-')
             };
+            await setProfileValue('user_profile', JSON.stringify(savedProfile));
+        }
+
+        // Sinkronkan email dari akun Supabase jika profil belum punya email
+        if (typeof supabase !== 'undefined' && (!savedProfile.email || savedProfile.email === '-')) {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user?.email) {
+                    savedProfile.email = session.user.email;
+                    await setProfileValue('profile_email', savedProfile.email);
+                    await setProfileValue('user_profile', JSON.stringify(savedProfile));
+                }
+            } catch (authErr) {
+                console.warn('Gagal sinkron email dari Supabase:', authErr);
+            }
         }
 
         // Injeksi ke HTML profil
@@ -2588,32 +3106,16 @@ async function loadDynamicProfile(showNotifications = false) {
 // Daftarkan ke objek window agar aman dipanggil dari inline onclick
 window.loadDynamicProfile = loadDynamicProfile;
 
-// Otomatisasi pemanggilan saat modal dibuka
-function hookProfileModalOpen() {
-    const originalToggleModal = window.toggleModal;
-    window.toggleModal = function(modalId) {
-        if (modalId === 'user-modal') {
-            loadDynamicProfile(false); // dipanggil tanpa memunculkan toast setiap buka modal
-        }
-        if (typeof originalToggleModal === 'function') {
-            originalToggleModal(modalId);
-        }
-    };
-}
-
-// Jalankan hook modal setelah DOM siap
-document.addEventListener('DOMContentLoaded', () => {
-    hookProfileModalOpen();
-});
+// loadDynamicProfile dipanggil otomatis dari toggleModal('user-modal') saat modal profil dibuka
 
 // =============================================
 
 const ProfileService = {
 
     getRecipes() {
-        return Array.isArray(window.recipes)
-            ? window.recipes
-            : [];
+        const recipes = readRecipesFromStorage();
+        window.recipes = recipes;
+        return recipes;
     },
 
     getIngredients() {
@@ -2623,26 +3125,55 @@ const ProfileService = {
     },
 
     getTimers() {
-        return Array.isArray(window.timerHistory)
-            ? window.timerHistory
-            : [];
+        const logs = readProofingLogsFromStorage();
+        window.timerHistory = logs;
+        return logs;
     },
 
     getProofings() {
-        return Array.isArray(window.proofingHistory)
-            ? window.proofingHistory
-            : [];
+        return readProofingLogsFromStorage();
     }
 
 };
 
+/** Buka bantuan dari profil — tutup profil dulu agar tidak tumpang tindih */
+function openHelpFromProfile() {
+    const userModal = document.getElementById('user-modal');
+    if (userModal?.classList.contains('active')) {
+        toggleModal('user-modal');
+    }
+    toggleModal('help-modal');
+}
+window.openHelpFromProfile = openHelpFromProfile;
+
+/** Buka daftar resep dari profil */
+function openRecipesFromProfile() {
+    const userModal = document.getElementById('user-modal');
+    if (userModal?.classList.contains('active')) {
+        toggleModal('user-modal');
+    }
+    if (typeof window.tampilkanDaftarResepTersimpan === 'function') {
+        window.tampilkanDaftarResepTersimpan();
+    }
+}
+window.openRecipesFromProfile = openRecipesFromProfile;
+
 // FUNGSI BUKA USER PROFILE
 async function openEditProfile() {
-    // Ambil data terlebih dahulu
-    const nameVal = await getProfileValue("profile_name", "");
-    const bakeryVal = await getProfileValue("profile_bakery", "");
-    const phoneVal = await getProfileValue("profile_phone", "");
-    const emailVal = await getProfileValue("profile_email", "");
+    // Ambil data dari blob user_profile atau key individual
+    const savedProfileRaw = await getProfileValue('user_profile', null);
+    let profileData = null;
+    if (savedProfileRaw) {
+        try {
+            profileData = JSON.parse(savedProfileRaw);
+        } catch (e) {
+            console.warn('user_profile rusak, fallback ke key individual');
+        }
+    }
+    const nameVal = profileData?.name ?? await getProfileValue("profile_name", "");
+    const bakeryVal = profileData?.bakery ?? await getProfileValue("profile_bakery", "");
+    const phoneVal = profileData?.phone ?? await getProfileValue("profile_phone", "");
+    const emailVal = profileData?.email ?? await getProfileValue("profile_email", "");
 
     // Ambil elemen input (gunakan optional chaining untuk mencegah error null)
     const editName = document.getElementById("edit-name");
@@ -2680,6 +3211,7 @@ function closeEditProfile() {
     userModal?.classList.add("active");
     userModal?.removeAttribute("inert");
     document.body.style.overflow = "hidden";
+    if (typeof loadDynamicProfile === 'function') loadDynamicProfile(false);
 }
 
 window.openEditProfile = openEditProfile;
@@ -2817,6 +3349,8 @@ async function saveProfile() {
         profile.email
     );
 
+    await setProfileValue('user_profile', JSON.stringify(profile));
+
     await renderUserProfile();
 
     closeEditProfile();
@@ -2858,9 +3392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Jalankan sapaan AI & sinkronisasi statistik dengan aman setelah DOM siap
     updateGreeting();
     tampilkanSapaanAwalAI();
-    // hookProfileModalOpen() sudah dipanggil sekali di listener DOMContentLoaded lain
-    // (dekat definisinya) — jangan panggil lagi di sini supaya toggleModal tidak
-    // dibungkus dua kali (dobel loadDynamicProfile saat modal profil dibuka).
+    // loadDynamicProfile dipanggil otomatis saat user-modal dibuka via toggleModal()
 });
 //===============================================
 
@@ -2872,46 +3404,24 @@ function setStat(id, value) {
 }
 
 function updateBakeryStatistics() {
-
     const recipes = ProfileService.getRecipes();
     const ingredients = ProfileService.getIngredients();
-    const timers = ProfileService.getTimers();
     const proofings = ProfileService.getProofings();
+    const timers = ProfileService.getTimers();
 
-    document.getElementById("stat-recipes").textContent =
-        recipes.length;
-
-    document.getElementById("stat-ingredients").textContent =
-        ingredients.length;
-
-    document.getElementById("stat-timers").textContent =
-        timers.length;
-
-    document.getElementById("stat-proofing").textContent =
-        proofings.length;
+    setStat('stat-recipes', recipes.length);
+    setStat('stat-ingredients', ingredients.length);
+    setStat('stat-proofing', proofings.length);
+    setStat('stat-timers', timers.length);
 }
 
-async function waitForStatistics(timeout = 5000) {
-
+async function waitForStatistics(timeout = 1500) {
     const start = Date.now();
-
     while (Date.now() - start < timeout) {
-
-        const recipesReady =
-            Array.isArray(window.recipes);
-
-        const ingredientsReady =
-            Array.isArray(window.bakeryIngredients);
-
-        if (recipesReady && ingredientsReady) {
-            break;
-        }
-
-        await new Promise(resolve => setTimeout(resolve, 100));
+        if (Array.isArray(window.bakeryIngredients)) break;
+        await new Promise(resolve => setTimeout(resolve, 50));
     }
-
     updateBakeryStatistics();
-
 }
 // ==============================================
 // Fungsi untuk menganalisis suhu dan memberikan rekomendasi ragi/proofing
@@ -3357,14 +3867,10 @@ function bukaArtikelLengkap(id) {
     document.getElementById('modal-title').innerText = artikel.title;
     document.getElementById('modal-body').innerHTML = artikel.content;
     
-    // Tampilkan overlay modal
+    // Tampilkan overlay modal via class .active (CSS menangani display)
     const overlay = document.getElementById('article-modal');
     if (overlay) {
-        overlay.style.display = 'flex';
-        // Beri sedikit delay agar transisi animasi CSS berjalan lancar
-        setTimeout(() => {
-            overlay.classList.add('active');
-        }, 10);
+        overlay.classList.add('active');
     }
 }
 
@@ -3375,8 +3881,14 @@ function tutupArtikelSecaraAman() {
     const articleModal = document.getElementById('article-modal');
     const modalOverlay = document.querySelector('.article-modal-overlay');
     
-    if (articleModal) articleModal.classList.remove('active');
-    if (modalOverlay) modalOverlay.classList.remove('active');
+    if (articleModal) {
+        articleModal.classList.remove('active');
+        articleModal.style.removeProperty('display');
+    }
+    if (modalOverlay && modalOverlay !== articleModal) {
+        modalOverlay.classList.remove('active');
+        modalOverlay.style.removeProperty('display');
+    }
     
     document.body.style.overflow = ''; // Kembalikan scroll utama
 }
@@ -3387,23 +3899,12 @@ window.tutupArtikelSecaraAman = tutupArtikelSecaraAman;
 window.addEventListener('click', (event) => {
     const overlay = document.getElementById('article-modal');
     if (event.target === overlay) {
-        tutupArtikelLengkap();
+        tutupArtikelSecaraAman();
     }
 });
 
-window.bukaArtikelLengkap = function(idAtauElemen) {
-    const articleModal = document.getElementById('article-modal');
-    if (articleModal) {
-        articleModal.classList.add('active'); //
-    }
-};
-
-window.tutupArtikelLengkap = function() {
-    const articleModal = document.getElementById('article-modal');
-    if (articleModal) {
-        articleModal.classList.remove('active');
-    }
-};
+window.bukaArtikelLengkap = bukaArtikelLengkap;
+window.tutupArtikelLengkap = tutupArtikelSecaraAman;
 
 function initArticleSlider() {
     const wrapper = document.getElementById('article-wrapper');
@@ -3485,31 +3986,6 @@ function initArticleSlider() {
     startAutoPlay();
 }
 
-window.handleOfflinePremium = function() {
-    window.DEBUG && console.log('Menjalankan kalkulasi mode luring...');
-    
-    // 1. Coba ambil data cuaca terakhir dari localStorage jika input kosong
-    const inputTemp = document.getElementById('off-temp');
-    const inputHum = document.getElementById('off-hum');
-    const inputCondition = document.getElementById('off-condition');
-
-    const cuacaCache = JSON.parse(localStorage.getItem('terakhir_sukses_cuaca') || '{}');
-    
-    // 2. Ambil elemen DOM
-    let finalTemp = parseFloat(inputTemp?.value);
-    if (isNaN(finalTemp)) {
-        finalTemp = cuacaCache.temp || 25; // Gunakan cadangan untuk kalkulasi saja
-    }
-    
-    let finalHum = parseFloat(inputHum?.value);
-    if (isNaN(finalHum)) {
-        finalHum = cuacaCache.hum || 60;   // Gunakan cadangan untuk kalkulasi saja
-    }
-    const finalCondition = inputCondition?.value;
-    
-    window.DEBUG && console.log('Kalkulasi offline menggunakan data:', { finalTemp, finalHum, finalCondition });
-};
-
 //=======================================================================
 // TOGGLE MODAL (ENTAH INI UNTUK APA DAN KENAPA PALING ATAS DI JAVASCRIPT)
 //=======================================================================
@@ -3532,7 +4008,7 @@ function toggleModal(modalId) {
         }, 50);
 
         if (modalId === 'user-modal' && typeof loadDynamicProfile === 'function') {
-            loadDynamicProfile();
+            loadDynamicProfile(false);
         }
     } else {
         if (document.activeElement && modal.contains(document.activeElement)) {
@@ -4320,7 +4796,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const btnResep = document.getElementById('btn-buka-resep');
     if (btnResep) {
-        btnResep.addEventListener('click', window.tampilkanDaftarResepTersimpan);
+        btnResep.addEventListener('click', () => {
+            if (typeof openRecipesFromProfile === 'function') openRecipesFromProfile();
+            else if (typeof window.tampilkanDaftarResepTersimpan === 'function') window.tampilkanDaftarResepTersimpan();
+        });
     }
 });
 // =========================================================
@@ -5373,6 +5852,7 @@ function handleOfflinePremium() {
         hitungEstimasiProofing(temp, humidity); 
     }
 }
+window.handleOfflinePremium = handleOfflinePremium;
 //==================================================================================
 
 function processWeatherData(temp, hum) {
@@ -5666,7 +6146,19 @@ function triggerMainProofing() {
         mainBtn.innerText = "RESET PROOFING"; 
         mainBtn.style.background = "#d32f2f";
         alarmTriggered = false; 
-        setControlsDisabled(true); 
+        setControlsDisabled(true);
+
+        const modeLabel = localStorage.getItem('activeMode') || 'custom';
+        const tempText = document.getElementById('temp-val')?.innerText?.replace(/[^\d.-]/g, '') || '--';
+        const humText = document.getElementById('hum-val')?.innerText?.replace(/[^\d.-]/g, '') || '--';
+        appendProofingLog({
+            title: modeLabel === 'custom' ? 'Proofing Manual' : `Proofing ${modeLabel}`,
+            duration: Math.max(1, Math.ceil(checkSeconds / 60)),
+            temp: tempText,
+            humidity: humText,
+            message: `Proofing dimulai — ${Math.max(1, Math.ceil(checkSeconds / 60))} menit`
+        });
+
         startProofing();
         if (typeof window.jadwalkanAlarmProofing === 'function') {
             const sisaMenit = Math.max(1, Math.ceil(globalTotalSeconds / 60));
@@ -5756,6 +6248,34 @@ function setCustomTime() {
         aiTipsEl.innerText = `Waktu diatur manual ke ${customVal} menit.`;
     }
 }
+
+/** Alias & fungsi pendukung yang sebelumnya dipanggil via typeof guard */
+function calculateIngredients() {
+    if (typeof renderRecipeTableBakuTotal === 'function') renderRecipeTableBakuTotal();
+    if (typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal();
+}
+function hitungKebutuhan() { calculateIngredients(); }
+function hitungEstimasiOtomatis(suhu) {
+    if (typeof processWeatherData !== 'function' || suhu == null) return;
+    let hum = 70;
+    const humEl = document.getElementById('hum-val');
+    if (humEl) {
+        const m = String(humEl.innerText || humEl.textContent).match(/(\d+)/);
+        if (m) hum = parseInt(m[1], 10);
+    }
+    processWeatherData(suhu, hum);
+}
+function hitungEstimasiProofing(temp, humidity) {
+    if (typeof processWeatherData === 'function') processWeatherData(temp, humidity);
+}
+function perbaruiKalkulasiWaktu() { setCustomTime(); }
+function startCountdownEngine() { startProofing(false); }
+window.calculateIngredients = calculateIngredients;
+window.hitungKebutuhan = hitungKebutuhan;
+window.hitungEstimasiOtomatis = hitungEstimasiOtomatis;
+window.hitungEstimasiProofing = hitungEstimasiProofing;
+window.perbaruiKalkulasiWaktu = perbaruiKalkulasiWaktu;
+window.startCountdownEngine = startCountdownEngine;
 
 function startProofing(isRestoring = false) {
     let display = document.getElementById('countdown');
@@ -5977,8 +6497,10 @@ document.addEventListener('touchend', (e) => {
     const touchEndY = e.changedTouches[0].clientY;
     const refreshIndicator = document.getElementById('refresh-indicator');
 
-    // Logika Refresh
-    if (touchEndY - touchStartY > 100 && window.scrollY === 0) {
+    // Logika Refresh — scroll terjadi di .scrollable-content, bukan window
+    const scrollArea = document.querySelector('.scrollable-content');
+    const scrollTop = scrollArea ? scrollArea.scrollTop : window.scrollY;
+    if (touchEndY - touchStartY > 100 && scrollTop <= 0) {
         // 1. CEK APAKAH SEDANG FETCHING? Jika iya, ABORT / JANGAN REFRESH LAGI
         if (isFetchingLocation) {
             console.warn("Refresh diabaikan karena proses memuat lokasi/cuaca sebelumnya belum selesai.");
@@ -6357,41 +6879,6 @@ function tambahBahanBakuKustom() {
     document.getElementById('new-ing-name').value = '';
     document.getElementById('new-ing-ratio').value = '';
     document.getElementById('new-ing-price').value = '';
-}
-
-function gantiTabMetode(tab) {
-    const tabBahan = document.getElementById('btn-tab-bahan');
-    const tabCara = document.getElementById('btn-tab-cara');
-    const contentCara = document.getElementById('method-steps-content');
-    // Jika Anda memiliki container khusus untuk konten bahan di dalam method-section, definisikan di sini
-    // Contoh jika ada element dengan id 'method-bahan-content'
-    const contentBahan = document.getElementById('method-bahan-content'); 
-
-    if (tab === 'bahan') {
-        // Atur warna tombol aktif (Bahan)
-        tabBahan.style.background = '#4E342E';
-        tabBahan.style.color = 'white';
-        
-        // Atur warna tombol tidak aktif (Cara)
-        tabCara.style.background = '#F2D2A9';
-        tabCara.style.color = '#4E342E';
-        
-        // Tampilkan/Sembunyikan konten
-        if(contentCara) contentCara.style.display = 'none';
-        if(contentBahan) contentBahan.style.display = 'block';
-    } else if (tab === 'cara') {
-        // Atur warna tombol aktif (Cara)
-        tabCara.style.background = '#4E342E';
-        tabCara.style.color = 'white';
-        
-        // Atur warna tombol tidak aktif (Bahan)
-        tabBahan.style.background = '#F2D2A9';
-        tabBahan.style.color = '#4E342E';
-        
-        // Tampilkan/Sembunyikan konten
-        if(contentCara) contentCara.style.display = 'block';
-        if(contentBahan) contentBahan.style.display = 'none';
-    }
 }
 
 window.toggleCollapseKategori = function(namaKategori) {
@@ -7104,18 +7591,16 @@ window.jalankanAnalisisAIAgent = function() {
     // E. SINKRONISASI TOMBOL LANGSUNG KE TIMER UTAMA
     btnKirim.style.display = "block";
     btnKirim.onclick = function() {
-        // Cari elemen input menit pada kalkulator utama luar Anda
-        const mainInputMenit = document.getElementById('input-timer-menit') || document.getElementById('duration'); 
+        const mainInputMenit = document.getElementById('custom-time');
         if (mainInputMenit) {
             mainInputMenit.value = estimasiWaktuMenit;
-            // Jika ada fungsi trigger kalkulasi timer otomatis bawaan, jalankan fungsinya
-            if (typeof perbaruiKalkulasiWaktu === 'function') perbaruiKalkulasiWaktu();
+            if (typeof setCustomTime === 'function') setCustomTime();
             
             alert(`⏱️ Sukses memindahkan waktu ${estimasiWaktuMenit} menit ke Timer Proofer utama!`);
-            // Tutup modal resep otomatis agar pengguna kembali ke halaman utama timer
-            if (typeof toggleModal === 'function') toggleModal('modal-resep'); 
+            if (typeof switchTab === 'function') switchTab('timer');
+            else if (typeof tutupHalamanResepSecaraAman === 'function') tutupHalamanResepSecaraAman();
         } else {
-            alert(`Waktu rekomendasi adalah ${estimasiWaktuMenit} menit. Sila masukan langsung pada kolom timer utama.`);
+            alert(`Waktu rekomendasi adalah ${estimasiWaktuMenit} menit. Silakan masukkan langsung pada kolom timer utama.`);
         }
     };
 };
@@ -7434,6 +7919,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (session) {
             document.body.classList.remove('logged-out');
             document.body.classList.add('logged-in');
+            if (typeof loadDynamicProfile === 'function') loadDynamicProfile(false);
         } else {
             document.body.classList.remove('logged-in');
             document.body.classList.add('logged-out');
@@ -7682,34 +8168,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    const btnCloseProfile = document.getElementById('btn-close-profile');
-if (btnCloseProfile) {
-    btnCloseProfile.addEventListener('click', () => {
-        // Menggunakan logika pencarian elemen induk yang sama persis dengan modal lainnya
-        const modalUser = btnCloseProfile.closest('.article-modal-header')?.parentElement;
-        if (modalUser) modalUser.classList.remove('active');
-    });
-}
-
-    const btnCloseHelp = document.getElementById('btn-close-help');
-if (btnCloseHelp) {
-    btnCloseHelp.addEventListener('click', () => {
-        // Logika traversal DOM yang sama persis: cari header lalu hapus class active pada parent modal
-        const modalHelp = btnCloseHelp.closest('.article-modal-header')?.parentElement;
-        if (modalHelp) modalHelp.classList.remove('active');
-    });
-}
     // -----------------------------------------------------------------
     // 6. MANAGEMENT NOTIFIKASI SYSTEM
     // -----------------------------------------------------------------
-    const btnCloseNotif = document.getElementById('btn-close-notif');
-    if (btnCloseNotif) {
-        btnCloseNotif.addEventListener('click', () => {
-            const modalNotif = btnCloseNotif.closest('.article-modal-header')?.parentElement;
-            if (modalNotif) modalNotif.classList.remove('active');
-        });
-    }
-
     const btnNotifBaca = document.getElementById('btn-notif-baca');
     if (btnNotifBaca) {
         btnNotifBaca.addEventListener('click', () => {
@@ -7935,15 +8396,6 @@ function filterNotificationElements(category) {
 
     // Filter tab sudah ditangani oleh onclick filterNotif() di HTML
 
-    // C. ISI OTOMATIS KONTEN BERMANFAAT UNTUK USER (LOG AKTIVITAS)
-    // Mengisi Log Tab Resep otomatis berdasarkan sistem Unilever Anda
-    tambahNotifikasi("Kalkulator : Mengubah porsi resep menjadi 50 Pcs. Komposisi terigu otomatis disesuaikan.", "resep", "🧾");
-    tambahNotifikasi("Rekomendasi Adonan: Suhu Sidoarjo terdeteksi berawan. Sistem menyarankan air es bersuhu 4°C.", "resep", "🧾");
-    
-    // Mengisi Log Tab Sistem otomatis berdasarkan pembacaan hardware/fitur Capacitor
-    tambahNotifikasi("Sistem: GPS berhasil mendeteksi posisi di Balonggabus, Candi, Sidoarjo. Tema malam aktif.", "sistem", "⚙️");
-    tambahNotifikasi("Capacitor Native: Izin Push Notification disetujui. Pengingat proofer siap berjalan di latar belakang.", "sistem", "⚙️");
-
 // Pengaman kapasitas maksimum resep jika belum didefinisikan di file lain
 if (typeof MAX_RESEP_TERSIMPAN === 'undefined') {
     const MAX_RESEP_TERSIMPAN = 10; 
@@ -8000,6 +8452,119 @@ async function simpanResepKeLokal(dataResep) {
     console.error('Gagal menyimpan resep di fallback:', err);
     throw err;
   }
+}
+
+async function muatDataResep() {
+    try {
+        // 1. Coba ambil dulu dari IndexedDB agar loading terasa instan
+        const dataLokal = await ambilDariIndexedDB();
+        if (dataLokal && dataLokal.length > 0) {
+            renderTampilan(dataLokal);
+        }
+
+        // 2. Jika ada koneksi internet, ambil data terbaru dari Supabase
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data: dataCloud, error } = await supabase
+                .from('recipes')
+                .select('*')
+                .eq('user_id', user.id);
+
+            if (!error && dataCloud) {
+                // Simpan ulang data dari cloud ke IndexedDB agar sinkron
+                await simpanKeIndexedDB(dataCloud);
+                renderTampilan(dataCloud); // Refresh tampilan dengan data terbaru
+            }
+        }
+    } catch (err) {
+        console.error("Gagal memuat data, menggunakan mode offline:", err);
+    }
+}
+
+// Fungsi untuk menyimpan atau memperbarui resep ke Cloud Supabase
+async function simpanResepKeCloud(judulResep, daftarLangkah) {
+    // 1. Cek apakah user sudah login
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+        console.warn("User belum login, data hanya tersimpan secara lokal.");
+        return;
+    }
+
+    // 2. Kirim data ke tabel recipes di Supabase
+    // Menggunakan upsert agar jika judul resep sama, datanya diperbarui (bukan duplikat)
+    const { data, error } = await supabase
+        .from('recipes')
+        .upsert({
+            user_id: user.id,
+            title: judulResep,
+            steps: daftarLangkah,
+            updated_at: new Date()
+        }, { onConflict: 'user_id, title' });
+
+    if (error) {
+        console.error("Gagal sinkronisasi ke Supabase:", error.message);
+    } else {
+        console.log("Resep berhasil diamankan di Cloud Supabase!", data);
+    }
+}
+
+async function muatResepDariCloud() {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+        console.log("Tidak ada user aktif, memuat data lokal saja.");
+        return;
+    }
+
+    // Ambil data resep milik user yang sedang login dari Supabase
+    const { data, error } = await supabase
+        .from('recipes')
+        .select('*')
+        .eq('user_id', user.id);
+
+    if (error) {
+        console.error("Gagal memuat data dari cloud:", error.message);
+        return;
+    }
+
+    if (data && data.length > 0) {
+        // Ambil langkah-langkah dari database cloud (misal resep pertama/aktif)
+        // Sesuaikan dengan variabel array 'productionSteps' di aplikasi Anda
+        productionSteps = data[0].steps; 
+        
+        // Render ulang tampilan di layar
+        renderSteps();
+        
+        // Simpan juga ke IndexedDB lokal sebagai cache offline
+        simpanKeStorage(); 
+        console.log("Data berhasil disinkronkan dari Cloud Supabase ke perangkat.");
+    }
+}
+
+async function simpanPerubahanResep(daftarLangkahBaru) {
+    // 1. Simpan secara lokal ke IndexedDB terlebih dahulu (offline-first)
+    await simpanKeIndexedDB(daftarLangkahBaru);
+    renderTampilan(daftarLangkahBaru); // Update UI seketika tanpa jeda
+
+    // 2. Kirim ke Supabase di latar belakang
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+        const { error } = await supabase
+            .from('recipes')
+            .upsert({ 
+                user_id: user.id, 
+                steps: daftarLangkahBaru,
+                updated_at: new Date() 
+            });
+
+        if (error) {
+            console.error("Gagal sinkronisasi ke cloud (tersimpan lokal):", error.message);
+            // Anda bisa memberi tanda ikon "offline/pending sync" di UI jika perlu
+        } else {
+            console.log("Data berhasil disinkronkan ke Supabase!");
+        }
+    }
 }
 
 window.simpanResepKeDatabase = async function() {
@@ -8118,7 +8683,7 @@ window.renderDaftarResepTersimpan = async function() {
 };
 
 // 5. TOMBOL DATABASES (Menggabungkan Logika Log & Membuka Modal UI)
-window.tampilkanDaftarResepTersimpan = function() {
+window.tampilkanDaftarResepTersimpan = async function() {
     window.DEBUG && console.log("Membuka database resep...");
     const modal = document.getElementById('recipe-list-modal');
     const container = document.getElementById('recipe-list-container');
@@ -8128,10 +8693,15 @@ window.tampilkanDaftarResepTersimpan = function() {
         return;
     }
 
-    // Ambil data resep dari LocalStorage (menggunakan key 'premium_saved_recipes')
+    let recipes = [];
     try {
-        const rawData = localStorage.getItem('premium_saved_recipes');
-        const recipes = rawData ? JSON.parse(rawData) : [];
+        if (typeof bacaSemuaResepDariPerangkat === 'function') {
+            recipes = await bacaSemuaResepDariPerangkat();
+        } else {
+            const rawData = localStorage.getItem('premium_saved_recipes');
+            recipes = rawData ? JSON.parse(rawData) : [];
+        }
+        if (!Array.isArray(recipes)) recipes = [];
 
         if (container) {
             if (recipes.length === 0) {
@@ -8392,6 +8962,7 @@ async function generateBusinessInsight(recipeData) {
             profileSet("profile_bakery", profile.bakery);
             profileSet("profile_phone", profile.phone);
             profileSet("profile_email", profile.email);
+            profileSet("user_profile", JSON.stringify(profile));
 
             const profileName = document.getElementById("profile-name");
             const profileBakery = document.getElementById("profile-bakery");
