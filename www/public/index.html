@@ -1491,8 +1491,7 @@ body.logged-in .container {
                         <div class="summary-icon">📍</div>
                         <div class="summary-title">Lokasi</div>
                         <div class="summary-value" id="summary-location">
-                            <small id="prof-coords" class="">Mendeteksi GPS...</small>
-                            <span id="prof-address" class="">Memuat Alamat...</span>
+                            <div id="prof-coords" class="">Mendeteksi GPS...</div>
                         </div>
                     </div>
 
@@ -1550,47 +1549,49 @@ body.logged-in .container {
             <!-- INVENTARIS BAHAN BAKU DINAMIS -->
             <div class="profile-card animation-fade">
                 <h3 class="profile-section-title">📦 Inventaris Bahan Baku</h3>
-                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
-                    <thead>
-                        <tr style="border-bottom: 2px solid var(--dough);">
-                            <th style="padding: 6px;">Bahan</th>
-                            <th style="padding: 6px; text-align: right;">Stok</th>
-                            <th style="padding: 6px; text-align: center;">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dynamic-inventory-rows">
-                        <tr>
-                            <td style="padding: 8px; vertical-align: top;">Tepung Terigu pro Tinggi</td>
-                            <td style="padding: 8px; text-align: right;">0</td>
-                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; vertical-align: top;">Gula Pasir</td>
-                            <td style="padding: 8px; text-align: right;">0</td>
-                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; vertical-align: top;">Susu Bubuk full cream</td>
-                            <td style="padding: 8px; text-align: right;">0</td>
-                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; vertical-align: top;">Kuning Telur</td>
-                            <td style="padding: 8px; text-align: right;">0</td>
-                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; vertical-align: top;">Air Es</td>
-                            <td style="padding: 8px; text-align: right;">0</td>
-                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px; vertical-align: top;">Margarin / Butter</td>
-                            <td style="padding: 8px; text-align: right;">0</td>
-                            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div id="dynamic-inventory-cards" class="inventory-card-wrapper">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--dough);">
+                                <th style="padding: 6px;">Bahan</th>
+                                <th style="padding: 6px; text-align: right;">Stok</th>
+                                <th style="padding: 6px; text-align: center;">Status</th>
+                            </tr>
+                        </thead>
+                        <div id="dynamic-inventory-cards" class="inventory-card-wrapper">
+                            <tr>
+                                <td style="padding: 8px; vertical-align: top;">Tepung Terigu pro Tinggi</td>
+                                <td style="padding: 8px; text-align: right;">0</td>
+                                <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; vertical-align: top;">Gula Pasir</td>
+                                <td style="padding: 8px; text-align: right;">0</td>
+                                <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; vertical-align: top;">Susu Bubuk full cream</td>
+                                <td style="padding: 8px; text-align: right;">0</td>
+                                <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; vertical-align: top;">Kuning Telur</td>
+                                <td style="padding: 8px; text-align: right;">0</td>
+                                <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; vertical-align: top;">Air Es</td>
+                                <td style="padding: 8px; text-align: right;">0</td>
+                                <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; vertical-align: top;">Margarin / Butter</td>
+                                <td style="padding: 8px; text-align: right;">0</td>
+                                <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge stock-low">Rendah</span></td>
+                            </tr>
+                        </div>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -1876,7 +1877,7 @@ body.logged-in .container {
 
         <!-- DINAMIS TAMBAH BAHAN -->
         <!-- Tambah Komponen Manual Quick Chip - Premium Hybrid Version -->
-<details class="premium-ai-accordion" style="background: #FFF5E6; border: 1px dashed #E67E22; border-radius: 12px; margin-bottom: 12px; overflow: hidden;">
+<details id="form-tambah-bahan" class="premium-ai-accordion" style="background: #FFF5E6; border: 1px dashed #E67E22; border-radius: 12px; margin-bottom: 12px; overflow: hidden;">
     <summary style="padding: 12px; font-weight: bold; color: #E67E22; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
         <span>➕ Tambah Komponen Bahan Baru</span>
         <span class="accordion-arrow" style="transition: transform 0.2s;">▼</span>
@@ -1921,8 +1922,8 @@ body.logged-in .container {
 
         <!-- Tombol Aksi Multi-fungsi -->
         <div style="display: flex; gap: 8px; margin-top: 4px;">
-            <button type="button"  data-onclick="window.tambahBahanBakeryDinamis(true)" style="flex: 1; padding: 10px; background: #8D6E63; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem;">➕ Simpan & Isi Lagi</button>
-            <button type="button"  data-onclick="window.tambahBahanBakeryDinamis(false)" style="flex: 1; padding: 10px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem;">Simpan & Tutup</button>
+            <button type="button"  onclick="window.tambahBahanBakeryDinamis(true)" style="flex: 1; padding: 10px; background: #8D6E63; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem;">➕ Simpan & Isi Lagi</button>
+            <button type="button" onclick="window.tambahBahanBakeryDinamis(false)" style="flex: 1; padding: 10px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem;">Simpan &amp; Tutup</button>
         </div>
         
         <div id="new-ing-error" style="color: red; font-size: 0.7rem; text-align: center; display: none;"></div>
@@ -1937,27 +1938,47 @@ body.logged-in .container {
 <div class="recipe-method-section" style="margin-top: 15px;">
     <div class="method-tabs" style="display: flex; gap: 4px; margin-bottom: 10px; font-size: 0.75rem; font-weight: bold;">
         <button type="button" id="btn-tab-bahan"  data-onclick="gantiTabMetode('bahan')" style="flex: 1; padding: 10px; background: #4E342E; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">📋 Bahan & HPP</button>
-        <button type="button" id="btn-tab-cara"  data-onclick="gantiTabMetode('cara')" style="flex: 1; padding: 10px; background: #F2D2A9; color: #4E342E; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">🍩 Cara Pembuatan</button>
+        <button type="button" id="btn-tab-cara" data-onclick="gantiTabMetode('cara')" style="flex: 1 1 0%; padding: 10px; background: rgb(78, 52, 46); color: white; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 8px 8px 0px 0px; cursor: pointer;">🍩 Cara Pembuatan</button>
     </div>
     
-    <!-- Konten Cara Pembuatan (Tersembunyi secara default, akan muncul saat tab diklik) -->
-    <div class="method-content" id="method-steps-content" style="background: white; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px; padding: 15px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); display: none;">
-        <h4 style="margin: 0 0 10px 0; color: #E67E22; font-size: 0.9rem;">Langkah Demi Langkah Produksi:</h4>
+    <div class="method-content" id="method-steps-content" style="display: none; flex-direction: column;"> 
+    
+    <!-- BINGKAI FRAME PUTIH UTAMA -->
+    <div style="background: white; border-radius: 12px; box-shadow: rgba(0, 0, 0, 0.03) 0px 3px 8px; overflow: hidden; margin-bottom: 12px; border: 1px solid rgb(226, 232, 240); display: block;">
         
-        <div class="step-item" style="display: flex; gap: 10px; margin-bottom: 12px; font-size: 0.8rem; align-items: flex-start;">
-            <input type="checkbox" style="margin-top: 3px; transform: scale(1.1);">
-            <div class="step-text" style="line-height: 1.4; color: #4E342E;">
-                <strong>Langkah 1:</strong> Campurkan Tepung Utama dan bahan kering lainnya. Lakukan proses <strong>autolisis selama 20-30 menit</strong> bersama air dingin untuk membentuk gluten alami.
-            </div>
+        <!-- 1. HEADER COKELAT (Kini 100% Bersih & Identik dengan Tab Bahan) -->
+        <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
+            📝 LANGKAH DEMI LANGKAH PRODUKSI
         </div>
-
-        <div class="step-item" style="display: flex; gap: 10px; margin-bottom: 12px; font-size: 0.8rem; align-items: flex-start;">
-            <input type="checkbox" style="margin-top: 3px; transform: scale(1.1);">
-            <div class="step-text" style="line-height: 1.4; color: #4E342E;">
-                <strong>Langkah 2:</strong> Masukkan ragi aktif, aduk rata, lalu tambahkan mentega dan garam. Mixer kembali hingga adonan mencapai status <strong>kalis elastis (windowpane test)</strong>.
+        
+        <!-- 2. BARIS TOMBOL AKSI KHUSUS (Ditempatkan rapi di bawah judul, rata kanan) -->
+        <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 12px 12px 0 12px; background: white;">
+            <button type="button" onclick="muatTemplateLangkahDonat()" style="background: #f39c12; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;" title="Isi otomatis langkah standar donat">
+                ⚡ Template
+            </button>
+            <button type="button" onclick="tambahLangkahProduksi()" style="background: #27ae60; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                ➕ Tambah
+            </button>
+        </div>
+        
+        <!-- 3. WADAH SCROLL DAFTAR LANGKAH -->
+        <div id="container-daftar-langkah" style="padding: 12px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 12px;">
+            
+            <!-- Kartu Langkah #1 -->
+            <div style="display: flex; flex-direction: column; gap: 8px; background: rgb(255, 255, 255); padding: 12px; border: 1px solid rgb(226, 232, 240); border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.01) 0px 2px 4px; transition: 0.2s;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: bold; color: #E67E22; font-size: 0.78rem; background: #fef3c7; padding: 2px 8px; border-radius: 4px;">Langkah #1</span>
+                    <div style="display: flex; gap: 4px;">
+                        <button type="button" onclick="pindahLangkah(0, 1)" style="background: #e2e8f0; color: #334155; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;" title="Geser ke Bawah">⬇️</button>
+                        <button type="button" onclick="hapusLangkahProduksi(0)" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold;" title="Hapus Langkah">🗑️ Hapus</button>
+                    </div>
+                </div>
+                <textarea class="input-step-text" data-index="0" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.8rem; font-family: inherit; resize: vertical; min-height: 60px; color: #4E342E; background: #fafaf9; outline: none;" placeholder="Tulis instruksi detail untuk langkah ini...">Campurkan Tepung Utama dan bahan kering lainnya. Lakukan proses autolisis selama 20-30 menit bersama air dingin untuk membentuk gluten alami.</textarea>
             </div>
+            
         </div>
     </div>
+</div>
 
         <!-- DAFTAR KOMPOSISI BAHAN UTAMA -->
         <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
@@ -2057,7 +2078,7 @@ body.logged-in .container {
 
         <!-- UTILITY ACTIONS BUTTONS -->
         <div class="action-buttons-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-            <button type="button" class="btn" id="btn-simpan-resep"  data-onclick="window.simpanResepKeDatabase()" style="background: #2c3e50; color: white; padding: 10px; border: none; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer;">💾 SIMPAN RESEP</button>
+            <button type="button" class="btn" id="btn-simpan-resep" onclick="window.simpanResepKeDatabase()" style="background: #2c3e50; color: white; padding: 10px; border: none; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer;">💾 SIMPAN RESEP</button>
             <button type="button"  data-onclick="window.eksekusiCetakPremium()" style="background: #c0392b; color: white; border: none; padding: 10px; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">📄 CETAK PDF</button>
         </div>
         <div class="sticky-bottom-action" style="position: sticky; bottom: 0; background-color: var(--cream); padding: 12px 15px; box-shadow: 0 -4px 10px rgba(0,0,0,0.06); z-index: 101; flex-shrink: 0;">
@@ -2128,50 +2149,88 @@ body.logged-in .container {
     const MAX_RESEP_TERSIMPAN = 10;
     window.MAX_RESEP_TERSIMPAN = MAX_RESEP_TERSIMPAN;
 
-    async function initDatabase() {
-        const isNative = window.Capacitor && window.Capacitor.isNativePlatform();
+    let currentEditingRecipeId = null;
 
-        if (isNative) {
-            console.log("Berjalan di Native - Menggunakan SQLite");
-            // Tambahkan logika SQLite native Anda di sini jika pluginnya sudah tersedia
-        } else {
-            console.log("Berjalan di Browser Web - Menggunakan IndexedDB");
-            const db = await openDB('KedaiMakerDB', 1, {
-                upgrade(db) {
-                    if (!db.objectStoreNames.contains('recipes')) {
-                        db.createObjectStore('recipes', { keyPath: 'id', autoIncrement: true });
-                    }
-                },
-            });
-            return db;
-        }
-    }
+    let activeRecipeSteps = [
+        "Campurkan Tepung Utama dan bahan kering lainnya. Lakukan proses autolisis selama 20-30 menit bersama air dingin untuk membentuk gluten alami.",
+        "Masukkan ragi aktif, aduk rata, lalu tambahkan mentega dan garam. Mixer kembali hingga adonan mencapai status kalis elastis (windowpane test)."
+    ];
 
-    // Jalankan inisialisasi database
-    initDatabase();
-
-    // Inisialisasi Database dan Object Store (Tabel)
-    async function initDB() {
+    async function initIndexedDB() {
     return openDB('KedaiMakerDB', 1, {
         upgrade(db) {
-        if (!db.objectStoreNames.contains('recipes')) {
-            db.createObjectStore('recipes', { keyPath: 'id', autoIncrement: true });
-        }
+            if (!db.objectStoreNames.contains('recipes')) {
+                db.createObjectStore('recipes', { keyPath: 'id' });
+            }
         },
     });
+}
+
+
+// KUNCI PENGAMAN (Pastikan diletakkan di luar fungsi)
+// 1. KUNCI PENGAMAN (Pastikan ini ada di luar fungsi)
+let isSaving = false; 
+
+// 2. FUNGSI UTAMA PENYIMPANAN
+async function simpanResepKeDatabase() {
+    if (isSaving) return;
+    isSaving = true;
+
+    const namaResepInput = document.getElementById('recipe-save-name');
+    let namaResep = namaResepInput ? namaResepInput.value.trim() : "";
+    
+    if (!namaResep) {
+        const tanggalHariIni = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        namaResep = `Resep Donat (${tanggalHariIni})`;
+        if (namaResepInput) namaResepInput.value = namaResep;
     }
 
-    // Menyimpan Data
-    async function saveRecipe(recipe) {
-    const db = await initDB();
-    await db.add('recipes', recipe);
-    }
+    const objekResep = bangunObjekResepDariForm(namaResep);
 
-    // Mengambil Semua Data
-    async function getAllRecipes() {
-    const db = await initDB();
-    return await db.getAll('recipes');
+    try {
+        let daftarResep = readRecipesFromStorage();
+        const indexExisting = daftarResep.findIndex(r => r.id === objekResep.id || r.nama.toLowerCase() === objekResep.nama.toLowerCase());
+        
+        if (indexExisting >= 0) {
+            daftarResep[indexExisting] = objekResep; // Update / Edit resep yang sudah ada
+        } else {
+            daftarResep.push(objekResep); // Simpan resep baru
+        }
+        
+        await simpanDaftarResepKePerangkat(daftarResep);
+
+        // Sinkronisasi ke Supabase jika online
+        if (navigator.onLine) {
+            const { data: { user } } = await supabase.auth.getUser();
+            const payload = {
+                id: objekResep.id,
+                user_id: user ? user.id : null,
+                name: objekResep.nama,
+                details: objekResep,
+                updated_at: new Date().toISOString()
+            };
+            await supabase.from('recipes').upsert([payload]);
+        }
+
+        // --- PEMBERITAHUAN BERHASIL DISIMPAN ---
+        if (typeof NotifSystem !== 'undefined') {
+            NotifSystem.tambah('resep', 'Resep Berhasil Disimpan', `Resep "${namaResep}" berhasil disimpan dan diperbarui.`, '💾');
+        }
+        alert(`Sukses! Resep "${namaResep}" berhasil disimpan.`);
+        
+        // Reset state edit & form
+        currentEditingRecipeId = null;
+        if (namaResepInput) namaResepInput.value = '';
+        
+        if (typeof updateBakeryStatistics === 'function') updateBakeryStatistics();
+    } catch (err) {
+        console.error("Gagal menyimpan resep:", err);
+        alert("Gagal menyimpan resep: " + err.message);
+    } finally {
+        isSaving = false;
     }
+}
+window.simpanResepKeDatabase = simpanResepKeDatabase;
 /* ========================================= */
 
 async function initSQLite() {
@@ -2232,20 +2291,42 @@ async function saveRecipeSQLite(name, details) {
         console.log("Perangkat offline. Data diamankan ke penyimpanan lokal sementara.");
     }
 
-    async function syncLocalDataToSupabase() {
-        let offlineQueue = JSON.parse(localStorage.getItem('offline_queue') || '[]');
-        if (offlineQueue.length === 0) return;
+    // ==========================================
+// FUNGSI SINKRONISASI DATA OFFLINE KE SUPABASE
+// ==========================================
+async function syncLocalDataToSupabase() {
+    // Pastikan nama key storage sama dengan yang dipakai di fungsi simpan
+    let offlineQueue = JSON.parse(localStorage.getItem('offline_recipe_queue') || '[]');
+    
+    if (offlineQueue.length === 0) return;
 
-        for (let item of offlineQueue) {
-            const { error } = await supabase.from('nama_tabel').insert([item]);
-            if (error) {
-                console.error("Gagal sinkronisasi item:", error);
-                return; 
-            }
-        }
+    console.log(`Menemukan ${offlineQueue.length} resep dalam antrean offline. Memulai sinkronisasi...`);
+
+    // 1. Dapatkan user ID (Cukup panggil sekali di luar loop agar lebih cepat)
+    const { data: { user } } = await supabase.auth.getUser();
+
+    for (let item of offlineQueue) {
+        // 2. Bungkus SETIAP data menggunakan format 5 kolom yang benar
+        const payload = {
+            id: item.id,
+            user_id: user ? user.id : null,
+            name: item.nama || item.name, 
+            details: item, // Seluruh bahanBaku dkk dibungkus di sini
+            updated_at: new Date().toISOString()
+        };
+
+        // 3. Tembak menggunakan upsert ke tabel 'recipes'
+        const { error } = await supabase.from('recipes').upsert([payload]);
         
-        localStorage.removeItem('offline_queue');
-        console.log("Sinkronisasi ke Supabase selesai! Data lokal aman di cloud.");
+        if (error) {
+            console.error("Gagal sinkronisasi item resep dari antrean:", error.message);
+            return; // Hentikan fungsi agar antrean tidak terhapus jika gagal
+        }
+    }
+    
+        // 4. Bersihkan antrean HANYA jika semua perulangan di atas sukses
+        localStorage.removeItem('offline_recipe_queue');
+        console.log("Sinkronisasi otomatis ke Supabase selesai! Data tertunda berhasil masuk ke cloud.");
     }
 
     // Deklarasikan variabel status di luar fungsi agar dikenali secara global
@@ -2536,6 +2617,133 @@ async function simpanDaftarResepKePerangkat(daftarResep) {
     }
 }
 
+// Fungsi untuk merender daftar langkah dengan card & textarea bergaya modern-clean
+function renderLangkahProduksi() {
+    const container = document.getElementById('container-daftar-langkah');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (activeRecipeSteps.length === 0) {
+        container.innerHTML = `
+            <div style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; text-align: center; padding: 25px; color: #64748b;">
+                <p style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: 500;">Belum ada langkah produksi.</p>
+                <button type="button" onclick="tambahLangkahProduksi()" style="background: #E67E22; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">+ Buat Langkah Pertama</button>
+            </div>`;
+        return;
+    }
+
+    activeRecipeSteps.forEach((stepText, index) => {
+        const stepDiv = document.createElement('div');
+        // Card wrapper yang bersih dan elegan
+        stepDiv.style.cssText = "background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);";
+        
+        let actionButtons = '';
+        if (index > 0) {
+            actionButtons += `<button type="button" onclick="pindahLangkah(${index}, -1)" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; width: 26px; height: 26px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold;" title="Geser ke Atas">▲</button>`;
+        } else {
+            actionButtons += `<div style="width: 26px; height: 26px; opacity: 0.2; pointer-events: none; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc; color: #475569;">▲</div>`;
+        }
+
+        if (index < activeRecipeSteps.length - 1) {
+            actionButtons += `<button type="button" onclick="pindahLangkah(${index}, 1)" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; width: 26px; height: 26px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold;" title="Geser ke Bawah">▼</button>`;
+        } else {
+            actionButtons += `<div style="width: 26px; height: 26px; opacity: 0.2; pointer-events: none; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 1px solid #cbd5e1; border-radius: 6px; background: #f8fafc; color: #475569;">▼</div>`;
+        }
+
+        stepDiv.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">
+                <span style="font-weight: 700; font-size: 0.8rem; color: #E67E22; background: #fef3c7; padding: 2px 8px; border-radius: 6px;">Langkah #${index + 1}</span>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <div style="display: flex; gap: 3px;">
+                        ${actionButtons}
+                    </div>
+                    <button type="button" onclick="hapusLangkahProduksi(${index})" style="background: #fee2e2; color: #ef4444; border: none; width: 26px; height: 26px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-left: 4px;" title="Hapus Langkah">×</button>
+                </div>
+            </div>
+            
+            <!-- PERBAIKAN: Penambahan atribut id dan name secara dinamis -->
+            <textarea id="step-instruction-${index}" name="step_instruction_${index}" class="input-step-text" data-index="${index}" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.8rem; font-family: inherit; resize: vertical; min-height: 65px; color: #4E342E; background: #ffffff; outline: none; line-height: 1.5; transition: border-color 0.2s ease, box-shadow 0.2s ease;" placeholder="Tulis instruksi detail langkah ini...">${escapeHtmlResep(stepText)}</textarea>
+        `;
+        container.appendChild(stepDiv);
+    });
+
+    // Sinkronisasi input teks secara real-time & efek interaksi fokus yang elegan
+    document.querySelectorAll('.input-step-text').forEach(textarea => {
+        textarea.addEventListener('input', (e) => {
+            const idx = parseInt(e.target.getAttribute('data-index'), 10);
+            activeRecipeSteps[idx] = e.target.value;
+        });
+
+        textarea.addEventListener('focus', (e) => {
+            e.target.style.borderColor = '#E67E22';
+            e.target.style.boxShadow = '0 0 0 3px rgba(230, 126, 34, 0.12)';
+        });
+
+        textarea.addEventListener('blur', (e) => {
+            e.target.style.borderColor = '#e2e8f0';
+            e.target.style.boxShadow = 'none';
+        });
+    });
+}
+window.renderLangkahProduksi = renderLangkahProduksi;
+
+// Fungsi untuk menambah langkah baru
+function tambahLangkahProduksi() {
+    activeRecipeSteps.push("");
+    renderLangkahProduksi();
+    
+    // Otomatis fokus ke textarea baru
+    setTimeout(() => {
+        const textareas = document.querySelectorAll('.input-step-text');
+        if (textareas.length > 0) textareas[textareas.length - 1].focus();
+    }, 50);
+}
+window.tambahLangkahProduksi = tambahLangkahProduksi;
+
+// Fungsi untuk menghapus langkah berdasarkan indeks
+function hapusLangkahProduksi(index) {
+    if (confirm("Hapus langkah produksi ini?")) {
+        activeRecipeSteps.splice(index, 1);
+        renderLangkahProduksi();
+    }
+}
+window.hapusLangkahProduksi = hapusLangkahProduksi;
+
+// Fungsi baru: Memindahkan urutan langkah (Naik / Turun)
+function pindahLangkah(index, arah) {
+    const targetIndex = index + arah;
+    if (targetIndex < 0 || targetIndex >= activeRecipeSteps.length) return;
+    
+    // Tukar posisi elemen di dalam array
+    const temp = activeRecipeSteps[index];
+    activeRecipeSteps[index] = activeRecipeSteps[targetIndex];
+    activeRecipeSteps[targetIndex] = temp;
+    
+    renderLangkahProduksi();
+}
+window.pindahLangkah = pindahLangkah;
+
+// Fungsi baru: Template instan standar pembuatan donat
+function muatTemplateLangkahDonat() {
+    if (confirm("Muat template standar produksi donat? Catatan langkah saat ini akan digantikan.")) {
+        activeRecipeSteps = [
+            "Campurkan Tepung Utama dan bahan kering lainnya. Lakukan proses autolisis bersama air dingin untuk membentuk gluten alami.",
+            "Masukkan ragi aktif, aduk rata, lalu tambahkan mentega dan garam. Mixer hingga adonan mencapai kalis elastis (windowpane test).",
+            "Istirahatkan adonan (First Proofing) selama 45-60 menit hingga mengembang dua kali lipat.",
+            "Timbang dan bulatkan adonan (Rounding), lalu istirahatkan kembali (Bench Proofing) selama 15 menit.",
+            "Proses cetak / bentuk donat, tata di loyang yang sudah ditaburi terigu tipis.",
+            "Lakukan fermentasi akhir (Final Proofing) hingga ringan dan mengembang pas.",
+            "Goreng dalam minyak panas sedang dengan satu kali balik hingga matang kecokelatan."
+        ];
+        renderLangkahProduksi();
+        if (typeof NotifSystem !== 'undefined') {
+            NotifSystem.tambah('resep', 'Template Dimuat', 'Langkah standar donat berhasil diterapkan.', '⚡');
+        }
+    }
+}
+window.muatTemplateLangkahDonat = muatTemplateLangkahDonat;
+
 async function simpanPdfNative(base64Data, namaFile) {
   try {
     // Jika lingkungan native tersedia, gunakan Filesystem + Share
@@ -2621,6 +2829,27 @@ async function bacaSemuaResepDariPerangkat() {
     return [];
 }
 
+function syncInventoryWithProfile() {
+    // 1. Ambil bahan aktif dari state kalkulator resep
+    const currentIngredients = window.bakeryIngredients || [];
+    
+    // 2. Petakan ke format inventaris bahan baku
+    const inventoryData = currentIngredients.map(item => ({
+        nama: item.name || item.nama || 'Bahan Baku',
+        stok: item.pack || item.quantity || 0,
+        satuan: item.packUnit || 'g',
+        kategori: item.category || 'Bahan Keras'
+    }));
+
+    // 3. Simpan ke penyimpanan lokal agar persisten di halaman profil
+    localStorage.setItem('bakery_inventory_cache', JSON.stringify(inventoryData));
+
+    // 4. Perbarui tampilan baris inventaris di modal profil secara real-time
+    if (typeof renderInventoryCards === 'function') {
+        renderInventoryCards();
+    }
+}
+
 /* FUNGSI HALAMAN LOGIN*/
 document.addEventListener('DOMContentLoaded', function() {
     const loginBtn = document.getElementById('loginBtn');
@@ -2635,6 +2864,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 /* == AKHIR FUNGSI HALAMAN LOGIN = */
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderLangkahProduksi();
+});
 
 // FUNGSI HALAMAN USER PROFILE SUMMARY
 function updateProfileSummary(data = {}) {
@@ -2841,49 +3074,80 @@ function renderProofingLogs() {
     });
 }
 
-function renderInventoryRows() {
-    const tbody = document.getElementById('dynamic-inventory-rows');
-    if (!tbody) return;
+window.renderInventoryCards = function() {
+    const container = document.getElementById('dynamic-inventory-cards');
+    if (!container) return;
 
-    const ingredients = Array.isArray(window.bakeryIngredients) ? window.bakeryIngredients : [];
-    tbody.innerHTML = '';
+    // Ambil data bahan dari state global resep
+    const ingredients = window.bakeryIngredients || [];
+    container.innerHTML = '';
 
-    if (!ingredients.length) {
-        const row = document.createElement('tr');
-        row.innerHTML = '<td colspan="3" style="padding: 12px; text-align: center; color: rgba(78,52,46,0.7);">Inventaris kosong. Tambahkan bahan agar stok tampil di sini.</td>';
-        tbody.appendChild(row);
+    if (ingredients.length === 0) {
+        container.innerHTML = `<div class="log-empty">Tidak ada stok bahan tersedia.</div>`;
         return;
     }
 
-    ingredients.slice(0, 6).forEach(item => {
-        const hasStock = item.stock != null || item.qty != null || item.quantity != null;
-        const stock = Number(item.stock ?? item.qty ?? item.quantity ?? NaN);
-        let status = 'stock-good';
-        let badgeText = 'Standar';
-        let stockLabel = item.pack ? `${item.pack} ${item.packUnit || 'g'}` : '—';
+    // Definisi bobot prioritas kategori standar produksi bakery
+    // Angka lebih kecil akan diposisikan lebih dulu di bagian atas
+    const categoryPriority = {
+        'utama': 1,      // Tepung terigu, dll.
+        'tepung': 1,
+        'tambahan': 2,   // Gula, Susu, Telur, Ragi, Garam, Butter
+        'cairan': 3,     // Air Es, Minyak Goreng
+        'minyak': 3,
+        'toping': 4,     // Glaze, Meses
+        'kemasan': 5     // Kotak dus, dll.
+    };
 
-        if (hasStock && Number.isFinite(stock)) {
-            stockLabel = String(stock);
-            if (stock <= 2) {
-                status = 'stock-low';
-                badgeText = 'Rendah';
-            } else if (stock <= 5) {
-                status = 'stock-medium';
-                badgeText = 'Cukup';
-            } else {
-                badgeText = 'Aman';
-            }
+    // Fungsi helper untuk mendeteksi peringkat kategori
+    const getCategoryRank = (categoryName) => {
+        if (!categoryName) return 99; // Jika kategori tidak diisi, taruh di paling bawah
+        const lower = categoryName.toLowerCase();
+        for (const key in categoryPriority) {
+            if (lower.includes(key)) return categoryPriority[key];
         }
+        return 99;
+    };
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td style="padding: 8px; vertical-align: top;">${item.name || item.label || 'Bahan'}</td>
-            <td style="padding: 8px; text-align: right;">${stockLabel}</td>
-            <td style="padding: 8px; text-align: center;"><span class="inventory-status-badge ${status}">${badgeText}</span></td>
-        `;
-        tbody.appendChild(tr);
+    // Urutkan berdasarkan bobot kategori terlebih dahulu, 
+    // sehingga Minyak/Cairan atau bahan lain otomatis masuk ke kelompoknya yang tepat
+    const sortedIngredients = [...ingredients].sort((a, b) => {
+        const catA = getCategoryRank(a.category || a.kategori);
+        const catB = getCategoryRank(b.category || b.kategori);
+        
+        if (catA !== catB) {
+            return catA - catB;
+        }
+        
+        // Jika kategori sama, urutkan berdasarkan abjad nama bahan
+        const nameA = (a.name || a.nama || '').toLowerCase();
+        const nameB = (b.name || b.nama || '').toLowerCase();
+        return nameA.localeCompare(nameB);
     });
-}
+
+    // Render kartu inventaris yang sudah terstruktur rapi
+    sortedIngredients.forEach(item => {
+        const stock = Number(item.pack ?? item.stok ?? 0);
+        
+        // Logika Status Badge profesional
+        let statusClass = stock <= 500 ? 'stock-low' : (stock <= 1500 ? 'stock-medium' : 'stock-good');
+        let statusText = stock <= 500 ? 'Rendah' : (stock <= 1500 ? 'Cukup' : 'Aman');
+
+        const card = document.createElement('div');
+        card.className = 'recipe-slide';
+        card.style.cssText = "background: #fff; border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(242, 210, 169, 0.5);";
+        
+        card.innerHTML = `
+            <div>
+                <h4 style="margin: 0; font-size: 0.9rem; color: var(--chocolate); font-weight: 700;">${item.name || item.nama}</h4>
+                <p style="margin: 2px 0 0; font-size: 0.75rem; color: #8d6e63;">Stok: ${stock} ${item.packUnit || 'g'}</p>
+            </div>
+            <span class="inventory-status-badge ${statusClass}">${statusText}</span>
+        `;
+        
+        container.appendChild(card);
+    });
+};
 
 /** Catat aktivitas proofing ke localStorage untuk riwayat profil */
 function appendProofingLog(entry) {
@@ -2947,7 +3211,7 @@ async function renderUserProfile(summaryData = null) {
     updateProfileLastUpdated(new Date());
     updateProfileStatusBadge((summaryData && summaryData.status) || 'Premium Member');
     renderProofingLogs();
-    renderInventoryRows();
+    renderInventoryCards();
 
     // 6. Versi aplikasi
     updateVersion();
@@ -3064,10 +3328,12 @@ async function loadDynamicProfile(showNotifications = false) {
         const profHumidity = document.getElementById('summary-humidity');
 
         if (profWeather && mainTempVal) {
-            profWeather.textContent = mainTempVal.textContent !== '--' ? `${mainTempVal.textContent}°C` : '--';
+            let cleanTemp = mainTempVal.textContent.replace(/[^0-9.-]/g, '');
+            profWeather.textContent = cleanTemp !== '' && cleanTemp !== '--' ? `${Math.round(cleanTemp)}°C` : '--';
         }
         if (profHumidity && mainHumVal) {
-            profHumidity.textContent = mainHumVal.textContent !== '--' ? `${mainHumVal.textContent}%` : '--';
+            let cleanHum = mainHumVal.textContent.replace(/[^0-9.-]/g, '');
+            profHumidity.textContent = cleanHum !== '' && cleanHum !== '--' ? `${Math.round(cleanHum)}%` : '--';
         }
 
         // Perbarui Waktu Pembaruan Terakhir
@@ -3507,25 +3773,34 @@ function formatTanggalResep(isoString) {
     }
 }
 
+// Fungsi pelindung karakter HTML (pastikan hanya ada 1 fungsi ini di skrip Anda)
 function escapeHtmlResep(str) {
-    return String(str ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
+window.escapeHtmlResep = escapeHtmlResep;
 
 function bangunObjekResepDariForm(namaResep) {
     const tepungUtama = document.getElementById('base-flour')?.value || "1000";
     const targetYield = document.getElementById('recipe-yield')?.value || "1";
     const hargaJual = document.getElementById('input-harga-jual')?.value || "0";
+    
+    const namaBersih = namaResep.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const stableId = currentEditingRecipeId || ("resep_" + namaBersih + "_" + Date.now());
+
     return {
-        id: "resep_" + Date.now(),
-        nama: namaResep || `Resep Donat ${formatTanggalResep(new Date().toISOString())}`,
+        id: stableId,
+        nama: namaResep,
         tepungUtama: parseFloat(tepungUtama),
         targetYield: parseInt(targetYield, 10),
         hargaJual: parseFloat(hargaJual),
         bahanBaku: JSON.parse(JSON.stringify(bakeryIngredients)),
+        langkahProduksi: JSON.parse(JSON.stringify(activeRecipeSteps)), // <--- Menyimpan langkah produksi
         waktuSimpan: new Date().toISOString()
     };
 }
@@ -6965,7 +7240,7 @@ function renderRecipeTableBakuTotal() {
             htmlContentTable += `
                 <tr style="background: #f1f5f9;">
                     <td colspan="6" style="text-align: left; font-weight: 700; color: ${kat.warnaTeks}; padding: 6px; font-size: 11px;">
-                        ${kat.emoji} KELOMPOK ${kat.nama.toUpperCase()}
+                        ${kat.nama.toUpperCase()}
                     </td>
                 </tr>
             `;
@@ -7225,7 +7500,7 @@ window.tambahBahanBakeryDinamis = function(tambahLagi = true) {
     }
 
     window.bakeryIngredients.push(dataBahanBaru);
-
+    syncInventoryWithProfile();
     if (window.dbManager && window.dbManager.db) {
         window.dbManager.db.saveRecipe({
             id: dataBahanBaru.id,
@@ -7251,15 +7526,17 @@ window.tambahBahanBakeryDinamis = function(tambahLagi = true) {
     }
 
     if (tambahLagi) {
-        // Fokuskan kembali ke kolom nama agar user bisa langsung mengetik bahan ke-2 tanpa klik layar lagi
+        // Fokuskan kembali ke kolom nama agar user bisa langsung mengetik
         nameInp.focus();
     } else {
-        // Berikan feedback visual atau minimize form jika diperlukan
-        const accordion = document.querySelector(".premium-ai-accordion");
-
-    if (accordion) {
-        accordion.removeAttribute("open");
-    }
+        // Menggunakan getElementById agar 100% tepat sasaran ke form tambah bahan
+        const accordion = document.getElementById("form-tambah-bahan");
+        
+        if (accordion) {
+            // Gunakan properti DOM asli (open = false) untuk memaksa tag <details> menutup
+            accordion.open = false; 
+            accordion.removeAttribute("open");
+        }
     }
 
     if (typeof NotifSystem !== 'undefined' && typeof NotifSystem.tambah === 'function') {
@@ -7293,6 +7570,7 @@ window.hapusBahanBakeryDinamis = function(index) {
             window.bakeryIngredients.splice(index, 1);
         } else if (Array.isArray(bakeryIngredients)) {
             bakeryIngredients.splice(index, 1);
+            syncInventoryWithProfile();
         }
 
         // Gambar ulang & hitung ulang total biaya produksi
@@ -7512,98 +7790,317 @@ window.eksporResepKePDF = function() {
     }, 300);
 };
 
-window.eksekusiCetakPremium = async function() {
-    window.eksporResepKePDF();
-//    const isNative = window.Capacitor && window.Capacitor.isNativePlatform();
+window.eksekusiCetakPremium = function() {
+    window.DEBUG && console.log("Mengeksekusi Cetak 1 Lembar (Iframe Only - Fix Auto Filename)...");
 
-//    if (isNative) {
-//        try {
-            // Ambil objek Printer dari global window jika menggunakan plugin cordova bawaan
-//            const NativePrinter = window.Printer || (window.cordova && window.cordova.plugins && window.cordova.plugins.printer);
+    // ==========================================
+    // 1. AMBIL JUDUL RESEP
+    // ==========================================
+    let namaResep = "";
+    const elJudulResep = document.getElementById('recipe-save-name');
+    
+    if (elJudulResep) {
+        namaResep = elJudulResep.value.trim();
+    }
+    if (namaResep === "") {
+        namaResep = "RESEP PRODUKSI KEDAI MAK-ER"; 
+    }
 
-//            if (!NativePrinter) {
-                // Fallback otomatis jika plugin native tidak terdeteksi meski di perangkat native
-//                console.warn("Plugin Printer tidak ditemukan, dialihkan ke Cetak Sistem.");
-//                window.print();
-//                return;
-//            }
+    // ==========================================
+    // 1.5. PERSIAPAN NAMA FILE PDF (SANITASI)
+    // ==========================================
+    const safeFileName = namaResep.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
+    const finalDocTitle = safeFileName + " - Kedai Mak-er"; // Ini yang akan jadi nama file .pdf
 
-            // Gunakan objek NativePrinter yang sudah divalidasi keaktifannya
-//            const isAvailable = await NativePrinter.isAvailable();
+    // ==========================================
+    // 2. AMBIL DATA ANALISIS BISNIS (AI INSIGHT)
+    // ==========================================
+    const elPM = document.getElementById('text-analysis-pm');
+    const elFC = document.getElementById('text-analysis-fc');
+    const elUB = document.getElementById('text-analysis-ub');
+    
+    const insightPM = elPM ? elPM.innerText.trim() : "Data analisis margin belum dihitung.";
+    const insightFC = elFC ? elFC.innerText.trim() : "Data analisis food cost belum dihitung.";
+    const insightUB = elUB ? elUB.innerText.trim() : "Data analisis standar belum dihitung.";
+
+    let fcPercent = window.currentFoodCostPersen || 35; 
+    let fcChartValue = fcPercent > 100 ? 100 : fcPercent; 
+
+    // ==========================================
+    // 3. AMBIL LANGKAH PRODUKSI
+    // ==========================================
+    let stepsArray = window.activeRecipeSteps || [];
+    if (stepsArray.length === 0) {
+        const stepInputs = document.querySelectorAll('.input-step-text');
+        stepInputs.forEach(function(input) {
+            if (input.value.trim() !== '') {
+                stepsArray.push(input.value.trim());
+            }
+        });
+    }
+
+    let stepsHTML = "";
+    if (stepsArray.length > 0) {
+        stepsArray.forEach(function(step) {
+            stepsHTML += '<li style="margin-bottom: 4px;">' + step + '</li>';
+        });
+    } else {
+        stepsHTML = '<li>Belum ada instruksi langkah produksi.</li>';
+    }
+
+    // ==========================================
+    // 4. AMBIL DATA BAHAN, KATEGORI & TOTAL BIAYA
+    // ==========================================
+    let rowsHTML = "";
+    let totalModalBatch = 0;
+    const tableRows = document.querySelectorAll('.recipe-table tbody tr');
+    
+    if (tableRows && tableRows.length > 0) {
+        tableRows.forEach(function(row) {
+            const ths = row.querySelectorAll('th');
+            const tds = row.querySelectorAll('td');
             
-//            if (isAvailable) {
-//                const htmlContent = document.documentElement.outerHTML;
-//                NativePrinter.pick(htmlContent);
-//            } else {
-//                alert("Layanan cetak tidak tersedia di perangkat ini.");
-//            }
-//        } catch (error) {
-//            alert("Gagal memanggil printer Android: " + error.message);
-//        }
-//    } else {
-//        window.print();
-//    }
+            if (ths.length > 0 || (tds.length === 1)) {
+                const namaKategori = ths.length > 0 ? ths[0].innerText.trim() : tds[0].innerText.trim();
+                rowsHTML += '<tr style="background-color: #f8fafc;">' +
+                    '<td colspan="4" style="padding: 5px 8px; font-weight: 800; color: #d35400; font-size: 8.5pt; border: 1px solid #cbd5e1; text-transform: uppercase;">' + 
+                    namaKategori + 
+                    '</td>' +
+                '</tr>';
+            } else if (tds.length >= 2) {
+                const namaBahan = tds[0] ? tds[0].innerText.trim() : '-';
+                const takaran = tds[1] ? tds[1].innerText.trim() : '-';
+                const beratPakai = tds[tds.length - 2] ? tds[tds.length - 2].innerText.trim() : '-';
+                const strBiaya = tds[tds.length - 1] ? tds[tds.length - 1].innerText.trim() : '0';
+                
+                const angkaBiaya = parseFloat(strBiaya.replace(/[^0-9,-]/g, '').replace(',', '.')) || 0;
+                totalModalBatch += angkaBiaya;
+
+                rowsHTML += '<tr>' +
+                    '<td style="padding: 4px 6px; padding-left: 14px;">' + namaBahan + '</td>' + 
+                    '<td style="text-align: center; padding: 4px 6px;">' + takaran + '</td>' +
+                    '<td style="text-align: right; padding: 4px 6px;">' + beratPakai + '</td>' +
+                    '<td style="text-align: right; font-weight: bold; color: #4E342E; padding: 4px 6px;">' + strBiaya + '</td>' +
+                '</tr>';
+            }
+        });
+    }
+
+    if (!rowsHTML) {
+        rowsHTML = '<tr><td colspan="4" style="text-align: center; color: #666; padding: 6px;">Data komposisi bahan merujuk pada kalkulator aktif.</td></tr>';
+    }
+
+    const formattedTotalModal = "Rp " + totalModalBatch.toLocaleString('id-ID');
+    const tanggalCetak = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    // ==========================================
+    // 5. SUSUN DOKUMEN HTML
+    // ==========================================
+    const printDocumentContent = 
+        '<!DOCTYPE html>' +
+        '<html lang="id">' +
+        '<head>' +
+        '<meta charset="UTF-8">' +
+        '<title>' + finalDocTitle + '</title>' +
+        '<style>' +
+        '@page { size: A4 portrait; margin: 10mm; }' +
+        'body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #2c3e50; margin: 0; padding: 0; line-height: 1.3; font-size: 8.5pt; background: #ffffff; }' +
+        
+        '.header-container { border-bottom: 2px solid #4E342E; padding-bottom: 4px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-end; }' +
+        'h1 { color: #4E342E; margin: 0; font-size: 14pt; font-weight: 900; text-transform: uppercase; }' +
+        '.brand-tag { color: #E67E22; font-size: 8pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }' +
+        
+        '.meta-box { background: #fdf8f2; border: 1px solid #f3e5dc; padding: 6px 10px; margin-bottom: 8px; border-radius: 6px; font-size: 8pt; display: flex; justify-content: space-between; }' +
+        '.meta-box strong { color: #4E342E; }' +
+        
+        '.section-title { background: #4E342E; color: white; padding: 4px 8px; font-size: 9pt; font-weight: bold; margin-top: 8px; margin-bottom: 4px; border-radius: 4px; display: inline-block; width: 100%; box-sizing: border-box; }' +
+        
+        'table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }' +
+        'th, td { border: 1px solid #cbd5e1; padding: 4px 6px; }' +
+        'th { background: #F2D2A9; color: #4E342E; text-align: left; font-weight: bold; }' +
+        '.total-row { background: #fdf8f2; font-weight: bold; color: #4E342E; border-top: 2px solid #4E342E; }' +
+        
+        '.insight-container { display: flex; align-items: center; gap: 15px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; margin-bottom: 8px; }' +
+        '.pie-chart-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 80px; }' +
+        '.pie-chart { width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 0 0 1px #cbd5e1; margin-bottom: 6px; background: conic-gradient(#e67e22 0% ' + fcChartValue + '%, #27ae60 ' + fcChartValue + '% 100%); }' +
+        '.legend { font-size: 7pt; font-weight: bold; display: flex; flex-direction: column; gap: 3px; }' +
+        '.legend-item { display: flex; align-items: center; gap: 4px; }' +
+        '.dot-fc { width: 8px; height: 8px; background: #e67e22; border-radius: 2px; }' +
+        '.dot-pm { width: 8px; height: 8px; background: #27ae60; border-radius: 2px; }' +
+        
+        '.insight-content { flex-grow: 1; font-size: 8pt; border-left: 1px dashed #cbd5e1; padding-left: 15px; }' +
+        '.insight-item { margin-bottom: 4px; }' +
+        '.insight-item strong { color: #4E342E; }' +
+        
+        'ol { padding-left: 18px; margin: 4px 0; }' +
+        'li { margin-bottom: 3px; text-align: justify; }' +
+        
+        '.footer { margin-top: 15px; text-align: center; font-size: 7.5pt; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 6px; }' +
+        '</style>' +
+        '</head>' +
+        '<body>' +
+        
+        '<div class="header-container">' +
+        '<div>' +
+        '<div class="brand-tag">Lembar Kerja Produksi Resmi</div>' +
+        '<h1>' + namaResep + '</h1>' +
+        '</div>' +
+        '<div style="text-align: right; font-size: 8pt; color: #64748b;">' +
+        '<strong>Dicetak:</strong> ' + tanggalCetak +
+        '</div>' +
+        '</div>' +
+        
+        '<div class="meta-box">' +
+        '<div><strong>Pembuat:</strong> Joko Prasetyo</div>' +
+        '<div><strong>Unit Usaha:</strong> Kedai Mak-er</div>' +
+        '<div><strong>Status Dokumen:</strong> Valid (Auto-Generated)</div>' +
+        '</div>' +
+
+        '<div class="section-title">📋 KOMPOSISI BAHAN & STRUKTUR BIAYA</div>' +
+        '<table>' +
+        '<thead>' +
+        '<tr>' +
+        '<th>Komponen Bahan</th>' +
+        '<th style="text-align: center; width: 60px;">Takaran</th>' +
+        '<th style="text-align: right; width: 75px;">Berat Pakai</th>' +
+        '<th style="text-align: right; width: 90px;">Biaya (Rp)</th>' +
+        '</tr>' +
+        '</thead>' +
+        '<tbody>' +
+        rowsHTML +
+        '<tr class="total-row">' +
+        '<td colspan="3" style="text-align: right; padding: 6px 8px;">TOTAL MODAL BAHAN (1 BATCH):</td>' +
+        '<td style="text-align: right; padding: 6px 8px; color: #d97706; font-size: 9pt;">' + formattedTotalModal + '</td>' +
+        '</tr>' +
+        '</tbody>' +
+        '</table>' +
+        
+        '<div class="section-title">💡 WAWASAN & ANALISIS BISNIS (AI AGENT)</div>' +
+        '<div class="insight-container">' +
+            '<div class="pie-chart-wrapper">' +
+                '<div class="pie-chart"></div>' +
+                '<div class="legend">' +
+                    '<div class="legend-item"><div class="dot-fc"></div> Cost (' + fcPercent + '%)</div>' +
+                    '<div class="legend-item"><div class="dot-pm"></div> Profit</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="insight-content">' +
+                '<div class="insight-item"><strong>📊 Profit Margin:</strong> ' + insightPM + '</div>' +
+                '<div class="insight-item"><strong>💰 Rekomendasi Food Cost:</strong> ' + insightFC + '</div>' +
+                '<div class="insight-item" style="margin-bottom:0;"><strong>🛡️ Standar Produksi (Unilever):</strong> ' + insightUB + '</div>' +
+            '</div>' +
+        '</div>' +
+
+        '<div class="section-title">📝 INSTRUKSI LANGKAH DEMI LANGKAH</div>' +
+        '<ol>' +
+        stepsHTML +
+        '</ol>' +
+
+        '<div class="footer">' +
+        'Dokumen Manajemen Operasional Kedai Mak-er • Dicetak melalui Sistem PWA Mobile' +
+        '</div>' +
+        
+        '</body>' +
+        '</html>';
+
+    // ==========================================
+    // 6. EKSEKUSI CETAK (HANYA MENGGUNAKAN IFRAME)
+    // ==========================================
+    
+    // Simpan judul asli aplikasi Anda untuk dikembalikan nanti
+    const originalAppTitle = document.title;
+
+    // Buat elemen iframe tersembunyi
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
+    document.body.appendChild(iframe);
+    
+    // HACK: Ubah judul aplikasi UTAMA sementara agar Chrome membacanya sebagai nama File PDF!
+    document.title = finalDocTitle;
+
+    // Tulis dokumen ke dalam iframe
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(printDocumentContent);
+    doc.close();
+    
+    // Beri sedikit jeda agar DOM Iframe selesai dirender, lalu cetak
+    setTimeout(() => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+        
+        // Kembalikan judul aplikasi ke semula setelah dialog print dieksekusi
+        setTimeout(() => {
+            document.title = originalAppTitle;
+            document.body.removeChild(iframe);
+        }, 1500); // Jeda aman untuk memastikan dialog print sudah membaca judulnya
+        
+    }, 500);
 };
+window.eksekusiCetakPremium = eksekusiCetakPremium;
 
 window.jalankanAnalisisAIAgent = function() {
-    const boxAI = document.getElementById('premium-ai-analysis-box');
-    const contentAI = document.getElementById('ai-analysis-content');
-    const btnKirim = document.getElementById('btn-kirim-timer');
-    if (!boxAI || !contentAI) return;
-
-    boxAI.style.display = "block";
-
-    // A. BACA DATA RESEP
-    const ragi = bakeryIngredients.find(x => x.category === "Bahan Pengembang" || x.id === "yeast");
-    const gula = bakeryIngredients.find(x => x.name.toLowerCase().includes("gula"));
+    // 1. Ambil data aktual dari kalkulator aplikasi Anda 
+    // (Sesuaikan nama variabel/selector dengan yang sudah ada di source code Anda)
+    const hppPcs = window.currentHppBersih || 2169; // Contoh fallback
+    const hargaJual = window.currentHargaJual || 5000; // Contoh harga jual
+    const foodCostPersen = window.currentFoodCostPersen || 32.5; // Persentase food cost
+    const beratPcs = window.currentBeratPcs || 63.5; // Berat adonan per pcs
     
-    let rasioRagi = ragi ? ragi.ratio : 2.0; // default 2% jika tidak ditemukan
-    let rasioGula = gula ? gula.ratio : 18.0; // default 18%
+    // Hitung Profit Margin otomatis
+    const profitMargin = hargaJual > 0 ? (((hargaJual - hppPcs) / hargaJual) * 100).toFixed(1) : 0;
 
-    // B. BACA DATA SENSOR LINGKUNGAN (CUACA / SUHU)
-    // Mengambil variabel cuaca global yang sudah berhasil dideteksi oleh aplikasi Anda (misal dari GPS/Vercel)
-    let suhuSekitar = window.lastDetectedTemp || 29.5; 
-    let kelembabanSekitar = window.lastDetectedHumidity || 75;
+    // --- TAB 1: ANALISIS PROFIT MARGIN ---
+    let analisisPM = "";
+    if (profitMargin >= 55) {
+        analisisPM = `Margin keuntungan sangat sehat di angka ${profitMargin}%. Harga jual Rp ${hargaJual.toLocaleString()} memberikan bantalan laba yang sangat baik terhadap fluktuasi harga bahan baku.`;
+    } else if (profitMargin >= 40) {
+        analisisPM = `Margin keuntungan stabil di angka ${profitMargin}%. Bisnis Kedai Mak-er berada di zona aman, namun tetap pantau kenaikan harga bahan kering utama.`;
+    } else {
+        analisisPM = `Peringatan: Margin keuntungan menipis (${profitMargin}%). Pertimbangkan untuk menaikkan harga jual atau mengoptimalkan takaran bahan untuk menjaga operasional.`;
+    }
 
-    // C. LOGIKA PREDIKSI OPTIMASI WAKTU PROOFING (RUMUS AI AGENT)
-    // Hubungan Fisika-Kimia: Makin panas/lembap = proofing makin cepat. Makin banyak ragi = makin cepat.
-    let baseMinutes = 60; // Waktu standar pada suhu 28 derajat dengan ragi 2%
-    
-    // Koreksi faktor ragi
-    let faktorRagi = 2.0 / rasioRagi;
-    // Koreksi faktor suhu lingkungan
-    let faktorSuhu = 1.0 - ((suhuSekitar - 28) * 0.04); 
+    // --- TAB 2: REKOMENDASI FOOD COST ---
+    let analisisFC = "";
+    if (foodCostPersen <= 30) {
+        analisisFC = `Food Cost efisien (${foodCostPersen}%). Pengelolaan HPP sudah sangat optimal di bawah standar industri 35%. Pertahankan efisiensi supplier saat ini.`;
+    } else if (foodCostPersen <= 38) {
+        analisisFC = `Food Cost ideal berada di kisaran ${foodCostPersen}%. Cari supplier alternatif untuk bahan berbiaya tinggi (seperti mentega/butter atau cokelat) jika ingin mendongkrak margin.`;
+    } else {
+        analisisFC = `Food Cost terlalu tinggi (${foodCostPersen}%). Porsi bahan baku membebani modal produksi per batch. Segera tinjau ulang harga beli dan spesifikasi kemasan.`;
+    }
 
-    // Hitung estimasi final
-    let estimasiWaktuMenit = Math.round(baseMinutes * faktorRagi * faktorSuhu);
-    
-    // Batasi angka aman proofing donat (30 menit - 90 menit)
-    if (estimasiWaktuMenit < 30) estimasiWaktuMenit = 30;
-    if (estimasiWaktuMenit > 90) estimasiWaktuMenit = 90;
+    // --- TAB 3: STANDAR UNILEVER / PRODUKSI MASAL ---
+    let analisisUB = "";
+    if (beratPcs >= 55 && beratPcs <= 65) {
+        analisisUB = `Berat adonan (${beratPcs}g per pcs) sudah ideal dan presisi untuk standar grade komersial masal, menghasilkan konsistensi proofing dan hasil goreng yang stabil.`;
+    } else if (beratPcs > 65) {
+        analisisUB = `Berat adonan tergolong besar (${beratPcs}g). Pastikan waktu *final proofing* disesuaikan agar volume ragi mampu mengangkat struktur adonan dengan sempurna.`;
+    } else {
+        analisisUB = `Berat adonan terlalu kecil (${beratPcs}g). Risiko produk kempes atau kering saat digoreng lebih tinggi. Sesuaikan kembali dengan cetakan standar.`;
+    }
 
-    // D. TAMPILKAN ANALISIS KE LAYAR USER
-    contentAI.innerHTML = `
-        • <b>Kondisi Adonan:</b> Ragi ${rasioRagi}%, Gula ${rasioGula}%. Ketersediaan makanan ragi optimal.<br>
-        • <b>Kondisi Udara Sekitar:</b> Suhu ${suhuSekitar}°C, Kelembaban ${kelembabanSekitar}%.<br>
-        • <b>Rekomendasi AI:</b> Aktivitas gas CO2 tinggi. Waktu proofing ideal donat Anda diprediksi selama <b>${estimasiWaktuMenit} menit</b> untuk menghindari <i>over-proofing</i>.
-    `;
+    // Masukkan hasil analisis ke dalam DOM secara dinamis
+    const elPM = document.getElementById('text-analysis-pm');
+    const elFC = document.getElementById('text-analysis-fc');
+    const elUB = document.getElementById('text-analysis-ub');
 
-    // E. SINKRONISASI TOMBOL LANGSUNG KE TIMER UTAMA
-    btnKirim.style.display = "block";
-    btnKirim.onclick = function() {
-        const mainInputMenit = document.getElementById('custom-time');
-        if (mainInputMenit) {
-            mainInputMenit.value = estimasiWaktuMenit;
-            if (typeof setCustomTime === 'function') setCustomTime();
-            
-            alert(`⏱️ Sukses memindahkan waktu ${estimasiWaktuMenit} menit ke Timer Proofer utama!`);
-            if (typeof switchTab === 'function') switchTab('timer');
-            else if (typeof tutupHalamanResepSecaraAman === 'function') tutupHalamanResepSecaraAman();
-        } else {
-            alert(`Waktu rekomendasi adalah ${estimasiWaktuMenit} menit. Silakan masukkan langsung pada kolom timer utama.`);
-        }
-    };
+    if (elPM) elPM.innerText = analisisPM;
+    if (elFC) elFC.innerText = analisisFC;
+    if (elUB) elUB.innerText = analisisUB;
 };
+
+// Panggil fungsi ini setiap kali kalkulasi resep diubah/dihitung ulang oleh user
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.jalankanAnalisisAIAgent === 'function') {
+        window.jalankanAnalisisAIAgent();
+    }
+});
 
 // Fungsi baru untuk menyembunyikan kotak AI secara manual oleh user
 window.sembunyikanKotakAI = function() {
@@ -8364,6 +8861,100 @@ if (btnCloseSettings) {
     }
 });
 
+// Memuat daftar resep ke dalam #recipe-list-container dengan opsi muat ulang
+// Cukup deklarasikan sekali saja
+async function tampilkanDaftarResepTersimpan() {
+    const modalList = document.getElementById('recipe-list-modal');
+    const container = document.getElementById('recipe-list-container');
+    if (!modalList || !container) return;
+
+    modalList.classList.add('active');
+    modalList.removeAttribute('inert');
+    container.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">Memuat daftar resep...</div>';
+
+    let resepList = readRecipesFromStorage();
+
+    if (navigator.onLine) {
+        try {
+            const { data, error } = await supabase.from('recipes').select('*');
+            if (!error && data && data.length > 0) {
+                resepList = data.map(item => item.details || { id: item.id, nama: item.name, ...item });
+                await simpanDaftarResepKePerangkat(resepList);
+            }
+        } catch (err) {
+            console.warn("Gagal ambil dari Supabase, menggunakan lokal:", err);
+        }
+    }
+
+    container.innerHTML = '';
+    if (!resepList || resepList.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:30px; color:#94a3b8; font-style:italic;">Belum ada resep yang disimpan.</div>';
+        return;
+    }
+
+    resepList.forEach((resep) => {
+        const card = document.createElement('div');
+        card.style.cssText = "background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);";
+        
+        card.innerHTML = `
+            <div>
+                <h4 style="margin:0 0 4px 0; font-size:0.9rem; color:var(--chocolate);">${escapeHtmlResep(resep.nama || 'Tanpa Nama')}</h4>
+                <small style="color:#64748b;">Tepung Utama: ${resep.tepungUtama || 1000}g | Porsi: ${resep.targetYield || 1} pcs</small>
+            </div>
+            <div style="display:flex; gap:6px;">
+                <button type="button" class="btn-muat-satuan" style="background:#27ae60; color:#fff; border:none; padding:6px 10px; border-radius:6px; font-size:0.75rem; font-weight:bold; cursor:pointer;">Muat</button>
+                <button type="button" class="btn-hapus-satuan" style="background:#e74c3c; color:#fff; border:none; padding:6px 10px; border-radius:6px; font-size:0.75rem; font-weight:bold; cursor:pointer;">Hapus</button>
+            </div>
+        `;
+
+        card.querySelector('.btn-muat-satuan').addEventListener('click', () => {
+            terapkanResepKeKalkulator(resep);
+            tutupDaftarResepTersimpan();
+            alert(`Resep "${resep.nama}" berhasil dimuat ke kalkulator!`);
+        });
+
+        card.querySelector('.btn-hapus-satuan').addEventListener('click', async () => {
+            if (confirm(`Hapus resep "${resep.nama}" secara permanen?`)) {
+                await hapusResepBerdasarkanId(resep.id);
+                tampilkanDaftarResepTersimpan();
+            }
+        });
+
+        container.appendChild(card);
+    });
+}
+window.tampilkanDaftarResepTersimpan = tampilkanDaftarResepTersimpan;
+/* ============================================================*/
+
+window.addEventListener('online', async () => {
+    console.log("Koneksi internet pulih. Mengirim antrean resep offline ke Supabase...");
+    let queue = JSON.parse(localStorage.getItem('offline_recipe_queue') || '[]');
+    
+    if (queue.length > 0) {
+        // Dapatkan user ID terlebih dahulu
+        const { data: { user } } = await supabase.auth.getUser();
+
+        for (let item of queue) {
+            // Bungkus rapi ke dalam payload 5 kolom agar sesuai skema database
+            const payload = {
+                id: item.id,
+                user_id: user ? user.id : null,
+                name: item.nama || item.name,
+                details: item, // Semua bahanBaku dkk masuk dengan aman di sini
+                updated_at: new Date().toISOString()
+            };
+
+            const { error } = await supabase.from('recipes').upsert([payload]);
+            if (error) {
+                console.error("Gagal sinkronisasi resep:", error);
+                return;
+            }
+        }
+        localStorage.removeItem('offline_recipe_queue');
+        console.log("Semua resep offline berhasil disinkronkan ke Cloud Supabase.");
+    }
+});
+
 // Jalankan fungsi penyaringan aktual terhadap daftar list notifikasi Anda
 function filterNotificationElements(category) {
     // Cari elemen pembungkus list/item notifikasi Anda (sesuaikan dengan class/id asli Anda)
@@ -8567,45 +9158,74 @@ async function simpanPerubahanResep(daftarLangkahBaru) {
     }
 }
 
-window.simpanResepKeDatabase = async function() {
+// ==========================================
+// 3. FUNGSI HAPUS SATUAN BERDASARKAN ID (FIX BUG HAPUS SEMUA)
+// ==========================================
+async function hapusResepBerdasarkanId(id) {
     try {
-        const namaInput = document.getElementById('recipe-save-name');
-        let namaResep = namaInput?.value?.trim() || '';
-        if (!namaResep) {
-            namaResep = prompt('Beri nama resep ini:', `Resep Donat ${new Date().toLocaleDateString('id-ID')}`);
-            if (!namaResep || !namaResep.trim()) return;
-            namaResep = namaResep.trim();
+        // A. Filter dan hapus spesifik berdasarkan ID dari penyimpanan lokal
+        let list = readRecipesFromStorage();
+        list = list.filter(r => r.id !== id);
+        await simpanDaftarResepKePerangkat(list);
+
+        // B. Hapus spesifik baris data dari tabel Supabase berdasarkan ID
+        if (navigator.onLine) {
+            const { error } = await supabase.from('recipes').delete().eq('id', id);
+            if (error) {
+                console.warn("Gagal hapus di Supabase:", error.message);
+            } else {
+                console.log(`Resep ID ${id} berhasil dihapus dari Supabase.`);
+            }
         }
-
-        const dataResep = bangunObjekResepDariForm(namaResep);
-        let daftar = await bacaSemuaResepDariPerangkat();
-
-        const idxDuplikat = daftar.findIndex(r => r.nama?.toLowerCase() === namaResep.toLowerCase());
-        if (idxDuplikat >= 0) {
-            const timpa = confirm(`Resep "${namaResep}" sudah ada. Timpa resep lama?`);
-            if (!timpa) return;
-            daftar.splice(idxDuplikat, 1);
-        }
-
-        daftar.unshift(dataResep);
-        if (daftar.length > MAX_RESEP_TERSIMPAN) {
-            daftar = daftar.slice(0, MAX_RESEP_TERSIMPAN);
-        }
-
-        await simpanDaftarResepKePerangkat(daftar);
-        if (namaInput) namaInput.value = namaResep;
-
-        const pesanSukses = `Resep "${namaResep}" tersimpan di perangkat ini (${daftar.length}/${MAX_RESEP_TERSIMPAN}).`;
-
-        if (typeof NotifSystem !== 'undefined' && typeof NotifSystem.tambah === 'function') {
-            NotifSystem.tambah('resep', '💾 Resep Tersimpan', pesanSukses, '🧾');
-        } else {
-            alert("✨ " + pesanSukses);
-        }
-    } catch (e) {
-        console.error("Gagal menyimpan resep:", e);
-        alert("Gagal menyimpan resep: " + e.message);
+    } catch (err) {
+        console.error("Gagal menghapus resep:", err);
+        alert("Gagal menghapus resep: " + err.message);
     }
+}
+
+// ==========================================
+// 4. FUNGSI EKSPOR & IMPOR FILE JSON
+// ==========================================
+window.eksporSemuaResep = function() {
+    const list = readRecipesFromStorage();
+    if (list.length === 0) {
+        alert("Tidak ada resep untuk diekspor.");
+        return;
+    }
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(list, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", `kedaidonat_resep_${Date.now()}.json`);
+    document.body.appendChild(dlAnchorElem);
+    dlAnchorElem.click();
+    dlAnchorElem.remove();
+};
+
+window.imporResepDariFile = function(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        try {
+            const imported = JSON.parse(e.target.result);
+            const arrayData = Array.isArray(imported) ? imported : [imported];
+            let existing = readRecipesFromStorage();
+            
+            arrayData.forEach(newItem => {
+                if (!newItem.id) newItem.id = "resep_" + Date.now() + Math.random();
+                const idx = existing.findIndex(r => r.id === newItem.id);
+                if (idx >= 0) existing[idx] = newItem;
+                else existing.push(newItem);
+            });
+
+            await simpanDaftarResepKePerangkat(existing);
+            alert(`Berhasil mengimpor ${arrayData.length} resep!`);
+            tampilkanDaftarResepTersimpan();
+        } catch (err) {
+            console.error("Gagal mengimpor file JSON:", err);
+            alert("Format file JSON tidak valid.");
+        }
+    };
+    reader.readAsText(file);
 };
 
 // 2. FUNGSI MUAT RESEP
@@ -8684,57 +9304,101 @@ window.renderDaftarResepTersimpan = async function() {
 
 // 5. TOMBOL DATABASES (Menggabungkan Logika Log & Membuka Modal UI)
 window.tampilkanDaftarResepTersimpan = async function() {
-    window.DEBUG && console.log("Membuka database resep...");
     const modal = document.getElementById('recipe-list-modal');
     const container = document.getElementById('recipe-list-container');
-    
-    if (!modal) {
-        console.error("Elemen 'recipe-list-modal' tidak ditemukan!");
+    if (!modal || !container) return;
+
+    modal.classList.add('active');
+    modal.removeAttribute('inert');
+    container.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">Memuat daftar resep dari perangkat & cloud...</div>';
+
+    let daftarResep = readRecipesFromStorage();
+
+    // 1. Tarik juga data dari Supabase jika online agar sinkron
+    if (navigator.onLine && typeof supabase !== 'undefined') {
+        try {
+            const { data: cloudRecipes, error } = await supabase.from('recipes').select('*');
+            if (!error && cloudRecipes) {
+                // Konversi format Supabase (details) ke format objek resep lokal
+                cloudRecipes.forEach(cloudRow => {
+                    if (cloudRow.details) {
+                        const resepCloud = typeof cloudRow.details === 'string' ? JSON.parse(cloudRow.details) : cloudRow.details;
+                        // Cek apakah sudah ada di array lokal, jika belum / lebih baru, masukkan
+                        const existingIdx = daftarResep.findIndex(r => r.id === resepCloud.id);
+                        if (existingIdx < 0) {
+                            daftarResep.push(resepCloud);
+                        }
+                    }
+                });
+                // Simpan kembali gabungan data terbaru ke penyimpanan lokal
+                await simpanDaftarResepKePerangkat(daftarResep);
+            }
+        } catch (err) {
+            console.warn("Gagal sinkronisasi resep dari Supabase:", err);
+        }
+    }
+
+    if (daftarResep.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:30px; color:#94a3b8; font-style:italic;">Belum ada resep yang tersimpan.</div>';
         return;
     }
 
-    let recipes = [];
-    try {
-        if (typeof bacaSemuaResepDariPerangkat === 'function') {
-            recipes = await bacaSemuaResepDariPerangkat();
-        } else {
-            const rawData = localStorage.getItem('premium_saved_recipes');
-            recipes = rawData ? JSON.parse(rawData) : [];
-        }
-        if (!Array.isArray(recipes)) recipes = [];
+    container.innerHTML = '';
+    daftarResep.forEach((resep) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.style.cssText = "background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 3px rgba(0,0,0,0.02);";
+        
+        itemDiv.innerHTML = `
+            <div>
+                <strong style="font-size:0.9rem; color:var(--chocolate); display:block; margin-bottom:2px;">${escapeHtmlResep(resep.nama)}</strong>
+                <small style="color:#64748b; font-size:0.72rem;">Terigu: ${resep.tepungUtama || 1000}g | Yield: ${resep.targetYield || 1} pcs</small><br>
+                <small style="color:#94a3b8; font-size:0.68rem;">Disimpan: ${formatTanggalResep ? formatTanggalResep(resep.waktuSimpan) : (resep.waktuSimpan || '-')}</small>
+            </div>
+            <div style="display:flex; gap:6px;">
+                <button type="button" class="btn-load-resep" style="background:#27ae60; color:white; border:none; padding:6px 10px; border-radius:6px; font-size:0.72rem; font-weight:bold; cursor:pointer;">Muat / Edit</button>
+                <button type="button" class="btn-del-resep" style="background:#e74c3c; color:white; border:none; padding:6px 8px; border-radius:6px; font-size:0.72rem; font-weight:bold; cursor:pointer;">Hapus</button>
+            </div>
+        `;
 
-        if (container) {
-            if (recipes.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#777; padding:20px;">Belum ada resep yang tersimpan.</p>';
-            } else {
-                let html = '';
-                recipes.forEach((r) => {
-                    html += `
-                        <div style="background:#f9f9f9; border:1px solid #e0e0e0; border-radius:8px; padding:12px; margin-bottom:10px;">
-                            <div style="font-weight:bold; color:var(--chocolate); font-size:1rem; margin-bottom:4px;">${r.nama || 'Tanpa Nama'}</div>
-                            <div style="font-size:0.85rem; color:#555;">
-                                🌾 Tepung: ${r.tepungUtama}g &nbsp;|&nbsp; 🍩 Yield: ${r.targetYield} pcs &nbsp;|&nbsp; 💰 Jual: Rp ${Number(r.hargaJual || 0).toLocaleString('id-ID')}
-                            </div>
-                            <div style="font-size:0.75rem; color:#888; margin-top:6px;">
-                                Dibuat: ${r.waktuSimpan ? new Date(r.waktuSimpan).toLocaleString('id-ID') : '-'}
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
+        // Tombol Muat / Edit Resep
+        itemDiv.querySelector('.btn-load-resep').addEventListener('click', () => {
+            currentEditingRecipeId = resep.id;
+            terapkanResepKeKalkulator(resep);
+            
+            // Muat langkah produksi jika ada
+            if (resep.langkahProduksi && Array.isArray(resep.langkahProduksi) && typeof activeRecipeSteps !== 'undefined') {
+                activeRecipeSteps = [...resep.langkahProduksi];
+                if (typeof renderLangkahProduksi === 'function') renderLangkahProduksi();
             }
-        }
-    } catch (e) {
-        console.error("Gagal memuat daftar resep:", e);
-        if (container) {
-            container.innerHTML = '<p style="color:red; text-align:center;">Gagal membaca data resep dari perangkat.</p>';
-        }
-    }
 
-    // Tampilkan modal ke layar
-    modal.classList.add('active');
-    modal.removeAttribute('inert');
-    document.body.style.overflow = 'hidden';
+            const namaInput = document.getElementById('recipe-save-name');
+            if (namaInput) namaInput.value = resep.nama;
+
+            window.tutupDaftarResepTersimpan();
+            if (typeof NotifSystem !== 'undefined') {
+                NotifSystem.tambah('resep', 'Resep Dimuat', `Resep "${resep.nama}" dimuat untuk diedit.`, '📂');
+            }
+            alert(`Resep "${resep.nama}" dimuat. Anda dapat mengubah bahan/nama lalu klik "Simpan Resep" untuk memperbarui.`);
+        });
+
+        // Tombol Hapus Resep (Lokal & Supabase)
+        itemDiv.querySelector('.btn-del-resep').addEventListener('click', async () => {
+            if (confirm(`Hapus resep "${resep.nama}" dari perangkat dan cloud?`)) {
+                daftarResep = daftarResep.filter(r => r.id !== resep.id);
+                await simpanDaftarResepKePerangkat(daftarResep);
+
+                // Hapus juga dari Supabase jika online
+                if (navigator.onLine && typeof supabase !== 'undefined') {
+                    await supabase.from('recipes').delete().eq('id', resep.id);
+                }
+
+                window.tampilkanDaftarResepTersimpan();
+                if (typeof updateBakeryStatistics === 'function') updateBakeryStatistics();
+            }
+        });
+
+        container.appendChild(itemDiv);
+    });
 };
 
 window.tutupDaftarResepTersimpan = function() {
@@ -8747,45 +9411,212 @@ window.tutupDaftarResepTersimpan = function() {
 };
 
 // 6. TUTUP MODAL
-window.tutupDaftarResepTersimpan = function() {
+function tutupDaftarResepTersimpan() {
     const modal = document.getElementById('recipe-list-modal');
-    if (modal) modal.classList.remove('active');
-};
+    if (modal) {
+        modal.classList.remove('active');
+        modal.setAttribute('inert', '');
+    }
+    document.body.style.overflow = '';
+}
+window.tutupDaftarResepTersimpan = tutupDaftarResepTersimpan;
 
-// 7. TOMBOL EKSPOR (Menggunakan Backup File JSON Otomatis)
-window.eksporSemuaResep = async function() {
-    window.DEBUG && console.log("Memulai proses ekspor...");
+window.muatResepTersimpan = async function(resepId) {
     try {
-        const daftar = await bacaSemuaResepDariPerangkat();
-        if (!daftar.length) {
-            alert("Tidak ada resep untuk diekspor.");
+        console.log("Mencari data resep dengan ID:", resepId);
+        let savedRecipes = [];
+
+        // LANGKAH 1: Coba ambil dari IndexedDB (Sistem Luring Utama Anda)
+        if (typeof initIndexedDB === 'function') {
+            try {
+                const db = await initIndexedDB();
+                savedRecipes = await db.getAll('recipes');
+            } catch(e) {
+                console.warn("Pencarian IndexedDB dilewati:", e);
+            }
+        }
+
+        // LANGKAH 2: Jika di IndexedDB kosong, gunakan fungsi baca bawaan Anda (Fallback Storage/Capacitor)
+        if ((!savedRecipes || savedRecipes.length === 0) && typeof bacaSemuaResepDariPerangkat === 'function') {
+            savedRecipes = await bacaSemuaResepDariPerangkat();
+        }
+
+        // LANGKAH 3: Fallback terakhir ke LocalStorage Premium
+        if (!savedRecipes || savedRecipes.length === 0) {
+            const rawData = localStorage.getItem('premium_saved_recipes');
+            if (rawData) savedRecipes = JSON.parse(rawData);
+        }
+
+        // COCOKKAN ID
+        const resepData = savedRecipes.find(r => String(r.id) === String(resepId));
+
+        if (!resepData) {
+            alert("Maaf, data resep tidak ditemukan di memori perangkat ini.");
             return;
         }
-        const payload = {
-            app: 'Timer Proofer',
-            versi: 1,
-            dieksporPada: new Date().toISOString(),
-            resep: daftar
-        };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        const tanggal = new Date().toISOString().slice(0, 10);
-        link.href = url;
-        link.download = `resep-donat-${tanggal}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
 
-        if (typeof NotifSystem !== 'undefined' && typeof NotifSystem.tambah === 'function') {
-            NotifSystem.tambah('resep', '📤 Ekspor Berhasil', `${daftar.length} resep diekspor ke file JSON.`, '🧾');
-        } else {
-            alert(`📤 Berhasil mengekspor ${daftar.length} resep.`);
+        console.log("Resep ditemukan! Memuat ke kalkulator...", resepData);
+
+        // --- PROSES TRANSFER DATA KE KALKULATOR UTAMA ---
+        // (Berjaga-jaga jika format array bahan bernama 'ingredients', 'bahan', atau 'komposisi')
+        window.bakeryIngredients = resepData.bahanBaku || resepData.ingredients || resepData.bahan || resepData.komposisi || [];
+        // JIKA Anda memiliki input nama resep di layar utama, otomatis diisi:
+        const inputNama = document.getElementById('recipe-name-input');
+        if (inputNama) inputNama.value = resepData.nama || '';
+
+        // --- RENDER ULANG UI ---
+        if (typeof perbaruiPreviewBahanBaru === 'function') perbaruiPreviewBahanBaru();
+        if (typeof renderRecipeTableBakuTotal === 'function') renderRecipeTableBakuTotal();
+        if (typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal();
+        if (typeof syncInventoryWithProfile === 'function') syncInventoryWithProfile();
+
+        // --- TUTUP MODAL ---
+        const modal = document.getElementById('recipe-list-modal');
+        if (modal) {
+            modal.classList.remove('active');
+            // Pastikan overlay tertutup
+            document.body.style.overflow = '';
         }
-    } catch (e) {
-        alert("Gagal mengekspor resep: " + e.message);
+        if (typeof window.tutupDaftarResepTersimpan === 'function') {
+            window.tutupDaftarResepTersimpan();
+        }
+
+        // --- NOTIFIKASI SUKSES ---
+        if (typeof NotifSystem !== 'undefined' && typeof NotifSystem.tambah === 'function') {
+            NotifSystem.tambah('resep', '✓ Resep Dimuat', `Formula "${resepData.nama || 'Tanpa Nama'}" siap digunakan.`, '📂');
+        } else {
+            alert(`Resep "${resepData.nama || 'Tanpa Nama'}" berhasil dimuat ke kalkulator!`);
+        }
+
+    } catch (error) {
+        console.error("Gagal mengeksekusi pemuatan resep:", error);
+        alert("Terjadi kesalahan sistem saat menarik data dari database.");
     }
+};
+
+
+// Fungsi inti untuk memproses penghapusan resep
+async function eksekusiHapusResepMaster(resepId) {
+    // 1. Validasi ketat ID
+    if (!resepId || resepId === 'undefined' || resepId === 'null') {
+        alert("Gagal menghapus: ID resep tidak valid.");
+        return;
+    }
+
+    if (!confirm("Apakah Anda yakin ingin menghapus resep ini secara permanen dari perangkat?")) {
+        return;
+    }
+
+    try {
+        console.log("Mengeksekusi penghapusan aman untuk ID:", resepId);
+
+        // A. Hapus presisi dari IndexedDB (Offline Storage Utama)
+        if (typeof initIndexedDB === 'function') {
+            try {
+                const db = await initIndexedDB();
+                const tx = db.transaction('recipes', 'readwrite');
+                await tx.store.delete(resepId);
+                await tx.done;
+                console.log("Berhasil dihapus dari IndexedDB.");
+            } catch (e) {
+                console.warn("IndexedDB delete warning:", e);
+            }
+        }
+
+        // B. Hapus presisi dari LocalStorage (Dengan pengaman ketat agar item tanpa ID tidak ikut terhapus)
+        const rawData = localStorage.getItem('premium_saved_recipes');
+        if (rawData) {
+            let recipes = JSON.parse(rawData);
+            if (Array.isArray(recipes)) {
+                // HANYA filter item yang memiliki r.id dan TIDAK SAMA dengan resepId yang dipilih
+                let filteredRecipes = recipes.filter(r => r.id && String(r.id) !== String(resepId));
+                localStorage.setItem('premium_saved_recipes', JSON.stringify(filteredRecipes));
+                console.log("LocalStorage berhasil dibersihkan dengan aman.");
+            }
+        }
+
+        // C. Hapus dari Supabase Cloud (Jika online & tabel 'recipes' tersedia)
+        if (navigator.onLine && typeof supabase !== 'undefined') {
+            try {
+                const { error } = await supabase
+                    .from('recipes')
+                    .delete()
+                    .eq('id', resepId);
+
+                if (error) {
+                    console.warn("Catatan Cloud Supabase:", error.message);
+                } else {
+                    console.log("Berhasil dihapus dari Cloud Supabase.");
+                }
+            } catch (cloudErr) {
+                console.warn("Cloud delete bypassed:", cloudErr);
+            }
+        }
+
+        // D. Refresh tampilan modal resep secara instan
+        if (typeof tampilkanDaftarResepTersimpan === 'function') {
+            await tampilkanDaftarResepTersimpan();
+        }
+
+        // E. Notifikasi Sukses
+        if (typeof NotifSystem !== 'undefined' && typeof NotifSystem.tambah === 'function') {
+            NotifSystem.tambah('resep', '🗑️ Resep Dihapus', 'Resep berhasil dihapus dari perangkat.', '⚠️');
+        } else {
+            alert("Resep berhasil dihapus.");
+        }
+
+    } catch (err) {
+        console.error("Gagal mengeksekusi penghapusan resep:", err);
+        alert("Terjadi kesalahan sistem saat menghapus resep.");
+    }
+};
+
+// Daftarkan ke semua alias fungsi agar tombol di HTML tidak meleset
+window.hapusResep = eksekusiHapusResepMaster;
+window.hapusResepTersimpan = eksekusiHapusResepMaster;
+window.hapusResepDariDatabase = eksekusiHapusResepMaster;
+
+// 7. TOMBOL EKSPOR (Menggunakan Backup File JSON Otomatis)
+window.eksporSemuaResep = function() {
+    const list = readRecipesFromStorage();
+    if (list.length === 0) {
+        alert("Tidak ada resep untuk diekspor.");
+        return;
+    }
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(list, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", `kedaidonat_resep_${Date.now()}.json`);
+    document.body.appendChild(dlAnchorElem);
+    dlAnchorElem.click();
+    dlAnchorElem.remove();
+};
+
+window.imporResepDariFile = function(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        try {
+            const imported = JSON.parse(e.target.result);
+            const arrayData = Array.isArray(imported) ? imported : [imported];
+            let existing = readRecipesFromStorage();
+            
+            arrayData.forEach(newItem => {
+                if (!newItem.id) newItem.id = "resep_" + Date.now() + Math.random();
+                const idx = existing.findIndex(r => r.id === newItem.id);
+                if (idx >= 0) existing[idx] = newItem;
+                else existing.push(newItem);
+            });
+
+            await simpanDaftarResepKePerangkat(existing);
+            alert(`Berhasil mengimpor ${arrayData.length} resep!`);
+            tampilkanDaftarResepTersimpan();
+        } catch (err) {
+            console.error("Gagal mengimpor file JSON:", err);
+            alert("Format file JSON tidak valid.");
+        }
+    };
+    reader.readAsText(file);
 };
 
 // 8. FUNGSI IMPOR FILE DAN PENCETAKAN PDF (Dipertahankan Utuh)
