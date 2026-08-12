@@ -11,6 +11,11 @@
     <meta name="apple-mobile-web-app-title" content="Timer Proofer">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Library untuk mengambil 'screenshot' elemen HTML -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Library untuk membuat file PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="assets/js/html2pdf.bundle.min.js" defer></script>
     <script type="importmap">
 {
@@ -4809,6 +4814,18 @@ function hitungHPPBakeryTotal() {
             }
         }
     }
+    // ---------------------------------------------------------
+    // 2. TAMBAHKAN KODE PEMICU AI AGENT DI SINI (BAGIAN AKHIR FUNGSI)
+    // ---------------------------------------------------------
+    
+    // Panggil fungsi AI Agent dan masukkan 3 data krusial yang SUDAH dihitung di atas
+    if (typeof window.jalankanAnalisisAIAgent === 'function') {
+        window.jalankanAnalisisAIAgent(
+            hppGabunganPerPcs, // Total HPP per pcs yang didapat
+            hargaJualPerPcs,   // Harga jual yang sudah diparsing di awal fungsi
+            weightPerPcs       // Berat per pcs dari akumulasi sumNetDough
+        );
+    }
 }
 
 //================================
@@ -7791,30 +7808,16 @@ window.eksporResepKePDF = function() {
 };
 
 window.eksekusiCetakPremium = function() {
-    window.DEBUG && console.log("Mengeksekusi Cetak 1 Lembar (Iframe Only - Fix Auto Filename)...");
+    window.DEBUG && console.log("Mengeksekusi Cetak Laporan PDF Pro Golden Ratio (Enterprise Dashboard)...");
 
-    // ==========================================
-    // 1. AMBIL JUDUL RESEP
-    // ==========================================
     let namaResep = "";
     const elJudulResep = document.getElementById('recipe-save-name');
-    
-    if (elJudulResep) {
-        namaResep = elJudulResep.value.trim();
-    }
-    if (namaResep === "") {
-        namaResep = "RESEP PRODUKSI KEDAI MAK-ER"; 
-    }
+    if (elJudulResep) namaResep = elJudulResep.value.trim();
+    if (namaResep === "") namaResep = "RESEP PRODUKSI KEDAI MAK-ER"; 
 
-    // ==========================================
-    // 1.5. PERSIAPAN NAMA FILE PDF (SANITASI)
-    // ==========================================
     const safeFileName = namaResep.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
-    const finalDocTitle = safeFileName + " - Kedai Mak-er"; // Ini yang akan jadi nama file .pdf
+    const finalDocTitle = safeFileName + " - Kedai Mak-er";
 
-    // ==========================================
-    // 2. AMBIL DATA ANALISIS BISNIS (AI INSIGHT)
-    // ==========================================
     const elPM = document.getElementById('text-analysis-pm');
     const elFC = document.getElementById('text-analysis-fc');
     const elUB = document.getElementById('text-analysis-ub');
@@ -7824,49 +7827,40 @@ window.eksekusiCetakPremium = function() {
     const insightUB = elUB ? elUB.innerText.trim() : "Data analisis standar belum dihitung.";
 
     let fcPercent = window.currentFoodCostPersen || 35; 
-    let fcChartValue = fcPercent > 100 ? 100 : fcPercent; 
+    let pmPercent = 100 - fcPercent;
+    if (pmPercent < 0) pmPercent = 0;
 
-    // ==========================================
-    // 3. AMBIL LANGKAH PRODUKSI
-    // ==========================================
     let stepsArray = window.activeRecipeSteps || [];
     if (stepsArray.length === 0) {
         const stepInputs = document.querySelectorAll('.input-step-text');
-        stepInputs.forEach(function(input) {
-            if (input.value.trim() !== '') {
-                stepsArray.push(input.value.trim());
-            }
+        stepInputs.forEach(input => {
+            if (input.value.trim() !== '') stepsArray.push(input.value.trim());
         });
     }
 
     let stepsHTML = "";
     if (stepsArray.length > 0) {
-        stepsArray.forEach(function(step) {
-            stepsHTML += '<li style="margin-bottom: 4px;">' + step + '</li>';
-        });
+        stepsArray.forEach(step => { stepsHTML += `<li style="margin-bottom: 5px; font-size: 8pt; line-height: 1.4; text-align: justify;">${step}</li>`; });
     } else {
-        stepsHTML = '<li>Belum ada instruksi langkah produksi.</li>';
+        stepsHTML = '<li style="font-size: 8pt;">Belum ada instruksi langkah produksi.</li>';
     }
 
-    // ==========================================
-    // 4. AMBIL DATA BAHAN, KATEGORI & TOTAL BIAYA
-    // ==========================================
     let rowsHTML = "";
     let totalModalBatch = 0;
     const tableRows = document.querySelectorAll('.recipe-table tbody tr');
     
     if (tableRows && tableRows.length > 0) {
-        tableRows.forEach(function(row) {
+        tableRows.forEach(row => {
             const ths = row.querySelectorAll('th');
             const tds = row.querySelectorAll('td');
             
             if (ths.length > 0 || (tds.length === 1)) {
                 const namaKategori = ths.length > 0 ? ths[0].innerText.trim() : tds[0].innerText.trim();
-                rowsHTML += '<tr style="background-color: #f8fafc;">' +
-                    '<td colspan="4" style="padding: 5px 8px; font-weight: 800; color: #d35400; font-size: 8.5pt; border: 1px solid #cbd5e1; text-transform: uppercase;">' + 
-                    namaKategori + 
-                    '</td>' +
-                '</tr>';
+                rowsHTML += `<tr style="background-color: #f8fafc;">
+                    <td colspan="4" style="padding: 4px 8px; font-weight: 800; color: #d35400; font-size: 7.5pt; border: 1px solid #cbd5e1; text-transform: uppercase;">
+                        ${namaKategori}
+                    </td>
+                </tr>`;
             } else if (tds.length >= 2) {
                 const namaBahan = tds[0] ? tds[0].innerText.trim() : '-';
                 const takaran = tds[1] ? tds[1].innerText.trim() : '-';
@@ -7876,223 +7870,286 @@ window.eksekusiCetakPremium = function() {
                 const angkaBiaya = parseFloat(strBiaya.replace(/[^0-9,-]/g, '').replace(',', '.')) || 0;
                 totalModalBatch += angkaBiaya;
 
-                rowsHTML += '<tr>' +
-                    '<td style="padding: 4px 6px; padding-left: 14px;">' + namaBahan + '</td>' + 
-                    '<td style="text-align: center; padding: 4px 6px;">' + takaran + '</td>' +
-                    '<td style="text-align: right; padding: 4px 6px;">' + beratPakai + '</td>' +
-                    '<td style="text-align: right; font-weight: bold; color: #4E342E; padding: 4px 6px;">' + strBiaya + '</td>' +
-                '</tr>';
+                rowsHTML += `<tr>
+                    <td style="padding: 3px 6px; padding-left: 10px; font-size: 7.5pt;">${namaBahan}</td>
+                    <td style="text-align: center; padding: 3px 6px; font-size: 7.5pt;">${takaran}</td>
+                    <td style="text-align: right; padding: 3px 6px; font-size: 7.5pt;">${beratPakai}</td>
+                    <td style="text-align: right; font-weight: bold; color: #4E342E; padding: 3px 6px; font-size: 7.5pt;">${strBiaya}</td>
+                </tr>`;
             }
         });
     }
 
     if (!rowsHTML) {
-        rowsHTML = '<tr><td colspan="4" style="text-align: center; color: #666; padding: 6px;">Data komposisi bahan merujuk pada kalkulator aktif.</td></tr>';
+        rowsHTML = '<tr><td colspan="4" style="text-align: center; color: #666; padding: 6px; font-size: 7.5pt;">Data komposisi bahan belum tersedia.</td></tr>';
     }
 
     const formattedTotalModal = "Rp " + totalModalBatch.toLocaleString('id-ID');
     const tanggalCetak = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    // ==========================================
-    // 5. SUSUN DOKUMEN HTML
-    // ==========================================
-    const printDocumentContent = 
-        '<!DOCTYPE html>' +
-        '<html lang="id">' +
-        '<head>' +
-        '<meta charset="UTF-8">' +
-        '<title>' + finalDocTitle + '</title>' +
-        '<style>' +
-        '@page { size: A4 portrait; margin: 10mm; }' +
-        'body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #2c3e50; margin: 0; padding: 0; line-height: 1.3; font-size: 8.5pt; background: #ffffff; }' +
-        
-        '.header-container { border-bottom: 2px solid #4E342E; padding-bottom: 4px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-end; }' +
-        'h1 { color: #4E342E; margin: 0; font-size: 14pt; font-weight: 900; text-transform: uppercase; }' +
-        '.brand-tag { color: #E67E22; font-size: 8pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }' +
-        
-        '.meta-box { background: #fdf8f2; border: 1px solid #f3e5dc; padding: 6px 10px; margin-bottom: 8px; border-radius: 6px; font-size: 8pt; display: flex; justify-content: space-between; }' +
-        '.meta-box strong { color: #4E342E; }' +
-        
-        '.section-title { background: #4E342E; color: white; padding: 4px 8px; font-size: 9pt; font-weight: bold; margin-top: 8px; margin-bottom: 4px; border-radius: 4px; display: inline-block; width: 100%; box-sizing: border-box; }' +
-        
-        'table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }' +
-        'th, td { border: 1px solid #cbd5e1; padding: 4px 6px; }' +
-        'th { background: #F2D2A9; color: #4E342E; text-align: left; font-weight: bold; }' +
-        '.total-row { background: #fdf8f2; font-weight: bold; color: #4E342E; border-top: 2px solid #4E342E; }' +
-        
-        '.insight-container { display: flex; align-items: center; gap: 15px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; margin-bottom: 8px; }' +
-        '.pie-chart-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 80px; }' +
-        '.pie-chart { width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 0 0 1px #cbd5e1; margin-bottom: 6px; background: conic-gradient(#e67e22 0% ' + fcChartValue + '%, #27ae60 ' + fcChartValue + '% 100%); }' +
-        '.legend { font-size: 7pt; font-weight: bold; display: flex; flex-direction: column; gap: 3px; }' +
-        '.legend-item { display: flex; align-items: center; gap: 4px; }' +
-        '.dot-fc { width: 8px; height: 8px; background: #e67e22; border-radius: 2px; }' +
-        '.dot-pm { width: 8px; height: 8px; background: #27ae60; border-radius: 2px; }' +
-        
-        '.insight-content { flex-grow: 1; font-size: 8pt; border-left: 1px dashed #cbd5e1; padding-left: 15px; }' +
-        '.insight-item { margin-bottom: 4px; }' +
-        '.insight-item strong { color: #4E342E; }' +
-        
-        'ol { padding-left: 18px; margin: 4px 0; }' +
-        'li { margin-bottom: 3px; text-align: justify; }' +
-        
-        '.footer { margin-top: 15px; text-align: center; font-size: 7.5pt; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 6px; }' +
-        '</style>' +
-        '</head>' +
-        '<body>' +
-        
-        '<div class="header-container">' +
-        '<div>' +
-        '<div class="brand-tag">Lembar Kerja Produksi Resmi</div>' +
-        '<h1>' + namaResep + '</h1>' +
-        '</div>' +
-        '<div style="text-align: right; font-size: 8pt; color: #64748b;">' +
-        '<strong>Dicetak:</strong> ' + tanggalCetak +
-        '</div>' +
-        '</div>' +
-        
-        '<div class="meta-box">' +
-        '<div><strong>Pembuat:</strong> Joko Prasetyo</div>' +
-        '<div><strong>Unit Usaha:</strong> Kedai Mak-er</div>' +
-        '<div><strong>Status Dokumen:</strong> Valid (Auto-Generated)</div>' +
-        '</div>' +
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'fixed';
+    tempContainer.style.left = '0';
+    tempContainer.style.top = '-9999px';
+    tempContainer.style.width = '794px'; 
+    tempContainer.style.backgroundColor = '#ffffff';
+    // Memberikan ruang kosong yang lebih lega (whitespace) untuk estetika premium
+    tempContainer.style.padding = '35px 40px'; 
+    tempContainer.style.boxSizing = 'border-box';
+    tempContainer.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+    tempContainer.style.color = '#1e293b'; // Warna teks lebih premium (slate-800)
 
-        '<div class="section-title">📋 KOMPOSISI BAHAN & STRUKTUR BIAYA</div>' +
-        '<table>' +
-        '<thead>' +
-        '<tr>' +
-        '<th>Komponen Bahan</th>' +
-        '<th style="text-align: center; width: 60px;">Takaran</th>' +
-        '<th style="text-align: right; width: 75px;">Berat Pakai</th>' +
-        '<th style="text-align: right; width: 90px;">Biaya (Rp)</th>' +
-        '</tr>' +
-        '</thead>' +
-        '<tbody>' +
-        rowsHTML +
-        '<tr class="total-row">' +
-        '<td colspan="3" style="text-align: right; padding: 6px 8px;">TOTAL MODAL BAHAN (1 BATCH):</td>' +
-        '<td style="text-align: right; padding: 6px 8px; color: #d97706; font-size: 9pt;">' + formattedTotalModal + '</td>' +
-        '</tr>' +
-        '</tbody>' +
-        '</table>' +
+    tempContainer.innerHTML = `
+        <style>
+            .header-container { border-bottom: 3px solid #4E342E; padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end; }
+            h1 { color: #4E342E; margin: 0; font-size: 15pt; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; }
+            .brand-tag { color: #e67e22; font-size: 8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+            .meta-box { background: #fdf8f2; border: 1px solid #f3e5dc; padding: 8px 12px; margin-bottom: 15px; border-radius: 6px; font-size: 8pt; display: flex; justify-content: space-between; }
+            .meta-box strong { color: #4E342E; }
+            .section-title { background: #4E342E; color: white; padding: 4px 10px; font-size: 8.5pt; font-weight: bold; border-radius: 4px; display: block; width: 100%; box-sizing: border-box; text-transform: uppercase; letter-spacing: 0.5px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+            th, td { border: 1px solid #cbd5e1; }
+            th { background: #F2D2A9; color: #4E342E; text-align: left; font-weight: bold; padding: 5px 6px; font-size: 7.5pt; }
+            .total-row { background: #fdf8f2; font-weight: bold; color: #4E342E; border-top: 2px solid #4E342E; }
+            ol { padding-left: 18px; margin: 10px 0 0 0; }
+            .footer { margin-top: 20px; text-align: center; font-size: 7.5pt; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 8px; }
+        </style>
         
-        '<div class="section-title">💡 WAWASAN & ANALISIS BISNIS (AI AGENT)</div>' +
-        '<div class="insight-container">' +
-            '<div class="pie-chart-wrapper">' +
-                '<div class="pie-chart"></div>' +
-                '<div class="legend">' +
-                    '<div class="legend-item"><div class="dot-fc"></div> Cost (' + fcPercent + '%)</div>' +
-                    '<div class="legend-item"><div class="dot-pm"></div> Profit</div>' +
-                '</div>' +
-            '</div>' +
-            '<div class="insight-content">' +
-                '<div class="insight-item"><strong>📊 Profit Margin:</strong> ' + insightPM + '</div>' +
-                '<div class="insight-item"><strong>💰 Rekomendasi Food Cost:</strong> ' + insightFC + '</div>' +
-                '<div class="insight-item" style="margin-bottom:0;"><strong>🛡️ Standar Produksi (Unilever):</strong> ' + insightUB + '</div>' +
-            '</div>' +
-        '</div>' +
-
-        '<div class="section-title">📝 INSTRUKSI LANGKAH DEMI LANGKAH</div>' +
-        '<ol>' +
-        stepsHTML +
-        '</ol>' +
-
-        '<div class="footer">' +
-        'Dokumen Manajemen Operasional Kedai Mak-er • Dicetak melalui Sistem PWA Mobile' +
-        '</div>' +
+        <div class="header-container">
+            <div>
+                <div class="brand-tag">Lembar Kerja Produksi Resmi</div>
+                <h1>${namaResep}</h1>
+            </div>
+            <div style="text-align: right; font-size: 8pt; color: #64748b; margin-bottom: 2px;">
+                <strong>Dicetak:</strong> ${tanggalCetak}
+            </div>
+        </div>
         
-        '</body>' +
-        '</html>';
+        <div class="meta-box">
+            <div><strong>Pembuat:</strong> Joko Prasetyo</div>
+            <div><strong>Unit Usaha:</strong> Kedai Mak-er</div>
+            <div><strong>Status:</strong> Valid (PWA Dashboard)</div>
+        </div>
 
-    // ==========================================
-    // 6. EKSEKUSI CETAK (HANYA MENGGUNAKAN IFRAME)
-    // ==========================================
-    
-    // Simpan judul asli aplikasi Anda untuk dikembalikan nanti
-    const originalAppTitle = document.title;
+        <!-- LAYOUT UTAMA: MUTLAK GOLDEN RATIO 1.618 : 1 -->
+        <div style="display: flex; gap: 24px; align-items: flex-start; margin-bottom: 20px;">
+            
+            <!-- KOLOM KIRI (1.618): TABEL BAHAN YANG LEGA -->
+            <!-- Tambahan 'width: 0' memaksa flexbox mematuhi rasio terlepas dari isi konten -->
+            <div style="flex: 1.618; width: 0; display: flex; flex-direction: column;">
+                <div class="section-title">📋 Komposisi Bahan & Struktur Biaya</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Komponen Bahan</th>
+                            <th style="text-align: center; width: 55px;">Takaran</th>
+                            <th style="text-align: right; width: 60px;">Berat</th>
+                            <th style="text-align: right; width: 85px;">Biaya (Rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHTML}
+                        <tr class="total-row">
+                            <td colspan="3" style="text-align: right; padding: 6px 8px; font-size: 7.5pt;">TOTAL MODAL (BATCH):</td>
+                            <td style="text-align: right; padding: 6px 8px; color: #d97706; font-size: 8.5pt;">${formattedTotalModal}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    // Buat elemen iframe tersembunyi
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = 'none';
-    document.body.appendChild(iframe);
-    
-    // HACK: Ubah judul aplikasi UTAMA sementara agar Chrome membacanya sebagai nama File PDF!
-    document.title = finalDocTitle;
+            <!-- KOLOM KANAN (1.0): DASHBOARD AI PANEL YANG MEMANFAATKAN RUANG KOSONG -->
+            <div style="flex: 1; width: 0; display: flex; flex-direction: column;">
+                <div class="section-title">💡 Wawasan Bisnis (AI)</div>
+                <!-- Panel AI dengan tampilan layaknya Card di Aplikasi Mobile -->
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 18px 14px; margin-top: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 16px;">
+                    
+                    <!-- Pie Chart Besar yang Menawan -->
+                    <!-- Resolusi kanvas dinaikkan 2x lipat (300px) agar sangat tajam, tapi dirender 150px -->
+                    <canvas id="pdf-pie-canvas" width="300" height="300" style="width: 150px; height: 150px; display: block;"></canvas>
+                    
+                    <!-- Legend Proporsional di bawah Chart -->
+                    <div style="font-size: 8.5pt; font-weight: 800; display: flex; width: 100%; justify-content: center; gap: 15px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 14px;">
+                        <div style="display: flex; align-items: center; gap: 5px; color: #4E342E;">
+                            <span style="width: 10px; height: 10px; background: #e67e22; display: inline-block; border-radius: 2px;"></span> Cost (${Number(fcPercent).toFixed(1)}%)
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px; color: #4E342E;">
+                            <span style="width: 10px; height: 10px; background: #27ae60; display: inline-block; border-radius: 2px;"></span> Profit (${Number(pmPercent).toFixed(1)}%)
+                        </div>
+                    </div>
 
-    // Tulis dokumen ke dalam iframe
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(printDocumentContent);
-    doc.close();
-    
-    // Beri sedikit jeda agar DOM Iframe selesai dirender, lalu cetak
+                    <!-- Insight Text yang terbaca jelas -->
+                    <div style="font-size: 8pt; display: flex; flex-direction: column; gap: 10px; line-height: 1.45; text-align: justify; width: 100%;">
+                        <div><strong style="color: #0f172a; font-size: 8.5pt;">📊 Margin:</strong><br>${insightPM}</div>
+                        <div><strong style="color: #0f172a; font-size: 8.5pt;">💰 Food Cost:</strong><br>${insightFC}</div>
+                        <div><strong style="color: #0f172a; font-size: 8.5pt;">🛡️ Standar:</strong><br>${insightUB}</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BAGIAN BAWAH: INSTRUKSI LANGKAH DEMI LANGKAH -->
+        <div style="width: 100%;">
+            <div class="section-title">📝 Instruksi Langkah Demi Langkah</div>
+            <ol>${stepsHTML}</ol>
+        </div>
+
+        <div class="footer">Dokumen Manajemen Operasional Kedai Mak-er • Dicetak via Sistem PWA Mobile Kelas Premium</div>
+    `;
+
+    document.body.appendChild(tempContainer);
+
+    // Render Pie Chart dengan Skala Resolusi Tinggi dan Sudut Mulai yang Elegan (Top-Center)
+    const canvasEl = tempContainer.querySelector('#pdf-pie-canvas');
+    if (canvasEl) {
+        const ctx = canvasEl.getContext('2d');
+        // Ukuran internal disesuaikan dengan width/height=300 dari canvas HTML di atas
+        const centerX = 150, centerY = 150, radius = 135; 
+        
+        // Memulai gambar dari titik jam 12 atas (Top Center) agar terlihat seperti dashboard profesional
+        let startAngle = -0.5 * Math.PI; 
+        
+        const fcVal = parseFloat(fcPercent) || 0;
+        const pmVal = 100 - fcVal;
+        
+        const slices = [
+            { percent: fcVal, color: '#e67e22' },      // Cost (Oranye)
+            { percent: pmVal > 0 ? pmVal : 0, color: '#27ae60' } // Profit (Hijau)
+        ];
+
+        slices.forEach(slice => {
+            if (slice.percent > 0) {
+                const sliceAngle = (slice.percent / 100) * 2 * Math.PI;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = slice.color;
+                ctx.fill();
+                
+                // Tambahkan stroke putih tipis sebagai pemisah antar warna (memberikan efek modern)
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = '#ffffff';
+                ctx.stroke();
+
+                startAngle += sliceAngle;
+            }
+        });
+    }
+
+    // Eksekusi Pembuatan PDF
     setTimeout(() => {
-        iframe.contentWindow.focus();
-        iframe.contentWindow.print();
-        
-        // Kembalikan judul aplikasi ke semula setelah dialog print dieksekusi
-        setTimeout(() => {
-            document.title = originalAppTitle;
-            document.body.removeChild(iframe);
-        }, 1500); // Jeda aman untuk memastikan dialog print sudah membaca judulnya
-        
-    }, 500);
+        html2canvas(tempContainer, {
+            scale: 2.5, // Kualitas optimal (tidak perlu 3 jika font sudah besar, menghemat RAM mobile)
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            windowWidth: 794
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png', 1.0);
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            const lebarPDF = pdf.internal.pageSize.getWidth();
+            const tinggiPDF = (canvas.height * lebarPDF) / canvas.width;
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, lebarPDF, tinggiPDF);
+            pdf.save(`${finalDocTitle}.pdf`); 
+            
+            document.body.removeChild(tempContainer);
+        }).catch(err => {
+            console.error("Gagal merender PDF: ", err);
+            alert("Terjadi kesalahan saat memproses file PDF.");
+            document.body.removeChild(tempContainer);
+        });
+    }, 300);
 };
-window.eksekusiCetakPremium = eksekusiCetakPremium;
 
-window.jalankanAnalisisAIAgent = function() {
-    // 1. Ambil data aktual dari kalkulator aplikasi Anda 
-    // (Sesuaikan nama variabel/selector dengan yang sudah ada di source code Anda)
-    const hppPcs = window.currentHppBersih || 2169; // Contoh fallback
-    const hargaJual = window.currentHargaJual || 5000; // Contoh harga jual
-    const foodCostPersen = window.currentFoodCostPersen || 32.5; // Persentase food cost
-    const beratPcs = window.currentBeratPcs || 63.5; // Berat adonan per pcs
-    
-    // Hitung Profit Margin otomatis
-    const profitMargin = hargaJual > 0 ? (((hargaJual - hppPcs) / hargaJual) * 100).toFixed(1) : 0;
+window.jalankanAnalisisAIAgent = function(hppPcs, hargaJual, beratPcs) {
+    // 1. Validasi & Kalkulasi Angka Dasar
+    const hpp = parseFloat(hppPcs) || 0;
+    const jual = parseFloat(hargaJual) || 0;
+    const berat = parseFloat(beratPcs) || 0;
 
-    // --- TAB 1: ANALISIS PROFIT MARGIN ---
-    let analisisPM = "";
-    if (profitMargin >= 55) {
-        analisisPM = `Margin keuntungan sangat sehat di angka ${profitMargin}%. Harga jual Rp ${hargaJual.toLocaleString()} memberikan bantalan laba yang sangat baik terhadap fluktuasi harga bahan baku.`;
-    } else if (profitMargin >= 40) {
-        analisisPM = `Margin keuntungan stabil di angka ${profitMargin}%. Bisnis Kedai Mak-er berada di zona aman, namun tetap pantau kenaikan harga bahan kering utama.`;
-    } else {
-        analisisPM = `Peringatan: Margin keuntungan menipis (${profitMargin}%). Pertimbangkan untuk menaikkan harga jual atau mengoptimalkan takaran bahan untuk menjaga operasional.`;
+    // Hindari pembagian dengan nol
+    const foodCostPersen = jual > 0 ? (hpp / jual) * 100 : 0;
+    const profitMarginPersen = jual > 0 ? ((jual - hpp) / jual) * 100 : 0;
+
+    // ==========================================
+    // 2. UPDATE ELEMEN BADGE ATAS (PROFIT & FOOD COST)
+    // ==========================================
+    const elTabProfit = document.getElementById('sum-profit-margin');
+    const elTabFC = document.getElementById('food-cost-percent');
+    const elBadgeFC = document.getElementById('fc-badge');
+
+    if (elTabProfit) {
+        elTabProfit.innerText = profitMarginPersen.toFixed(1) + '%';
+        // Ubah warna text jika rugi (merah) atau untung (hijau)
+        elTabProfit.style.color = profitMarginPersen < 0 ? '#e74c3c' : '#27ae60'; 
     }
 
-    // --- TAB 2: REKOMENDASI FOOD COST ---
-    let analisisFC = "";
-    if (foodCostPersen <= 30) {
-        analisisFC = `Food Cost efisien (${foodCostPersen}%). Pengelolaan HPP sudah sangat optimal di bawah standar industri 35%. Pertahankan efisiensi supplier saat ini.`;
-    } else if (foodCostPersen <= 38) {
-        analisisFC = `Food Cost ideal berada di kisaran ${foodCostPersen}%. Cari supplier alternatif untuk bahan berbiaya tinggi (seperti mentega/butter atau cokelat) jika ingin mendongkrak margin.`;
-    } else {
-        analisisFC = `Food Cost terlalu tinggi (${foodCostPersen}%). Porsi bahan baku membebani modal produksi per batch. Segera tinjau ulang harga beli dan spesifikasi kemasan.`;
+    if (elTabFC) {
+        elTabFC.innerText = foodCostPersen.toFixed(1) + '%';
     }
 
-    // --- TAB 3: STANDAR UNILEVER / PRODUKSI MASAL ---
-    let analisisUB = "";
-    if (beratPcs >= 55 && beratPcs <= 65) {
-        analisisUB = `Berat adonan (${beratPcs}g per pcs) sudah ideal dan presisi untuk standar grade komersial masal, menghasilkan konsistensi proofing dan hasil goreng yang stabil.`;
-    } else if (beratPcs > 65) {
-        analisisUB = `Berat adonan tergolong besar (${beratPcs}g). Pastikan waktu *final proofing* disesuaikan agar volume ragi mampu mengangkat struktur adonan dengan sempurna.`;
-    } else {
-        analisisUB = `Berat adonan terlalu kecil (${beratPcs}g). Risiko produk kempes atau kering saat digoreng lebih tinggi. Sesuaikan kembali dengan cetakan standar.`;
+    if (elBadgeFC) {
+        // Logika Badge Peringatan Dinamis
+        if (foodCostPersen > 45) {
+            elBadgeFC.innerText = "🚨 BOROS / OVERBUDGET (Food Cost > 45%)";
+            elBadgeFC.style.background = "#e74c3c"; // Merah
+        } else if (foodCostPersen >= 35 && foodCostPersen <= 45) {
+            elBadgeFC.innerText = "⚠️ STANDAR / AMAN (Food Cost 35% - 45%)";
+            elBadgeFC.style.background = "#f39c12"; // Oranye/Kuning
+        } else if (foodCostPersen > 0 && foodCostPersen < 35) {
+            elBadgeFC.innerText = "✅ SANGAT EFISIEN (Food Cost < 35%)";
+            elBadgeFC.style.background = "#27ae60"; // Hijau
+        } else {
+            elBadgeFC.innerText = "ℹ️ BELUM ADA DATA";
+            elBadgeFC.style.background = "#95a5a6"; // Abu-abu
+        }
     }
 
-    // Masukkan hasil analisis ke dalam DOM secara dinamis
+    // ==========================================
+    // 3. UPDATE TEKS AI AGENT (INSIGHT FOLDER)
+    // ==========================================
     const elPM = document.getElementById('text-analysis-pm');
     const elFC = document.getElementById('text-analysis-fc');
     const elUB = document.getElementById('text-analysis-ub');
 
-    if (elPM) elPM.innerText = analisisPM;
-    if (elFC) elFC.innerText = analisisFC;
-    if (elUB) elUB.innerText = analisisUB;
+    // --- Insight Profit Margin ---
+    if (elPM) {
+        if (profitMarginPersen >= 50) {
+            elPM.innerText = `Margin keuntungan sangat sehat di angka ${profitMarginPersen.toFixed(1)}%. Harga jual memberikan bantalan laba yang sangat baik terhadap fluktuasi harga bahan baku.`;
+        } else if (profitMarginPersen > 0) {
+            elPM.innerText = `Margin keuntungan stabil di angka ${profitMarginPersen.toFixed(1)}%. Bisnis berada di zona aman, namun tetap pantau kenaikan harga bahan utama.`;
+        } else {
+            elPM.innerText = `Peringatan Kritis: Anda mengalami kerugian dengan margin ${profitMarginPersen.toFixed(1)}%. Segera naikkan harga jual atau kurangi biaya bahan baku!`;
+        }
+    }
+
+    // --- Insight Food Cost ---
+    if (elFC) {
+        if (foodCostPersen <= 35) {
+            elFC.innerText = `Food Cost sangat ideal berada di ${foodCostPersen.toFixed(1)}%. Pengelolaan HPP Anda sudah setara dengan standar industri F&B profesional.`;
+        } else if (foodCostPersen <= 45) {
+            elFC.innerText = `Food Cost berada di kisaran ${foodCostPersen.toFixed(1)}%. Masih wajar, namun cari supplier alternatif untuk bahan berbiaya tinggi agar margin naik.`;
+        } else {
+            elFC.innerText = `Food Cost membengkak hingga ${foodCostPersen.toFixed(1)}%! Beban bahan baku terlalu berat. Tinjau ulang resep atau naikkan harga jual secepatnya.`;
+        }
+    }
+
+    // --- Insight Unilever (Berat Pcs) ---
+    if (elUB) {
+        if (berat >= 55 && berat <= 65) {
+            elUB.innerText = `Berat adonan (${berat.toFixed(1)}g per pcs) sudah ideal dan presisi untuk standar grade komersial masal, menghasilkan konsistensi proofing yang stabil.`;
+        } else if (berat > 65) {
+            elUB.innerText = `Berat adonan tergolong besar (${berat.toFixed(1)}g). Hati-hati, ini bisa memakan Food Cost. Pastikan waktu proofing disesuaikan agar ragi aktif sempurna.`;
+        } else {
+            elUB.innerText = `Berat adonan terlalu kecil (${berat.toFixed(1)}g). Risiko produk kempes atau kering saat digoreng lebih tinggi. Sesuaikan kembali dengan cetakan standar.`;
+        }
+    }
+    
+    // Simpan data ke window agar terbaca oleh fungsi Cetak PDF
+    window.currentFoodCostPersen = foodCostPersen;
 };
 
 // Panggil fungsi ini setiap kali kalkulasi resep diubah/dihitung ulang oleh user
