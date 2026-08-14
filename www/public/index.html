@@ -663,7 +663,7 @@ body.logged-in .container {
         .mini-mode .timer-circle { width: 110px; height: 110px; margin: 5px auto; }
         .mini-mode svg { width: 110px; height: 110px; }
         .mini-mode circle { cx: 55; cy: 55; r: 45; stroke-width: 6; }
-        .mini-mode #progress-circle { stroke-dasharray: 282.7; transform: scaleX(-1) rotate(-90deg); transform-origin: 55px 55px; }
+        .mini-mode #progress-circle { stroke-dasharray: 282.7; transform: scaleX(-1) rotate(-90deg); transform-origin: 50% 50%; }
         .mini-mode #countdown { font-size: 1.2rem; margin: 1px 0; }
         .mini-mode .time-info { font-size: 0.5rem; height: auto; }
         .mini-mode .btn { padding: 6px 10px; font-size: 0.7rem; border-radius: 20px; }
@@ -783,12 +783,34 @@ body.logged-in .container {
 
         .article-slider-container.fullscreen-mode .article-slide {flex: 0 0 auto; width: 100%; padding: 15px; border-bottom: 1px dashed rgba(78, 52, 46, 0.2);}
          /* TIMER DAN ANALISIS AI - ada perubaha */
-        .timer-circle { position: relative; width: 200px; height: 200px; margin: 15px auto; display: flex; justify-content: center; align-items: center; flex-shrink: 0;}
-        .timer-content-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; z-index: 5; }
-        .timer-circle svg {
-    width: 233px !important; /* Fibonacci Number */
-    height: 233px !important;
+        .timer-circle { position: relative; 
+    width: 377px;       /* Skala Fibonacci berikutnya */
+    max-width: 85vw;    /* Aman untuk layar HP kecil */
+    aspect-ratio: 1 / 1; /* Menjaga tetap bulat sempurna */
+    height: auto; 
+    margin: 21px auto;  /* Angka Fibonacci */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    flex-shrink: 0;
 }
+        .timer-content-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+    display: flex; flex-direction: column; justify-content: center; align-items: center; 
+    pointer-events: none; z-index: 5;
+}
+        .timer-circle svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100% !important; 
+    height: 100% !important;
+}
+
+        #progress-circle { transition: stroke-dashoffset 1s linear, stroke 0.5s ease; 
+    transform: scaleX(-1) rotate(-90deg); 
+    transform-origin: 50% 50%;
+ }
+
         #countdown {font-size: var(--fs-h2, 2.29rem); 
     font-weight: 800; 
     color: var(--chocolate); 
@@ -797,7 +819,7 @@ body.logged-in .container {
     pointer-events: auto; 
     cursor: pointer;
 }
-        #progress-circle { transition: stroke-dashoffset 1s linear, stroke 0.5s ease; transform: scaleX(-1) rotate(-90deg); transform-origin: 100px 100px; }
+
         .time-info { font-size: 0.75rem; color: inherit; opacity: 0.8; font-weight: 600; height: 16px; line-height: 16px; text-align: center; }
 
         /* MODAL ABOUT DAN RESEP */
@@ -1410,14 +1432,19 @@ body.logged-in .container {
 
         <!-- Bagian Timer Circle-->
         <div class="timer-circle">
-            <svg width="200" height="200" id="timer-svg">
-    <!-- Lingkaran Background (Jalur statis) -->
-    <circle cx="100" cy="100" r="89" stroke="rgba(0,0,0,0.05)" stroke-width="8" fill="transparent"/>
-    
-    <!-- Lingkaran Progress (Jalur yang bergerak) -->
-    <circle id="progress-circle" cx="100" cy="100" r="89" stroke="#E67E22" stroke-width="8" fill="transparent" stroke-dasharray="559.20" stroke-dashoffset="0" style="stroke-dashoffset: 0; stroke: var(--accent);"></circle>
-</svg>
+            <svg viewBox="0 0 377 377" id="timer-svg">
+                <!-- cx & cy = 188.5 (Tengah dari 377) -->
+                <!-- r = 144 (Fibonacci) -->
+                <!-- stroke-width = 13 (Fibonacci) -->
+                
+                <!-- Lingkaran Background -->
+                <circle cx="188.5" cy="188.5" r="144" stroke="rgba(0,0,0,0.05)" stroke-width="13" fill="transparent"/>
+                
+                <!-- Lingkaran Progress -->
+                <circle id="progress-circle" cx="188.5" cy="188.5" r="144" stroke="#E67E22" stroke-width="13" fill="transparent" stroke-dasharray="904.78" stroke-dashoffset="0" style="stroke-dashoffset: 0; stroke: var(--accent);"></circle>
+            </svg>
             <div class="timer-content-wrapper">
+                <div class="time-info" id="time-start" style="color: var(--accent); font-weight: 700; margin-bottom: -2px;"></div>
                 <div class="time-info" id="time-duration"></div>
                 <div id="countdown"  data-onclick="handleTimerClick()">00:00</div>
                 <div class="time-info" id="time-eta"></div>
@@ -1850,16 +1877,29 @@ body.logged-in .container {
         </div>
 
         <!-- INPUT ACUAN TEPUNG & PORSI -->
-        <div style="background: white; padding: 13px; border-radius: 13px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); margin-bottom: 13px; display: flex; gap: 13px; border: 1px solid #e2e8f0;">
-    <div style="flex: 1.618;">
-        <label for="base-flour" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Tepung Utama (gr)</label>
-        <input type="number" id="base-flour" value="1000" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
-    </div>
-    <div style="flex: 1;">
-        <label for="recipe-yield" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Total Porsi (Pcs)</label>
-        <input type="number" id="recipe-yield" value="34" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
-    </div>
-</div>
+        <div style="background: white; padding: 13px; border-radius: 13px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); margin-bottom: 13px; display: flex; flex-wrap: wrap; gap: 13px; border: 1px solid #e2e8f0;">
+    
+            <!-- Kolom 1: Tepung Utama -->
+            <div style="flex: 1.618; min-width: 90px;">
+                <label for="base-flour" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Tepung (gr)</label>
+                <input type="number" id="base-flour" value="1000" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+            </div>
+            
+            <!-- Kolom 2: Total Porsi -->
+            <div style="flex: 1; min-width: 70px;">
+                <label for="recipe-yield" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Porsi</label>
+                <input type="number" id="recipe-yield" value="34" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+            </div>
+
+            <!-- Kolom 3: Harga Jual (Terintegrasi) -->
+            <div style="flex: 1.5; min-width: 110px;">
+                <label for="input-harga-jual" style="font-size: 0.72rem; font-weight: bold; color: #27ae60; display: block; margin-bottom: 4px; text-transform: uppercase;">Harga/Pcs</label>
+                <div style="display: flex; align-items: center; padding: 7px 8px; border: 1px solid #27ae60; border-radius: 8px; box-sizing: border-box; background: #f0fdf4;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #27ae60; margin-right: 4px;">Rp</span>
+                    <input type="number" id="input-harga-jual" value="4500" step="100" style="width: 100%; border: none; font-size: 0.875rem; font-weight: 700; color: #27ae60; outline: none; padding: 0; background: transparent; text-align: left;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+                </div>
+            </div>
+        </div>
 
         <!-- AI AGENT PREMIUM ANALYTICS BOX -->
         <details id="premium-ai-analysis-box" class="premium-ai-accordion" style="background: linear-gradient(135deg, #fffcf7 0%, #fcf3e8 100%); border: 2px solid var(--accent, #E67E22); border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.08); overflow: hidden; display: none;" open>
@@ -2028,29 +2068,23 @@ body.logged-in .container {
             </div>
             
             <!-- Grid Input Harga Jual -->
-            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; margin-top: 2px; align-items: center;">
-                <div style="background: #fff; padding: 6px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                    <label for="input-harga-jual" style="display: block; font-size: 0.65rem; font-weight: 600; color: #27ae60; margin-bottom: 2px;">Harga Jual / Pcs:</label>
-                    <div style="display: flex; align-items: center; gap: 2px;">
-                        <span style="font-size: 0.8rem; font-weight: 700; color: #27ae60;">Rp</span>
-                        <input type="number" id="input-harga-jual" value="4500" step="100" style="width: 100%; border: none; font-size: 0.85rem; font-weight: 700; color: #27ae60; outline: none; padding: 0;"  data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
-                    </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 6px; margin-top: 2px; align-items: center;">
+    
+                <!-- Kolom 1: Profit Margin -->
+                <div id="tab-profit-margin" class="folder-trigger" data-onclick="switchFolderTab('profit-margin')" style="background: rgb(244, 251, 247); border: 1px solid rgb(209, 242, 225); padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s;">
+                    <span style="display: block; font-size: 0.52rem; font-weight: 700; color: #218c4e;">PROFIT MARGIN</span>
+                    <span id="sum-profit-margin" style="font-size: 0.85rem; font-weight: 800; color: rgb(39, 174, 96);">51.8%</span>
                 </div>
-                <div id="tab-profit-margin" class="folder-trigger"  data-onclick="switchFolderTab('profit-margin')" style="background: #f4fbf7; border: 1px solid #d1f2e1; padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s;">
-                    <span style="display: block; font-size: 0.58rem; font-weight: 700; color: #218c4e;">PROFIT MARGIN</span>
-                    <span id="sum-profit-margin" style="font-size: 0.95rem; font-weight: 800; color: #27ae60;">0%</span>
-                </div>
-            </div>
 
-            <!-- Pemicu Tab Food Cost & Badge -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.70rem;">
-                <div id="tab-food-cost" class="folder-trigger"  data-onclick="switchFolderTab('food-cost')" style="background: #f4fbf7; border: 1px solid #d1f2e1; padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s;">
-                    <span style="display: block; font-size: 0.55rem; font-weight: 700; color: #1e7e4a;">FOOD COST RATIO</span>
-                    <span id="food-cost-percent" style="font-size: 1rem; font-weight: 900; color: #34495e;">0%</span>
+                <!-- Kolom 2: Food Cost Ratio -->
+                <div id="tab-food-cost" class="folder-trigger" data-onclick="switchFolderTab('food-cost')" style="background: rgb(244, 251, 247); border: 1px solid rgb(209, 242, 225); padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s;">
+                    <span style="display: block; font-size: 0.52rem; font-weight: 700; color: #1e7e4a;">FOOD COST</span>
+                    <span id="food-cost-percent" style="font-size: 0.85rem; font-weight: 900; color: #34495e;">48.2%</span>
                 </div>
-                <div id="fc-badge" class="folder-trigger"  data-onclick="switchFolderTab('unilever-badge')" style="display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800; color: white; background: #7f8c8d; padding: 4px; border-radius: 8px; text-transform: uppercase; text-align: center; cursor: pointer; transition: all 0.2s;">
-                    MENUNGGU DATA
-                </div>
+
+                <!-- Kolom 3: Badge Overbudget -->
+                <div id="fc-badge" class="folder-trigger" data-onclick="switchFolderTab('unilever-badge')" style="display: flex; align-items: center; justify-content: center; font-size: 0.5rem; font-weight: 800; color: white; background: rgb(231, 76, 60); padding: 8px 4px; border-radius: 8px; text-transform: uppercase; text-align: center; cursor: pointer; transition: 0.2s;">🚨 OVERBUDGET</div>
+
             </div>
 
             <!-- WADAH ARSIP FOLDER BERBENTUK KLIP/TUMPUK -->
@@ -2238,6 +2272,23 @@ async function simpanResepKeDatabase() {
 window.simpanResepKeDatabase = simpanResepKeDatabase;
 /* ========================================= */
 
+// Fungsi untuk mulai mendengarkan perubahan data di server
+function jalankanSinkronisasiRealtime() {
+    supabase
+        .channel('sinkronisasi-resep')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'recipes' }, payload => {
+            console.log('Perubahan terdeteksi dari server!', payload);
+            
+            // Lempar payload ke fungsi distributor lokal
+            distribusiKePenyimpananLokal(payload);
+        })
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                console.log('Berhasil terhubung ke Supabase Realtime');
+            }
+        });
+}
+
 async function initSQLite() {
   try {
     // Membuat atau membuka koneksi database
@@ -2257,6 +2308,40 @@ async function initSQLite() {
   } catch (err) {
     console.error('Gagal menginisialisasi SQLite', err);
   }
+}
+
+async function distribusiKePenyimpananLokal(payload) {
+    const dataResep = payload.new;
+    const tipeEvent = payload.eventType; // 'INSERT', 'UPDATE', atau 'DELETE'
+
+    if (tipeEvent === 'DELETE') {
+        // Eksekusi logika penghapusan dari lokal
+        return; 
+    }
+
+    // Eksekusi pembaruan ke Native SQLite (Mobile)
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+        try {
+            await saveRecipeSQLite(dataResep.name, JSON.stringify(dataResep.details));
+        } catch (err) {
+            console.error('Gagal sinkron ke SQLite:', err);
+        }
+    } 
+    // Eksekusi pembaruan ke IndexedDB (PWA Browser)
+    else {
+        try {
+            const db = await initIndexedDB();
+            await db.put('recipes', {
+                id: dataResep.id,
+                ...dataResep.details 
+            });
+        } catch (err) {
+            console.error('Gagal sinkron ke IndexedDB:', err);
+        }
+    }
+
+    // Picu pembaruan visual agar layar tidak perlu di-refresh
+    reaktivitasUI();
 }
 
 // Menyimpan Data ke SQLite
@@ -2996,14 +3081,26 @@ function setProfileLoadingState(isLoading) {
     }
 }
 
-function renderProofingLogs() {
+// FUNGSI MENAMPILKAN LOG DI PROFIL (Mendukung Mobile Native & PWA)
+async function renderProofingLogs() {
     const container = document.getElementById('dynamic-proofing-logs');
     if (!container) return;
 
-    // 1. Ambil data dari localStorage (gunakan fallback ke window.proofingHistory jika local tidak ada)
     let rawLogs = [];
     try {
-        const stored = localStorage.getItem('proofing_logs');
+        let stored = null;
+        
+        // 1. Ambil data dari Native Mobile (Capacitor) jika tersedia
+        if (window.Capacitor && window.Capacitor.Plugins.Preferences) {
+            const { value } = await Capacitor.Plugins.Preferences.get({ key: 'proofing_logs' });
+            stored = value;
+        }
+        
+        // 2. Fallback PWA Browser
+        if (!stored) {
+            stored = localStorage.getItem('proofing_logs');
+        }
+
         if (stored) {
             rawLogs = JSON.parse(stored);
         } else if (Array.isArray(window.proofingHistory)) {
@@ -3026,6 +3123,7 @@ function renderProofingLogs() {
         return;
     }
 
+    // Bagian ini tetap menggunakan gaya UI lama Anda yang sudah bagus
     logs.forEach((entry) => {
         // Pemetaan properti yang aman dan fleksibel
         const title = entry.title || entry.recipe || entry.name || 'Proofing';
@@ -3154,23 +3252,60 @@ window.renderInventoryCards = function() {
     });
 };
 
-/** Catat aktivitas proofing ke localStorage untuk riwayat profil */
-function appendProofingLog(entry) {
+// FUNGSI MENAMBAH LOG (Mendukung Mobile Native & PWA)
+async function appendProofingLog(entry) {
     let logs = [];
     try {
-        const stored = localStorage.getItem('proofing_logs');
+        let stored = null;
+        
+        // 1. Coba baca dari penyimpanan Native Mobile (Capacitor)
+        if (window.Capacitor && window.Capacitor.Plugins.Preferences) {
+            const { value } = await Capacitor.Plugins.Preferences.get({ key: 'proofing_logs' });
+            stored = value;
+        }
+        
+        // 2. Fallback baca dari PWA Browser (localStorage)
+        if (!stored) {
+            stored = localStorage.getItem('proofing_logs');
+        }
+
         if (stored) {
             const parsed = JSON.parse(stored);
             if (Array.isArray(parsed)) logs = parsed;
         }
     } catch (e) {
-        console.warn('Gagal baca proofing_logs:', e);
+        console.warn('Gagal membaca proofing_logs:', e);
     }
+    
+    // Tambahkan log baru dengan timestamp
     logs.push({ ...entry, timestamp: entry.timestamp || Date.now() });
-    if (logs.length > 50) logs = logs.slice(-50);
-    localStorage.setItem('proofing_logs', JSON.stringify(logs));
+    
+    // Batasi maksimal 50 riwayat agar memori tidak penuh
+    if (logs.length > 50) logs = logs.slice(-50); 
+    
+    const jsonString = JSON.stringify(logs);
+    
+    // 3. Simpan ke PWA Browser
+    localStorage.setItem('proofing_logs', jsonString);
+    
+    // 4. Simpan ke Native Mobile
+    if (window.Capacitor && window.Capacitor.Plugins.Preferences) {
+        try {
+            await Capacitor.Plugins.Preferences.set({ key: 'proofing_logs', value: jsonString });
+        } catch (err) {
+            console.warn('Gagal menyimpan log ke penyimpanan Native:', err);
+        }
+    }
+    
+    // Simpan di variabel memori sementara
     window.proofingHistory = logs;
+
+    // Jika halaman profil sedang terbuka, langsung perbarui tampilannya secara real-time
+    if (typeof renderProofingLogs === 'function') {
+        renderProofingLogs();
+    }
 }
+// ==============================================
 
 function readProofingLogsFromStorage() {
     try {
@@ -6290,7 +6425,7 @@ function updateCircleProgress() {
     if (!circle) return;
     
     const isMini = document.getElementById('app-container').classList.contains('mini-mode');
-    const circumference = isMini ? 282.7 : 565.48;
+    const circumference = isMini ? 282.7 : 904.78;
     
     if (!Number.isFinite(globalTotalSeconds) || !Number.isFinite(globalInitialSeconds) || globalInitialSeconds <= 0) {
         circle.style.strokeDashoffset = "0";
@@ -6344,6 +6479,9 @@ function updateETALabel(minutes) {
 function handleTimerClick() {
     if (isTimerRunning) return; 
     
+    const startEl = document.getElementById('time-start'); // TAMBAHAN
+    if (startEl) startEl.innerText = "";                   // TAMBAHAN
+
     const display = document.getElementById('countdown');
     display.innerText = "00:00";
     totalDurationMinutes = 0;
@@ -6417,6 +6555,7 @@ function handleResetProofing() {
     }
 }
 
+// FUNGSI UTAMA UNTUK TOMBOL START/RESET PROOFING
 function triggerMainProofing() {
     const mainBtn = document.getElementById('main-start-btn');
     if (mainBtn && mainBtn.innerText === "START PROOFING") {
@@ -6440,6 +6579,13 @@ function triggerMainProofing() {
         alarmTriggered = false; 
         setControlsDisabled(true);
 
+        const now = new Date();
+        const startEl = document.getElementById('time-start');
+        if (startEl) {
+            const startHours = String(now.getHours()).padStart(2, '0');
+            const startMins = String(now.getMinutes()).padStart(2, '0');
+            startEl.innerText = `Mulai: ${startHours}:${startMins}`;
+        }
         const modeLabel = localStorage.getItem('activeMode') || 'custom';
         const tempText = document.getElementById('temp-val')?.innerText?.replace(/[^\d.-]/g, '') || '--';
         const humText = document.getElementById('hum-val')?.innerText?.replace(/[^\d.-]/g, '') || '--';
@@ -6459,6 +6605,9 @@ function triggerMainProofing() {
             }
         }
     } else {
+        const startEl = document.getElementById('time-start'); // TAMBAHAN
+        if (startEl) startEl.innerText = "";                   // TAMBAHAN
+
         if (timerInterval) {
             clearInterval(timerInterval);
             timerInterval = null; // <-- Kunci agar startProofing() selanjutnya bisa berjalan!
@@ -6497,6 +6646,7 @@ function triggerMainProofing() {
         }
     }
 }
+//==================================================================================
 
 // FUNGSI UNTUK TOMBOL CUSTOM TIME (SET) - MEMUNGKINKAN USER MENGATUR WAKTU PROOFING SECARA MANUAL
 function setCustomTime() {
@@ -6687,6 +6837,7 @@ function setMode(mode) {
 }
 
 // FUNGSI CHECK AND RESTORE TIMER
+// FUNGSI CHECK AND RESTORE TIMER
 function checkAndRestoreTimer() {
     const rawState = localStorage.getItem('proofing_state');
     if (!rawState) return;
@@ -6736,6 +6887,21 @@ function checkAndRestoreTimer() {
         updateCircleProgress();
 
         if (savedState.isRunning) {
+            
+            // --- KODE BARU: RESTORE WAKTU MULAI ---
+            if (savedState.savedAt) {
+                const durasiBerjalanMs = (globalInitialSeconds - restoredSeconds) * 1000;
+                const waktuMulaiAsli = new Date(Date.now() - durasiBerjalanMs);
+                
+                const startEl = document.getElementById('time-start');
+                if (startEl) {
+                    const startHours = String(waktuMulaiAsli.getHours()).padStart(2, '0');
+                    const startMins = String(waktuMulaiAsli.getMinutes()).padStart(2, '0');
+                    startEl.innerText = `Mulai: ${startHours}:${startMins}`;
+                }
+            }
+            // ----------------------------------------
+
             const mainBtn = document.getElementById('main-start-btn');
             if (mainBtn) {
                 mainBtn.innerText = "RESET PROOFING";
@@ -6755,6 +6921,68 @@ function checkAndRestoreTimer() {
     } catch (err) {
         console.warn('Gagal memulihkan state proofing:', err);
         clearProofingState();
+    }
+}
+
+// 1. Inisialisasi Listener Realtime
+function initSupabaseRealtime() {
+    // Pastikan klien supabase sudah terinisialisasi
+    if (!window.supabase) return;
+
+    window.supabase
+        .channel('sinkronisasi-resep-kedai')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'recipes' }, payload => {
+            console.log('Pembaruan dari server tertangkap!', payload);
+            tanganiPerubahanResepRealtime(payload);
+        })
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                console.log('✅ Realtime Listener Aktif!');
+            }
+        });
+}
+
+// 2. Eksekutor Pembaruan Lokal
+async function tanganiPerubahanResepRealtime(payload) {
+    const dataServer = payload.new;
+    const tipeAksi = payload.eventType; // INSERT, UPDATE, atau DELETE
+
+    // Baca data lokal saat ini menggunakan fungsi bawaan Anda
+    let resepLokal = readRecipesFromStorage();
+
+    if (tipeAksi === 'INSERT' || tipeAksi === 'UPDATE') {
+        const index = resepLokal.findIndex(r => r.id === dataServer.id);
+        
+        // Ambil objek detail resep utuh dari server
+        const resepUtuh = dataServer.details || dataServer;
+
+        if (index >= 0) {
+            resepLokal[index] = resepUtuh; // Timpa dengan data baru (Update)
+        } else {
+            resepLokal.push(resepUtuh); // Tambahkan data baru (Insert)
+        }
+    } else if (tipeAksi === 'DELETE') {
+        const dataLama = payload.old;
+        resepLokal = resepLokal.filter(r => r.id !== dataLama.id);
+    }
+
+    // Simpan paksa ke IndexedDB / Preferences menggunakan fungsi bawaan Anda
+    await simpanDaftarResepKePerangkat(resepLokal);
+
+    // 3. Reaktivitas UI (Hot Reload)
+    window.recipes = resepLokal; // Update variabel global
+    
+    // Jika modal daftar resep sedang terbuka, refresh tampilannya
+    const modalDaftarResep = document.getElementById('recipe-list-modal');
+    if (modalDaftarResep && modalDaftarResep.classList.contains('active')) {
+        if (typeof window.tampilkanDaftarResepTersimpan === 'function') {
+            window.tampilkanDaftarResepTersimpan();
+        }
+    }
+
+    // Berikan notifikasi halus di UI
+    if (typeof NotifSystem !== 'undefined') {
+        NotifSystem.tambah('sistem', 'Resep Tersinkronisasi', 'Data resep baru saja diperbarui dari server.', '🔄');
     }
 }
 //===================================================================================
@@ -6862,6 +7090,44 @@ document.addEventListener('click', function(event) {
         }
     }
 });
+
+// =====================================================================
+// FIX BACKGROUND THROTTLING: MENGATASI TIMER BERHENTI SAAT LAYAR MATI
+// =====================================================================
+
+// 1. Deteksi Sinkronisasi untuk PWA dan Browser Web
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        // Layar menyala kembali atau tab browser dibuka ulang
+        if (typeof isTimerRunning !== 'undefined' && isTimerRunning && typeof checkAndRestoreTimer === 'function') {
+            window.DEBUG && console.log("Layar menyala: Menghitung waktu kompensasi timer...");
+            checkAndRestoreTimer();
+        }
+    } else {
+        // Layar mati atau aplikasi di-minimize
+        if (typeof isTimerRunning !== 'undefined' && isTimerRunning && typeof persistProofingState === 'function') {
+            persistProofingState();
+        }
+    }
+});
+
+// 2. Deteksi Sinkronisasi untuk Aplikasi Mobile Native (Android/iOS via Capacitor)
+if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+    window.Capacitor.Plugins.App.addListener('appStateChange', ({ isActive }) => {
+        if (isActive) {
+            // Aplikasi kembali ke layar utama (Foreground)
+            if (typeof isTimerRunning !== 'undefined' && isTimerRunning && typeof checkAndRestoreTimer === 'function') {
+                window.DEBUG && console.log("Aplikasi Native aktif: Menghitung waktu kompensasi timer...");
+                checkAndRestoreTimer();
+            }
+        } else {
+            // Aplikasi tertutup ke latar belakang (Background)
+            if (typeof isTimerRunning !== 'undefined' && isTimerRunning && typeof persistProofingState === 'function') {
+                persistProofingState();
+            }
+        }
+    });
+}
 
 document.addEventListener('click', () => {
     // Berikan argumen 'true' untuk menandakan bahwa ini dipicu langsung oleh klik user
@@ -7309,7 +7575,7 @@ function renderRecipeTableBakuTotal() {
                                                 id="ing-${ing.id}-ratio" 
                                                 name="ing_${ing.id}_ratio" 
                                                 value="${ing.ratio}" 
-                                                step="0.1" 
+                                                step="1" 
                                                  data-oninput="perbaruiKomponenBahan('${ing.id}', 'ratio', this.value)" 
                                                 style="width:40px; font-size:0.75rem; text-align:center; font-weight:700; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0;" 
                                                 ${ing.isFlour ? 'disabled' : ''}>
@@ -7808,7 +8074,7 @@ window.eksporResepKePDF = function() {
 };
 
 window.eksekusiCetakPremium = function() {
-    window.DEBUG && console.log("Mengeksekusi Cetak Laporan PDF Pro Golden Ratio (Enterprise Dashboard)...");
+    window.DEBUG && console.log("Mengeksekusi Cetak Laporan PDF Pro (Include Parameter Card)...");
 
     let namaResep = "";
     const elJudulResep = document.getElementById('recipe-save-name');
@@ -7830,6 +8096,20 @@ window.eksekusiCetakPremium = function() {
     let pmPercent = 100 - fcPercent;
     if (pmPercent < 0) pmPercent = 0;
 
+    // Mengambil nilai aktual dari elemen HTML Anda secara langsung
+    let baseFlourVal = "1000";
+    const elBaseFlour = document.getElementById('base-flour');
+    if (elBaseFlour) baseFlourVal = elBaseFlour.value || elBaseFlour.innerText || "1000";
+
+    let recipeYieldVal = "34";
+    const elRecipeYield = document.getElementById('recipe-yield');
+    if (elRecipeYield) recipeYieldVal = elRecipeYield.value || elRecipeYield.innerText || "34";
+
+    let hargaJualVal = "4500";
+    const elHargaJual = document.getElementById('input-harga-jual');
+    if (elHargaJual) hargaJualVal = elHargaJual.value || elHargaJual.innerText || "4500";
+    const formattedHargaJual = "Rp " + (parseFloat(hargaJualVal) || 0).toLocaleString('id-ID');
+
     let stepsArray = window.activeRecipeSteps || [];
     if (stepsArray.length === 0) {
         const stepInputs = document.querySelectorAll('.input-step-text');
@@ -7840,13 +8120,16 @@ window.eksekusiCetakPremium = function() {
 
     let stepsHTML = "";
     if (stepsArray.length > 0) {
-        stepsArray.forEach(step => { stepsHTML += `<li style="margin-bottom: 5px; font-size: 8pt; line-height: 1.4; text-align: justify;">${step}</li>`; });
+        stepsArray.forEach(step => { stepsHTML += `<li style="margin-bottom: 4px; font-size: 7.5pt; line-height: 1.3; text-align: justify;">${step}</li>`; });
     } else {
-        stepsHTML = '<li style="font-size: 8pt;">Belum ada instruksi langkah produksi.</li>';
+        stepsHTML = '<li style="font-size: 7.5pt;">Belum ada instruksi langkah produksi.</li>';
     }
 
     let rowsHTML = "";
-    let totalModalBatch = 0;
+    let totalModalBatch = 0;   
+    let totalModalBelanja = 0; 
+    let totalBeratAdonan = 0;  
+
     const tableRows = document.querySelectorAll('.recipe-table tbody tr');
     
     if (tableRows && tableRows.length > 0) {
@@ -7857,34 +8140,42 @@ window.eksekusiCetakPremium = function() {
             if (ths.length > 0 || (tds.length === 1)) {
                 const namaKategori = ths.length > 0 ? ths[0].innerText.trim() : tds[0].innerText.trim();
                 rowsHTML += `<tr style="background-color: #f8fafc;">
-                    <td colspan="4" style="padding: 4px 8px; font-weight: 800; color: #d35400; font-size: 7.5pt; border: 1px solid #cbd5e1; text-transform: uppercase;">
+                    <td colspan="6" style="padding: 3px 6px; font-weight: 800; color: #d35400; font-size: 7pt; border: 1px solid #cbd5e1; text-transform: uppercase;">
                         ${namaKategori}
                     </td>
                 </tr>`;
             } else if (tds.length >= 2) {
                 const namaBahan = tds[0] ? tds[0].innerText.trim() : '-';
                 const takaran = tds[1] ? tds[1].innerText.trim() : '-';
-                const beratPakai = tds[tds.length - 2] ? tds[tds.length - 2].innerText.trim() : '-';
+                const beratPakai = tds[2] ? tds[2].innerText.trim() : '0'; 
+                const hargaBeli = tds[3] ? tds[3].innerText.trim() : '0'; 
+                const isiPack = tds[tds.length - 2] ? tds[tds.length - 2].innerText.trim() : '-'; 
                 const strBiaya = tds[tds.length - 1] ? tds[tds.length - 1].innerText.trim() : '0';
                 
-                const angkaBiaya = parseFloat(strBiaya.replace(/[^0-9,-]/g, '').replace(',', '.')) || 0;
+                const angkaBiaya = parseFloat(strBiaya.replace(/\./g, '').replace(',', '.').replace(/[^0-9.]/g, '')) || 0;
+                const angkaHargaBeli = parseFloat(hargaBeli.replace(/\./g, '').replace(',', '.').replace(/[^0-9.]/g, '')) || 0;
+                const angkaBeratPakai = parseFloat(beratPakai.replace(/\./g, '').replace(',', '.').replace(/[^0-9.]/g, '')) || 0;
+                
                 totalModalBatch += angkaBiaya;
+                totalModalBelanja += angkaHargaBeli;
+                totalBeratAdonan += angkaBeratPakai;
 
                 rowsHTML += `<tr>
-                    <td style="padding: 3px 6px; padding-left: 10px; font-size: 7.5pt;">${namaBahan}</td>
-                    <td style="text-align: center; padding: 3px 6px; font-size: 7.5pt;">${takaran}</td>
-                    <td style="text-align: right; padding: 3px 6px; font-size: 7.5pt;">${beratPakai}</td>
-                    <td style="text-align: right; font-weight: bold; color: #4E342E; padding: 3px 6px; font-size: 7.5pt;">${strBiaya}</td>
+                    <td style="padding: 2.5px 4px; padding-left: 8px; font-size: 6.5pt;">${namaBahan}</td>
+                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${takaran}</td>
+                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${isiPack}</td>
+                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt;">${hargaBeli}</td>
+                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt; font-weight: 600;">${beratPakai}</td>
+                    <td style="text-align: right; font-weight: bold; color: #4E342E; padding: 2.5px 4px; font-size: 6.5pt;">${strBiaya}</td>
                 </tr>`;
             }
         });
     }
 
     if (!rowsHTML) {
-        rowsHTML = '<tr><td colspan="4" style="text-align: center; color: #666; padding: 6px; font-size: 7.5pt;">Data komposisi bahan belum tersedia.</td></tr>';
+        rowsHTML = '<tr><td colspan="6" style="text-align: center; color: #666; padding: 6px; font-size: 7pt;">Data komposisi bahan belum tersedia.</td></tr>';
     }
 
-    const formattedTotalModal = "Rp " + totalModalBatch.toLocaleString('id-ID');
     const tanggalCetak = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
 
     const tempContainer = document.createElement('div');
@@ -7893,26 +8184,31 @@ window.eksekusiCetakPremium = function() {
     tempContainer.style.top = '-9999px';
     tempContainer.style.width = '794px'; 
     tempContainer.style.backgroundColor = '#ffffff';
-    // Memberikan ruang kosong yang lebih lega (whitespace) untuk estetika premium
-    tempContainer.style.padding = '35px 40px'; 
+    tempContainer.style.padding = '30px 35px'; 
     tempContainer.style.boxSizing = 'border-box';
     tempContainer.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
-    tempContainer.style.color = '#1e293b'; // Warna teks lebih premium (slate-800)
+    tempContainer.style.color = '#1e293b'; 
 
     tempContainer.innerHTML = `
         <style>
-            .header-container { border-bottom: 3px solid #4E342E; padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end; }
-            h1 { color: #4E342E; margin: 0; font-size: 15pt; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; }
-            .brand-tag { color: #e67e22; font-size: 8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
-            .meta-box { background: #fdf8f2; border: 1px solid #f3e5dc; padding: 8px 12px; margin-bottom: 15px; border-radius: 6px; font-size: 8pt; display: flex; justify-content: space-between; }
+            .header-container { border-bottom: 3px solid #4E342E; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-end; }
+            h1 { color: #4E342E; margin: 0; font-size: 14pt; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; }
+            .brand-tag { color: #e67e22; font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+            .meta-box { background: #fdf8f2; border: 1px solid #f3e5dc; padding: 6px 10px; margin-bottom: 10px; border-radius: 5px; font-size: 7.5pt; display: flex; justify-content: space-between; }
             .meta-box strong { color: #4E342E; }
-            .section-title { background: #4E342E; color: white; padding: 4px 10px; font-size: 8.5pt; font-weight: bold; border-radius: 4px; display: block; width: 100%; box-sizing: border-box; text-transform: uppercase; letter-spacing: 0.5px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+            
+            /* Style untuk Card Parameter Input yang diminta */
+            .param-card-container { background: white; padding: 10px 14px; border-radius: 8px; box-sizing: border-box; margin-bottom: 12px; display: flex; gap: 12px; border: 1px solid #e2e8f0; }
+            .param-item { flex: 1; background: #f8fafc; border: 1px solid #F2D2A9; border-radius: 6px; padding: 6px 10px; text-align: center; box-sizing: border-box; }
+            .param-label { font-size: 6.5pt; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 2px; text-transform: uppercase; }
+            .param-value { font-size: 9pt; font-weight: bold; color: #4E342E; }
+
+            .section-title { background: #4E342E; color: white; padding: 3px 8px; font-size: 8pt; font-weight: bold; border-radius: 3px; display: block; width: 100%; box-sizing: border-box; text-transform: uppercase; letter-spacing: 0.5px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 6px; }
             th, td { border: 1px solid #cbd5e1; }
-            th { background: #F2D2A9; color: #4E342E; text-align: left; font-weight: bold; padding: 5px 6px; font-size: 7.5pt; }
-            .total-row { background: #fdf8f2; font-weight: bold; color: #4E342E; border-top: 2px solid #4E342E; }
-            ol { padding-left: 18px; margin: 10px 0 0 0; }
-            .footer { margin-top: 20px; text-align: center; font-size: 7.5pt; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 8px; }
+            th { background: #F2D2A9; color: #4E342E; text-align: left; font-weight: bold; padding: 3px 4px; font-size: 6pt; }
+            ol { padding-left: 16px; margin: 8px 0 0 0; }
+            .footer { margin-top: 15px; text-align: center; font-size: 7pt; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 6px; }
         </style>
         
         <div class="header-container">
@@ -7920,7 +8216,7 @@ window.eksekusiCetakPremium = function() {
                 <div class="brand-tag">Lembar Kerja Produksi Resmi</div>
                 <h1>${namaResep}</h1>
             </div>
-            <div style="text-align: right; font-size: 8pt; color: #64748b; margin-bottom: 2px;">
+            <div style="text-align: right; font-size: 7.5pt; color: #64748b; margin-bottom: 2px;">
                 <strong>Dicetak:</strong> ${tanggalCetak}
             </div>
         </div>
@@ -7931,64 +8227,74 @@ window.eksekusiCetakPremium = function() {
             <div><strong>Status:</strong> Valid (PWA Dashboard)</div>
         </div>
 
-        <!-- LAYOUT UTAMA: MUTLAK GOLDEN RATIO 1.618 : 1 -->
-        <div style="display: flex; gap: 24px; align-items: flex-start; margin-bottom: 20px;">
+        <!-- CARD PARAMETER UTAMA (Tepung, Porsi, Harga/Pcs) -->
+        <div class="param-card-container">
+            <div class="param-item" style="flex: 1.618;">
+                <span class="param-label">Tepung Utama (gr)</span>
+                <span class="param-value">${baseFlourVal} g</span>
+            </div>
+            <div class="param-item" style="flex: 1;">
+                <span class="param-label">Total Porsi</span>
+                <span class="param-value">${recipeYieldVal} pcs</span>
+            </div>
+            <div class="param-item" style="flex: 1.5; background: #f0fdf4; border-color: #27ae60;">
+                <span class="param-label" style="color: #27ae60;">Harga Jual / Pcs</span>
+                <span class="param-value" style="color: #27ae60;">${formattedHargaJual}</span>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 18px; align-items: flex-start; margin-bottom: 15px;">
             
-            <!-- KOLOM KIRI (1.618): TABEL BAHAN YANG LEGA -->
-            <!-- Tambahan 'width: 0' memaksa flexbox mematuhi rasio terlepas dari isi konten -->
             <div style="flex: 1.618; width: 0; display: flex; flex-direction: column;">
                 <div class="section-title">📋 Komposisi Bahan & Struktur Biaya</div>
                 <table>
                     <thead>
                         <tr>
                             <th>Komponen Bahan</th>
-                            <th style="text-align: center; width: 55px;">Takaran</th>
-                            <th style="text-align: right; width: 60px;">Berat</th>
-                            <th style="text-align: right; width: 85px;">Biaya (Rp)</th>
+                            <th style="text-align: center; width: 35px;">Takaran</th>
+                            <th style="text-align: center; width: 40px;">Isi Pack</th>
+                            <th style="text-align: right; width: 55px;">Harga Beli</th>
+                            <th style="text-align: right; width: 50px;">Berat Pakai</th>
+                            <th style="text-align: right; width: 60px;">Biaya (Rp)</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${rowsHTML}
-                        <tr class="total-row">
-                            <td colspan="3" style="text-align: right; padding: 6px 8px; font-size: 7.5pt;">TOTAL MODAL (BATCH):</td>
-                            <td style="text-align: right; padding: 6px 8px; color: #d97706; font-size: 8.5pt;">${formattedTotalModal}</td>
+                        <tr style="border-top: 2px solid #4E342E; background-color: #f8fafc;">
+                            <td colspan="3" style="text-align: right; padding: 3px 5px; font-size: 6pt; font-weight: 800; color: #4E342E;">SUBTOTAL:</td>
+                            <td style="text-align: right; padding: 3px 5px; font-size: 6.5pt; font-weight: 800; color: #1e293b;">Rp ${totalModalBelanja.toLocaleString('id-ID')}</td>
+                            <td style="text-align: right; padding: 3px 5px; font-size: 6.5pt; font-weight: 800; color: #1e293b;">${totalBeratAdonan.toLocaleString('id-ID')}</td>
+                            <td style="text-align: right; padding: 3px 5px; font-size: 7pt; font-weight: 800; color: #d97706;">Rp ${totalModalBatch.toLocaleString('id-ID')}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <!-- KOLOM KANAN (1.0): DASHBOARD AI PANEL YANG MEMANFAATKAN RUANG KOSONG -->
             <div style="flex: 1; width: 0; display: flex; flex-direction: column;">
                 <div class="section-title">💡 Wawasan Bisnis (AI)</div>
-                <!-- Panel AI dengan tampilan layaknya Card di Aplikasi Mobile -->
-                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 18px 14px; margin-top: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 16px;">
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 12px; margin-top: 6px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 12px;">
                     
-                    <!-- Pie Chart Besar yang Menawan -->
-                    <!-- Resolusi kanvas dinaikkan 2x lipat (300px) agar sangat tajam, tapi dirender 150px -->
-                    <canvas id="pdf-pie-canvas" width="300" height="300" style="width: 150px; height: 150px; display: block;"></canvas>
+                    <canvas id="pdf-pie-canvas" width="300" height="300" style="width: 130px; height: 130px; display: block;"></canvas>
                     
-                    <!-- Legend Proporsional di bawah Chart -->
-                    <div style="font-size: 8.5pt; font-weight: 800; display: flex; width: 100%; justify-content: center; gap: 15px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 14px;">
-                        <div style="display: flex; align-items: center; gap: 5px; color: #4E342E;">
-                            <span style="width: 10px; height: 10px; background: #e67e22; display: inline-block; border-radius: 2px;"></span> Cost (${Number(fcPercent).toFixed(1)}%)
+                    <div style="font-size: 7.5pt; font-weight: 800; display: flex; width: 100%; justify-content: center; gap: 12px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 4px; color: #4E342E;">
+                            <span style="width: 8px; height: 8px; background: #e67e22; display: inline-block; border-radius: 2px;"></span> Cost (${Number(fcPercent).toFixed(1)}%)
                         </div>
-                        <div style="display: flex; align-items: center; gap: 5px; color: #4E342E;">
-                            <span style="width: 10px; height: 10px; background: #27ae60; display: inline-block; border-radius: 2px;"></span> Profit (${Number(pmPercent).toFixed(1)}%)
+                        <div style="display: flex; align-items: center; gap: 4px; color: #4E342E;">
+                            <span style="width: 8px; height: 8px; background: #27ae60; display: inline-block; border-radius: 2px;"></span> Profit (${Number(pmPercent).toFixed(1)}%)
                         </div>
                     </div>
 
-                    <!-- Insight Text yang terbaca jelas -->
-                    <div style="font-size: 8pt; display: flex; flex-direction: column; gap: 10px; line-height: 1.45; text-align: justify; width: 100%;">
-                        <div><strong style="color: #0f172a; font-size: 8.5pt;">📊 Margin:</strong><br>${insightPM}</div>
-                        <div><strong style="color: #0f172a; font-size: 8.5pt;">💰 Food Cost:</strong><br>${insightFC}</div>
-                        <div><strong style="color: #0f172a; font-size: 8.5pt;">🛡️ Standar:</strong><br>${insightUB}</div>
+                    <div style="font-size: 7.5pt; display: flex; flex-direction: column; gap: 8px; line-height: 1.4; text-align: justify; width: 100%;">
+                        <div><strong style="color: #0f172a; font-size: 8pt;">📊 Margin:</strong><br>${insightPM}</div>
+                        <div><strong style="color: #0f172a; font-size: 8pt;">💰 Food Cost:</strong><br>${insightFC}</div>
+                        <div><strong style="color: #0f172a; font-size: 8pt;">🛡️ Standar:</strong><br>${insightUB}</div>
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- BAGIAN BAWAH: INSTRUKSI LANGKAH DEMI LANGKAH -->
         <div style="width: 100%;">
             <div class="section-title">📝 Instruksi Langkah Demi Langkah</div>
             <ol>${stepsHTML}</ol>
@@ -7999,22 +8305,19 @@ window.eksekusiCetakPremium = function() {
 
     document.body.appendChild(tempContainer);
 
-    // Render Pie Chart dengan Skala Resolusi Tinggi dan Sudut Mulai yang Elegan (Top-Center)
     const canvasEl = tempContainer.querySelector('#pdf-pie-canvas');
     if (canvasEl) {
         const ctx = canvasEl.getContext('2d');
-        // Ukuran internal disesuaikan dengan width/height=300 dari canvas HTML di atas
         const centerX = 150, centerY = 150, radius = 135; 
         
-        // Memulai gambar dari titik jam 12 atas (Top Center) agar terlihat seperti dashboard profesional
         let startAngle = -0.5 * Math.PI; 
         
         const fcVal = parseFloat(fcPercent) || 0;
         const pmVal = 100 - fcVal;
         
         const slices = [
-            { percent: fcVal, color: '#e67e22' },      // Cost (Oranye)
-            { percent: pmVal > 0 ? pmVal : 0, color: '#27ae60' } // Profit (Hijau)
+            { percent: fcVal, color: '#e67e22' },      
+            { percent: pmVal > 0 ? pmVal : 0, color: '#27ae60' } 
         ];
 
         slices.forEach(slice => {
@@ -8027,7 +8330,6 @@ window.eksekusiCetakPremium = function() {
                 ctx.fillStyle = slice.color;
                 ctx.fill();
                 
-                // Tambahkan stroke putih tipis sebagai pemisah antar warna (memberikan efek modern)
                 ctx.lineWidth = 4;
                 ctx.strokeStyle = '#ffffff';
                 ctx.stroke();
@@ -8037,10 +8339,9 @@ window.eksekusiCetakPremium = function() {
         });
     }
 
-    // Eksekusi Pembuatan PDF
     setTimeout(() => {
         html2canvas(tempContainer, {
-            scale: 2.5, // Kualitas optimal (tidak perlu 3 jika font sudah besar, menghemat RAM mobile)
+            scale: 2.5, 
             useCORS: true,
             backgroundColor: '#ffffff',
             windowWidth: 794
