@@ -2205,6 +2205,18 @@ body.logged-in .container {
     });
 }
 
+// 1. Fungsi penampung saat aplikasi offline atau Supabase error
+function simpanKeAntreanOffline(resep) {
+    let offlineQueue = JSON.parse(localStorage.getItem('offline_recipe_queue') || '[]');
+    const idx = offlineQueue.findIndex(r => r.id === resep.id);
+    if (idx >= 0) {
+        offlineQueue[idx] = resep; 
+    } else {
+        offlineQueue.push(resep);  
+    }
+    localStorage.setItem('offline_recipe_queue', JSON.stringify(offlineQueue));
+    console.log("Resep diamankan ke antrean offline lokal.");
+}
 
 // KUNCI PENGAMAN (Pastikan diletakkan di luar fungsi)
 // 1. KUNCI PENGAMAN (Pastikan ini ada di luar fungsi)
@@ -2272,85 +2284,6 @@ async function simpanResepKeDatabase() {
 window.simpanResepKeDatabase = simpanResepKeDatabase;
 /* ========================================= */
 
-// Fungsi untuk mulai mendengarkan perubahan data di server
-function jalankanSinkronisasiRealtime() {
-    supabase
-        .channel('sinkronisasi-resep')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'recipes' }, payload => {
-            console.log('Perubahan terdeteksi dari server!', payload);
-            
-            // Lempar payload ke fungsi distributor lokal
-            distribusiKePenyimpananLokal(payload);
-        })
-        .subscribe((status) => {
-            if (status === 'SUBSCRIBED') {
-                console.log('Berhasil terhubung ke Supabase Realtime');
-            }
-        });
-}
-
-async function initSQLite() {
-  try {
-    // Membuat atau membuka koneksi database
-    const db = await sqlite.createConnection('kedaifaker', false, 'no-encryption', 1, false);
-    await db.open();
-
-    // Membuat Tabel
-    const schema = `
-      CREATE TABLE IF NOT EXISTS recipes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        details TEXT
-      );
-    `;
-    await db.execute(schema);
-    return db;
-  } catch (err) {
-    console.error('Gagal menginisialisasi SQLite', err);
-  }
-}
-
-async function distribusiKePenyimpananLokal(payload) {
-    const dataResep = payload.new;
-    const tipeEvent = payload.eventType; // 'INSERT', 'UPDATE', atau 'DELETE'
-
-    if (tipeEvent === 'DELETE') {
-        // Eksekusi logika penghapusan dari lokal
-        return; 
-    }
-
-    // Eksekusi pembaruan ke Native SQLite (Mobile)
-    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-        try {
-            await saveRecipeSQLite(dataResep.name, JSON.stringify(dataResep.details));
-        } catch (err) {
-            console.error('Gagal sinkron ke SQLite:', err);
-        }
-    } 
-    // Eksekusi pembaruan ke IndexedDB (PWA Browser)
-    else {
-        try {
-            const db = await initIndexedDB();
-            await db.put('recipes', {
-                id: dataResep.id,
-                ...dataResep.details 
-            });
-        } catch (err) {
-            console.error('Gagal sinkron ke IndexedDB:', err);
-        }
-    }
-
-    // Picu pembaruan visual agar layar tidak perlu di-refresh
-    reaktivitasUI();
-}
-
-// Menyimpan Data ke SQLite
-async function saveRecipeSQLite(name, details) {
-  const db = await initSQLite();
-  const query = `INSERT INTO recipes (name, details) VALUES (?, ?);`;
-  await db.run(query, [name, details]);
-}
-/* ========================================= */
 
     /* FUNGSI HALAMAN LOGIN */
     // Inisialisasi Klien Supabase (Ganti dengan URL & Anon Key Supabase Anda)
@@ -2362,24 +2295,6 @@ async function saveRecipeSQLite(name, details) {
         console.log("Koneksi pulih! Memulai sinkronisasi data lokal ke Supabase...");
         await syncLocalDataToSupabase();
     });
-
-    async function saveDataLocallyOrOnline(payload) {
-        if (navigator.onLine) {
-            const { data, error } = await supabase
-                .from('nama_tabel')
-                .insert([payload]);
-                
-            if (!error) {
-                console.log("Data berhasil disimpan ke Supabase secara online.");
-                return;
-            }
-        }
-        
-        let offlineQueue = JSON.parse(localStorage.getItem('offline_queue') || '[]');
-        offlineQueue.push(payload);
-        localStorage.setItem('offline_queue', JSON.stringify(offlineQueue));
-        console.log("Perangkat offline. Data diamankan ke penyimpanan lokal sementara.");
-    }
 
     // ==========================================
 // FUNGSI SINKRONISASI DATA OFFLINE KE SUPABASE
@@ -2536,9 +2451,13 @@ async function handleAuthSubmit(event) {
             });
             if (error) throw error;
             
-            // PENTING: Ganti kelas body, JANGAN reload halaman
             document.body.classList.remove('logged-out');
             document.body.classList.add('logged-in');
+
+            // --- TAMBAHKAN 3 BARIS INI UNTUK SINKRONISASI PASCA LOGIN ---
+            await sinkronisasiAwalDariSupabase();
+            await syncLocalDataToSupabase();
+            initSupabaseRealtime();
         }
     } catch (err) {
         showError(err.message);
@@ -2954,6 +2873,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 /* == AKHIR FUNGSI HALAMAN LOGIN = */
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Memeriksa sesi Supabase aktif saat aplikasi direfresh
+    supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+            document.body.classList.remove('logged-out');
+            document.body.classList.add('logged-in');
+            
+            // Tarik data cloud -> Push data antrean offline -> Mulai dengar realtime server
+            sinkronisasiAwalDariSupabase().then(() => {
+                syncLocalDataToSupabase();
+            });
+            initSupabaseRealtime();
+        }
+    });
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     renderLangkahProduksi();
@@ -9431,88 +9366,39 @@ async function muatDataResep() {
 }
 
 // Fungsi untuk menyimpan atau memperbarui resep ke Cloud Supabase
-async function simpanResepKeCloud(judulResep, daftarLangkah) {
-    // 1. Cek apakah user sudah login
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-        console.warn("User belum login, data hanya tersimpan secara lokal.");
-        return;
-    }
-
-    // 2. Kirim data ke tabel recipes di Supabase
-    // Menggunakan upsert agar jika judul resep sama, datanya diperbarui (bukan duplikat)
-    const { data, error } = await supabase
-        .from('recipes')
-        .upsert({
-            user_id: user.id,
-            title: judulResep,
-            steps: daftarLangkah,
-            updated_at: new Date()
-        }, { onConflict: 'user_id, title' });
-
-    if (error) {
-        console.error("Gagal sinkronisasi ke Supabase:", error.message);
-    } else {
-        console.log("Resep berhasil diamankan di Cloud Supabase!", data);
-    }
-}
-
-async function muatResepDariCloud() {
+async function sinkronisasiAwalDariSupabase() {
     const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-        console.log("Tidak ada user aktif, memuat data lokal saja.");
-        return;
-    }
+    if (!user) return;
 
-    // Ambil data resep milik user yang sedang login dari Supabase
-    const { data, error } = await supabase
-        .from('recipes')
-        .select('*')
-        .eq('user_id', user.id);
+    try {
+        const { data, error } = await supabase.from('recipes').select('*').eq('user_id', user.id);
+        if (error) throw error;
 
-    if (error) {
-        console.error("Gagal memuat data dari cloud:", error.message);
-        return;
-    }
-
-    if (data && data.length > 0) {
-        // Ambil langkah-langkah dari database cloud (misal resep pertama/aktif)
-        // Sesuaikan dengan variabel array 'productionSteps' di aplikasi Anda
-        productionSteps = data[0].steps; 
-        
-        // Render ulang tampilan di layar
-        renderSteps();
-        
-        // Simpan juga ke IndexedDB lokal sebagai cache offline
-        simpanKeStorage(); 
-        console.log("Data berhasil disinkronkan dari Cloud Supabase ke perangkat.");
-    }
-}
-
-async function simpanPerubahanResep(daftarLangkahBaru) {
-    // 1. Simpan secara lokal ke IndexedDB terlebih dahulu (offline-first)
-    await simpanKeIndexedDB(daftarLangkahBaru);
-    renderTampilan(daftarLangkahBaru); // Update UI seketika tanpa jeda
-
-    // 2. Kirim ke Supabase di latar belakang
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-        const { error } = await supabase
-            .from('recipes')
-            .upsert({ 
-                user_id: user.id, 
-                steps: daftarLangkahBaru,
-                updated_at: new Date() 
+        if (data && data.length > 0) {
+            let resepLokal = readRecipesFromStorage() || [];
+            let adaPerubahan = false;
+            
+            data.forEach(serverRow => {
+                const resepServer = serverRow.details;
+                const idxLokal = resepLokal.findIndex(r => r.id === resepServer.id);
+                
+                if (idxLokal >= 0) {
+                    // Cek jika butuh update (opsional, untuk amannya kita timpa data lokal dengan server)
+                    resepLokal[idxLokal] = resepServer;
+                } else {
+                    resepLokal.push(resepServer);
+                }
+                adaPerubahan = true;
             });
 
-        if (error) {
-            console.error("Gagal sinkronisasi ke cloud (tersimpan lokal):", error.message);
-            // Anda bisa memberi tanda ikon "offline/pending sync" di UI jika perlu
-        } else {
-            console.log("Data berhasil disinkronkan ke Supabase!");
+            if (adaPerubahan) {
+                await simpanDaftarResepKePerangkat(resepLokal);
+                window.recipes = resepLokal;
+                console.log("✅ Data lokal berhasil disinkronkan dengan Supabase.");
+            }
         }
+    } catch (err) {
+        console.error("Gagal menarik data awal Supabase:", err);
     }
 }
 
