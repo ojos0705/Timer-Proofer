@@ -1181,7 +1181,7 @@ body.logged-in .container {
     <!-- Form Login Lengkap -->
     <div class="auth-container" id="auth-wrapper">
     <div class="auth-header">
-        <h2>Kedai Mak-er</h2>
+        <h2>Timer Proofing</h2>
         <p id="auth-subtitle">Masuk ke akun kedai Anda</p>
     </div>
 
@@ -1670,7 +1670,7 @@ body.logged-in .container {
                 <hr style="border: 0; border-top: 1px dashed rgba(231, 76, 60, 0.4); margin: 24px 0 16px;">
 <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 12px;">
     <h4 style="color: #b91c1c; margin: 0 0 10px 0; font-size: 0.85rem; font-weight: 800;">⚠️ Zona Berbahaya</h4>
-    <p style="font-size: 0.7rem; color: #991b1b; margin: 0 0 12px 0;">Tindakan di bawah ini akan menghapus data Anda secara permanen dari sistem Kedai Mak-er.</p>
+    <p style="font-size: 0.7rem; color: #991b1b; margin: 0 0 12px 0;">Tindakan di bawah ini akan menghapus data Anda secara permanen dari sistem Timer Proofing.</p>
     
     <div style="display: flex; flex-direction: column; gap: 8px;">
         <button type="button" class="btn-danger-outline" onclick="hapusDataProfilLokal()">🗑️ Bersihkan Data Profil</button>
@@ -1811,7 +1811,7 @@ body.logged-in .container {
                 <h3 style="margin-top: 0;">ℹ️ Tentang Aplikasi</h3>
                 <p style="margin-bottom: 5px;"><strong>Donut Fermentation Agent</strong></p>
                 <p style="margin-top: 0; margin-bottom: 10px;">Aplikasi asisten pintar untuk memantau proses *proofing* adonan donat secara real-time berbasis data cuaca lokal.</p>
-                <p style="margin: 0; font-size: 0.8rem; opacity: 0.7;">Versi 1.2.0 © 2026 Kedai Mak-er</p>
+                <p style="margin: 0; font-size: 0.8rem; opacity: 0.7;">Versi 1.2.0 © 2026 Timer Proofing</p>
             </div>
         </div>
         </div>
@@ -1844,7 +1844,7 @@ body.logged-in .container {
     <!-- HEADER KHUSUS CETAK PRINT/PDF (Tetap dipertahankan untuk kompatibilitas cetak) -->
     <div class="print-header" style="display: none; flex-direction: column; gap: 2px;">
         <h3 style="margin: 0; color: var(--chocolate); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; font-weight: bold;">
-            <span>🍞</span> KEDAI MAK-ER
+            <span>🍞</span> TIMER PROOFING
         </h3>
         <p style="margin: 0; font-size: 0.7rem; color: #64748b; font-weight: 600; letter-spacing: 0.5px;">FORMULA RESEP &amp; ESTIMASI HPP</p>
     </div>
@@ -2377,7 +2377,7 @@ window.switchMode = switchMode;
 // ==========================================
 async function handleLogout() {
     // 1. Tampilkan dialog konfirmasi (Mencegah klik tidak sengaja)
-    const confirmLogout = confirm("Apakah Anda yakin ingin keluar dari akun Kedai Mak-er?");
+    const confirmLogout = confirm("Apakah Anda yakin ingin keluar dari akun Timer Proofing?");
     if (!confirmLogout) return;
 
     try {
@@ -2588,7 +2588,7 @@ async function hapusAkunPermanen() {
         // 4. Keluarkan (Sign Out) paksa
         await supabase.auth.signOut();
 
-        alert("Akun Kedai Mak-er Anda telah berhasil dihapus.");
+        alert("Akun Timer Proofing Anda telah berhasil dihapus.");
 
         // 5. Kembalikan State UI ke Halaman Login awal
         document.body.classList.remove('logged-in');
