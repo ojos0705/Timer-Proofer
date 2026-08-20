@@ -36,6 +36,9 @@
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     outline: none;
 
+    html {
+        background-color: #E2E8F0; /* Warna abu-abu lembut untuk latar luar area 480px */
+    }
     /* VARIABEL GOLDEN RATIO (φ = 1.618) */
     --phi: 1.618;
     --fs-small: 0.618rem;   /* base / φ */
@@ -51,16 +54,23 @@
     --radius-lg: 21px;}
         /* STYLE SELURUH PAGE*/
         body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Hanya font yang ditambah */
-    background-color: var(--cream); 
-    color: var(--chocolate);  
-    min-height: 100vh; 
-    min-height: 100dvh; 
-    margin: 0; 
-    padding-bottom: 0px; 
-    overflow: hidden; 
-    overscroll-behavior: none; 
-    -webkit-text-size-adjust: 100%; 
-    text-size-adjust: 100%;
+        background-color: var(--cream); 
+        color: var(--chocolate);  
+        min-height: 100vh; 
+        min-height: 100dvh; 
+        padding-bottom: 0px; 
+        overflow: hidden; 
+        overscroll-behavior: none; 
+        -webkit-text-size-adjust: 100%; 
+        text-size-adjust: 100%;
+        
+        /* --- PENYESUAIAN LUAS BODY (MAX 480PX) --- */
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto; /* Mengganti margin: 0; bawaan agar otomatis terpusat di tengah layar */
+        position: relative;
+        transform: translateZ(0); /* TRICK PRO: Memaksa elemen 'position: fixed' agar tidak keluar dari lebar 480px */
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1); /* Memberikan efek bayangan tepi agar terlihat seperti HP sungguhan */
     }
     /* CSS untuk kontainer login/register */
         .auth-container {
@@ -670,11 +680,33 @@ body.logged-in .container {
 
         /* LOKASI DAN CUACA */
         .location { word-wrap: break-word; font-size: 0.9rem; line-height: 1.2; padding: 0px; text-align: center;}
-        .weather-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 20px; }
-        .weather-card { background: var(--card-bg); color: var(--text-container, inherit); padding: 12px 4px; border-radius: 12px; text-align: center;display: flex; flex-direction: column; align-items: center; gap: 4px; transition: all 0.5s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid color-mix(in srgb, var(--text-container, currentColor) 15%, transparent); box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer;}
+        .weather-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 5px; margin-bottom: 5px;
+    align-items: stretch;}
+        .weather-card {background: var(--card-bg);
+    color: var(--text-container, inherit);
+    padding: 12px 4px;
+    border-radius: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; /* Mendorong isi agar terdistribusi merata */
+    box-sizing: border-box;
+    min-height: 85px; /* Sesuaikan tinggi minimum agar muat untuk teks dua baris */
+    transition: all 0.5s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid color-mix(in srgb, var(--text-container, currentColor) 15%, transparent);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    cursor: pointer;}
         .weather-card .icon { font-size: 1.2rem; }
         .weather-card span[id$="-val"] { font-size: 1rem; font-weight: 800; color: inherit; display: block; margin-top: 3px; }
-        .weather-card div { font-size: 0.55rem; font-weight: bold; color: inherit; opacity: 0.8; letter-spacing: 0.2px; }
+        .weather-card div { font-size: 0.5rem; /* Sedikit dikecilkan agar kata "KELEMBAPAN" muat dengan baik */
+    font-weight: bold;
+    color: inherit;
+    opacity: 0.8;
+    letter-spacing: 0.1px;
+    white-space: nowrap;}
 
         /* TOMBOL DAN INTERAKSI */
         .btn { background: var(--chocolate); color: white; border: none; padding: 15px 40px; border-radius: 50px; cursor: pointer; width: 100%; font-weight: bold; letter-spacing: 1px; margin-top: 5px; transition: background 0.3s; transform: 0.1s;}
@@ -1182,7 +1214,7 @@ body.logged-in .container {
     <div class="auth-container" id="auth-wrapper">
     <div class="auth-header">
         <h2>Timer Proofing</h2>
-        <p id="auth-subtitle">Masuk ke akun kedai Anda</p>
+        <p id="auth-subtitle">Masuk ke akun Anda</p>
     </div>
 
     <!-- Tab Switcher (Login / Register) -->
@@ -1199,7 +1231,7 @@ body.logged-in .container {
         <!-- WADAH INPUT: Ditambahkan di sini untuk mengunci tinggi form -->
         <div class="inputs-wrapper">
             <div class="form-group" id="group-name">
-                <label for="input-name">Nama Lengkap / Kedai</label>
+                <label for="input-name">Nama Lengkap</label>
                 <input type="text" id="input-name" placeholder="Contoh: Budi Bakery">
             </div>
             
@@ -1217,6 +1249,22 @@ body.logged-in .container {
 
         <button type="submit" class="btn-submit" id="btn-submit-main">MASUK</button>
     </form>
+
+    <!-- [BARU] WADAH FORM VERIFIKASI OTP (Disembunyikan secara default) -->
+    <div id="otp-verification-box" style="display: none; text-align: center; margin-top: 10px;">
+        <h3 style="color: var(--accent); margin-bottom: 5px; font-size: 1.1rem;">Verifikasi Email</h3>
+        <p style="font-size: 0.8rem; color: rgba(78, 52, 46, 0.7); margin-bottom: 20px; line-height: 1.4;">
+            Masukkan 6 digit kode OTP yang baru saja kami kirimkan ke <br><strong id="verify-email-display" style="color: var(--chocolate);"></strong>
+        </p>
+        
+        <div class="form-group">
+            <input type="text" id="input-otp" placeholder="• • • • • •" maxlength="6" style="text-align: center; font-size: 1.4rem; letter-spacing: 8px; font-weight: 800; padding: 15px;">
+        </div>
+        
+        <button type="button" class="btn-submit" id="btn-verify-otp" onclick="verifyEmailOtp()">VERIFIKASI KODE</button>
+        <button type="button" onclick="cancelVerification()" style="background: none; border: none; color: #7f8c8d; font-size: 0.75rem; margin-top: 15px; cursor: pointer; text-decoration: underline; font-weight: 600;">Batal & Kembali</button>
+    </div>
+    <!-- AKHIR WADAH OTP -->
 
     <div class="divider">ATAU MASUK DENGAN</div>
 
@@ -1271,11 +1319,7 @@ body.logged-in .container {
     <div class="top-nav-right">
         <div class="top-nav-group">
             <button class="nav-icon-btn" id="btn-refresh-manual" title="Refresh Halaman">🔄</button>
-            
-            <button class="nav-icon-btn" data-onclick="toggleModal('help-modal')" title="Pusat Bantuan">
-                <img src="tanda tanya.png" alt="Pusat Bantuan" style="width: 1.2rem; height: 1.2rem; object-fit: contain;">
-            </button>
-            
+                                   
             <button class="nav-icon-btn" data-onclick="toggleModal('notif-modal')" title="Notifikasi" style="position: relative;">
                 🔔
                 <span class="notif-badge" id="global-notif-badge" style="display: none;">0</span>
@@ -1931,6 +1975,26 @@ body.logged-in .container {
 
         <!-- DINAMIS TAMBAH BAHAN -->
         <!-- Tambah Komponen Manual Quick Chip - Premium Hybrid Version -->
+        
+        <div class="print-only-table-container" style="display: none;">
+            <table class="recipe-table"><tbody id="recipe-ingredients-body"></tbody></table>
+        </div>
+
+        <!-- FOLDER TABS KHUSUS UNTUK METODE PEMBUATAN -->
+<!-- FOLDER TABS KHUSUS UNTUK METODE PEMBUATAN -->
+<div class="recipe-method-section" style="margin-top: 15px;">
+    <div class="method-tabs" style="display: flex; gap: 4px; margin-bottom: 10px; font-size: 0.75rem; font-weight: bold;">
+        <button type="button" id="btn-tab-bahan" data-onclick="gantiTabMetode('bahan')" style="flex: 1; padding: 10px; background: #4E342E; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">📋 Bahan & HPP</button>
+        <button type="button" id="btn-tab-cara" data-onclick="gantiTabMetode('cara')" style="flex: 1; padding: 10px; background: #F2D2A9; color: #4E342E; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">🍩 Cara Pembuatan</button>
+    </div>
+    
+    <!-- KONTEN TAB: BAHAN & HPP (Form Tambah Bahan dipindahkan ke sini) -->
+    <div class="method-content" id="method-bahan-content" style="display: flex; flex-direction: column;">
+        <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
+            <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
+                📋 DAFTAR KOMPOSISI BAHAN ADONAN
+            </div>
+        <!-- DINAMIS TAMBAH BAHAN (Kini berada di dalam Tab Bahan & HPP) -->
         <details id="form-tambah-bahan" class="premium-ai-accordion" style="background: linear-gradient(135deg, #FFF9F0 0%, #FFF3E0 100%); border: 1px solid #F39C12; border-radius: 12px; margin-bottom: 14px; overflow: hidden; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.08);">
             <summary style="padding: 14px 16px; font-weight: 700; color: #D35400; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; letter-spacing: 0.3px;">
                 <span style="display: flex; align-items: center; gap: 8px;">
@@ -1941,15 +2005,14 @@ body.logged-in .container {
             </summary>
             
             <div style="padding: 16px; background: #ffffff; border-top: 1px solid #FDEBD0; display: flex; flex-direction: column; gap: 12px;">
-                
                 <!-- Baris 1: Nama & Kategori -->
                 <div style="display: flex; gap: 10px;">
                     <div style="flex: 1.6;">
-                        <label for="new-ing-name" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Nama Bahan</label>
-                        <input type="text" id="new-ing-name" placeholder="Contoh: Cokelat Compound" style="width: 100%; padding: 10px 12px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; font-size: 0.82rem; background: #FAFAFA; color: #3E2723; outline: none; transition: border 0.2s;">
+                        <label for="new-ing-name" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Nama Bahan</label>
+                        <input type="text" id="new-ing-name" placeholder="Contoh: Cokelat Compound" style="width: 100%; padding: 10px 12px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; font-size: 0.82rem; background: #FAFAFA; color: #3E2723; outline: none;">
                     </div>
                     <div style="flex: 1.2;">
-                        <label for="new-ing-type" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Kategori</label>
+                        <label for="new-ing-type" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Kategori</label>
                         <select id="new-ing-type" style="width: 100%; padding: 9px 10px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; font-size: 0.8rem; background: #FAFAFA; color: #3E2723; height: 40px; outline: none;">
                             <option value="Bahan Kering">🌾 Bahan Kering</option>
                             <option value="Bahan Basah">💧 Bahan Basah</option>
@@ -1964,162 +2027,65 @@ body.logged-in .container {
                 <!-- Baris 2: Rasio, Harga, Pack -->
                 <div style="display: flex; gap: 8px;">
                     <div style="flex: 1;">
-                        <label for="new-ing-ratio" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Rasio (%)</label>
+                        <label for="new-ing-ratio" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Rasio (%)</label>
                         <input type="number" id="new-ing-ratio" step="0.1" placeholder="0%" style="width: 100%; padding: 10px 8px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; text-align: center; font-size: 0.82rem; font-weight: bold; background: #FAFAFA; color: #3E2723; outline: none;">
                     </div>
                     <div style="flex: 1.3;">
-                        <label for="new-ing-price" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Harga Beli/kg</label>
+                        <label for="new-ing-price" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Harga Beli/kg</label>
                         <input type="number" id="new-ing-price" placeholder="Rp 0" style="width: 100%; padding: 10px 8px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; text-align: center; font-size: 0.82rem; background: #FAFAFA; color: #3E2723; outline: none;">
                     </div>
                     <div style="flex: 1;">
-                        <label for="new-ing-pack" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Pack (gr)</label>
+                        <label for="new-ing-pack" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Pack (gr)</label>
                         <input type="number" id="new-ing-pack" placeholder="Gram" style="width: 100%; padding: 10px 8px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; text-align: center; font-size: 0.82rem; background: #FAFAFA; color: #3E2723; outline: none;">
                     </div>
                 </div>
 
-                <!-- Tombol Aksi Multi-fungsi -->
+                <!-- Tombol Aksi -->
                 <div style="display: flex; gap: 10px; margin-top: 6px;">
-                    <button type="button" onclick="window.tambahBahanBakeryDinamis(true)" style="flex: 1; padding: 11px; background: #6D4C41; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.78rem; box-shadow: 0 2px 5px rgba(109,76,65,0.2); transition: background 0.2s;">➕ Simpan & Isi Lagi</button>
-                    <button type="button" onclick="window.tambahBahanBakeryDinamis(false)" style="flex: 1; padding: 11px; background: #E67E22; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.78rem; box-shadow: 0 2px 5px rgba(230,126,34,0.3); transition: background 0.2s;">Simpan & Tutup</button>
+                    <button type="button" onclick="window.tambahBahanBakeryDinamis(true)" style="flex: 1; padding: 11px; background: #6D4C41; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.78rem;">➕ Simpan & Isi Lagi</button>
+                    <button type="button" onclick="window.tambahBahanBakeryDinamis(false)" style="flex: 1; padding: 11px; background: #E67E22; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.78rem;">Simpan & Tutup</button>
                 </div>
                 
                 <div id="new-ing-error" style="color: #D32F2F; font-size: 0.72rem; text-align: center; font-weight: 600; display: none; background: #FFEBEE; padding: 6px; border-radius: 6px;"></div>
             </div>
         </details>
 
-        <div class="print-only-table-container" style="display: none;">
-            <table class="recipe-table"><tbody id="recipe-ingredients-body"></tbody></table>
+        <!-- DAFTAR KOMPOSISI BAHAN UTAMA -->
+        
+            <div id="recipe-cards-container" style="padding: 6px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 6px;">
+                <!-- Komponen bahan dimuat secara dinamis via JavaScript -->
+            </div>
         </div>
 
-        <!-- FOLDER TABS KHUSUS UNTUK METODE PEMBUATAN -->
-<div class="recipe-method-section" style="margin-top: 15px;">
-    <div class="method-tabs" style="display: flex; gap: 4px; margin-bottom: 10px; font-size: 0.75rem; font-weight: bold;">
-        <button type="button" id="btn-tab-bahan"  data-onclick="gantiTabMetode('bahan')" style="flex: 1; padding: 10px; background: #4E342E; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">📋 Bahan & HPP</button>
-        <button type="button" id="btn-tab-cara" data-onclick="gantiTabMetode('cara')" style="flex: 1 1 0%; padding: 10px; background: rgb(78, 52, 46); color: white; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 8px 8px 0px 0px; cursor: pointer;">🍩 Cara Pembuatan</button>
     </div>
-    
-    <div class="method-content" id="method-steps-content" style="display: none; flex-direction: column;"> 
-    
-    <!-- BINGKAI FRAME PUTIH UTAMA -->
-    <div style="background: white; border-radius: 12px; box-shadow: rgba(0, 0, 0, 0.03) 0px 3px 8px; overflow: hidden; margin-bottom: 12px; border: 1px solid rgb(226, 232, 240); display: block;">
+
+    <!-- KONTEN TAB: CARA PEMBUATAN -->
+    <!-- KONTEN TAB: CARA PEMBUATAN -->
+<div class="method-content" id="method-steps-content" style="display: none; flex-direction: column;"> 
+    <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
         
-        <!-- 1. HEADER COKELAT (Kini 100% Bersih & Identik dengan Tab Bahan) -->
+        <!-- HEADER -->
         <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
             📝 LANGKAH DEMI LANGKAH PRODUKSI
         </div>
         
-        <!-- 2. BARIS TOMBOL AKSI KHUSUS (Ditempatkan rapi di bawah judul, rata kanan) -->
-        <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 12px 12px 0 12px; background: white;">
-            <button type="button" onclick="muatTemplateLangkahDonat()" style="background: #f39c12; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;" title="Isi otomatis langkah standar donat">
+        <!-- WADAH SCROLL DAFTAR LANGKAH -->
+        <div id="container-daftar-langkah" style="padding: 12px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 12px;">
+            <!-- Kartu langkah akan dimuat di sini -->
+        </div>
+
+        <!-- TOMBOL AKSI SEKARANG BERADA DI BAWAH DAFTAR LANGKAH -->
+        <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px 12px 12px; background: white;">
+            <button type="button" onclick="muatTemplateLangkahDonat()" style="background: #f39c12; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
                 ⚡ Template
             </button>
-            <button type="button" onclick="tambahLangkahProduksi()" style="background: #27ae60; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+            <button type="button" onclick="tambahLangkahProduksi()" style="background: #27ae60; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
                 ➕ Tambah
             </button>
         </div>
         
-        <!-- 3. WADAH SCROLL DAFTAR LANGKAH -->
-        <div id="container-daftar-langkah" style="padding: 12px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 12px;">
-            
-            <!-- Kartu Langkah #1 -->
-            <div style="display: flex; flex-direction: column; gap: 8px; background: rgb(255, 255, 255); padding: 12px; border: 1px solid rgb(226, 232, 240); border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.01) 0px 2px 4px; transition: 0.2s;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: bold; color: #E67E22; font-size: 0.78rem; background: #fef3c7; padding: 2px 8px; border-radius: 4px;">Langkah #1</span>
-                    <div style="display: flex; gap: 4px;">
-                        <button type="button" onclick="pindahLangkah(0, 1)" style="background: #e2e8f0; color: #334155; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;" title="Geser ke Bawah">⬇️</button>
-                        <button type="button" onclick="hapusLangkahProduksi(0)" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; font-weight: bold;" title="Hapus Langkah">🗑️ Hapus</button>
-                    </div>
-                </div>
-                <textarea class="input-step-text" data-index="0" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.8rem; font-family: inherit; resize: vertical; min-height: 60px; color: #4E342E; background: #fafaf9; outline: none;" placeholder="Tulis instruksi detail untuk langkah ini...">Campurkan Tepung Utama dan bahan kering lainnya. Lakukan proses autolisis selama 20-30 menit bersama air dingin untuk membentuk gluten alami.</textarea>
-            </div>
-            
-        </div>
     </div>
 </div>
-
-        <!-- DAFTAR KOMPOSISI BAHAN UTAMA -->
-        <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
-            <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
-                📋 DAFTAR KOMPOSISI BAHAN ADONAN
-            </div>
-            <div id="recipe-cards-container" style="padding: 6px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 6px;">
-                <!-- KATEGORI: BAHAN KERING (Masuk ke Berat Adonan & Biaya) -->
-    <div data-onclick="toggleCollapseKategori('Bahan Kering')" style="background: #e2e8f0; cursor: pointer; user-select: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; font-size: 0.72rem; color: #2c3e50; display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-        <span>🔽 🌾 BAHAN KERING <small style="font-weight:500; color:#64748b; font-size:0.6rem;">(Rasio % dari Terigu - Masuk Berat Adonan)</small></span>
-        <span style="background: #fff; padding: 1px 6px; border-radius: 10px; font-size: 0.65rem;">3 item</span>
-    </div>
-
-    <!-- Tepung Terigu -->
-    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); position: relative;" data-kategori-tipe="bahan-adonan">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">
-            <span style="font-weight: 700; font-size: 0.8rem; color: var(--chocolate);">Tepung Terigu pro Tinggi</span>
-            <span style="font-size:0.65rem; font-weight:700; color:#3498db;">🔑 Utama</span>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1.2fr 1.2fr; gap: 6px; align-items: center;">
-            <div>
-                <label for="ing-flour_high-ratio" style="display:block; font-size:0.6rem; color:#94a3b8; font-weight:600;">TAKARAN</label>
-                <div style="display:flex; align-items:center; gap:2px;">
-                    <input type="number" id="ing-flour_high-ratio" name="ing_flour_high_ratio" value="100" step="1" data-oninput="perbaruiKomponenBahan('flour_high', 'ratio', this.value)" style="width:40px; font-size:0.75rem; text-align:center; font-weight:700; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0;" disabled="">
-                    <span style="font-size:0.7rem; font-weight:600; color:#64748b;">%</span>
-                </div>
-            </div>
-            <div>
-                <label for="ing-flour_high-price" style="display:block; font-size:0.6rem; color:#94a3b8; font-weight:600;">HARGA BELI</label>
-                <div style="display:flex; align-items:center; gap:2px; font-size:0.75rem;">
-                    <span style="color:#64748b; font-weight:600;">Rp</span>
-                    <input type="number" id="ing-flour_high-price" name="ing_flour_high_price" value="10000" data-oninput="perbaruiKomponenBahan('flour_high', 'price', this.value)" style="width:55px; font-size:0.75rem; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0; font-weight:600;">
-                </div>
-            </div>
-            <div>
-                <label for="ing-flour_high-pack" style="display:block; font-size:0.6rem; color:#94a3b8; font-weight:600;">ISI PACK (g)</label>
-                <input type="number" id="ing-flour_high-pack" name="ing_flour_high_pack" value="1000" data-oninput="perbaruiKomponenBahan('flour_high', 'pack', this.value)" style="width:55px; font-size:0.75rem; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0; font-weight:600;">
-            </div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; margin-top: 2px;">
-            <span style="color: #64748b;">Berat Pakai: <b style="color:var(--chocolate)"><span id="gross-flour_high">250</span>g</b></span>
-            <span style="color: #475569; font-weight: 700;">Biaya: <span style="color:#b91c1c;">Rp <span id="cost-flour_high">2.500</span></span></span>
-        </div>
-    </div>
-
-    <!-- KATEGORI: MINYAK GORENG (Masuk ke Kategori Beban/Biaya Saja, Bukan Berat Adonan) -->
-    <div data-onclick="toggleCollapseKategori('Beban Biaya')" style="background: #e2e8f0; cursor: pointer; user-select: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; font-size: 0.72rem; color: #c0392b; display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-        <span>🔽 💰 BEBAN & BIAYA <small style="font-weight:500; color:#64748b; font-size:0.6rem;">(Minyak, Toping, Kemasan - Tidak Masuk Berat Adonan)</small></span>
-        <span style="background: #fff; padding: 1px 6px; border-radius: 10px; font-size: 0.65rem;">3 item</span>
-    </div>
-
-    <!-- Minyak Goreng -->
-    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); position: relative;" data-kategori-tipe="beban-biaya">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px;">
-            <span style="font-weight: 700; font-size: 0.8rem; color: var(--chocolate);">Minyak goreng rizky (Beban)</span>
-            <button type="button" data-onclick="window.hapusBahanBakeryDinamis(8)" style="background: #fee2e2; color: #ef4444; border: none; padding: 3px 8px; font-weight: bold; border-radius: 6px; font-size: 0.68rem; cursor: pointer;">Hapus</button>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1.2fr 1.2fr; gap: 6px; align-items: center;">
-            <div>
-                <label for="ing-578d34f0-ratio" style="display:block; font-size:0.6rem; color:#94a3b8; font-weight:600;">TAKARAN</label>
-                <div style="display:flex; align-items:center; gap:2px;">
-                    <input type="number" id="ing-578d34f0-ratio" value="80" step="1" data-oninput="perbaruiKomponenBahan('578d34f0', 'ratio', this.value)" style="width:40px; font-size:0.75rem; text-align:center; font-weight:700; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0;">
-                    <span style="font-size:0.7rem; font-weight:600; color:#64748b;">%</span>
-                </div>
-            </div>
-            <div>
-                <label for="ing-578d34f0-price" style="display:block; font-size:0.6rem; color:#94a3b8; font-weight:600;">HARGA BELI</label>
-                <div style="display:flex; align-items:center; gap:2px; font-size:0.75rem;">
-                    <span style="color:#64748b; font-weight:600;">Rp</span>
-                    <input type="number" id="ing-578d34f0-price" value="11000" data-oninput="perbaruiKomponenBahan('578d34f0', 'price', this.value)" style="width:55px; font-size:0.75rem; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0; font-weight:600;">
-                </div>
-            </div>
-            <div>
-                <label for="ing-578d34f0-pack" style="display:block; font-size:0.6rem; color:#94a3b8; font-weight:600;">ISI PACK (g)</label>
-                <input type="number" id="ing-578d34f0-pack" value="400" data-oninput="perbaruiKomponenBahan('578d34f0', 'pack', this.value)" style="width:55px; font-size:0.75rem; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:1px 0; font-weight:600;">
-            </div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; margin-top: 2px;">
-            <span style="color: #64748b;">Pemakaian: <b style="color:var(--chocolate)"><span id="gross-578d34f0">200</span>g</b></span>
-            <span style="color: #475569; font-weight: 700;">Biaya Beban: <span style="color:#b91c1c;">Rp <span id="cost-578d34f0">5.500</span></span></span>
-        </div>
-    </div>
-            </div>
-        </div>
 
         <!-- ESTIMASI BIZ & SUMMARY HPP BOX -->
         <div class="recipe-summary-box" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
@@ -2175,57 +2141,27 @@ body.logged-in .container {
 
             <!-- WADAH ARSIP FOLDER BERBENTUK KLIP/TUMPUK -->
             <div id="biz-analysis-insight" style="margin-top: 12px; position: relative; font-family: inherit;">
-    <!-- Tab Folder Berkelompok -->
-    <div class="folder-stacked-tabs" style="display: flex; gap: 6px; margin-bottom: -1px; padding-left: 8px; z-index: 2; position: relative;">
-        <!-- Tab 1: Profit Margin -->
-        <div id="inner-tab-pm" onclick="switchFolderTab('profit-margin')" style="background: #e8f8f5; border: 1px solid #27ae60; border-bottom: none; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 6px 12px; cursor: pointer; color: #218c4e; font-weight: 800; font-size: 0.7rem; transition: all 0.2s ease; box-shadow: 0 -2px 5px rgba(39,174,96,0.1);">
-            📁 Profit Margin
-        </div>
-        <!-- Tab 2: Food Cost -->
-        <div id="inner-tab-fc" onclick="switchFolderTab('food-cost')" style="background: #fdf2e9; border: 1px solid #e67e22; border-bottom: none; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 6px 12px; cursor: pointer; color: #d35400; opacity: 0.7; font-weight: bold; font-size: 0.7rem; transition: all 0.2s ease;">
-            📁 Food Cost
-        </div>
-        <!-- Tab 3: Unilever Badge -->
-        <div id="inner-tab-ub" onclick="switchFolderTab('unilever-badge')" style="background: #ebf5fb; border: 1px solid #2980b9; border-bottom: none; border-top-left-radius: 8px; border-top-right-radius: 8px; padding: 6px 12px; cursor: pointer; color: #2471a3; opacity: 0.7; font-weight: bold; font-size: 0.7rem; transition: all 0.2s ease;">
-            📁 Standar Mutu
-        </div>
-    </div>
+                <div class="folder-body" style="background: #fffdf9; border: 1px solid #e2d4c0; padding: 14px 16px; border-radius: 10px; font-size: 0.78rem; color: #3e2723; min-height: 80px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                    
+                    <!-- Konten 1: Profit Margin (Default Tampil) -->
+                    <div id="page-profit-margin" style="display: block;">
+                        <div style="font-weight: 700; color: #27ae60; margin-bottom: 6px; font-size: 0.8rem;">📊 Analisis Profit Margin (AI Agent)</div>
+                        <div id="text-analysis-pm" style="line-height: 1.5; color: #4e342e;">Margin keuntungan sangat sehat di angka 60.8%. Harga jual memberikan bantalan laba yang sangat baik terhadap fluktuasi harga bahan baku.</div>
+                    </div>
 
-    <!-- Badan Folder Utama -->
-    <div class="folder-body" style="background: #fffdf9; border: 1px solid #e2d4c0; padding: 14px 16px; border-radius: 10px; border-top-left-radius: 0; font-size: 0.78rem; color: #3e2723; min-height: 80px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-        
-        <!-- Halaman 1: Profit Margin -->
-        <div id="page-profit-margin" class="folder-page" style="display: block;">
-            <div style="font-weight: 700; color: #27ae60; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
-                <span>📊</span> Analisis Profit Margin (AI Agent)
-            </div>
-            <div id="text-analysis-pm" style="line-height: 1.5; color: #4e342e;">
-                Margin keuntungan sangat sehat di angka 51.8%. Harga jual memberikan bantalan laba yang sangat baik terhadap fluktuasi harga bahan baku.
-            </div>
-        </div>
+                    <!-- Konten 2: Food Cost -->
+                    <div id="page-food-cost" style="display: none;">
+                        <div style="font-weight: 700; color: #e67e22; margin-bottom: 6px; font-size: 0.8rem;">💡 Rekomendasi Food Cost (AI Agent)</div>
+                        <div id="text-analysis-fc" style="line-height: 1.5; color: #4e342e;">Food Cost berada di kisaran 39.2%. Masih wajar, namun cari supplier alternatif untuk bahan berbiaya tinggi agar margin naik.</div>
+                    </div>
 
-        <!-- Halaman 2: Food Cost Ratio -->
-        <div id="page-food-cost" class="folder-page" style="display: none;">
-            <div style="font-weight: 700; color: #e67e22; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
-                <span>💡</span> Rekomendasi Food Cost (AI Agent)
+                    <!-- Konten 3: Standar / Badge -->
+                    <div id="page-unilever-badge" style="display: none;">
+                        <div style="font-weight: 700; color: #2980b9; margin-bottom: 6px; font-size: 0.8rem;">🛡️ Analisis Standar Komersial (AI Agent)</div>
+                        <div id="text-analysis-ub" style="line-height: 1.5; color: #4e342e;">Berat adonan (59.7g per pcs) sudah ideal dan presisi untuk standar grade komersial masal, menghasilkan konsistensi proofing yang stabil.</div>
+                    </div>
+                </div>
             </div>
-            <div id="text-analysis-fc" style="line-height: 1.5; color: #4e342e;">
-                Food Cost membengkak hingga 48.2%! Beban bahan baku terlalu berat. Tinjau ulang resep atau naikkan harga jual secepatnya.
-            </div>
-        </div>
-
-        <!-- Halaman 3: Unilever Badge Status -->
-        <div id="page-unilever-badge" class="folder-page" style="display: none;">
-            <div style="font-weight: 700; color: #2980b9; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
-                <span>🛡️</span> Analisis Standar Komersial (AI Agent)
-            </div>
-            <div id="text-analysis-ub" style="line-height: 1.5; color: #4e342e;">
-                Berat adonan (63.5g per pcs) sudah ideal dan presisi untuk standar grade komersial masal, menghasilkan konsistensi proofing yang stabil.
-            </div>
-        </div>
-
-    </div>
-</div>
 
         <!-- UTILITY ACTIONS BUTTONS -->
         <div class="action-buttons-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
@@ -2467,7 +2403,7 @@ function switchMode(mode) {
 
     if (mode === 'login') {
         isRegisterMode = false; 
-        title.innerText = "Masuk ke akun kedai Anda";
+        title.innerText = "Masuk ke akun Anda";
         
         // HAPUS CLASS ACTIVE
         if (nameGroup) nameGroup.classList.remove('active-form'); 
@@ -2478,7 +2414,7 @@ function switchMode(mode) {
         btnRegister.classList.remove('active');
     } else {
         isRegisterMode = true; 
-        title.innerText = "Daftar akun kedai baru";
+        title.innerText = "Daftar akun baru";
         
         // TAMBAHKAN CLASS ACTIVE
         if (nameGroup) nameGroup.classList.add('active-form'); 
@@ -2539,7 +2475,10 @@ function showError(message) {
     }
 }
 
-// 2. Handle Form Submit (Email & Password)
+// Variabel global untuk menyimpan email sementara
+let pendingVerificationEmail = "";
+
+// 1. Handle Form Submit (Memicu pengiriman OTP)
 async function handleAuthSubmit(event) {
     event.preventDefault();
     const email = document.getElementById('input-email').value.trim();
@@ -2551,20 +2490,30 @@ async function handleAuthSubmit(event) {
 
     try {
         if (isRegisterMode) {
+            // Mendaftar akun baru
             const { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: password,
-                options: {
-                    data: { full_name: name }
-                }
+                options: { data: { full_name: name } }
             });
             if (error) throw error;
-            alert('Pendaftaran berhasil! Silakan periksa email Anda untuk verifikasi atau langsung masuk.');
             
-            // Otomatis pindah ke mode login setelah daftar
-            switchMode('login');
+            // Simpan email ke memori sementara
+            pendingVerificationEmail = email;
+            
+            // Sembunyikan form pendaftaran, tampilkan form OTP
+            document.getElementById('auth-form').style.display = 'none';
+            document.querySelector('.tab-switch').style.display = 'none';
+            document.querySelector('.divider').style.display = 'none';
+            document.querySelector('.social-grid').style.display = 'none';
+            document.querySelector('.whatsapp-btn').style.display = 'none';
+            
+            document.getElementById('verify-email-display').innerText = email;
+            document.getElementById('otp-verification-box').style.display = 'block';
+            document.getElementById('auth-subtitle').innerText = "Cek kotak masuk/spam email Anda";
 
         } else {
+            // --- LOGIKA LOGIN NORMAL ---
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: password
@@ -2574,7 +2523,6 @@ async function handleAuthSubmit(event) {
             document.body.classList.remove('logged-out');
             document.body.classList.add('logged-in');
 
-            // --- TAMBAHKAN 3 BARIS INI UNTUK SINKRONISASI PASCA LOGIN ---
             await sinkronisasiAwalDariSupabase();
             await syncLocalDataToSupabase();
             initSupabaseRealtime();
@@ -2583,7 +2531,67 @@ async function handleAuthSubmit(event) {
         showError(err.message);
     }
 }
+
+// 2. Fungsi Eksekusi Verifikasi OTP
+async function verifyEmailOtp() {
+    const otpCode = document.getElementById('input-otp').value.trim();
+    const errorBox = document.getElementById('auth-error-box');
+    const btn = document.getElementById('btn-verify-otp');
+    
+    if (errorBox) errorBox.style.display = 'none';
+
+    if (otpCode.length !== 6) {
+        showError("Masukkan 6 digit angka OTP yang valid.");
+        return;
+    }
+
+    const originalText = btn.innerText;
+    btn.innerText = "MEMVERIFIKASI...";
+    btn.disabled = true;
+
+    try {
+        // Eksekusi API Supabase untuk validasi OTP
+        const { data, error } = await supabase.auth.verifyOtp({
+            email: pendingVerificationEmail,
+            token: otpCode,
+            type: 'signup' // Tipe spesifik untuk verifikasi pendaftaran
+        });
+
+        if (error) throw error;
+
+        // Berhasil! Listener onAuthStateChange (dari langkah sebelumnya) 
+        // akan otomatis mendeteksi sesi baru dan mengalihkan UI ke halaman utama.
+        
+        // Kembalikan form ke kondisi normal untuk jaga-jaga jika user logout
+        setTimeout(cancelVerification, 1000); 
+
+    } catch (err) {
+        showError("Kode OTP salah atau sudah kedaluwarsa. " + err.message);
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+}
+
+// 3. Fungsi Batal (Mengembalikan Form ke Awal)
+function cancelVerification() {
+    pendingVerificationEmail = "";
+    document.getElementById('input-otp').value = "";
+    
+    document.getElementById('otp-verification-box').style.display = 'none';
+    document.getElementById('auth-form').style.display = 'block';
+    document.querySelector('.tab-switch').style.display = 'flex';
+    document.querySelector('.divider').style.display = 'flex';
+    document.querySelector('.social-grid').style.display = 'grid';
+    document.querySelector('.whatsapp-btn').style.display = 'flex';
+    
+    switchMode('login');
+}
+
+// Ekspos fungsi ke atribut HTML global
 window.handleAuthSubmit = handleAuthSubmit;
+window.verifyEmailOtp = verifyEmailOtp;
+window.cancelVerification = cancelVerification;
 
 // 3. Handle Social Auth (Google, Facebook, Apple)
 async function signInWithProvider(providerName) {
@@ -3098,7 +3106,7 @@ function updateProfileLastUpdated(date = new Date()) {
 function setProfileLoadingState(isLoading) {
     const textPlaceholders = [
         { id: 'profile-name', text: 'Memuat nama...' },
-        { id: 'profile-bakery', text: 'Memuat data kedai...' },
+        { id: 'profile-bakery', text: 'Memuat data ...' },
         { id: 'profile-phone', text: '-' },
         { id: 'profile-email', text: '-' },
         { id: 'prof-coords', text: 'Mendeteksi GPS...' },
@@ -3598,14 +3606,16 @@ const ProfileService = {
 };
 
 /** Buka bantuan dari profil — tutup profil dulu agar tidak tumpang tindih */
-function openHelpFromProfile() {
-    const userModal = document.getElementById('user-modal');
-    if (userModal?.classList.contains('active')) {
-        toggleModal('user-modal');
+function openHelpSubModal() {
+    // Tutup modal pengaturan terlebih dahulu secara aman
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal && settingsModal.classList.contains('active')) {
+        toggleModal('settings-modal');
     }
+    // Buka modal bantuan (help-modal)
     toggleModal('help-modal');
 }
-window.openHelpFromProfile = openHelpFromProfile;
+window.openHelpSubModal = openHelpSubModal;
 
 
 /** Buka daftar resep dari profil */
@@ -4295,7 +4305,7 @@ const dataArtikelLengkap = {
             <p>Fermentasi atau <i>proofing</i> adalah tahap paling krusial dalam pembuatan donat yang empuk dan memiliki ring yang cantik. Ragi (Saccharomyces cerevisiae) membutuhkan lingkungan yang spesifik untuk memproduksi gas karbon dioksida secara stabil.</p>
             <p><b>1. Rentang Suhu Ideal:</b> Pastikan proofer Anda berada di kisaran 28°C hingga 35°C. Jika suhu di bawah 25°C, metabolisme ragi melambat secara drastis, membuat waktu tunggu menjadi terlalu lama. Sebaliknya, suhu di atas 40°C dapat membunuh sel ragi dan membuat donat terasa asam.</p>
             <p><b>2. Kelembaban (Humidity) Udara:</b> Jaga kelembaban di angka 70% - 80%. Kelembaban yang pas mencegah permukaan kulit adonan donat menjadi kering (crusting). Kulit adonan yang kering akan mengunci gas di dalam, memicu retakan saat donat digoreng.</p>
-            <p><b>Tips Tambahan Kedai Mak-er:</b> Selalu catat kombinasi waktu dan suhu yang berhasil di aplikasi ini sebagai referensi produksi harian Anda!</p>
+            <p><b>Tips Tambahan :</b> Selalu catat kombinasi waktu dan suhu yang berhasil di aplikasi ini sebagai referensi produksi harian Anda!</p>
         `
     },
     2: {
@@ -6964,16 +6974,27 @@ function checkAndRestoreTimer() {
 }
 
 // 1. Inisialisasi Listener Realtime
-function initSupabaseRealtime() {
-    // Periksa apakah window.supabase dan fungsi channel tersedia
+// ⚠️ 1. DEKLARASIKAN DI PALING ATAS (Global Scope) AGAR TERBACA SEMUA FUNGSI
+let globalResepChannel = null;
+
+// 2. Fungsi Realtime yang aman dari duplikasi channel
+async function initSupabaseRealtime() {
     if (!window.supabase || typeof window.supabase.channel !== 'function') {
         console.warn('⚠️ Supabase Realtime dilewati: Objek client belum versi 2 atau belum terinisialisasi.');
         return;
     }
 
     try {
-        window.supabase
-            .channel('sinkronisasi-resep-kedai')
+        // Hapus channel lama jika sudah ada sebelum membuat yang baru
+        if (globalResepChannel) {
+            await window.supabase.removeChannel(globalResepChannel);
+            globalResepChannel = null;
+        }
+
+        // Buat channel baru
+        globalResepChannel = window.supabase.channel('sinkronisasi-resep');
+
+        globalResepChannel
             .on('postgres_changes', { event: '*', schema: 'public', table: 'recipes' }, payload => {
                 console.log('Pembaruan dari server tertangkap!', payload);
                 if (typeof tanganiPerubahanResepRealtime === 'function') {
@@ -7293,28 +7314,28 @@ function panggilKembaliAIAgent() {
 
 window.bakeryIngredients = [
     // --- 1. BAHAN KERING ---
-    { id: "flour_high", name: "Tepung Terigu pro Tinggi", type: "Dough", category: "Bahan Kering", ratio: 100, price: 13000, pack: 1000, isFlour: true },
-    { id: "sugar", name: "Gula Pasir", type: "Dough", category: "Bahan Kering", ratio: 18, price: 18000, pack: 1000, isFlour: false },
-    { id: "milk_powder", name: "Susu Bubuk full cream", type: "Dough", category: "Bahan Kering", ratio: 4, price: 45000, pack: 1000, isFlour: false },
+    { id: "flour_high", name: "Tepung Terigu Protein Tinggi", type: "Dough", category: "Bahan Kering", ratio: 100, price: 0, pack: 0, isFlour: true },
+    { id: "sugar", name: "Gula Pasir", type: "Dough", category: "Bahan Kering", ratio: 18, price: 0, pack: 0, isFlour: false },
+    { id: "milk_powder", name: "Susu Bubuk full cream", type: "Dough", category: "Bahan Kering", ratio: 4, price: 0, pack: 0, isFlour: false },
     
     // --- 2. BAHAN BASAH ---
-    { id: "egg_yolk", name: "Kuning Telur", type: "Dough", category: "Bahan Basah", ratio: 12, price: 28000, pack: 1000, isFlour: false },
-    { id: "ice_water", name: "Air Es", type: "Dough", category: "Bahan Basah", ratio: 50, price: 1500, pack: 1000, isFlour: false },
-    { id: "butter", name: "Margarin / Butter", type: "Dough", category: "Bahan Basah", ratio: 15, price: 42000, pack: 500, isFlour: false },
+    { id: "egg_yolk", name: "Kuning Telur", type: "Dough", category: "Bahan Basah", ratio: 12, price: 0, pack: 0, isFlour: false },
+    { id: "ice_water", name: "Air Es", type: "Dough", category: "Bahan Basah", ratio: 50, price: 0, pack: 0, isFlour: false },
+    { id: "butter", name: "Margarin / Butter", type: "Dough", category: "Bahan Basah", ratio: 15, price: 0, pack: 0, isFlour: false },
     
     // --- 3. BAHAN PENGEMBANG ---
-    { id: "yeast", name: "Ragi Instan", type: "Dough", category: "Bahan Pengembang", ratio: 2, price: 5500, pack: 55, isFlour: false },
+    { id: "yeast", name: "Ragi Instan", type: "Dough", category: "Bahan Pengembang", ratio: 2, price: 0, pack: 0, isFlour: false },
     
     // --- 4. BAHAN TAMBAHAN (IMPROVER/ADDITIVE) ---
-    { id: "salt", name: "Garam", type: "Dough", category: "Bahan Tambahan", ratio: 1.5, price: 4000, pack: 250, isFlour: false },
-    { id: "improver", name: "Bread Improver", type: "Dough", category: "Bahan Tambahan", ratio: 0.4, price: 110000, pack: 500, isFlour: false },
+    { id: "salt", name: "Garam", type: "Dough", category: "Bahan Tambahan", ratio: 1.5, price: 0, pack: 0, isFlour: false },
+    { id: "improver", name: "Bread Improver", type: "Dough", category: "Bahan Tambahan", ratio: 0.4, price: 0, pack: 0, isFlour: false },
     
     // --- 5. BAHAN TOPING & ISIAN ---
-    { id: "glaze_choc", name: "Glaze Cokelat Celup", type: "Topping", category: "Bahan Toping", ratio: 10, price: 48000, pack: 1000, isFlour: false },
-    { id: "ceres", name: "Meses Cokelat Classic", type: "Topping", category: "Bahan Toping", ratio: 5, price: 32000, pack: 1000, isFlour: false },
+    { id: "glaze_choc", name: "Glaze Cokelat Celup", type: "Topping", category: "Bahan Toping", ratio: 10, price: 0, pack: 0, isFlour: false },
+    { id: "ceres", name: "Meses Cokelat Classic", type: "Topping", category: "Bahan Toping", ratio: 5, price: 0, pack: 0, isFlour: false },
 
     // --- 6. KEMASAN / PACKAGING ---
-    { id: "box_donut", name: "Kotak Dus Donat Isi 6", type: "Topping", category: "Kemasan", ratio: 0.166, price: 2500, pack: 1, isFlour: false }
+    { id: "box_donut", name: "Kotak Dus Donat Isi 6", type: "Topping", category: "Kemasan", ratio: 0.166, price: 0, pack: 0, isFlour: false }
 ];
 window.bakeryIngredients = bakeryIngredients;
 window.defaultIngredients = [];
@@ -7497,39 +7518,23 @@ window.toggleCollapseKategori = function(namaKategori) {
 };
 
 window.gantiTabMetode = function(metode) {
-    window.DEBUG && console.log("Tab changed to:", metode);
-    
-    // Ambil elemen tombol dan konten
     const tabBahan = document.getElementById('btn-tab-bahan');
     const tabCara = document.getElementById('btn-tab-cara');
-    const contentSteps = document.getElementById('method-steps-content');
-    const contentCards = document.getElementById('recipe-cards-container');
+    const contentBahan = document.getElementById('method-bahan-content');
+    const contentCara = document.getElementById('method-steps-content');
 
     if (metode === 'cara') {
-        // Aktifkan Tab Cara Pembuatan
-        tabCara.style.background = "#4E342E";
-        tabCara.style.color = "white";
+        if (tabCara) { tabCara.style.background = "#4E342E"; tabCara.style.color = "white"; }
+        if (tabBahan) { tabBahan.style.background = "#F2D2A9"; tabBahan.style.color = "#4E342E"; }
         
-        // Nonaktifkan Tab Bahan
-        tabBahan.style.background = "#F2D2A9";
-        tabBahan.style.color = "#4E342E";
+        if (contentCara) contentCara.style.display = "flex";
+        if (contentBahan) contentBahan.style.display = "none";
+    } else {
+        if (tabBahan) { tabBahan.style.background = "#4E342E"; tabBahan.style.color = "white"; }
+        if (tabCara) { tabCara.style.background = "#F2D2A9"; tabCara.style.color = "#4E342E"; }
         
-        // Tampilkan langkah pembuatan, sembunyikan daftar bahan baku
-        if(contentSteps) contentSteps.style.display = "block";
-        if(contentCards) contentCards.parentElement.style.display = "none";
-        
-    } else if (metode === 'bahan') {
-        // Aktifkan Tab Bahan
-        tabBahan.style.background = "#4E342E";
-        tabBahan.style.color = "white";
-        
-        // Nonaktifkan Tab Cara Pembuatan
-        tabCara.style.background = "#F2D2A9";
-        tabCara.style.color = "#4E342E";
-        
-        // Tampilkan daftar bahan baku, sembunyikan langkah pembuatan
-        if(contentSteps) contentSteps.style.display = "none";
-        if(contentCards) contentCards.parentElement.style.display = "block";
+        if (contentBahan) contentBahan.style.display = "flex";
+        if (contentCara) contentCara.style.display = "none";
     }
 };
 
@@ -8127,7 +8132,7 @@ window.eksekusiCetakPremium = function() {
     let namaResep = "";
     const elJudulResep = document.getElementById('recipe-save-name');
     if (elJudulResep) namaResep = elJudulResep.value.trim();
-    if (namaResep === "") namaResep = "RESEP PRODUKSI KEDAI MAK-ER"; 
+    if (namaResep === "") namaResep = "RESEP PRODUKSI"; 
 
     const safeFileName = namaResep.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
     const finalDocTitle = safeFileName + " - Kedai Mak-er";
@@ -8348,7 +8353,7 @@ window.eksekusiCetakPremium = function() {
             <ol>${stepsHTML}</ol>
         </div>
 
-        <div class="footer">Dokumen Manajemen Operasional Kedai Mak-er • Dicetak via Sistem PWA Mobile Kelas Premium</div>
+        <div class="footer">Dokumen Manajemen Operasional • Dicetak via Sistem PWA Mobile Kelas Premium</div>
     `;
 
     document.body.appendChild(tempContainer);
@@ -8528,7 +8533,7 @@ window.sembunyikanKotakAI = function() {
 window.hubungkanKeSensorBluetoothProofer = async function() {
     try {
         const device = await navigator.bluetooth.requestDevice({
-            filters: [{ name: 'SensorProoferDonatMakEr' }],
+            filters: [{ name: 'SensorProofer' }],
             optionalServices: ['environmental_sensing']
         });
         const server = await device.gatt.connect();
@@ -8601,68 +8606,46 @@ function renderIngredientsTable() {
  * Fungsi untuk mengatur perpindahan tab internal folder bertumpuk (Business Analysis Insight)
  * @param {string} tabId - Nama tab target ('profit-margin', 'food-cost', atau 'unilever-badge')
  */
-window.switchFolderTab = function(tabId) {
-    window.DEBUG && console.log('Switching to folder:', tabId);
+document.addEventListener("DOMContentLoaded", function() {
     
-    // 1. Definisikan pemetaan elemen beserta warna aktif vs pasifnya
-    const tabs = {
-        'profit-margin': {
-            trigger: document.getElementById('tab-profit-margin'),
-            innerTab: document.getElementById('inner-tab-pm'),
-            page: document.getElementById('page-profit-margin'),
-            activeBg: '#e8f8f5',
-            activeColor: '#218c4e'
-        },
-        'food-cost': {
-            trigger: document.getElementById('tab-food-cost'),
-            innerTab: document.getElementById('inner-tab-fc'),
-            page: document.getElementById('page-food-cost'),
-            activeBg: '#f4fbf7',
-            activeColor: '#1e7e4a'
-        },
-        'unilever-badge': {
-            trigger: document.getElementById('fc-badge'),
-            innerTab: document.getElementById('inner-tab-ub'),
-            page: document.getElementById('page-unilever-badge'),
-            activeBg: '#2980b9',
-            activeColor: '#ffffff'
-        }
-    };
+    // Fungsi untuk menyembunyikan semua teks keterangan
+    function hideAllInsights() {
+        document.getElementById('page-profit-margin').style.display = 'none';
+        document.getElementById('page-food-cost').style.display = 'none';
+        document.getElementById('page-unilever-badge').style.display = 'none';
+    }
 
-    // 2. Iterasi state untuk mengubah style secara dinamis
-    Object.keys(tabs).forEach(key => {
-        const item = tabs[key];
-        
-        if (!item || !item.innerTab) return; 
+    // 1. Menangkap klik dari elemen #sum-profit-margin milik Anda
+    const btnProfitMargin = document.getElementById('sum-profit-margin');
+    if (btnProfitMargin) {
+        btnProfitMargin.style.cursor = 'pointer'; // Menambahkan efek pointer agar jelas bisa diklik
+        btnProfitMargin.addEventListener('click', function() {
+            hideAllInsights();
+            document.getElementById('page-profit-margin').style.display = 'block';
+        });
+    }
 
-        if (key === tabId) {
-            // --- STATE AKTIF ---
-            if (item.trigger) item.trigger.style.transform = "scale(0.98)";
-            
-            // Kembalikan warna asli, pertebal teks, dan hilangkan border bawah agar menyatu dengan folder
-            item.innerTab.style.background = item.activeBg;
-            item.innerTab.style.color = item.activeColor;
-            item.innerTab.style.opacity = "1";
-            item.innerTab.style.fontWeight = "800";
-            item.innerTab.style.borderBottom = "1px solid #fff9f0"; 
-            
-            if (item.page) item.page.style.display = "block";
-        } else {
-            // --- STATE PASIF (TIDAK AKTIF) ---
-            if (item.trigger) item.trigger.style.transform = "none";
-            
-            // Ubah background & teks menjadi pudar/seragam mengikuti warna dasar folder body
-            item.innerTab.style.background = '#f2ebd9'; // Warna cream redup pasif
-            item.innerTab.style.color = '#7c5844';      // Warna cokelat pasif
-            item.innerTab.style.opacity = "0.6";
-            item.innerTab.style.fontWeight = "bold";
-            // Beri border bawah agar tegas bahwa tab ini sedang tertutup
-            item.innerTab.style.borderBottom = "1px solid #ffe8cc"; 
-            
-            if (item.page) item.page.style.display = "none";
-        }
-    });
-};
+    // 2. Menangkap klik dari elemen #food-cost-percent milik Anda
+    const btnFoodCost = document.getElementById('food-cost-percent');
+    if (btnFoodCost) {
+        btnFoodCost.style.cursor = 'pointer';
+        btnFoodCost.addEventListener('click', function() {
+            hideAllInsights();
+            document.getElementById('page-food-cost').style.display = 'block';
+        });
+    }
+
+    // 3. Menangkap klik dari elemen #fc-badge milik Anda
+    const btnBadge = document.getElementById('fc-badge');
+    if (btnBadge) {
+        btnBadge.style.cursor = 'pointer';
+        btnBadge.addEventListener('click', function() {
+            hideAllInsights();
+            document.getElementById('page-unilever-badge').style.display = 'block';
+        });
+    }
+
+});
 
 // ==========================================
 // FIX SWAPRIGHTSTATS REFERENCE ERROR
@@ -8818,14 +8801,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Pantau perubahan status login secara real-time
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
         if (session) {
             document.body.classList.remove('logged-out');
             document.body.classList.add('logged-in');
-            if (typeof loadDynamicProfile === 'function') loadDynamicProfile(false);
-        } else {
-            document.body.classList.remove('logged-in');
-            document.body.classList.add('logged-out');
+            
+            // Jalankan sinkronisasi dan realtime secara terpusat di sini
+            if (typeof sinkronisasiAwalDariSupabase === 'function') {
+                await sinkronisasiAwalDariSupabase();
+            }
+            if (typeof syncLocalDataToSupabase === 'function') {
+                await syncLocalDataToSupabase();
+            }
+            if (typeof initSupabaseRealtime === 'function') {
+                initSupabaseRealtime();
+            }
+        }
+    } else if (event === 'SIGNED_OUT') {
+        document.body.classList.remove('logged-in');
+        document.body.classList.add('logged-out');
+
+        // Bersihkan channel Realtime saat logout
+        if (globalResepChannel && window.supabase) {
+            await window.supabase.removeChannel(globalResepChannel);
+            globalResepChannel = null;
+        }
+    }
+});
+
+    // Pengecekan sesi awal (jika user membuka ulang aplikasi)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+            document.body.classList.remove('logged-out');
+            document.body.classList.add('logged-in');
         }
     });
     
@@ -9572,7 +9581,7 @@ window.eksporSemuaResep = async function() {
         
         // Format nama file otomatis dengan tanggal hari ini
         const tanggalHariIni = new Date().toISOString().split('T')[0];
-        const namaFile = `Cadangan_Resep_KedaiMaker_${tanggalHariIni}.txt`;
+        const namaFile = `Cadangan_Resep${tanggalHariIni}.txt`;
         
         // Proses pembuatan dan pengunduhan file .txt
         const blob = new Blob([dataResepString], { type: 'text/plain;charset=utf-8' });
