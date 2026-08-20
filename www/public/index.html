@@ -1380,13 +1380,13 @@ body.logged-in .container {
         <div class="shrunk-right-wrapper"  data-onclick="swapRightStats()" style="cursor: pointer; user-select: none;">
             <div id="shrunk-right-container" class="show-time">
                 <div id="shrunk-time-status" class="shrunk-badge-item">
-            <span id="shrunk-time-emoji">🕒</span>
-            <span id="shrunk-time-text">00:00</span>
-        </div>
+                    <span id="shrunk-time-text">00:00</span>
+                    <span id="shrunk-time-emoji">🕒</span>
+                </div>
         
                 <div id="shrunk-weather-status" class="shrunk-badge-item">
-                    <span id="shrunk-weather-emoji">☀️</span>
                     <span id="shrunk-weather-text">Cerah</span>
+                    <span id="shrunk-weather-emoji">☀️</span>
                 </div>
             </div>
         </div>
@@ -1889,7 +1889,7 @@ body.logged-in .container {
 <div id="recipe" class="tab-content recipe-modal" style="display: none; padding: 0; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: #FDF5E6; font-family: 'Segoe UI', sans-serif;"> 
     
     <!-- HEADER HALAMAN RESEP (Seragam dengan Modal Notifikasi) -->
-    <div class="article-modal-header" style="padding: 15px 20px 5px 20px; background: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
         <h3 id="recipe-modal-title" style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 13px; line-height: 1.618;">
             <span style="font-size: 1.618em; transform: translateY(-5%);">🍞</span> Resep Formula
         </h3>
@@ -1908,21 +1908,20 @@ body.logged-in .container {
         
         <!-- PENGATURAN DATABASE RESEP -->
         <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
-            <label for="recipe-save-name" style="display: block; font-size: 0.68rem; font-weight: 600; color: #718096; margin-bottom: 4px;">Nama Resep (Opsional):</label>
-            <input type="text" id="recipe-save-name" placeholder="Contoh: Donat Coklat Premium" maxlength="60" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.8rem; box-sizing: border-box; margin-bottom: 8px; color: #4E342E;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
-                <!-- Cukup ubah data-onclick menjadi onclick standar agar fungsi aslinya terpanggil -->
-                 <!-- 1. Tombol Database & Ekspor-Impor -->
-<button type="button" class="btn" id="btn-muat-resep" onclick="window.tampilkanDaftarResepTersimpan()" style="background: #E67E22; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📂 DATABASES</button>
-
-<button type="button" class="btn" onclick="window.eksporSemuaResep()" style="background: #2980b9; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📤 EKSPOR</button>
-
-<button type="button" class="btn" onclick="document.getElementById('recipe-import-input').click()" style="background: #27ae60; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📥 IMPOR FILE</button>
-
-<!-- 2. Input File Tersembunyi (SANGAT PENTING!) -->
-<!-- Perhatikan bagian onchange: kita mengirim 'this.files[0]' langsung ke fungsi asli Anda -->
-<input type="file" id="recipe-import-input" accept=".txt,.json" style="display: none;" onchange="window.prosesImporResep(event)">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label for="recipe-save-name" style="font-size: 0.68rem; font-weight: 600; color: #718096;">Nama Resep:</label>
+                <!-- Tombol Tambah Resep Baru / Reset Form -->
+                <button type="button" onclick="window.buatResepBaruForm()" style="background: none; border: none; color: #E67E22; font-size: 0.7rem; font-weight: 700; cursor: pointer; padding: 0;">+ Resep Baru</button>
             </div>
+            
+            <input type="text" id="recipe-save-name" placeholder="Contoh: Donat Coklat Premium" maxlength="60" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.8rem; box-sizing: border-box; margin-bottom: 8px; color: #4E342E;">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
+                <button type="button" class="btn" id="btn-muat-resep" onclick="window.tampilkanDaftarResepTersimpan()" style="background: #E67E22; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📂 DATABASE</button>
+                <button type="button" class="btn" onclick="window.eksporSemuaResep()" style="background: #2980b9; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📤 EKSPOR</button>
+                <button type="button" class="btn" onclick="document.getElementById('recipe-import-input').click()" style="background: #27ae60; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📥 IMPOR</button>
+            </div>
+            <input type="file" id="recipe-import-input" accept=".txt,.json" style="display: none;" onchange="window.prosesImporResep(event)">
         </div>
 
         <div class="print-meta-grid" style="display: none;">
@@ -2055,6 +2054,9 @@ body.logged-in .container {
             <div id="recipe-cards-container" style="padding: 6px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 6px;">
                 <!-- Komponen bahan dimuat secara dinamis via JavaScript -->
             </div>
+            <button type="button" onclick="window.tambahBahanBaruDinamis()" style="width: 100%; background: #f1f5f9; color: #334155; border: 1px dashed #cbd5e1; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                ➕ Tambah Bahan Baru ke Resep
+            </button>
         </div>
 
     </div>
@@ -2252,6 +2254,40 @@ body.logged-in .container {
         },
     });
 }
+
+// Fungsi untuk mereset form kalkulator resep menjadi baru/bersih
+function buatResepBaruForm() {
+    // Konfirmasi jika sedang mengedit resep aktif agar tidak kehilangan data tidak sengaja
+    if (currentEditingRecipeId) {
+        const lanjut = confirm("Anda sedang mengedit resep yang ada. Buat lembar resep baru?");
+        if (!lanjut) return;
+    }
+
+    // Reset ID Edit aktif
+    currentEditingRecipeId = null;
+
+    // Kosongkan nama resep
+    const namaInput = document.getElementById('recipe-save-name');
+    if (namaInput) namaInput.value = '';
+
+    // Reset standar tepung & yield ke default awal
+    const flourInput = document.getElementById('base-flour');
+    if (flourInput) flourInput.value = '1000';
+
+    const yieldInput = document.getElementById('recipe-yield');
+    if (yieldInput) yieldInput.value = '34';
+
+    const hargaJualInput = document.getElementById('input-harga-jual');
+    if (hargaJualInput) hargaJualInput.value = '4500';
+
+    // Berikan notifikasi halus
+    if (typeof NotifSystem !== 'undefined') {
+        NotifSystem.tambah('resep', 'Lembar Resep Baru', 'Form kalkulator dikosongkan untuk resep baru.', '✨');
+    } else {
+        alert("Lembar resep baru disiapkan.");
+    }
+}
+window.buatResepBaruForm = buatResepBaruForm;
 
 // 1. Fungsi penampung saat aplikasi offline atau Supabase error
 function simpanKeAntreanOffline(resep) {
@@ -5362,6 +5398,7 @@ function getMoonPhase() {
 //=============================================================
 // Fungsi otomatis untuk memperbarui elemen teks di shrunk-view
 // ============================================================
+// Fungsi otomatis untuk memperbarui elemen teks di shrunk-view
 function perbaruiKeteranganWaktuShrunk() {
     const elTimeText = document.getElementById('shrunk-time-text');
     const elTimeEmoji = document.getElementById('shrunk-time-emoji');
@@ -5378,7 +5415,9 @@ function perbaruiKeteranganWaktuShrunk() {
             } else if (keterangan === "Sore" || keterangan === "Senja" || keterangan === "Petang") {
                 elTimeEmoji.innerText = "🌇";
             } else {
-                elTimeEmoji.innerText = "🌙";
+                // MENGGUNAKAN FASE BULAN DINAMIS UNTUK MALAM HARI
+                const moon = typeof getMoonPhase === 'function' ? getMoonPhase() : { icon: "🌙" };
+                elTimeEmoji.innerText = moon.icon;
             }
         }
     }
@@ -5395,7 +5434,8 @@ function perbaruiKeteranganWaktuShrunk() {
         }
 
         // Ambil teks fase bulan yang sedang aktif dari global variabel jika ada
-        const teksFaseBulan = window.currentMoonPhaseText || ""; 
+        const moon = typeof getMoonPhase === 'function' ? getMoonPhase() : { icon: "" };
+        const teksFaseBulan = moon.icon || ""; 
         const isMalam = ["Malam", "Tengah Malam", "Dini Hari"].includes(namaWaktuTampil); 
 
         weatherTimeLineElement.innerHTML = `
@@ -5405,14 +5445,14 @@ function perbaruiKeteranganWaktuShrunk() {
                         ${isMalam ? 
                             `<span>${namaWaktuTampil}</span> <span>${teksFaseBulan}</span>` 
                             : 
-                            `${iconWaktu} <span>${namaWaktuTampil}</span>`
+                            `<span>${namaWaktuTampil}</span> <span>${iconWaktu}</span>`
                         }
                     </div>
                     
                     <div style="width: 100%; height: 1px; background: rgba(148, 163, 184, 0.2); margin: 2px 0;"></div>
                     
                     <div style="font-size: 0.78rem; opacity: 0.9; color: var(--text-weather); display: flex; align-items: center; gap: 4px; white-space: nowrap;">
-                        ${typeof iconCuaca !== 'undefined' ? iconCuaca : '☁️'} ${typeof capitalizedCond !== 'undefined' ? capitalizedCond : 'Memuat...'}
+                         <span>${typeof capitalizedCond !== 'undefined' ? capitalizedCond : 'Memuat...'}</span> <span>${typeof iconCuaca !== 'undefined' ? iconCuaca : '☁️'}</span>
                     </div>
                 </div>`;
     }
@@ -5651,9 +5691,21 @@ function updateDynamicTheme(weatherId, mainWeather) {
 
     // 6. UPDATE TEMA DI KONDISI SHRUNK
     const shrunkWeatherText = document.getElementById('shrunk-weather-text');
-    const shrunkTimeEmoji = document.getElementById('shrunk-time-emoji');
+    const shrunkWeatherEmoji = document.getElementById('shrunk-weather-emoji');
+    
     if (shrunkWeatherText) shrunkWeatherText.innerText = condition.charAt(0).toUpperCase() + condition.slice(1);
-    if (shrunkTimeEmoji) shrunkTimeEmoji.innerText = lineweather ? lineweather.innerText.split(' ')[0] : '☀️';
+    
+    // Targetkan 'weather-emoji' (bukan time-emoji) dan set manual sesuai kondisi
+    if (shrunkWeatherEmoji) {
+        let emojiMini = "☀️";
+        if (condition === "hujan") emojiMini = "🌧️";
+        else if (condition === "mendung") emojiMini = "☁️";
+        else if (condition === "berawan") emojiMini = "⛅";
+        else if (condition === "panas") emojiMini = "🔥";
+        else if (["malam", "tengah malam", "dini hari"].includes(timeOfDay) && condition === "cerah") emojiMini = "✨";
+        
+        shrunkWeatherEmoji.innerText = emojiMini;
+    }
 }
 //==============================================================================
 
@@ -7246,15 +7298,27 @@ function updateDurationLabel(minutes) {
 let isTempMain = true; // Status awal: Suhu di kiri (besar)
 
 // Fungsi menyalin data asli ke header mini
+// Fungsi menyalin data asli ke header mini
 function updateMiniHeader() {
     const tempText = document.getElementById('temp-val')?.innerText || '--';
     const humText = document.getElementById('hum-val')?.innerText || '--';
     
-    // 1. Ambil teks lokasi dan bersihkan ikon pin agar terlihat rapi
-    let locText = document.getElementById('loc-line1')?.innerText || 'Lokasi';
-    locText = locText.replace('📍', '').trim();
+    // 1. Ambil teks lokasi baris 1 (Jalan, Kelurahan, Kecamatan)
+    let locLine1 = document.getElementById('loc-line1')?.innerText || 'Lokasi';
+    locLine1 = locLine1.replace('📍', '').trim();
+    
+    // 2. Ambil teks lokasi baris 2 (Kabupaten, Provinsi, Negara)
+    let locLine2 = document.getElementById('loc-line2')?.innerText || '';
+    locLine2 = locLine2.trim();
+
+    // 3. Gabungkan menjadi alamat lengkap (Abaikan jika isinya pesan 'Mendeteksi')
+    let fullLocation = locLine1;
+    if (locLine2 && !locLine2.includes('Mendeteksi') && !locLine2.includes('Koordinat')) {
+        fullLocation += ', ' + locLine2;
+    }
+
     const locEl = document.getElementById('shrunk-loc-text');
-    if (locEl) locEl.innerText = locText;
+    if (locEl) locEl.innerText = fullLocation;
 
     // 2. Logika Tukar Posisi Statistik (Suhu & Kelembaban)
     const mainEl = document.getElementById('shrunk-main');
