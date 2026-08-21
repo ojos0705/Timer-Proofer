@@ -590,6 +590,9 @@ body.logged-in .container {
         #shrunk-weather-status {display: flex;align-items: center;gap: 6px;background: var(--card-bg, rgba(255, 255, 255, 0.15));padding: 6px 12px;border-radius: 20px; font-weight: 700;font-size: 0.85rem;backdrop-filter: blur(5px);-webkit-backdrop-filter: blur(5px);box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
         #shrunk-time-emoji {font-size: 1.1rem;}
         #shrunk-weather-text {text-transform: capitalize; /* Membuat huruf awal otomatis kapital */}
+        #shrunk-time-text {
+    white-space: nowrap;
+}
 
         /* Jika ada kartu kecil di dalam section lokasi (misal info suhu/ikon cuaca) */
         #location-section .weather-card {background-color: var(--card-bg, rgba(78, 52, 46, 0.08)); border-radius: 12px; padding: 10px 15px; margin-top: 8px; display: inline-block; transition: background-color 0.5s ease;}
@@ -1306,9 +1309,7 @@ body.logged-in .container {
 <!-- AKHIR IKLAN -->
 
 <div class="container" id="app-container">
-    <button id="pip-trigger-btn" class="pip-badge" title="Aktifkan Mode Melayang">
-    📺 PIP Mode
-</button>
+    
     <!-- TOP NAVIGATION BAR -->
 <div class="top-nav-bar">
     <div class="top-nav-left">
@@ -1318,13 +1319,12 @@ body.logged-in .container {
 
     <div class="top-nav-right">
         <div class="top-nav-group">
+            <button id="pip-trigger-btn" class="pip-badge" title="Aktifkan Mode Melayang">📺 PIP Mode</button>
             <button class="nav-icon-btn" id="btn-refresh-manual" title="Refresh Halaman">🔄</button>
-                                   
             <button class="nav-icon-btn" data-onclick="toggleModal('notif-modal')" title="Notifikasi" style="position: relative;">
                 🔔
                 <span class="notif-badge" id="global-notif-badge" style="display: none;">0</span>
             </button>
-            
             <button class="nav-icon-btn" data-onclick="toggleModal('settings-modal')" title="Pengaturan">⚙️</button>
         </div>
     </div>
@@ -1891,7 +1891,7 @@ body.logged-in .container {
     <!-- HEADER HALAMAN RESEP (Seragam dengan Modal Notifikasi) -->
     <div class="article-modal-header" style="padding: 15px 20px 5px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
         <h3 id="recipe-modal-title" style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 13px; line-height: 1.618;">
-            <span style="font-size: 1.618em; transform: translateY(-5%);">🍞</span> Resep Formula
+            <span style="font-size: 1.618em; transform: translateY(-5%);">🍞</span> Resep
         </h3>
 
     <!-- HEADER KHUSUS CETAK PRINT/PDF (Tetap dipertahankan untuk kompatibilitas cetak) -->
@@ -1934,21 +1934,21 @@ body.logged-in .container {
             <!-- Kolom 1: Tepung Utama -->
             <div style="flex: 1.618; min-width: 90px;">
                 <label for="base-flour" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Tepung (gr)</label>
-                <input type="number" id="base-flour" value="1000" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+                <input type="number" id="base-flour" value="" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem; background: #fff; height: 38px;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
             </div>
             
             <!-- Kolom 2: Total Porsi -->
             <div style="flex: 1; min-width: 70px;">
                 <label for="recipe-yield" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Porsi</label>
-                <input type="number" id="recipe-yield" value="34" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+                <input type="number" id="recipe-yield" value="" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem; background: #fff; height: 38px;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
             </div>
 
             <!-- Kolom 3: Harga Jual (Terintegrasi) -->
             <div style="flex: 1.5; min-width: 110px;">
-                <label for="input-harga-jual" style="font-size: 0.72rem; font-weight: bold; color: #27ae60; display: block; margin-bottom: 4px; text-transform: uppercase;">Harga/Pcs</label>
-                <div style="display: flex; align-items: center; padding: 7px 8px; border: 1px solid #27ae60; border-radius: 8px; box-sizing: border-box; background: #f0fdf4;">
-                    <span style="font-size: 0.8rem; font-weight: 700; color: #27ae60; margin-right: 4px;">Rp</span>
-                    <input type="number" id="input-harga-jual" value="4500" step="100" style="width: 100%; border: none; font-size: 0.875rem; font-weight: 700; color: #27ae60; outline: none; padding: 0; background: transparent; text-align: left;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+                <label for="input-harga-jual" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Harga/Pcs</label>
+                <div style="display: flex; align-items: center; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; background: #fff; padding: 0 8px; height: 38px;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #8D6E63; margin-right: 4px;">Rp</span>
+                    <input type="number" id="input-harga-jual" value="" step="100" style="width: 100%; border: none; font-size: 0.875rem; font-weight: 700; color: #4E342E; outline: none; background: transparent; text-align: left;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
                 </div>
             </div>
         </div>
@@ -1994,7 +1994,14 @@ body.logged-in .container {
                 📋 DAFTAR KOMPOSISI BAHAN ADONAN
             </div>
         <!-- DINAMIS TAMBAH BAHAN (Kini berada di dalam Tab Bahan & HPP) -->
-        <details id="form-tambah-bahan" class="premium-ai-accordion" style="background: linear-gradient(135deg, #FFF9F0 0%, #FFF3E0 100%); border: 1px solid #F39C12; border-radius: 12px; margin-bottom: 14px; overflow: hidden; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.08);">
+        
+
+        <!-- DAFTAR KOMPOSISI BAHAN UTAMA -->
+        
+            <div id="recipe-cards-container" style="padding: 6px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 6px;">
+                <!-- Komponen bahan dimuat secara dinamis via JavaScript -->
+            </div>
+            <details id="form-tambah-bahan" class="premium-ai-accordion" style="background: linear-gradient(135deg, #FFF9F0 0%, #FFF3E0 100%); border: 1px solid #F39C12; border-radius: 12px; margin-bottom: 14px; overflow: hidden; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.08);">
             <summary style="padding: 14px 16px; font-weight: 700; color: #D35400; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; letter-spacing: 0.3px;">
                 <span style="display: flex; align-items: center; gap: 8px;">
                     <span style="background: #E67E22; color: white; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;">+</span> 
@@ -2049,11 +2056,6 @@ body.logged-in .container {
             </div>
         </details>
 
-        <!-- DAFTAR KOMPOSISI BAHAN UTAMA -->
-        
-            <div id="recipe-cards-container" style="padding: 6px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 6px;">
-                <!-- Komponen bahan dimuat secara dinamis via JavaScript -->
-            </div>
             <button type="button" onclick="window.tambahBahanBaruDinamis()" style="width: 100%; background: #f1f5f9; color: #334155; border: 1px dashed #cbd5e1; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 ➕ Tambah Bahan Baru ke Resep
             </button>
@@ -2170,9 +2172,9 @@ body.logged-in .container {
             <button type="button" class="btn" id="btn-simpan-resep" onclick="window.simpanResepKeDatabase()" style="background: #2c3e50; color: white; padding: 10px; border: none; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer;">💾 SIMPAN RESEP</button>
             <button type="button"  data-onclick="window.eksekusiCetakPremium()" style="background: #c0392b; color: white; border: none; padding: 10px; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">📄 CETAK PDF</button>
         </div>
-        <div class="sticky-bottom-action" style="position: sticky; bottom: 0; background-color: var(--cream); padding: 12px 15px; box-shadow: 0 -4px 10px rgba(0,0,0,0.06); z-index: 101; flex-shrink: 0;">
-        <button id="btn-recipe-close-bottom" class="about-close-btn" style="margin: 0; width: 100%; display: block;">TUTUP KALKULATOR</button>
-    </div>
+        <div class="sticky-bottom-action" style="position: fixed; bottom: 0; left: 0; width: 100%; box-sizing: border-box; padding: 15px 15px 25px 15px; z-index: 101; background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; pointer-events: none;">
+            <button id="btn-recipe-close-bottom" class="about-close-btn" style="margin: 0; width: 100%; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important; pointer-events: auto;">TUTUP KALKULATOR</button>
+        </div>
 
     <div id="recipe-list-modal" class="page-modal" style="z-index: 200;">
         <div style="padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
@@ -2288,6 +2290,48 @@ function buatResepBaruForm() {
     }
 }
 window.buatResepBaruForm = buatResepBaruForm;
+
+window.buatResepBaruForm = function() {
+    if (confirm("Membuat resep baru akan mengosongkan nama resep, pengaturan, daftar bahan, dan langkah produksi saat ini. Lanjutkan?")) {
+        
+        // 1. Kosongkan input nama resep
+        const recipeNameInput = document.getElementById('recipe-save-name');
+        if (recipeNameInput) recipeNameInput.value = '';
+
+        // 2. Kosongkan kolom Tepung, Porsi, dan Harga/Pcs
+        const baseFlour = document.getElementById('base-flour');
+        if (baseFlour) baseFlour.value = '';
+
+        const recipeYield = document.getElementById('recipe-yield');
+        if (recipeYield) recipeYield.value = '';
+
+        const hargaJual = document.getElementById('input-harga-jual');
+        if (hargaJual) hargaJual.value = '';
+
+        // 3. Kosongkan data bahan (menggunakan fungsi reset)
+        if (typeof window.resetBakeryIngredients === 'function') {
+            window.resetBakeryIngredients();
+        } else {
+            window.bakeryIngredients = [];
+            localStorage.removeItem('bakeryIngredients');
+        }
+
+        // 4. Kosongkan / Reset Langkah-langkah Produksi
+        const containerLangkah = document.getElementById('container-daftar-langkah');
+        if (containerLangkah) {
+            containerLangkah.innerHTML = ''; // Mengosongkan tampilan daftar langkah
+        }
+        
+        // Jika Anda menyimpan data langkah dalam variabel array global (misal: window.langkahProduksi), reset juga:
+        if (typeof window.langkahProduksi !== 'undefined') {
+            window.langkahProduksi = [];
+        }
+
+        // 5. Perbarui tampilan tabel dan kalkulasi HPP
+        if (typeof window.renderRecipeTable === 'function') window.renderRecipeTable();
+        if (typeof window.hitungHPP === 'function') window.hitungHPP();
+    }
+};
 
 // 1. Fungsi penampung saat aplikasi offline atau Supabase error
 function simpanKeAntreanOffline(resep) {
@@ -2860,6 +2904,40 @@ function renderLangkahProduksi() {
     });
 }
 window.renderLangkahProduksi = renderLangkahProduksi;
+
+window.tambahBahanBaruDinamis = function() {
+    const name = document.getElementById('new-ing-name')?.value.trim();
+    const category = document.getElementById('new-ing-type')?.value || 'Bahan Kering';
+    const ratio = parseFloat(document.getElementById('new-ing-ratio')?.value) || 0;
+    const price = parseFloat(document.getElementById('new-ing-price')?.value) || 0;
+    const pack = parseFloat(document.getElementById('new-ing-pack')?.value) || 1000;
+
+    if (!name) { 
+        alert("Silakan isi nama bahan baku terlebih dahulu!"); 
+        return; 
+    }
+
+    const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now();
+    const isFlour = (category === 'Bahan Kering' && ratio === 100);
+
+    window.addBakeryIngredient({
+        id: newId,
+        name: name,
+        type: (category === 'Bahan Toping' || category === 'Kemasan') ? 'Topping' : 'Dough',
+        category: category,
+        ratio: ratio,
+        price: price,
+        pack: pack,
+        isFlour: isFlour
+    });
+    
+    // Reset Form Input
+    document.getElementById('new-ing-name').value = '';
+    document.getElementById('new-ing-ratio').value = '';
+    document.getElementById('new-ing-price').value = '';
+    document.getElementById('new-ing-pack').value = '';
+    perbaruiPreviewBahanBaru();
+};
 
 // Fungsi untuk menambah langkah baru
 function tambahLangkahProduksi() {
@@ -4949,21 +5027,25 @@ function hitungHPPBakeryTotal() {
         // --- FIX VISUAL KARTU KOMPONEN SECARA REAL-TIME ---
         const idBahan = ing.id !== undefined ? ing.id : index;
         
+        // 1. Tambahkan format desimal di sini agar angka seperti 2.5 tidak dibulatkan
+        const formatBerat = grossWeight % 1 !== 0 ? Number(grossWeight.toFixed(1)) : grossWeight;
+        
         const grossEl = document.getElementById(`gross-${idBahan}`);
-        if (grossEl) grossEl.innerText = Math.round(grossWeight);
+        if (grossEl) grossEl.innerText = formatBerat; // <-- Math.round dihapus
         
         const costEl = document.getElementById(`cost-${idBahan}`);
         if (costEl) costEl.innerText = Math.round(costTerpakai).toLocaleString('id-ID');
         
         const grossTabEl = document.getElementById(`gross-table-${idBahan}`);
-        if (grossTabEl) grossTabEl.innerText = Math.round(grossWeight);
+        if (grossTabEl) grossTabEl.innerText = formatBerat; // <-- Math.round dihapus
+        
         const costTabEl = document.getElementById(`cost-table-${idBahan}`);
         if (costTabEl) costTabEl.innerText = Math.round(costTerpakai).toLocaleString('id-ID');
 
         const cardTarget = document.querySelector(`[data-id="${index}"]`);
         if (cardTarget) {
             const txtBeratLokal = cardTarget.querySelector('.berat-pakai-text, .text-berat-pakai');
-            if (txtBeratLokal) txtBeratLokal.innerText = Math.round(grossWeight) + " gr";
+            if (txtBeratLokal) txtBeratLokal.innerText = formatBerat + " gr"; // <-- Math.round dihapus
             
             const txtBiayaLokal = cardTarget.querySelector('.biaya-text, .text-biaya');
             if (txtBiayaLokal) txtBiayaLokal.innerText = "Rp " + Math.round(costTerpakai).toLocaleString('id-ID');
@@ -7376,40 +7458,79 @@ function panggilKembaliAIAgent() {
 // INTERFAZ PREMIUM KALKULATOR RESEP: DUAL-GROUP AUTO SPREADSHEET
 // =========================================================================
 
-window.bakeryIngredients = [
-    // --- 1. BAHAN KERING ---
-    { id: "flour_high", name: "Tepung Terigu Protein Tinggi", type: "Dough", category: "Bahan Kering", ratio: 100, price: 0, pack: 0, isFlour: true },
-    { id: "sugar", name: "Gula Pasir", type: "Dough", category: "Bahan Kering", ratio: 18, price: 0, pack: 0, isFlour: false },
-    { id: "milk_powder", name: "Susu Bubuk full cream", type: "Dough", category: "Bahan Kering", ratio: 4, price: 0, pack: 0, isFlour: false },
-    
-    // --- 2. BAHAN BASAH ---
-    { id: "egg_yolk", name: "Kuning Telur", type: "Dough", category: "Bahan Basah", ratio: 12, price: 0, pack: 0, isFlour: false },
-    { id: "ice_water", name: "Air Es", type: "Dough", category: "Bahan Basah", ratio: 50, price: 0, pack: 0, isFlour: false },
-    { id: "butter", name: "Margarin / Butter", type: "Dough", category: "Bahan Basah", ratio: 15, price: 0, pack: 0, isFlour: false },
-    
-    // --- 3. BAHAN PENGEMBANG ---
-    { id: "yeast", name: "Ragi Instan", type: "Dough", category: "Bahan Pengembang", ratio: 2, price: 0, pack: 0, isFlour: false },
-    
-    // --- 4. BAHAN TAMBAHAN (IMPROVER/ADDITIVE) ---
-    { id: "salt", name: "Garam", type: "Dough", category: "Bahan Tambahan", ratio: 1.5, price: 0, pack: 0, isFlour: false },
-    { id: "improver", name: "Bread Improver", type: "Dough", category: "Bahan Tambahan", ratio: 0.4, price: 0, pack: 0, isFlour: false },
-    
-    // --- 5. BAHAN TOPING & ISIAN ---
-    { id: "glaze_choc", name: "Glaze Cokelat Celup", type: "Topping", category: "Bahan Toping", ratio: 10, price: 0, pack: 0, isFlour: false },
-    { id: "ceres", name: "Meses Cokelat Classic", type: "Topping", category: "Bahan Toping", ratio: 5, price: 0, pack: 0, isFlour: false },
-
-    // --- 6. KEMASAN / PACKAGING ---
-    { id: "box_donut", name: "Kotak Dus Donat Isi 6", type: "Topping", category: "Kemasan", ratio: 0.166, price: 0, pack: 0, isFlour: false }
+// ==========================================
+// 1. DATA DASAR & KATEGORI DINAMIS
+// ==========================================
+window.bakeryCategories = [
+    "Bahan Kering",
+    "Bahan Basah",
+    "Bahan Pengembang",
+    "Bahan Tambahan",
+    "Bahan Toping",
+    "Kemasan"
 ];
-window.bakeryIngredients = bakeryIngredients;
-window.defaultIngredients = [];
-window.renderRecipeTable = function() { renderRecipeTableBakuTotal(); };
-window.hitungHPP = function() { hitungHPPBakeryTotal(); };
 
-function sesuaikanPlaceholderRasio() {
-    perbaruiLabelRasioBahan();
+// Kosong saat pertama kali instal, tersimpan otomatis di localStorage setelahnya
+window.bakeryIngredients = JSON.parse(localStorage.getItem('bakeryIngredients')) || [];
+
+// Menyimpan status buka-tutup kategori (default: true = terbuka semua)
+if (window.statusKategoriResep === undefined) {
+    window.statusKategoriResep = {
+        "Bahan Kering": true,
+        "Bahan Basah": true,
+        "Bahan Pengembang": true,
+        "Bahan Tambahan": true,
+        "Bahan Toping": true,
+        "Kemasan": true
+    };
 }
 
+
+// ==========================================
+// 2. FUNGSI PENYIMPANAN & MANAJEMEN DATA
+// ==========================================
+window.saveBakeryIngredients = function() {
+    localStorage.setItem('bakeryIngredients', JSON.stringify(window.bakeryIngredients));
+    if (typeof window.renderRecipeTable === 'function') window.renderRecipeTable();
+    if (typeof window.hitungHPP === 'function') window.hitungHPP();
+};
+
+window.addBakeryIngredient = function(newIngredient) {
+    window.bakeryIngredients.push(newIngredient);
+    window.saveBakeryIngredients();
+};
+
+window.updateBakeryIngredient = function(id, updatedData) {
+    const index = window.bakeryIngredients.findIndex(item => item.id === id);
+    if (index !== -1) {
+        window.bakeryIngredients[index] = { ...window.bakeryIngredients[index], ...updatedData };
+        window.saveBakeryIngredients();
+    }
+};
+
+window.deleteBakeryIngredient = function(id) {
+    window.bakeryIngredients = window.bakeryIngredients.filter(item => item.id !== id);
+    window.saveBakeryIngredients();
+};
+
+window.resetBakeryIngredients = function() {
+    window.bakeryIngredients = [];
+    window.saveBakeryIngredients();
+};
+
+// Hubungkan Fungsi Render & HPP Utama
+window.renderRecipeTable = function() { 
+    if (typeof renderRecipeTableBakuTotal === 'function') renderRecipeTableBakuTotal(); 
+};
+
+window.hitungHPP = function() { 
+    if (typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal(); 
+};
+
+
+// ==========================================
+// 3. PRESET & INTERAKSI FORM UI (DIAMBIL DARI KODE LAMA)
+// ==========================================
 const PRESET_BAHAN_CEPAT = [
     { label: 'Mentega', name: 'Mentega', category: 'Bahan Basah', ratio: 10, price: 18000, pack: 200 },
     { label: 'Gula', name: 'Gula Pasir', category: 'Bahan Kering', ratio: 12, price: 14000, pack: 1000 },
@@ -7464,7 +7585,6 @@ window.isiBahanCepat = function(preset) {
     if (ratioInp) ratioInp.value = preset.ratio;
     if (priceInp) priceInp.value = preset.price;
     if (packInp) packInp.value = preset.pack;
-    tampilkanErrorBahan('');
     perbaruiPreviewBahanBaru();
     if (nameInp) nameInp.focus();
 };
@@ -7516,7 +7636,7 @@ function inisialisasiFormTambahBahan() {
             el.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    window.tambahBahanBakeryDinamis();
+                    tambahBahanBakuKustom();
                 }
             });
         }
@@ -7531,45 +7651,41 @@ function inisialisasiFormTambahBahan() {
     perbaruiPreviewBahanBaru();
 }
 
-// Menyimpan status buka-tutup kategori (default: true = terbuka semua)
-if (window.statusKategoriResep === undefined) {
-    window.statusKategoriResep = {
-        "Bahan Kering": true,
-        "Bahan Basah": true,
-        "Bahan Pengembang": true,
-        "Bahan Tambahan": true,
-        "Bahan Toping": true,
-        "Kemasan": true
-    };
-}
-
+// Fungsi tambah bahan yang disesuaikan agar masuk ke sistem dinamis localStorage
 function tambahBahanBakuKustom() {
-    const name = document.getElementById('new-ing-name').value;
-    const ratio = parseFloat(document.getElementById('new-ing-ratio').value) || 0;
-    const price = parseFloat(document.getElementById('new-ing-price').value) || 0;
+    const name = document.getElementById('new-ing-name')?.value.trim();
+    const category = document.getElementById('new-ing-type')?.value || 'Bahan Kering';
+    const ratio = parseFloat(document.getElementById('new-ing-ratio')?.value) || 0;
+    const price = parseFloat(document.getElementById('new-ing-price')?.value) || 0;
+    const pack = parseFloat(document.getElementById('new-ing-pack')?.value) || 1000;
 
     if (!name) { 
         alert("Silakan isi nama bahan baku terlebih dahulu!"); 
         return; 
     }
 
-    const tbody = document.getElementById('ingredient-rows');
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-        <td>${name}</td>
-        <td><input type="number" class="ing-ratio" value="${ratio}" oninput="hitungHPP()"></td>
-        <td><span class="ing-weight">0</span> gr</td>
-        <td><input type="number" class="ing-price" value="${price}" oninput="hitungHPP()"></td>
-        <td>Rp <span class="ing-total">0</span></td>
-    `;
-    tbody.appendChild(tr);
+    // Buat ID unik berdasarkan nama
+    const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now();
+    const isFlour = (category === 'Bahan Kering' && ratio === 100); // deteksi sederhana jika ingin dijadikan acuan tepung
+
+    // Masukkan ke array dinamis & simpan
+    window.addBakeryIngredient({
+        id: newId,
+        name: name,
+        type: (category === 'Bahan Toping' || category === 'Kemasan') ? 'Topping' : 'Dough',
+        category: category,
+        ratio: ratio,
+        price: price,
+        pack: pack,
+        isFlour: isFlour
+    });
     
-    hitungHPP();
-    
-    // Reset Form
+    // Reset Form Input
     document.getElementById('new-ing-name').value = '';
     document.getElementById('new-ing-ratio').value = '';
     document.getElementById('new-ing-price').value = '';
+    document.getElementById('new-ing-pack').value = '';
+    perbaruiPreviewBahanBaru();
 }
 
 window.toggleCollapseKategori = function(namaKategori) {
@@ -7751,22 +7867,26 @@ function renderRecipeTableBakuTotal() {
 }
 
 
-function perbaruiKomponenBahan(idBahan, properti, nilai) {
+window.perbaruiKomponenBahan = function(idBahan, properti, nilai) {
     const angkaValid = parseFloat(nilai) || 0;
 
     // 1. Cari data bahan di dalam array memori utama dan update nilainya
-    const ing = bakeryIngredients.find(x => x.id === idBahan);
+    const ing = window.bakeryIngredients.find(x => x.id === idBahan);
     if (!ing) return;
     ing[properti] = angkaValid;
 
-    // 2. Ambil nilai acuan input utama dari dokumen HTML Anda
+    // [PERBAIKAN] Simpan secara diam-diam ke localStorage 
+    // agar data tidak hilang di-refresh, tanpa memicu kursor lompat
+    localStorage.setItem('bakeryIngredients', JSON.stringify(window.bakeryIngredients));
+
+    // 2. Ambil nilai acuan input utama dari dokumen HTML
     const baseFlourInput = document.getElementById('base-flour') || document.getElementById('base-tepung');
     const baseFlourWeight = baseFlourInput ? (parseFloat(baseFlourInput.value) || 1000) : 1000;
     
     const yieldInput = document.getElementById('recipe-yield') || document.getElementById('total-yield');
     const totalYield = yieldInput ? (parseFloat(yieldInput.value) || 1) : 1;
 
-    // 3. Kalkulasi ulang matematika khusus untuk satu bahan ini saja
+    // 3. Kalkulasi ulang matematika khusus
     let grossWeight = 0;
     let costTerpakai = 0;
 
@@ -7775,40 +7895,39 @@ function perbaruiKomponenBahan(idBahan, properti, nilai) {
     const currentRatio = parseFloat(ing.ratio) || 0;
 
     if (ing.type === "Dough" || ing.category === "Bahan Kering" || ing.category === "Bahan Basah" || ing.category === "Bahan Pengembang" || ing.category === "Bahan Tambahan") {
-        // Kelompok Adonan (Menggunakan persentase Baker's Percentage dari berat tepung utama)
         let ratio = ing.isFlour ? 100 : currentRatio;
         grossWeight = (ratio / 100) * baseFlourWeight;
         costTerpakai = (grossWeight / packSize) * currentPrice;
     } else {
-        // Kelompok Bahan Topping & Kemasan (Menggunakan gramasi/unit netto dikali hasil pcs kue)
         grossWeight = currentRatio * totalYield;
         costTerpakai = (grossWeight / packSize) * currentPrice;
     }
 
-    // 4. SUNTIK LANGSUNG ANGKA TERBARU KE ELEMENT KARTU DAN TABEL (TANPA RENDER ULANG)
-    // Strategi manipulasi DOM lokal ini mencegah kursor ketikan hilang/mental saat mengetik angka!
-    
-    // Update Tampilan Kartu Mobile
+    // [PERBAIKAN] Tampilkan 1 angka desimal jika ada koma (misal: 2.5), 
+    // jangan bulatkan penuh agar harga dan berat sinkron secara logika.
+    const formatBerat = grossWeight % 1 !== 0 ? Number(grossWeight.toFixed(1)) : grossWeight;
+
+    // 4. SUNTIK LANGSUNG ANGKA TERBARU KE ELEMENT KARTU DAN TABEL
     const grossEl = document.getElementById(`gross-${idBahan}`);
-    if (grossEl) grossEl.innerText = Math.round(grossWeight);
+    if (grossEl) grossEl.innerText = formatBerat;
 
     const costEl = document.getElementById(`cost-${idBahan}`);
     if (costEl) costEl.innerText = Math.round(costTerpakai).toLocaleString('id-ID');
 
     // Update Tampilan Format Cetak Tabel PDF
     const grossTabEl = document.getElementById(`gross-table-${idBahan}`);
-    if (grossTabEl) grossTabEl.innerText = Math.round(grossWeight);
+    if (grossTabEl) grossTabEl.innerText = formatBerat;
     
     const costTabEl = document.getElementById(`cost-table-${idBahan}`);
     if (costTabEl) costTabEl.innerText = Math.round(costTerpakai).toLocaleString('id-ID');
 
-    // 5. Jalankan fungsi hitung total global untuk memperbarui ringkasan HPP, Food Cost & Profit di bawah
+    // 5. Jalankan fungsi hitung total global
     if (typeof hitungHPPBakeryTotal === 'function') {
         hitungHPPBakeryTotal();
     } else if (typeof hitungHPP === 'function') {
         hitungHPP();
     }
-}
+};
 
 // FUNGSI JEMBATAN UNTUK MEMPERBARUI DATA BAHAN SECARA DINAMIS SAAT DIINPUT
 window.perbaruiKomponenBahan = function(idBahan, properti, nilai) {
@@ -8190,21 +8309,38 @@ window.eksporResepKePDF = function() {
     }, 300);
 };
 
-window.eksekusiCetakPremium = function() {
-    window.DEBUG && console.log("Mengeksekusi Cetak Laporan PDF Pro (Include Parameter Card)...");
+function perbaruiTampilanUnitUsaha() {
+    const elemenProfil = document.getElementById('profile-bakery');
+    const elemenTampil = document.getElementById('display-unit-usaha');
 
+    if (elemenProfil && elemenTampil) {
+        // Deteksi apakah profile-bakery itu input form (.value) atau teks biasa (.textContent)
+        const namaUsaha = (elemenProfil.value || elemenProfil.textContent || "").trim();
+        
+        // Suntikkan ke HTML, berikan fallback jika pengguna belum mengisi nama
+        elemenTampil.textContent = namaUsaha !== "" ? namaUsaha : "-";
+    }
+}
+
+// Panggil fungsi ini saat data profil diperbarui atau saat halaman dimuat
+perbaruiTampilanUnitUsaha();
+
+window.eksekusiCetakPremium = function() {
+    window.DEBUG && console.log("Mengeksekusi Cetak Laporan PDF Pro (Include Parameter Card & Ringkasan)...");
+
+    // 1. Ambil Nama Resep
     let namaResep = "";
     const elJudulResep = document.getElementById('recipe-save-name');
     if (elJudulResep) namaResep = elJudulResep.value.trim();
     if (namaResep === "") namaResep = "RESEP PRODUKSI"; 
 
     const safeFileName = namaResep.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
-    const finalDocTitle = safeFileName + " - Kedai Mak-er";
+    const finalDocTitle = safeFileName + " - " + (document.getElementById('profile-bakery')?.value || "Nama Bakery");
 
+    // 2. Ambil Insight AI
     const elPM = document.getElementById('text-analysis-pm');
     const elFC = document.getElementById('text-analysis-fc');
     const elUB = document.getElementById('text-analysis-ub');
-    
     const insightPM = elPM ? elPM.innerText.trim() : "Data analisis margin belum dihitung.";
     const insightFC = elFC ? elFC.innerText.trim() : "Data analisis food cost belum dihitung.";
     const insightUB = elUB ? elUB.innerText.trim() : "Data analisis standar belum dihitung.";
@@ -8213,7 +8349,7 @@ window.eksekusiCetakPremium = function() {
     let pmPercent = 100 - fcPercent;
     if (pmPercent < 0) pmPercent = 0;
 
-    // Mengambil nilai aktual dari elemen HTML Anda secara langsung
+    // 3. Ambil Nilai Parameter Utama
     let baseFlourVal = "1000";
     const elBaseFlour = document.getElementById('base-flour');
     if (elBaseFlour) baseFlourVal = elBaseFlour.value || elBaseFlour.innerText || "1000";
@@ -8227,6 +8363,7 @@ window.eksekusiCetakPremium = function() {
     if (elHargaJual) hargaJualVal = elHargaJual.value || elHargaJual.innerText || "4500";
     const formattedHargaJual = "Rp " + (parseFloat(hargaJualVal) || 0).toLocaleString('id-ID');
 
+    // 4. Ambil Langkah Produksi
     let stepsArray = window.activeRecipeSteps || [];
     if (stepsArray.length === 0) {
         const stepInputs = document.querySelectorAll('.input-step-text');
@@ -8242,13 +8379,13 @@ window.eksekusiCetakPremium = function() {
         stepsHTML = '<li style="font-size: 7.5pt;">Belum ada instruksi langkah produksi.</li>';
     }
 
+    // 5. Ambil Data Tabel Bahan & Hitung Total Biaya
     let rowsHTML = "";
     let totalModalBatch = 0;   
     let totalModalBelanja = 0; 
     let totalBeratAdonan = 0;  
 
     const tableRows = document.querySelectorAll('.recipe-table tbody tr');
-    
     if (tableRows && tableRows.length > 0) {
         tableRows.forEach(row => {
             const ths = row.querySelectorAll('th');
@@ -8293,8 +8430,24 @@ window.eksekusiCetakPremium = function() {
         rowsHTML = '<tr><td colspan="6" style="text-align: center; color: #666; padding: 6px; font-size: 7pt;">Data komposisi bahan belum tersedia.</td></tr>';
     }
 
+    // =========================================================================
+    // 6. KALKULASI RINGKASAN FINANSIAL (Sesuai dengan gambar referensi Anda)
+    // =========================================================================
+    const calcBiaya = totalModalBatch || 0; 
+    const calcPcs = parseInt(recipeYieldVal) || 1;
+    const calcHargaJual = parseFloat(hargaJualVal) || 0;
+
+    const calcHppPerPcs = Math.round(calcBiaya / calcPcs);
+    const calcTotalBiayaModal = calcHppPerPcs * calcPcs;
+    const calcTotalPendapatan = calcPcs * calcHargaJual;
+    const calcProfitMargin = calcTotalPendapatan - calcTotalBiayaModal;
+
+    const formatRp = (angka) => "Rp " + Math.round(angka).toLocaleString('id-ID');
+    // =========================================================================
+
     const tanggalCetak = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
 
+    // 7. Bangun Template HTML PDF
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'fixed';
     tempContainer.style.left = '0';
@@ -8314,7 +8467,6 @@ window.eksekusiCetakPremium = function() {
             .meta-box { background: #fdf8f2; border: 1px solid #f3e5dc; padding: 6px 10px; margin-bottom: 10px; border-radius: 5px; font-size: 7.5pt; display: flex; justify-content: space-between; }
             .meta-box strong { color: #4E342E; }
             
-            /* Style untuk Card Parameter Input yang diminta */
             .param-card-container { background: white; padding: 10px 14px; border-radius: 8px; box-sizing: border-box; margin-bottom: 12px; display: flex; gap: 12px; border: 1px solid #e2e8f0; }
             .param-item { flex: 1; background: #f8fafc; border: 1px solid #F2D2A9; border-radius: 6px; padding: 6px 10px; text-align: center; box-sizing: border-box; }
             .param-label { font-size: 6.5pt; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 2px; text-transform: uppercase; }
@@ -8339,12 +8491,11 @@ window.eksekusiCetakPremium = function() {
         </div>
         
         <div class="meta-box">
-            <div><strong>Pembuat:</strong> Joko Prasetyo</div>
-            <div><strong>Unit Usaha:</strong> Kedai Mak-er</div>
+            <div><strong>Pembuat:</strong> <span>${document.getElementById('profile-nama-user')?.value || document.getElementById('profile-user')?.value || document.getElementById('nama-pembuat')?.value || "Pengguna"}</span></div>
+            <div><strong>Unit Usaha:</strong> <span>${document.getElementById('profile-bakery')?.value || document.getElementById('nama-bakery')?.value || document.getElementById('nama-unit-usaha')?.value || "Unit Usaha"}</span></div>
             <div><strong>Status:</strong> Valid (PWA Dashboard)</div>
         </div>
 
-        <!-- CARD PARAMETER UTAMA (Tepung, Porsi, Harga/Pcs) -->
         <div class="param-card-container">
             <div class="param-item" style="flex: 1.618;">
                 <span class="param-label">Tepung Utama (gr)</span>
@@ -8385,6 +8536,33 @@ window.eksekusiCetakPremium = function() {
                         </tr>
                     </tbody>
                 </table>
+
+                <!-- KOTAK RINGKASAN FINANSIAL YANG DIINTEGRASIKAN -->
+                <div style="margin-top: 12px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #f8fafc; font-family: sans-serif; color: #334155; page-break-inside: avoid;">
+                    <h4 style="margin: 0 0 8px 0; color: #4E342E; font-size: 8pt; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px;">Ringkasan Finansial Produksi</h4>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 7pt;">
+                        <span>Total Biaya Modal (Adonan, Toping, Kemasan):</span>
+                        <span style="font-weight: 600;">${formatRp(calcBiaya)}</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 7pt;">
+                        <span>Harga Pokok Produksi per Pcs (${calcPcs} pcs):</span>
+                        <span style="font-weight: 600;">${formatRp(calcHppPerPcs)}</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 7pt;">
+                        <span>Proyeksi Pendapatan (Harga Jual ${formatRp(calcHargaJual)}):</span>
+                        <span style="font-weight: 600;">${formatRp(calcTotalPendapatan)}</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; font-size: 8pt; font-weight: bold; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #94a3b8; color: #27ae60;">
+                        <span>Estimasi Keuntungan Bersih:</span>
+                        <span>${formatRp(calcProfitMargin)}</span>
+                    </div>
+                </div>
+                <!-- AKHIR KOTAK RINGKASAN FINANSIAL -->
+
             </div>
 
             <div style="flex: 1; width: 0; display: flex; flex-direction: column;">
@@ -8422,6 +8600,7 @@ window.eksekusiCetakPremium = function() {
 
     document.body.appendChild(tempContainer);
 
+    // 8. Render Canvas (Pie Chart)
     const canvasEl = tempContainer.querySelector('#pdf-pie-canvas');
     if (canvasEl) {
         const ctx = canvasEl.getContext('2d');
@@ -8456,6 +8635,7 @@ window.eksekusiCetakPremium = function() {
         });
     }
 
+    // 9. Eksekusi PDF Download
     setTimeout(() => {
         html2canvas(tempContainer, {
             scale: 2.5, 
