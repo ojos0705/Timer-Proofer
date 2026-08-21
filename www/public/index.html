@@ -557,6 +557,8 @@ body.logged-in .container {
         /* Nama Jalan (Berada di atas, max-width diperlebar karena space kiri luas) */
         .marquee-container {
     overflow: hidden; /* Menyembunyikan teks yang keluar dari batas */
+    position: relative;
+    width: calc(100% - 130px); /* Mengurangi lebar layar dengan estimasi lebar badge (sekitar 130px) */
     white-space: nowrap; /* Memaksa teks tetap satu baris panjang */
     box-sizing: border-box;
     width: 100%; /* Menyesuaikan dengan lebar space yang tersedia */
@@ -634,7 +636,25 @@ body.logged-in .container {
         #loc-line-weather .weather-status-line{display: flex !important;flex-direction: row !important; /* Forces horizontal alignment instead of stacked column */justify-content: space-between !important; /* Pushes one to the left, one to the right */align-items: center !important;width: 100%;}
 
         /* Styling kesamaan komponen badge di kanan shrunk-view */
-        .shrunk-badge-item {display: flex; align-items: center; gap: 6px; background: var(--card-bg, rgba(255, 255, 255, 0.15)); padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.3s ease; position: absolute; right: 0; top: 50%; transform: translateY(-50%);}
+        .shrunk-badge-item {
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+    background: var(--card-bg, rgba(255, 255, 255, 0.15)); 
+    padding: 6px 12px; 
+    border-radius: 20px; 
+    font-weight: 700; 
+    font-size: 0.85rem; 
+    backdrop-filter: blur(5px); 
+    -webkit-backdrop-filter: blur(5px); 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    transition: all 0.3s ease; 
+    position: absolute; 
+    right: 0; 
+    top: 50%; 
+    transform: translateY(-50%);
+    margin-top: 10px; /* <--- Ini tambahan barunya */
+}
 
         /* Kondisi state 1: Menampilkan WAKTU (Cuaca disembunyikan) */
         #shrunk-right-container.show-time #shrunk-time-status {opacity: 1; pointer-events: auto; transform: translateY(-50%) scale(1);}
@@ -1860,19 +1880,121 @@ body.logged-in .container {
                 </div>
                 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
             </div>
-            <div style="background: rgba(78, 52, 46, 0.05); padding: 12px; border-radius: 8px; font-size: 0.9rem;">
-                <h3 style="margin-top: 0;">ℹ️ Tentang Aplikasi</h3>
-                <p style="margin-bottom: 5px;"><strong>Donut Fermentation Agent</strong></p>
-                <p style="margin-top: 0; margin-bottom: 10px;">Aplikasi asisten pintar untuk memantau proses *proofing* adonan donat secara real-time berbasis data cuaca lokal.</p>
-                <p style="margin: 0; font-size: 0.8rem; opacity: 0.7;">Versi 1.2.0 © 2026 Timer Proofing</p>
+
+            <div onclick="toggleModal('about-modal')" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.1rem;">ℹ️</span>
+                    <div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Tentang Aplikasi</div>
+                        <div id="about-menu-version" style="font-size: 0.7rem; color: #888;">Memuat versi...</div>
+                    </div>
+                </div>
+                <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
+            </div>
+
+            <!-- Menu Bagikan ke Teman -->
+            <div onclick="bagikanAplikasi()" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.1rem;">📤</span>
+                    <div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Bagikan ke Teman</div>
+                        <div style="font-size: 0.7rem; color: #888;">Rekomendasikan Timer Proofing</div>
+                    </div>
+                </div>
+                <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
+            </div>
+
+            <!-- Menu Beri Nilai Kami (Rate Us) -->
+            <div onclick="toggleModal('rate-modal')" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.1rem;">⭐</span>
+                    <div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Beri Nilai Kami</div>
+                        <div style="font-size: 0.7rem; color: #888;">Play Store, App Store, Galaxy Store...</div>
+                    </div>
+                </div>
+                <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
             </div>
         </div>
-        </div>
+    </div>
     <div class="modal-bottom-actions">
         <button class="about-close-btn" style="margin: 0;"  data-onclick="toggleModal('settings-modal')">SIMPAN & KEMBALI</button>
     </div>
 </div>
+<!-- MODAL TENTANG APLIKASI -->
+<div class="page-modal" id="about-modal" inert>
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+        <h3 id="about-modal-title" style="margin: 0; display: flex; align-items: center; gap: 8px;">
+            ℹ️ Tentang Aplikasi
+        </h3>
+        <!-- Tombol silang penutup modal -->
+        <button class="article-modal-close" id="btn-close-about" onclick="toggleModal('about-modal')">×</button>
+    </div>
+    
+    <div class="modal-scroll-content">
+        <!-- Area Logo dan Judul Utama -->
+        <div style="text-align: center; padding: 20px 10px;">
+            <img src="logo donat.png" alt="Logo Timer Proofer" style="width: 89px; height: 89px; margin-bottom: 13px; border-radius: 21px; box-shadow: 0 8px 18px rgba(230, 126, 34, 0.22);">
+            <h2 style="color: var(--accent); margin: 0 0 8px 0; font-size: 1.4rem; font-weight: 800;">Donut Fermentation Agent</h2>
+            <div id="about-app-version" style="font-size: 0.85rem; color: rgba(78, 52, 46, 0.7); font-weight: 700;">Memuat versi...</div>
+            <div style="font-size: 0.75rem; color: rgba(78, 52, 46, 0.5); margin-top: 4px;">&copy; 2026 Timer Proofing</div>
+        </div>
 
+        <!-- Area Deskripsi -->
+        <div style="background: rgba(242, 210, 169, 0.3); border: 1px solid rgba(78, 52, 46, 0.08); padding: 16px; border-radius: 13px; text-align: center; color: var(--chocolate); line-height: 1.5; font-size: 0.85rem;">
+            Aplikasi asisten pintar untuk memantau proses <em>proofing</em> adonan donat secara <em>real-time</em> berbasis data cuaca lokal. Dirancang untuk meningkatkan presisi produksi dan stabilitas <em>food cost</em> Anda.
+        </div>
+    </div>
+    
+    <div class="modal-bottom-actions">
+        <button class="about-close-btn" style="margin: 0; width: 100%;" onclick="toggleModal('about-modal')">TUTUP</button>
+    </div>
+</div>
+
+<!-- MODAL RATE US (BERI NILAI) -->
+<div class="page-modal" id="rate-modal" inert>
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+        <h3 style="margin: 0; display: flex; align-items: center; gap: 8px; color: #3e2723;">
+            <span>⭐</span> Beri Nilai Aplikasi
+        </h3>
+        <button class="article-modal-close" onclick="toggleModal('rate-modal')">×</button>
+    </div>
+    
+    <div class="modal-scroll-content" style="text-align: center;">
+        <p style="font-size: 0.85rem; color: rgba(78, 52, 46, 0.8); margin-bottom: 20px; line-height: 1.5;">
+            Dukungan bintang 5 Anda sangat berarti bagi pengembangan aplikasi ini. Silakan pilih <em>App Store</em> yang Anda gunakan:
+        </p>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+            <!-- Google Play Store -->
+            <button onclick="window.open('https://play.google.com/store/apps/details?id=com.timerproofing.app', '_blank')" style="background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='none'">
+                <span style="font-size: 1.2rem;">▶️</span> Google Play Store
+            </button>
+            
+            <!-- Apple App Store -->
+            <button onclick="window.open('https://apps.apple.com/app/idXXXXXXXXX', '_blank')" style="background: #e3f2fd; border: 1px solid #bbdefb; color: #1565c0; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='none'">
+                <span style="font-size: 1.2rem;">🍎</span> Apple App Store
+            </button>
+            
+            <!-- Samsung Galaxy Store -->
+            <button onclick="window.open('samsungapps://ProductDetail/com.timerproofing.app', '_blank')" style="background: #f3e5f5; border: 1px solid #e1bee7; color: #6a1b9a; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='none'">
+                <span style="font-size: 1.2rem;">🌌</span> Samsung Galaxy Store
+            </button>
+            
+            <!-- Huawei AppGallery -->
+            <button onclick="window.open('appmarket://details?id=com.timerproofing.app', '_blank')" style="background: #ffebee; border: 1px solid #ffcdd2; color: #c62828; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.9rem; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='none'">
+                <span style="font-size: 1.2rem;">🌺</span> Huawei AppGallery
+            </button>
+        </div>
+    </div>
+    
+    <div class="modal-bottom-actions">
+        <button class="about-close-btn" style="margin: 0; width: 100%;" onclick="toggleModal('rate-modal')">KEMBALI</button>
+    </div>
+</div>
+<!-- AKHIR MODAL RATE US -->
+
+<!-- AKHIR MODAL TENTANG APLIKASI -->
     <!-- Bagian Bottom Navbar -->
     <div class="bottom-bar">
         <div class="bottom-item" id="tab-timer"  data-onclick="switchTab('timer')">
@@ -3535,18 +3657,60 @@ async function renderUserProfile(summaryData = null) {
 }
 
 function updateVersion() {
-    const el = document.getElementById("profile-version");
-    if (!el) return;
+    // Referensi elemen-elemen yang perlu diupdate versinya
+    const els = {
+        profile: document.getElementById("profile-version"),
+        aboutModal: document.getElementById("about-app-version"),
+        aboutMenu: document.getElementById("about-menu-version")
+    };
+    
     fetch('./version.json')
         .then(r => r.ok ? r.json() : null)
         .then(data => {
-            el.textContent = data?.version ? `Versi ${data.version}` : 'Versi 3.2.0';
+            const versionString = data?.version ? `Donut Fermentation Agent v${data.version}` : 'Donut Fermentation Agent v1.2.0';
+            const versionSimple = data?.version ? `Versi ${data.version}` : 'Versi 1.2.0';
+
+            // Update elemen yang ada
+            if (els.profile) els.profile.textContent = versionSimple;
+            if (els.aboutModal) els.aboutModal.textContent = versionSimple;
+            // Untuk menu, kita gunakan format yang menyertakan nama aplikasi
+            if (els.aboutMenu) els.aboutMenu.textContent = versionString;
         })
         .catch(() => {
-            el.textContent = 'Versi 3.2.0';
+            // Fallback jika file tidak ditemukan
+            if (els.profile) els.profile.textContent = 'Versi 1.2.0';
+            if (els.aboutModal) els.aboutModal.textContent = 'Versi 1.2.0';
+            if (els.aboutMenu) els.aboutMenu.textContent = 'Donut Fermentation Agent v1.2.0';
         });
 }
 //==============================================
+
+async function bagikanAplikasi() {
+    const shareData = {
+        title: 'Timer Proofing - Donut Fermentation Agent',
+        text: 'Halo! Saya menggunakan aplikasi cerdas ini untuk memantau waktu proofing adonan donat berdasarkan suhu cuaca. Sangat membantu! Coba di sini:',
+        url: window.location.origin // Otomatis mendeteksi domain web/PWA Anda
+    };
+
+    try {
+        // Cek jika berjalan di Capacitor (Mobile Native)
+        if (window.Capacitor && window.Capacitor.Plugins.Share) {
+            await window.Capacitor.Plugins.Share.share(shareData);
+        } 
+        // Fallback untuk Web API (PWA / Browser)
+        else if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            // Fallback jika fitur share diblokir (Copy Link)
+            navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+            alert("Tautan aplikasi berhasil disalin ke clipboard!");
+        }
+    } catch (err) {
+        console.warn("Bagikan dibatalkan atau gagal:", err);
+    }
+}
+// Daftarkan ke global jika pakai tipe module
+window.bagikanAplikasi = bagikanAplikasi;
 
 // Data Default Profil (Fallback jika storage kosong)
 const defaultProfile = {
