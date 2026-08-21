@@ -1851,6 +1851,7 @@ body.logged-in .container {
                     <option value="default">Default Digital Beep</option>
                     <option value="soft-bell">Soft Bakery Bell</option>
                     <option value="kitchen-timer">Classic Kitchen Timer</option>
+                    <option value="custom">Nada Kustom (Audio File)</option>
                 </select>
                 
                 <label for="range-alarm-volume" style="display:block; font-size: 12px; margin-bottom: 4px; color: #666;">Volume Alarm:</label>
@@ -3689,27 +3690,33 @@ async function bagikanAplikasi() {
     const shareData = {
         title: 'Timer Proofing - Donut Fermentation Agent',
         text: 'Halo! Saya menggunakan aplikasi cerdas ini untuk memantau waktu proofing adonan donat berdasarkan suhu cuaca. Sangat membantu! Coba di sini:',
-        url: window.location.origin // Otomatis mendeteksi domain web/PWA Anda
+        url: window.location.origin + window.location.pathname
     };
 
-    try {
-        // Cek jika berjalan di Capacitor (Mobile Native)
-        if (window.Capacitor && window.Capacitor.Plugins.Share) {
-            await window.Capacitor.Plugins.Share.share(shareData);
-        } 
-        // Fallback untuk Web API (PWA / Browser)
-        else if (navigator.share) {
+    // Cek apakah browser mendukung share dan tidak sedang dibuka di desktop yang rentan error
+    if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        try {
             await navigator.share(shareData);
-        } else {
-            // Fallback jika fitur share diblokir (Copy Link)
-            navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
-            alert("Tautan aplikasi berhasil disalin ke clipboard!");
+            return;
+        } catch (err) {
+            console.warn("Share dibatalkan pengguna atau gagal:", err);
+            return;
         }
-    } catch (err) {
-        console.warn("Bagikan dibatalkan atau gagal:", err);
+    }
+
+    // Fallback otomatis (untuk PC/Desktop atau browser yang tidak mendukung)
+    const textToCopy = `${shareData.text} ${shareData.url}`;
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert("🔗 Tautan aplikasi berhasil disalin! Silakan tempel (paste) ke WhatsApp atau media sosial teman Anda.");
+        }).catch(err => {
+            prompt("Salin tautan berikut:", textToCopy);
+        });
+    } else {
+        prompt("Salin tautan berikut:", textToCopy);
     }
 }
-// Daftarkan ke global jika pakai tipe module
 window.bagikanAplikasi = bagikanAplikasi;
 
 // Data Default Profil (Fallback jika storage kosong)
@@ -8030,6 +8037,31 @@ function renderRecipeTableBakuTotal() {
     }
 }
 
+function playAlarmSound() {
+    const selectedTone = document.getElementById('select-alarm-tone').value;
+    let audioPath = '';
+
+    // Tentukan jalur file berdasarkan pilihan
+    if (selectedTone === 'custom') {
+        audioPath = 'assets/audio/Donat Proofing.mp3'; // Sesuaikan dengan lokasi folder file Anda
+    } else if (selectedTone === 'soft-bell') {
+        audioPath = 'assets/audio/soft-bell.mp3';
+    } else if (selectedTone === 'kitchen-timer') {
+        audioPath = 'assets/audio/kitchen-timer.mp3';
+    }
+
+    // Jika menggunakan file audio eksternal
+    if (audioPath) {
+        const audio = new Audio(audioPath);
+        audio.play().catch(err => {
+            console.warn("Gagal memutar audio kustom, menggunakan fallback bawaan:", err);
+            playDefaultBeep(); // Fungsi suara bawaan (fallback)
+        });
+    } else {
+        // Pemutaran default (misal menggunakan Web Audio API / Beep bawaan)
+        playDefaultBeep();
+    }
+}
 
 window.perbaruiKomponenBahan = function(idBahan, properti, nilai) {
     const angkaValid = parseFloat(nilai) || 0;
