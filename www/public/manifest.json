@@ -1,5 +1,5 @@
 {
-  "name": "Timer Proofer Kedai Mak-er",
+  "name": "Timer Proofer",
   "short_name": "Timer Proofer",
   "description": "Asisten pintar pemantau proofing adonan berbasis data cuaca",
   "start_url": "./index.html",

@@ -515,17 +515,22 @@ body.logged-in .container {
 
         /* FITUR PIP - BELUM MAKSIMAL*/
         /* Modifikasi posisi tombol lama agar turun ke bawah Navigasi Baru */
-        .pip-badge {position: absolute;
-    top: 65px !important;
-    right: 15px !important;
-    background: var(--accent);
+        .pip-badge {background: var(--accent);
     color: white;
     font-size: 0.65rem;
-    padding: 4px 8px;
-    border-radius: 10px;
+    padding: 0 10px; /* Padding horizontal disesuaikan */
+    border-radius: 15px; /* Dibuat sedikit lebih membulat */
     cursor: pointer;
-    font-weight: bold;
-    z-index: 95;}
+    font-weight: 800;
+    z-index: 95;
+    border: none;
+    height: 38px; /* Wajib: Samakan dengan tinggi .nav-icon-btn (38px) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap; /* Mencegah teks patah/turun baris */
+    box-shadow: 0 2px 5px rgba(230, 126, 34, 0.2);
+    transition: transform 0.2s ease, background 0.2s ease;}
 
     .pip-badge:active {
     transform: scale(0.95);
@@ -548,20 +553,38 @@ body.logged-in .container {
         #location-section.shrunk > .location,
         #location-section.shrunk > .weather-grid,
         #location-section.shrunk .location-row-container {max-height: 0 !important; /* Gunakan !important untuk menimpa inline-style HTML */opacity: 0 !important;margin-top: 0 !important;margin-bottom: 0 !important;padding-top: 0 !important;padding-bottom: 0 !important;transform: translateY(-10px) scale(0.95);pointer-events: none; /* Mencegah elemen bisa diklik saat tersembunyi */}
-        #shrunk-view {display: flex; /* Biarkan selalu flex, kita mainkan visualnya dengan opacity & height */justify-content: space-between; align-items: center;width: 100%;/* State awal: Tersembunyi */ max-height: 0; opacity: 0;transform: translateY(10px);pointer-events: none;transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);}
-        #location-section.shrunk #shrunk-view {max-height: 52px; /* Ringkas agar konten utama naik lebih penuh */ opacity: 1; transform: translateY(0); pointer-events: auto; margin-top: 2px;}
+        #shrunk-view {display: flex; 
+    flex-direction: column; /* Ini kunci utamanya */
+    justify-content: center;
+    width: 100%;
+    max-height: 0; opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);}
+        #location-section.shrunk #shrunk-view {max-height: 70px; 
+    opacity: 1; 
+    transform: translateY(0); 
+    pointer-events: auto; 
+    margin-top: 4px;}
+
+    .shrunk-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 6px; /* Jarak estetis antara teks lokasi dan angka statistik */
+}
 
         /* SISI KIRI */
         .shrunk-left-wrapper {display: flex;flex-direction: column; /* Menyusun nama jalan di atas, data cuaca di bawah */align-items: flex-start; /* Rata kiri */text-align: left;}
 
         /* Nama Jalan (Berada di atas, max-width diperlebar karena space kiri luas) */
         .marquee-container {
-    overflow: hidden; /* Menyembunyikan teks yang keluar dari batas */
+    overflow: hidden; 
     position: relative;
-    width: calc(100% - 130px); /* Mengurangi lebar layar dengan estimasi lebar badge (sekitar 130px) */
-    white-space: nowrap; /* Memaksa teks tetap satu baris panjang */
+    width: 100%; 
+    white-space: nowrap; 
     box-sizing: border-box;
-    width: 100%; /* Menyesuaikan dengan lebar space yang tersedia */
 }
         #shrunk-loc-text {
     display: inline-block;
@@ -641,7 +664,7 @@ body.logged-in .container {
     align-items: center; 
     gap: 6px; 
     background: var(--card-bg, rgba(255, 255, 255, 0.15)); 
-    padding: 6px 12px; 
+    padding: 5px 12px; 
     border-radius: 20px; 
     font-weight: 700; 
     font-size: 0.85rem; 
@@ -653,7 +676,6 @@ body.logged-in .container {
     right: 0; 
     top: 50%; 
     transform: translateY(-50%);
-    margin-top: 10px; /* <--- Ini tambahan barunya */
 }
 
         /* Kondisi state 1: Menampilkan WAKTU (Cuaca disembunyikan) */
@@ -1223,6 +1245,57 @@ body.logged-in .container {
         input[type="number"] { background: rgba(0,0,0,0.03); color: inherit; font-weight: bold; }
         input:disabled, button:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* --- KILL GOOGLE TRANSLATE BANNER & GAP SECARA MUTLAK --- */
+.goog-te-banner-frame, 
+.skiptranslate, 
+iframe.goog-te-banner-frame,
+body > .skiptranslate {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0px !important;
+    width: 0px !important;
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+}
+
+/* Mencegah bodi digeser ke bawah oleh script Google */
+body {
+    top: 0px !important;
+    position: static !important;
+}
+
+    /* Style elegan ala bar menu WhatsApp */
+    .lang-item-wa {
+        padding: 12px 15px;
+        background: #ffffff;
+        border: 1px solid rgba(78, 52, 46, 0.08);
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #3e2723;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .lang-item-wa:hover {
+        background: #fff8f0;
+        border-color: #E67E22;
+        transform: translateY(-1px);
+    }
+
+    /* Wajib: Jangan gunakan display: none agar Google Translate tetap bisa memuat komponennya */
+#google_translate_element {
+    opacity: 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    z-index: -999 !important;
+    pointer-events: none !important;
+}
+
         /* FITUR PREMIUM MODE LURING - di versi baru dihilangkan */
         .premium-offline-box { background: rgba(230, 126, 34, 0.08); border: 2px dashed var(--accent); border-radius: 20px; padding: 15px; margin-bottom: 20px; display: none; text-align: left; color: inherit;}
         .premium-offline-box h4 { margin: 0 0 10px 0; color: var(--accent); font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
@@ -1265,13 +1338,27 @@ body.logged-in .container {
             
             <div class="form-group">
                 <label for="input-password">Kata Sandi</label>
-                <input type="password" id="input-password" required placeholder="Minimal 6 karakter">
+                <div style="position: relative; display: flex; align-items: center; width: 100%; margin-bottom: 8px;">
+                    <input type="password" id="input-password" required placeholder="Minimal 6 karakter" style="width: 100%; padding: 6px 36px 6px 8px; border-radius: 4px; border: 1px solid rgba(78, 52, 46, 0.2); background: #fff; font-size: 13px; box-sizing: border-box;">
+                    
+                    <!-- Tombol Ikon Mata untuk Toggle Password -->
+                    <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0; color: #888;" title="Tampilkan/Sembunyikan Password">
+                        👁️
+                    </button>
+            </div>
+            <!-- Fitur Ingat Saya (Remember Me) -->
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px; margin-bottom: 12px;">
+                <input type="checkbox" id="remember-me-checkbox" style="width: 16px; height: 16px; cursor: pointer; accent-color: #3e2723;">
+                <label for="remember-me-checkbox" style="font-size: 0.8rem; color: #3e2723; cursor: pointer; user-select: none;">
+                    Ingat email & kata sandi
+                </label>
             </div>
         </div>
         <!-- AKHIR WADAH INPUT -->
 
         <button type="submit" class="btn-submit" id="btn-submit-main">MASUK</button>
     </form>
+    </div>
 
     <!-- [BARU] WADAH FORM VERIFIKASI OTP (Disembunyikan secara default) -->
     <div id="otp-verification-box" style="display: none; text-align: center; margin-top: 10px;">
@@ -1334,7 +1421,8 @@ body.logged-in .container {
 <div class="top-nav-bar">
     <div class="top-nav-left">
         <button class="nav-icon-btn"  data-onclick="toggleModal('user-modal')" title="Profil Pengguna">👤</button>
-        <h1 class="top-nav-title">Timer Proofer</h1>
+        <h1 class="top-nav-title" data-i18n="app_title">Timer Proofer</h1>
+        <span data-i18n="tab_recipe">Resep</span>
     </div>
 
     <div class="top-nav-right">
@@ -1389,24 +1477,32 @@ body.logged-in .container {
     </div>
 
     <div id="shrunk-view">
+        <!-- BARIS 1 (ATAS): Teks Berjalan Penuh 100% -->
         <div class="marquee-container">
             <div id="shrunk-loc-text">Mendeteksi Lokasi...</div>
+        </div>
+
+        <!-- BARIS 2 (BAWAH): Kiri (Suhu) & Kanan (Waktu) -->
+        <div class="shrunk-bottom-row">
+            
+            <!-- Sisi Kiri: Angka Suhu & Kelembaban -->
             <div class="shrunk-stats-row">
                 <div id="shrunk-main">🌡️ --</div>
                 <div id="shrunk-sub">💧 --</div>
             </div>
-        </div>
 
-        <div class="shrunk-right-wrapper"  data-onclick="swapRightStats()" style="cursor: pointer; user-select: none;">
-            <div id="shrunk-right-container" class="show-time">
-                <div id="shrunk-time-status" class="shrunk-badge-item">
-                    <span id="shrunk-time-text">00:00</span>
-                    <span id="shrunk-time-emoji">🕒</span>
-                </div>
-        
-                <div id="shrunk-weather-status" class="shrunk-badge-item">
-                    <span id="shrunk-weather-text">Cerah</span>
-                    <span id="shrunk-weather-emoji">☀️</span>
+            <!-- Sisi Kanan: Badge Tukar Waktu/Cuaca -->
+            <div class="shrunk-right-wrapper" data-onclick="swapRightStats()" style="cursor: pointer; user-select: none;">
+                <div id="shrunk-right-container" class="show-time">
+                    <div id="shrunk-time-status" class="shrunk-badge-item">
+                        <span id="shrunk-time-text">00:00</span>
+                        <span id="shrunk-time-emoji">🕒</span>
+                    </div>
+            
+                    <div id="shrunk-weather-status" class="shrunk-badge-item">
+                        <span id="shrunk-weather-text">Cerah</span>
+                        <span id="shrunk-weather-emoji">☀️</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1815,6 +1911,20 @@ body.logged-in .container {
             <button class="article-modal-close" id="btn-close-setting">×</button>
         </div>
 
+        <!-- Wadah Menu Terjemahan (Memperbaiki Error Sebelumnya) -->
+        <!-- UI Kustom Dropdown Anda (Tetap Elegan) -->
+        <!-- Menu Pilihan Bahasa di Pengaturan -->
+        <div onclick="bukaModalBahasaWhatsApp()" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 1.1rem;">🌐</span>
+                <div>
+                    <div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Bahasa Aplikasi / App Language</div>
+                    <div id="label-bahasa-aktif" style="font-size: 0.7rem; color: #888;">Bahasa Indonesia (Default)</div>
+                </div>
+            </div>
+            <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
+        </div>
+
         <div class="modal-scroll-content" style="padding-top: 0;">
         <div style="margin-top: 10px; border-top: 1px dashed rgba(78, 52, 46, 0.3); border-bottom: 1px dashed rgba(78, 52, 46, 0.3); padding: 15px 0; margin-bottom: 15px;">
             <h3 style="margin-top: 0;">🌡️ Koneksi Sensor</h3>
@@ -1829,12 +1939,14 @@ body.logged-in .container {
                 <span style="font-size: 11px; font-weight: bold; color: var(--chocolate); opacity: 0.8;">Perangkat Terhubung (Multi-Device):</span>
                 <div id="ble-devices-list" style="font-size: 13px; margin-top: 5px;">
                     <div style="display: flex; justify-content: space-between; padding: 4px 0; align-items: center;">
-                        <span>🟢 Sensor Ruangan (Ruang A)</span>
-                        <button class="about-close-btn" style="padding: 2px 6px; font-size: 11px; margin: 0; background: #c0392b;">Putus</button>
+                        <span id="sensor-ruang-status">🟢 Sensor Ruangan (Ruang A)</span>
+                        <!-- Tombol Putus / Disconnect -->
+                        <button id="btn-putus-ble" class="about-close-btn" style="padding: 2px 6px; font-size: 11px; margin: 0; background: #c0392b;" onclick="putuskanSensorBluetooth()">Putus</button>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 4px 0; color: #999; align-items: center;">
-                        <span>⚫ Sensor Suhu Adonan</span>
-                        <button class="about-close-btn" style="padding: 2px 6px; font-size: 11px; margin: 0; background: #2980b9;">Pindai</button>
+                        <span id="sensor-adonan-status">⚫ Sensor Suhu Adonan</span>
+                        <!-- Tombol Pindai / Scan (Memanggil fungsi BLE utama Anda) -->
+                        <button id="btn-pindai-ble" class="about-close-btn" style="padding: 2px 6px; font-size: 11px; margin: 0; background: #2980b9;" onclick="connectBluetoothThermometer()">Pindai</button>
                     </div>
                 </div>
             </div>
@@ -1922,6 +2034,54 @@ body.logged-in .container {
         <button class="about-close-btn" style="margin: 0;"  data-onclick="toggleModal('settings-modal')">SIMPAN & KEMBALI</button>
     </div>
 </div>
+
+<!-- MODAL PILIHAN BAHASA ALA WHATSAPP -->
+<div class="page-modal" id="whatsapp-language-modal" inert style="display: none;">
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+        <h3 style="margin: 0; display: flex; align-items: center; gap: 8px; color: #3e2723; font-size: 1.1rem;">
+            <span>🌐</span> Pilih Bahasa / Select Language
+        </h3>
+        <button class="article-modal-close" onclick="tutupModalBahasaWhatsApp()">×</button>
+    </div>
+    
+    <div class="modal-scroll-content" style="padding: 10px 20px;">
+        <p style="font-size: 0.78rem; color: rgba(78, 52, 46, 0.7); margin-bottom: 15px;">
+            Aplikasi akan diterjemahkan secara otomatis ke seluruh bahasa di dunia.
+        </p>
+
+        <!-- Daftar Pilihan Bahasa Global (Mendukung Ratusan Bahasa) -->
+        <div id="list-pilihan-bahasa" style="display: flex; flex-direction: column; gap: 6px;">
+            <!-- Dibuat dinamis atau list lengkap -->
+            <div onclick="pilihBahasaGlobal('id', 'Bahasa Indonesia')" class="lang-item-wa">🇮🇩 Bahasa Indonesia</div>
+            <div onclick="pilihBahasaGlobal('en', 'English')" class="lang-item-wa">🇬🇧 English</div>
+            <div onclick="pilihBahasaGlobal('es', 'Español (Spanish)')" class="lang-item-wa">🇪🇸 Español</div>
+            <div onclick="pilihBahasaGlobal('ar', 'العربية (Arabic)')" class="lang-item-wa">🇸🇦 العربية</div>
+            <div onclick="pilihBahasaGlobal('zh-CN', '中文 (Chinese Simplified)')" class="lang-item-wa">🇨🇳 中文 (简体)</div>
+            <div onclick="pilihBahasaGlobal('ja', '日本語 (Japanese)')" class="lang-item-wa">🇯🇵 日本語</div>
+            <div onclick="pilihBahasaGlobal('ko', '한국어 (Korean)')" class="lang-item-wa">🇰🇷 한국어</div>
+            <div onclick="pilihBahasaGlobal('fr', 'Français (French)')" class="lang-item-wa">🇫🇷 Français</div>
+            <div onclick="pilihBahasaGlobal('de', 'Deutsch (German)')" class="lang-item-wa">🇩🇪 Deutsch</div>
+            <div onclick="pilihBahasaGlobal('ru', 'Русский (Russian)')" class="lang-item-wa">🇷🇺 Русский</div>
+            <div onclick="pilihBahasaGlobal('pt', 'Português (Portuguese)')" class="lang-item-wa">🇵🇹 Português</div>
+            <div onclick="pilihBahasaGlobal('hi', 'हिन्दी (Hindi)')" class="lang-item-wa">🇮🇳 हिन्दी</div>
+            <div onclick="pilihBahasaGlobal('tr', 'Türkçe (Turkish)')" class="lang-item-wa">🇹🇷 Türkçe</div>
+            <div onclick="pilihBahasaGlobal('vi', 'Tiếng Việt (Vietnamese)')" class="lang-item-wa">🇻🇳 Tiếng Việt</div>
+            <div onclick="pilihBahasaGlobal('th', 'ไทย (Thai)')" class="lang-item-wa">🇹🇭 ไทย</div>
+            <div onclick="pilihBahasaGlobal('it', 'Italiano (Italian)')" class="lang-item-wa">🇮🇹 Italiano</div>
+            <div onclick="pilihBahasaGlobal('nl', 'Nederlands (Dutch)')" class="lang-item-wa">🇳🇱 Nederlands</div>
+            <div onclick="pilihBahasaGlobal('pl', 'Polski (Polish)')" class="lang-item-wa">🇵🇱 Polski</div>
+            <div onclick="pilihBahasaGlobal('sv', 'Svenska (Swedish)')" class="lang-item-wa">🇸🇪 Svenska</div>
+            <!-- Anda bisa menambahkan bahasa dunia lainnya di sini -->
+        </div>
+    </div>
+    
+    <div class="modal-bottom-actions">
+        <button class="about-close-btn" style="margin: 0; width: 100%;" onclick="tutupModalBahasaWhatsApp()">TUTUP</button>
+    </div>
+</div>
+
+
+
 <!-- MODAL TENTANG APLIKASI -->
 <div class="page-modal" id="about-modal" inert>
     <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
@@ -2357,6 +2517,21 @@ body.logged-in .container {
     import { App, LocalNotifications, Preferences, Share, Filesystem, Directory, Encoding } from './vendor/capacitor-plugins.js';
     import { openDB } from 'idb';
 
+    const i18n = {
+        "id": {
+            "app_title": "Timer Proofer",
+            "btn_login": "Masuk",
+            "btn_register": "Daftar",
+            "tab_recipe": "Resep"
+        },
+        "en": {
+            "app_title": "Proofer Timer",
+            "btn_login": "Login",
+            "btn_register": "Register",
+            "tab_recipe": "Recipe"
+        }
+    };
+
     const RESEP_LIST_KEY = 'premium_saved_recipes';
     const RESEP_LEGACY_KEY = 'premium_saved_recipe';
     const FILE_RESEP_PATH = 'data/resep_sourdough.json';
@@ -2379,6 +2554,29 @@ body.logged-in .container {
         },
     });
 }
+
+window.setLanguage = function(lang) {
+    if (!i18n[lang]) lang = 'en'; 
+    localStorage.setItem('app_lang', lang);
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[lang] && i18n[lang][key]) {
+            el.innerText = i18n[lang][key];
+        }
+    });
+    
+    document.documentElement.lang = lang;
+};
+
+// Auto-deteksi saat aplikasi pertama kali dimuat
+function initLanguage() {
+    const savedLang = localStorage.getItem('app_lang');
+    const deviceLang = navigator.language.split('-')[0];
+    setLanguage(savedLang || (i18n[deviceLang] ? deviceLang : 'id'));
+}
+
+document.addEventListener('DOMContentLoaded', initLanguage);
 
 // Fungsi untuk mereset form kalkulator resep menjadi baru/bersih
 function buatResepBaruForm() {
@@ -2647,6 +2845,7 @@ async function handleLogout() {
         // 3. Kembalikan UI ke halaman Login
         document.body.classList.remove('logged-in');
         document.body.classList.add('logged-out');
+        document.getElementById('auth-wrapper').style.display = 'flex';
 
         // 4. Tutup modal profil jika sedang terbuka
         const userModal = document.getElementById('user-modal');
@@ -2666,6 +2865,21 @@ async function handleLogout() {
 
 // WAJIB: Ekspos fungsi ke global window agar bisa dipanggil oleh onclick di HTML
 window.handleLogout = handleLogout;
+
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('input-password');
+    if (!passwordInput) return;
+
+    // Ubah tipe input antara 'password' dan 'text'
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+    } else {
+        passwordInput.type = 'password';
+    }
+}
+
+// Pastikan fungsi terdaftar secara global jika menggunakan module
+window.togglePasswordVisibility = togglePasswordVisibility;
 
 // Fungsi bantuan untuk menampilkan error di kotak pesan
 function showError(message) {
@@ -2717,18 +2931,36 @@ async function handleAuthSubmit(event) {
 
         } else {
             // --- LOGIKA LOGIN NORMAL ---
+            
+            // 1. TAMBAHKAN LOGIKA INGAT SAYA DI SINI
+            const remember = document.getElementById('remember-me-checkbox').checked;
+            if (remember) {
+                localStorage.setItem('saved_email', email);
+                localStorage.setItem('saved_pass', password);
+            } else {
+                localStorage.removeItem('saved_email');
+                localStorage.removeItem('saved_pass');
+            }
+
+            // 2. PROSES LOGIN SUPABASE
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: password
             });
             if (error) throw error;
             
+            // 3. ATUR TAMPILAN AGAR TIDAK BLANK
             document.body.classList.remove('logged-out');
             document.body.classList.add('logged-in');
 
+            document.getElementById('auth-wrapper').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+
+            // 4. SINKRONISASI & JALANKAN MESIN UTAMA APLIKASI
             await sinkronisasiAwalDariSupabase();
             await syncLocalDataToSupabase();
             initSupabaseRealtime();
+            initApp();
         }
     } catch (err) {
         showError(err.message);
@@ -2846,6 +3078,20 @@ async function signInWithWhatsApp() {
 }
 window.signInWithWhatsApp = signInWithWhatsApp; // Ekspos ke global
     /* AKHIR FUNGSI HALAMAN LOGIN */
+
+function handleLogin() {
+    const email = document.getElementById('input-email').value;
+    const password = document.getElementById('input-password').value;
+    const remember = document.getElementById('remember-me-checkbox').checked;
+
+    if (remember) {
+        localStorage.setItem('saved_email', email);
+        localStorage.setItem('saved_pass', password);
+    } else {
+        localStorage.removeItem('saved_email');
+        localStorage.removeItem('saved_pass');
+    }
+}
 
 // ==========================================
 // EKSEKUSI HAPUS DATA PROFIL (LOKAL)
@@ -3224,6 +3470,34 @@ function syncInventoryWithProfile() {
     }
 }
 
+// Panggil fungsi ini tepat setelah user terdeteksi berhasil login
+function aturTampilanSetelahLogin() {
+    // 1. Sembunyikan kotak form login/auth
+    const authWrapper = document.getElementById('auth-wrapper');
+    if (authWrapper) {
+        authWrapper.style.display = 'none';
+    }
+
+    // 2. Tampilkan elemen utama aplikasi.
+    // Prioritaskan #app-container (elemen utama yang ada di markup), kemudian fallback ke id/class lain jika dibutuhkan.
+    const appContainer = document.getElementById('app-container') || document.getElementById('main-app') || document.querySelector('.main-content');
+    if (appContainer) {
+        // Biarkan CSS mengatur layout; hanya hapus style display:none yang dipasang inline jika ada
+        try {
+            if (appContainer.style) {
+                appContainer.style.display = '';
+            }
+        } catch (e) {
+            // defensif: jika terjadi error, set ke block sebagai fallback
+            appContainer.style.display = 'block';
+        }
+    }
+
+    // 3. Ubah kelas body agar aturan CSS seperti body.logged-in .container berlaku
+    document.body.classList.remove('logged-out');
+    document.body.classList.add('logged-in');
+}
+
 /* FUNGSI HALAMAN LOGIN*/
 document.addEventListener('DOMContentLoaded', function() {
     const loginBtn = document.getElementById('loginBtn');
@@ -3238,6 +3512,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 /* == AKHIR FUNGSI HALAMAN LOGIN = */
+
+window.addEventListener('DOMContentLoaded', () => {
+    const savedEmail = localStorage.getItem('saved_email');
+    const savedPass = localStorage.getItem('saved_pass');
+    if (savedEmail && savedPass) {
+        document.getElementById('input-email').value = savedEmail; // Sesuaikan ID input email Anda
+        document.getElementById('input-password').value = savedPass;
+        document.getElementById('remember-me-checkbox').checked = true;
+    }
+
+    setTimeout(() => {
+        const savedLang = localStorage.getItem('user_lang_preference');
+        const customSwitcher = document.getElementById('custom-lang-switcher');
+        
+        if (savedLang && customSwitcher) {
+            customSwitcher.value = savedLang;
+            // Eksekusi fungsi translasi
+            if (typeof window.triggerGoogleTranslate === 'function') {
+                window.triggerGoogleTranslate(savedLang);
+            }
+        }
+    }, 1500);
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     // Memeriksa sesi Supabase aktif saat aplikasi direfresh
@@ -5058,6 +5355,52 @@ function onDisconnected() {
 }
 // ===================================================================================
 
+// ==========================================
+// FUNGSI MENGELOLA KONEKSI BLUETOOTH (MULTI-DEVICE)
+// ==========================================
+async function putuskanSensorBluetooth() {
+    const statusEl = document.getElementById('ble-status');
+    const labelRuang = document.getElementById('sensor-ruang-status');
+    
+    try {
+        // 1. Jika menggunakan Capacitor (Native Mobile)
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.BluetoothLe) {
+            const BleClient = window.Capacitor.Plugins.BluetoothLe;
+            // Jika ada device ID tersimpan, lakukan disconnect
+            if (window.activeBleDeviceId) {
+                await BleClient.disconnect({ deviceId: window.activeBleDeviceId });
+                window.activeBleDeviceId = null;
+            }
+        } 
+        // 2. Jika menggunakan Web Bluetooth (Browser / PWA)
+        else if (typeof bleDevice !== 'undefined' && bleDevice && bleDevice.gatt.connected) {
+            await bleDevice.gatt.disconnect();
+            bleDevice = null;
+        }
+
+        // Perbarui Tampilan Status UI
+        if (statusEl) statusEl.innerText = "Status: Terputus Manual";
+        if (labelRuang) {
+            labelRuang.innerText = "⚫ Sensor Ruangan (Terputus)";
+            labelRuang.style.color = "#999";
+        }
+        
+        if (typeof NotifSystem !== 'undefined') {
+            NotifSystem.tambah('sistem', 'Sensor Diputus', 'Koneksi perangkat sensor Bluetooth berhasil dihentikan.', '🔌');
+        } else {
+            alert("Sensor Bluetooth berhasil diputus.");
+        }
+
+    } catch (error) {
+        console.error("Gagal memutuskan perangkat Bluetooth:", error);
+        alert("Gagal memutuskan perangkat: " + error.message);
+    }
+}
+
+// Ekspos ke global window agar terbaca onclick HTML
+window.putuskanSensorBluetooth = putuskanSensorBluetooth;
+//=========================================================
+
 //======================================
 // MANAGEMENT SWITCH TAB & BOTTOM BAR
 //======================================
@@ -5390,12 +5733,26 @@ let pipIntervalInstance = null;
 async function aktifkanModePIP() {
     // 1. Validasi dukungan API Document Picture-in-Picture pada Browser
     if (!('documentPictureInPicture' in window)) {
-        if (typeof NotifSystem !== 'undefined') {
-            NotifSystem.tambah('sistem', 'Fitur Tidak Didukung', 'Browser Anda belum mendukung Document PIP.', '⚠️');
-        } else {
-            alert('Browser Anda belum mendukung Document Picture-in-Picture. Gunakan browser berbasis Chromium terbaru (Chrome/Edge).');
+        const container = document.getElementById('app-container');
+        const pipBtn = document.getElementById('pip-trigger-btn');
+        
+        if (container) {
+            // Aktifkan/nonaktifkan mode mini
+            container.classList.toggle('mini-mode');
+            
+            // Ubah tampilan tombol sebagai indikator
+            if (container.classList.contains('mini-mode')) {
+                pipBtn.innerHTML = "❌ Tutup Mini";
+                pipBtn.style.background = "#c0392b"; // Ubah merah saat aktif
+                if (typeof NotifSystem !== 'undefined') {
+                    NotifSystem.tambah('sistem', 'Mode Mini Aktif', 'Tampilan disederhanakan ke mode widget.', '📱');
+                }
+            } else {
+                pipBtn.innerHTML = "📺 PIP Mode";
+                pipBtn.style.background = "var(--accent)"; // Kembali oranye
+            }
         }
-        return;
+        return; // Hentikan eksekusi kode Desktop di bawah ini
     }
 
     // Jika PIP sudah terbuka, fokuskan kembali jendelanya
@@ -8038,30 +8395,51 @@ function renderRecipeTableBakuTotal() {
 }
 
 function playAlarmSound() {
-    const selectedTone = document.getElementById('select-alarm-tone').value;
+    const toneSelect = document.getElementById('select-alarm-tone');
+    const volumeRange = document.getElementById('range-alarm-volume');
+    const selectedTone = toneSelect ? toneSelect.value : 'default';
+    
+    // Ambil nilai volume dari slider (0 - 100), diubah ke rentang 0.0 - 1.0
+    const volumeValue = volumeRange ? (volumeRange.value / 100) : 0.8;
+    
     let audioPath = '';
 
-    // Tentukan jalur file berdasarkan pilihan
     if (selectedTone === 'custom') {
-        audioPath = 'assets/audio/Donat Proofing.mp3'; // Sesuaikan dengan lokasi folder file Anda
+        audioPath = 'assets/audio/donat-proofing.mp3'; 
     } else if (selectedTone === 'soft-bell') {
         audioPath = 'assets/audio/soft-bell.mp3';
     } else if (selectedTone === 'kitchen-timer') {
         audioPath = 'assets/audio/kitchen-timer.mp3';
     }
 
-    // Jika menggunakan file audio eksternal
-    if (audioPath) {
+    // Jika memilih opsi selain default dan path tersedia
+    if (audioPath && selectedTone !== 'default') {
         const audio = new Audio(audioPath);
-        audio.play().catch(err => {
-            console.warn("Gagal memutar audio kustom, menggunakan fallback bawaan:", err);
-            playDefaultBeep(); // Fungsi suara bawaan (fallback)
+        audio.volume = volumeValue; // Terapkan volume dari slider
+        
+        audio.play().then(() => {
+            console.log("Berhasil memutar audio:", audioPath);
+        }).catch(err => {
+            // CETAK ERROR ASLI KE CONSOLE UNTUK MELIHAT PENYEBABNYA
+            console.error("GAGAL MEMUTAR AUDIO MP3:", err.name, err.message);
+            
+            // Fallback ke suara default jika gagal
+            if (typeof playAlarmTone === 'function') {
+                playAlarmTone(); 
+            }
         });
     } else {
-        // Pemutaran default (misal menggunakan Web Audio API / Beep bawaan)
-        playDefaultBeep();
+        // Pemutaran default bawaan
+        if (typeof playAlarmTone === 'function') {
+            playAlarmTone();
+        }
     }
 }
+
+window.playAlarmSound = playAlarmSound;
+
+// Ekspos ke global window agar aman dipanggil dari mana saja
+window.playAlarmSound = playAlarmSound;
 
 window.perbaruiKomponenBahan = function(idBahan, properti, nilai) {
     const angkaValid = parseFloat(nilai) || 0;
@@ -10716,9 +11094,92 @@ function showToast(msg, duration = 2000) {
     console.warn('showToast error', e);
   }
 }
+
+</script>
+<!-- ========================================================================= -->
+    <!-- LETAKKAN ENGINE GOOGLE TRANSLATE DI SINI, TEPAT SEBELUM </body> -->
+    <!-- ========================================================================= -->
+    <script>
+    <script>
+    // 1. Inisialisasi Google Translate
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'id',
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+
+    // 2. Kontrol Modal WhatsApp
+    window.bukaModalBahasaWhatsApp = function() {
+        const modal = document.getElementById('whatsapp-language-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            modal.removeAttribute('inert');
+            document.body.style.overflow = 'hidden';
+        }
+    };
+
+    window.tutupModalBahasaWhatsApp = function() {
+        const modal = document.getElementById('whatsapp-language-modal');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.setAttribute('inert', '');
+            document.body.style.overflow = '';
+            setTimeout(() => { modal.style.display = 'none'; }, 50);
+        }
+    };
+
+    // 3. Fungsi Pemilihan Bahasa dengan Auto-Retry yang Lebih Sabar (Hingga 10 Detik)
+    window.pilihBahasaGlobal = function(langCode, langName, retryCount = 0) {
+        var googleSelect = document.querySelector('select.goog-te-combo');
+        
+        if (googleSelect) {
+            // Ubah bahasa pada dropdown tersembunyi milik Google
+            googleSelect.value = langCode;
+            googleSelect.dispatchEvent(new Event('change'));
+            
+            // Simpan preferensi pengguna
+            localStorage.setItem('user_lang_preference', langCode);
+            localStorage.setItem('user_lang_name', langName);
+            
+            // Perbarui teks label di menu pengaturan
+            const labelAktif = document.getElementById('label-bahasa-aktif');
+            if (labelAktif) labelAktif.innerText = langName;
+            
+            tutupModalBahasaWhatsApp();
+        } else {
+            // Coba ulang setiap 500ms (maksimal 20 kali percobaan = 10 detik)
+            if (retryCount < 20) {
+                setTimeout(function() {
+                    window.pilihBahasaGlobal(langCode, langName, retryCount + 1);
+                }, 500);
+            } else {
+                alert("Mesin penerjemah gagal dimuat. Pastikan perangkat terhubung ke internet.");
+            }
+        }
+    };
+
+    // 4. Auto-restore bahasa saat aplikasi dibuka ulang
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            var savedLang = localStorage.getItem('user_lang_preference');
+            var savedName = localStorage.getItem('user_lang_name');
+            
+            if (savedLang && savedLang !== 'id') {
+                var googleSelect = document.querySelector('select.goog-te-combo');
+                if (googleSelect) {
+                    googleSelect.value = savedLang;
+                    googleSelect.dispatchEvent(new Event('change'));
+                }
+                const labelAktif = document.getElementById('label-bahasa-aktif');
+                if (labelAktif && savedName) labelAktif.innerText = savedName;
+            }
+        }, 2000); // Beri jeda 2 detik saat pertama buka
+    });
 </script>
 
-<style id="copilot-toast-style">#copilot-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(0,0,0,.85);color:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transition:opacity .18s ease,transform .18s ease;pointer-events:none;z-index:99999;font-family:system-ui,-apple-system,"Segoe UI",Roboto,'Helvetica Neue',Arial}</style>
-
+<!-- URL resmi pemanggil mesin Google Translate -->
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
