@@ -384,7 +384,11 @@ body.logged-in .container {
         /* Sisi Atas */
         .top-nav-bar {display: flex; position: relative;justify-content: space-between;align-items: center;background-color: var(--dough);color: var(--cream);padding: calc(10px + env(safe-area-inset-top)) 15px 10px 15px;height: calc(55px + env(safe-area-inset-top));box-sizing: border-box;}
         /* Sisi Kiri (Tombol User) */
-        .top-nav-left {display: flex; align-items: center; z-index: 10; /* Berada di atas layer judul */}
+        .top-nav-left {display: flex; 
+    align-items: center; 
+    gap: 6px;
+    min-width: 0; /* Mencegah flexbox meluber */
+    flex: 1;}
 
 /* ==========================================
    USER PROFILE
@@ -485,14 +489,22 @@ body.logged-in .container {
     }
 }
         /* Judul Aplikasi (Mengunci Tepat di Tengah Layar) */
-        .top-nav-title {font-size: 1.2rem; font-weight: bold;margin: 0; white-space: nowrap; color: #E67E22;}
+        .top-nav-title {font-size: 1.05rem; /* Disesuaikan sedikit agar lebih proporsional */
+    font-weight: bold;
+    margin: 0; 
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px; /* Membatasi lebar maksimal agar tombol di kanan selalu aman */
+    color: #E67E22;}
         /* Sisi Kanan (Kelompok Tombol Akses: Help, Notif, Settings) */
         .top-nav-right {display: flex; align-items: center; z-index: 10;}
         /* Pengaturan Tombol Navigasi Berbentuk Ikon */
         .top-nav-bar .nav-icon-btn {background: none; border: none; font-size: 1.35rem; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; color: inherit; transition: transform 0.1s ease;}
         /* Efek feedback visual saat tombol ditekan di HP */
         .top-nav-bar .nav-icon-btn:active {transform: scale(0.9);}
-        .top-nav-group {display: flex;gap: 8px;}
+        .top-nav-group {display: flex;
+    gap: 4px; /* Diperkecil dari 8px agar semua tombol muat */}
         .nav-icon-btn {background: var(--card-bg, rgba(78, 52, 46, 0.08)); color: var(--chocolate); border: 1px solid rgba(78, 52, 46, 0.1); width: 38px; height: 38px; border-radius: 50%; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; cursor: pointer; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: transform 0.2s ease, background 0.2s ease; padding: 0; /* Menghilangkan padding bawaan agar emoji pas di tengah */
     box-sizing: border-box;}
         .nav-icon-btn:active {transform: scale(0.9); background: var(--accent); color: white;}
@@ -1237,7 +1249,25 @@ body.logged-in .container {
         /* ANALISIS AI - di versi baru dihilangkan*/
         #ai-analysis-wrapper { position: relative; width: 100%; }
         #ai-toggle { position: relative; z-index: 60; cursor: pointer; margin-bottom: 5px; }
-        .ai-analysis-box {position: absolute; top: 30px; left: 0; right: 0; background: #ffffff; border: 2px solid #F2D2A9; padding: 20px; border-radius: 20px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease, opacity 0.3s ease; overflow: hidden; display: none; opacity: 0; color: #4E342E; z-index: 150; transform: translateY(5px);}
+        .ai-analysis-box {position: relative; /* Diubah agar mendesak elemen di bawahnya secara natural */
+    margin-top: 10px;   /* Pengganti top: 30px; */
+    width: 100%;        /* Pengganti left: 0; dan right: 0; */
+    box-sizing: border-box; /* Mencegah kotak meluber ke samping karena padding */
+    
+    /* Biarkan properti di bawah ini sesuai aslinya */
+    background: #ffffff; 
+    border: 2px solid #F2D2A9; 
+    padding: 20px; 
+    border-radius: 20px; 
+    text-align: left; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+    transition: transform 0.3s ease, opacity 0.3s ease; 
+    overflow: hidden; 
+    display: none; 
+    opacity: 0; 
+    color: #4E342E; 
+    z-index: 150; 
+    transform: translateY(5px);}
         .ai-analysis-box.show {display: block !important; opacity: 1; transform: translateY(0);}
         .ai-analysis-box h3 { font-size: 1rem; margin-top: 0; color: #E67E22; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
         #ai-insight { font-size: 0.95rem; line-height: 1.6; color: #444; }
@@ -1422,7 +1452,6 @@ body {
     <div class="top-nav-left">
         <button class="nav-icon-btn"  data-onclick="toggleModal('user-modal')" title="Profil Pengguna">👤</button>
         <h1 class="top-nav-title" data-i18n="app_title">Timer Proofer</h1>
-        <span data-i18n="tab_recipe">Resep</span>
     </div>
 
     <div class="top-nav-right">
@@ -2565,7 +2594,6 @@ window.setLanguage = function(lang) {
             el.innerText = i18n[lang][key];
         }
     });
-    
     document.documentElement.lang = lang;
 };
 
@@ -3249,16 +3277,26 @@ function renderLangkahProduksi() {
             </div>
             
             <!-- PERBAIKAN: Penambahan atribut id dan name secara dinamis -->
-            <textarea id="step-instruction-${index}" name="step_instruction_${index}" class="input-step-text" data-index="${index}" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.8rem; font-family: inherit; resize: vertical; min-height: 65px; color: #4E342E; background: #ffffff; outline: none; line-height: 1.5; transition: border-color 0.2s ease, box-shadow 0.2s ease;" placeholder="Tulis instruksi detail langkah ini...">${escapeHtmlResep(stepText)}</textarea>
+            <textarea id="step-instruction-${index}" name="step_instruction_${index}" class="input-step-text" data-index="${index}" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.8rem; font-family: inherit; resize: none; overflow: hidden; min-height: 65px; color: #4E342E; background: #ffffff; outline: none; line-height: 1.5; transition: border-color 0.2s ease, box-shadow 0.2s ease;" placeholder="Tulis instruksi detail langkah ini...">${escapeHtmlResep(stepText)}</textarea>
         `;
         container.appendChild(stepDiv);
     });
 
     // Sinkronisasi input teks secara real-time & efek interaksi fokus yang elegan
     document.querySelectorAll('.input-step-text').forEach(textarea => {
+        
+        // FITUR ALA GOOGLE KEEP: Sesuaikan tinggi awal saat pertama kali dirender
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+
         textarea.addEventListener('input', (e) => {
+            // Simpan data teks ke array
             const idx = parseInt(e.target.getAttribute('data-index'), 10);
             activeRecipeSteps[idx] = e.target.value;
+
+            // FITUR ALA GOOGLE KEEP: Auto-resize saat mengetik atau menghapus teks
+            e.target.style.height = 'auto'; // Reset dulu agar bisa menyusut jika teks dihapus
+            e.target.style.height = (e.target.scrollHeight) + 'px'; // Sesuaikan dengan tinggi konten
         });
 
         textarea.addEventListener('focus', (e) => {
@@ -7791,6 +7829,7 @@ document.addEventListener('click', function(event) {
     if (aiBox && aiBox.classList.contains('show')) {
         if (!aiBox.contains(event.target) && !aiToggle?.contains(event.target)) {
             aiBox.classList.remove('show');
+            aiBox.style.display = '';
         }
     }
 
@@ -7880,13 +7919,9 @@ function toggleAI() {
     const box = document.getElementById('ai-analysis');
     if (!box) return;
 
-    if (box.style.display === 'none' || !box.classList.contains('show')) {
-        box.style.display = 'block';
-        box.classList.add('show');
-    } else {
-        box.style.display = 'none';
-        box.classList.remove('show');
-    }
+    // Bersihkan sisa gaya bawaan agar sepenuhnya dikontrol oleh CSS
+    box.style.display = ''; 
+    box.classList.toggle('show');
 }
 window.toggleAI = toggleAI;
 
@@ -8382,7 +8417,12 @@ function renderRecipeTableBakuTotal() {
 
     if (cardsContainer) {
         if (totalBahanDitambahkan === 0) {
-            cardsContainer.innerHTML = `<div style="text-align: center; color: #94a3b8; font-size: 0.75rem; padding: 20px; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1;">Belum ada bahan baku yang ditambahkan.</div>`;
+            container.innerHTML = `
+            <div style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; text-align: center; padding: 25px; color: #64748b;">
+                <p style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: 500;">Belum ada bahan baku yang ditambahkan.</p>
+                <button type="button" onclick="document.getElementById('form-tambah-bahan').open = true; document.getElementById('new-ing-name').focus();" style="background: #E67E22; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">+ Tambah Bahan Pertama</button>
+            </div>
+        `;
         } else {
             cardsContainer.innerHTML = htmlContentCards;
         }
@@ -11099,7 +11139,7 @@ function showToast(msg, duration = 2000) {
 <!-- ========================================================================= -->
     <!-- LETAKKAN ENGINE GOOGLE TRANSLATE DI SINI, TEPAT SEBELUM </body> -->
     <!-- ========================================================================= -->
-    <script>
+    <div id="google_translate_element" style="display: none;"></div>
     <script>
     // 1. Inisialisasi Google Translate
     function googleTranslateElementInit() {
@@ -11131,34 +11171,46 @@ function showToast(msg, duration = 2000) {
     };
 
     // 3. Fungsi Pemilihan Bahasa dengan Auto-Retry yang Lebih Sabar (Hingga 10 Detik)
-    window.pilihBahasaGlobal = function(langCode, langName, retryCount = 0) {
-        var googleSelect = document.querySelector('select.goog-te-combo');
-        
-        if (googleSelect) {
-            // Ubah bahasa pada dropdown tersembunyi milik Google
-            googleSelect.value = langCode;
-            googleSelect.dispatchEvent(new Event('change'));
-            
-            // Simpan preferensi pengguna
-            localStorage.setItem('user_lang_preference', langCode);
-            localStorage.setItem('user_lang_name', langName);
-            
-            // Perbarui teks label di menu pengaturan
-            const labelAktif = document.getElementById('label-bahasa-aktif');
-            if (labelAktif) labelAktif.innerText = langName;
-            
-            tutupModalBahasaWhatsApp();
-        } else {
-            // Coba ulang setiap 500ms (maksimal 20 kali percobaan = 10 detik)
-            if (retryCount < 20) {
-                setTimeout(function() {
-                    window.pilihBahasaGlobal(langCode, langName, retryCount + 1);
-                }, 500);
-            } else {
-                alert("Mesin penerjemah gagal dimuat. Pastikan perangkat terhubung ke internet.");
-            }
+    window.pilihBahasaGlobal = function(kodeBahasa, namaBahasa) {
+    try {
+        // 1. Simpan preferensi bahasa ke LocalStorage & Capacitor Preferences
+        localStorage.setItem('app_lang', kodeBahasa);
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Preferences) {
+            window.Capacitor.Plugins.Preferences.set({ key: 'app_lang', value: kodeBahasa });
         }
-    };
+
+        // 2. Perbarui teks label bahasa aktif di UI Pengaturan
+        const labelAktif = document.getElementById('label-bahasa-aktif');
+        if (labelAktif) {
+            labelAktif.innerText = namaBahasa + " (Aktif)";
+        }
+
+        // 3. Cek Koneksi Internet sebelum memicu Google Translate Widget
+        if (!navigator.onLine) {
+            alert("Perangkat Anda sedang offline. Terjemahan UI lokal diterapkan, namun mesin penerjemah otomatis memerlukan koneksi internet.");
+            tutupModalBahasaWhatsApp();
+            return;
+        }
+
+        // 4. Eksekusi Cookie Google Translate secara aman
+        document.cookie = `googtrans=/id/${kodeBahasa}; path=/; domain=${window.location.hostname}`;
+        document.cookie = `googtrans=/id/${kodeBahasa}; path=/;`;
+
+        // 5. Tutup modal pilihan bahasa ala WhatsApp
+        if (typeof tutupModalBahasaWhatsApp === 'function') {
+            tutupModalBahasaWhatsApp();
+        }
+
+        // 6. Refresh halaman secara halus untuk menerapkan terjemahan
+        setTimeout(() => {
+            window.location.reload();
+        }, 300);
+
+    } catch (error) {
+        console.error("Gagal mengubah bahasa:", error);
+        alert("Gagal memuat mesin penerjemah. Pastikan perangkat terhubung ke internet.");
+    }
+};
 
     // 4. Auto-restore bahasa saat aplikasi dibuka ulang
     window.addEventListener('load', function() {
