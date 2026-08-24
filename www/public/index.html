@@ -666,7 +666,17 @@ body.logged-in .container {
         .location-row-container {display: flex; align-items: center; justify-content: space-between; /* Membuat jarak seimbang antara card kiri dan cuaca kanan */ gap: 10px; /* Jarak minimal antar kedua elemen */ width: 100%; margin: 12px 0;}
         #loc-line-weather {display: flex; flex-direction: column; align-items: flex-end; text-align: right; flex-shrink: 0; min-width: 130px;}
         #loc-line-weather .weather-time-line {width: 100%;}
-
+/* Mencegah kedipan teks saat halaman dimuat ulang */
+#loc-line-weather:empty {
+    display: none;
+}
+.weather-status-line {
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+}
+.weather-status-line.loaded {
+    opacity: 1;
+}
         /* Menyesuaikan teks cuaca di sebelah kanan */
         #loc-line-weather .weather-status-line{display: flex !important;flex-direction: row !important; /* Forces horizontal alignment instead of stacked column */justify-content: space-between !important; /* Pushes one to the left, one to the right */align-items: center !important;width: 100%;}
 
@@ -737,33 +747,42 @@ body.logged-in .container {
 
         /* LOKASI DAN CUACA */
         .location { word-wrap: break-word; font-size: 0.9rem; line-height: 1.2; padding: 0px; text-align: center;}
-        .weather-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 5px; margin-bottom: 5px;
-    align-items: stretch;}
+        .weather-grid {display: grid; 
+            grid-template-columns: repeat(4, minmax(0, 1fr)); 
+            gap: 6px; 
+            margin-top: 5px; 
+            margin-bottom: 5px;
+            align-items: stretch;}
         .weather-card {background: var(--card-bg);
-    color: var(--text-container, inherit);
-    padding: 12px 4px;
-    border-radius: 12px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between; /* Mendorong isi agar terdistribusi merata */
-    box-sizing: border-box;
-    min-height: 85px; /* Sesuaikan tinggi minimum agar muat untuk teks dua baris */
-    transition: all 0.5s ease;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid color-mix(in srgb, var(--text-container, currentColor) 15%, transparent);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    cursor: pointer;}
+            color: var(--text-container, inherit);
+            padding: 10px 2px;
+            border-radius: 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            min-height: 85px; 
+            width: 100%; /* Memastikan lebar mengisi penuh alokasi grid */
+            transition: all 0.5s ease;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid color-mix(in srgb, var(--text-container, currentColor) 15%, transparent);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            cursor: pointer;}
         .weather-card .icon { font-size: 1.2rem; }
-        .weather-card span[id$="-val"] { font-size: 1rem; font-weight: 800; color: inherit; display: block; margin-top: 3px; }
-        .weather-card div { font-size: 0.5rem; /* Sedikit dikecilkan agar kata "KELEMBAPAN" muat dengan baik */
-    font-weight: bold;
-    color: inherit;
-    opacity: 0.8;
-    letter-spacing: 0.1px;
-    white-space: nowrap;}
+        .weather-card span[id$="-val"] {font-size: 0.9rem; /* Disesuaikan sedikit agar angka tidak turun baris */
+            font-weight: 800; 
+            color: inherit; 
+            display: block; 
+            margin-top: 3px;}
+        .weather-card div { font-size: 0.48rem; /* Sedikit dikecilkan agar kata "KELEMBAPAN" muat sempurna di HP kecil */
+            font-weight: bold;
+            color: inherit;
+            opacity: 0.8;
+            letter-spacing: 0.1px;
+            white-space: nowrap; /* Mencegah teks terpotong turun ke bawah */}
 
         /* TOMBOL DAN INTERAKSI */
         .btn { background: var(--chocolate); color: white; border: none; padding: 15px 40px; border-radius: 50px; cursor: pointer; width: 100%; font-weight: bold; letter-spacing: 1px; margin-top: 5px; transition: background 0.3s; transform: 0.1s;}
@@ -1296,7 +1315,7 @@ body {
 }
 
     /* Style elegan ala bar menu WhatsApp */
-    .lang-item-wa {
+    .lang-item {
         padding: 12px 15px;
         background: #ffffff;
         border: 1px solid rgba(78, 52, 46, 0.08);
@@ -1307,7 +1326,7 @@ body {
         cursor: pointer;
         transition: all 0.15s ease;
     }
-    .lang-item-wa:hover {
+    .lang-item:hover {
         background: #fff8f0;
         border-color: #E67E22;
         transform: translateY(-1px);
@@ -1325,6 +1344,41 @@ body {
     z-index: -999 !important;
     pointer-events: none !important;
 }
+
+.lang-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #3e2723;
+        transition: all 0.2s ease;
+    }
+    
+    .lang-item:hover {
+        background: #fff7ed;
+        border-color: #F2D2A9;
+        transform: translateY(-1px);
+    }
+
+    .lang-flag {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #F2D2A9;
+        color: #3e2723;
+        font-size: 0.7rem;
+        font-weight: 800;
+        padding: 3px 6px;
+        border-radius: 6px;
+        min-width: 26px;
+        letter-spacing: 0.5px;
+    }
 
         /* FITUR PREMIUM MODE LURING - di versi baru dihilangkan */
         .premium-offline-box { background: rgba(230, 126, 34, 0.08); border: 2px dashed var(--accent); border-radius: 20px; padding: 15px; margin-bottom: 20px; display: none; text-align: left; color: inherit;}
@@ -2064,7 +2118,7 @@ body {
     </div>
 </div>
 
-<!-- MODAL PILIHAN BAHASA ALA WHATSAPP -->
+<!-- MODAL PILIHAN BAHASA ALA WHATSAPP (60 BAHASA DUNIA) -->
 <div class="page-modal" id="whatsapp-language-modal" inert style="display: none;">
     <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
         <h3 style="margin: 0; display: flex; align-items: center; gap: 8px; color: #3e2723; font-size: 1.1rem;">
@@ -2075,32 +2129,292 @@ body {
     
     <div class="modal-scroll-content" style="padding: 10px 20px;">
         <p style="font-size: 0.78rem; color: rgba(78, 52, 46, 0.7); margin-bottom: 15px;">
-            Aplikasi akan diterjemahkan secara otomatis ke seluruh bahasa di dunia.
+            Aplikasi akan diterjemahkan secara otomatis ke seluruh bahasa di bawah ini.
         </p>
 
-        <!-- Daftar Pilihan Bahasa Global (Mendukung Ratusan Bahasa) -->
-        <div id="list-pilihan-bahasa" style="display: flex; flex-direction: column; gap: 6px;">
-            <!-- Dibuat dinamis atau list lengkap -->
-            <div onclick="pilihBahasaGlobal('id', 'Bahasa Indonesia')" class="lang-item-wa">🇮🇩 Bahasa Indonesia</div>
-            <div onclick="pilihBahasaGlobal('en', 'English')" class="lang-item-wa">🇬🇧 English</div>
-            <div onclick="pilihBahasaGlobal('es', 'Español (Spanish)')" class="lang-item-wa">🇪🇸 Español</div>
-            <div onclick="pilihBahasaGlobal('ar', 'العربية (Arabic)')" class="lang-item-wa">🇸🇦 العربية</div>
-            <div onclick="pilihBahasaGlobal('zh-CN', '中文 (Chinese Simplified)')" class="lang-item-wa">🇨🇳 中文 (简体)</div>
-            <div onclick="pilihBahasaGlobal('ja', '日本語 (Japanese)')" class="lang-item-wa">🇯🇵 日本語</div>
-            <div onclick="pilihBahasaGlobal('ko', '한국어 (Korean)')" class="lang-item-wa">🇰🇷 한국어</div>
-            <div onclick="pilihBahasaGlobal('fr', 'Français (French)')" class="lang-item-wa">🇫🇷 Français</div>
-            <div onclick="pilihBahasaGlobal('de', 'Deutsch (German)')" class="lang-item-wa">🇩🇪 Deutsch</div>
-            <div onclick="pilihBahasaGlobal('ru', 'Русский (Russian)')" class="lang-item-wa">🇷🇺 Русский</div>
-            <div onclick="pilihBahasaGlobal('pt', 'Português (Portuguese)')" class="lang-item-wa">🇵🇹 Português</div>
-            <div onclick="pilihBahasaGlobal('hi', 'हिन्दी (Hindi)')" class="lang-item-wa">🇮🇳 हिन्दी</div>
-            <div onclick="pilihBahasaGlobal('tr', 'Türkçe (Turkish)')" class="lang-item-wa">🇹🇷 Türkçe</div>
-            <div onclick="pilihBahasaGlobal('vi', 'Tiếng Việt (Vietnamese)')" class="lang-item-wa">🇻🇳 Tiếng Việt</div>
-            <div onclick="pilihBahasaGlobal('th', 'ไทย (Thai)')" class="lang-item-wa">🇹🇭 ไทย</div>
-            <div onclick="pilihBahasaGlobal('it', 'Italiano (Italian)')" class="lang-item-wa">🇮🇹 Italiano</div>
-            <div onclick="pilihBahasaGlobal('nl', 'Nederlands (Dutch)')" class="lang-item-wa">🇳🇱 Nederlands</div>
-            <div onclick="pilihBahasaGlobal('pl', 'Polski (Polish)')" class="lang-item-wa">🇵🇱 Polski</div>
-            <div onclick="pilihBahasaGlobal('sv', 'Svenska (Swedish)')" class="lang-item-wa">🇸🇪 Svenska</div>
-            <!-- Anda bisa menambahkan bahasa dunia lainnya di sini -->
+        <!-- Daftar 60 Pilihan Bahasa Global -->
+        <div id="list-pilihan-bahasa" style="display: flex; flex-direction: column; gap: 8px;">
+    
+            <div onclick="pilihBahasaGlobal('id', 'Bahasa Indonesia')" class="lang-item">
+                <img src="https://flagcdn.com/w40/id.png" alt="ID" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;"> 
+                <span>Bahasa Indonesia</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('en', 'English')" class="lang-item">
+                <img src="https://flagcdn.com/w40/gb.png" alt="GB" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>English</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ar', 'العربية')" class="lang-item">
+                <img src="https://flagcdn.com/w40/sa.png" alt="SA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>العربية (Arabic)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('zh-CN', '中文 (Simplified)')" class="lang-item">
+                <img src="https://flagcdn.com/w40/cn.png" alt="CN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>中文 (Chinese Simplified)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('zh-TW', '中文 (Traditional)')" class="lang-item">
+                <img src="https://flagcdn.com/w40/tw.png" alt="TW" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>中文 (Chinese Traditional)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ja', '日本語')" class="lang-item">
+                <img src="https://flagcdn.com/w40/jp.png" alt="JP" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>日本語 (Japanese)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ko', '한국어')" class="lang-item">
+                <img src="https://flagcdn.com/w40/kr.png" alt="KR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>한국어 (Korean)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('es', 'Español')" class="lang-item">
+                <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Español (Spanish)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('fr', 'Français')" class="lang-item">
+                <img src="https://flagcdn.com/w40/fr.png" alt="FR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Français (French)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('de', 'Deutsch')" class="lang-item">
+                <img src="https://flagcdn.com/w40/de.png" alt="DE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Deutsch (German)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('it', 'Italiano')" class="lang-item">
+                <img src="https://flagcdn.com/w40/it.png" alt="IT" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Italiano (Italian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('pt', 'Português')" class="lang-item">
+                <img src="https://flagcdn.com/w40/pt.png" alt="PT" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Português (Portuguese)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ru', 'Русский')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ru.png" alt="RU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Русский (Russian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('hi', 'हिन्दी')" class="lang-item">
+                <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>हिन्दी (Hindi)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('th', 'ไทย')" class="lang-item">
+                <img src="https://flagcdn.com/w40/th.png" alt="TH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>ไทย (Thai)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('vi', 'Tiếng Việt')" class="lang-item">
+                <img src="https://flagcdn.com/w40/vn.png" alt="VN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Tiếng Việt (Vietnamese)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ms', 'Bahasa Melayu')" class="lang-item">
+                <img src="https://flagcdn.com/w40/my.png" alt="MY" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Bahasa Melayu (Malay)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('tl', 'Tagalog')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ph.png" alt="PH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Tagalog (Filipino)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('tr', 'Türkçe')" class="lang-item">
+                <img src="https://flagcdn.com/w40/tr.png" alt="TR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Türkçe (Turkish)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('nl', 'Nederlands')" class="lang-item">
+                <img src="https://flagcdn.com/w40/nl.png" alt="NL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Nederlands (Dutch)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('pl', 'Polski')" class="lang-item">
+                <img src="https://flagcdn.com/w40/pl.png" alt="PL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Polski (Polish)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('uk', 'Українська')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ua.png" alt="UA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Українська (Ukrainian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('fa', 'فارسی')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ir.png" alt="IR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>فارسی (Persian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('bn', 'বাংলা')" class="lang-item">
+                <img src="https://flagcdn.com/w40/bd.png" alt="BD" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>বাংলা (Bengali)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ur', 'اردو')" class="lang-item">
+                <img src="https://flagcdn.com/w40/pk.png" alt="PK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>اردو (Urdu)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('sw', 'Kiswahili')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ke.png" alt="KE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Kiswahili (Swahili)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('af', 'Afrikaans')" class="lang-item">
+                <img src="https://flagcdn.com/w40/za.png" alt="ZA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Afrikaans</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('sq', 'Shqip')" class="lang-item">
+                <img src="https://flagcdn.com/w40/al.png" alt="AL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Shqip (Albanian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('am', 'አማርኛ')" class="lang-item">
+                <img src="https://flagcdn.com/w40/et.png" alt="ET" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>አማርኛ (Amharic)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('hy', 'Հայերեն')" class="lang-item">
+                <img src="https://flagcdn.com/w40/am.png" alt="AM" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Հայերեն (Armenian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('az', 'Azərbaycan')" class="lang-item">
+                <img src="https://flagcdn.com/w40/az.png" alt="AZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Azərbaycan (Azerbaijani)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('eu', 'Euskara')" class="lang-item">
+                <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Euskara (Basque)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('bs', 'Bosanski')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ba.png" alt="BA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Bosanski (Bosnian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('bg', 'Български')" class="lang-item">
+                <img src="https://flagcdn.com/w40/bg.png" alt="BG" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Български (Bulgarian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('my', 'မြန်မာ')" class="lang-item">
+                <img src="https://flagcdn.com/w40/mm.png" alt="MM" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>မြန်မာ (Burmese)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ca', 'Català')" class="lang-item">
+                <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Català (Catalan)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('hr', 'Hrvatski')" class="lang-item">
+                <img src="https://flagcdn.com/w40/hr.png" alt="HR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Hrvatski (Croatian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('cs', 'Čeština')" class="lang-item">
+                <img src="https://flagcdn.com/w40/cz.png" alt="CZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Čeština (Czech)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('da', 'Dansk')" class="lang-item">
+                <img src="https://flagcdn.com/w40/dk.png" alt="DK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Dansk (Danish)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('et', 'Eesti')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ee.png" alt="EE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Eesti (Estonian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('fi', 'Suomi')" class="lang-item">
+                <img src="https://flagcdn.com/w40/fi.png" alt="FI" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Suomi (Finnish)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('gl', 'Galego')" class="lang-item">
+                <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Galego (Galician)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ka', 'ქართული')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ge.png" alt="GE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>ქართული (Georgian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('el', 'Ελληνικά')" class="lang-item">
+                <img src="https://flagcdn.com/w40/gr.png" alt="GR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Ελληνικά (Greek)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('gu', 'ગુજરાતી')" class="lang-item">
+                <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>ગુજરાતી (Gujarati)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('he', 'עברית')" class="lang-item">
+                <img src="https://flagcdn.com/w40/il.png" alt="IL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>עברית (Hebrew)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('hu', 'Magyar')" class="lang-item">
+                <img src="https://flagcdn.com/w40/hu.png" alt="HU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Magyar (Hungarian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('is', 'Íslenska')" class="lang-item">
+                <img src="https://flagcdn.com/w40/is.png" alt="IS" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Íslenska (Icelandic)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ga', 'Gaeilge')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ie.png" alt="IE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Gaeilge (Irish)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('kn', 'ಕನ್ನಡ')" class="lang-item">
+                <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>ಕನ್ನಡ (Kannada)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('kk', 'Қазақ тілі')" class="lang-item">
+                <img src="https://flagcdn.com/w40/kz.png" alt="KZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Қазақ тілі (Kazakh)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('km', 'ខ្មែរ')" class="lang-item">
+                <img src="https://flagcdn.com/w40/kh.png" alt="KH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>ខ្មែរ (Khmer)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('lo', 'ລາວ')" class="lang-item">
+                <img src="https://flagcdn.com/w40/la.png" alt="LA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>ລາວ (Lao)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('lv', 'Latviešu')" class="lang-item">
+                <img src="https://flagcdn.com/w40/lv.png" alt="LV" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Latviešu (Latvian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('lt', 'Lietuvių')" class="lang-item">
+                <img src="https://flagcdn.com/w40/lt.png" alt="LT" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Lietuvių (Lithuanian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('mk', 'Македонски')" class="lang-item">
+                <img src="https://flagcdn.com/w40/mk.png" alt="MK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Македонски (Macedonian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ml', 'മലയാളം')" class="lang-item">
+                <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>മലയാളം (Malayalam)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('mr', 'मराठी')" class="lang-item">
+                <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>मराठी (Marathi)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ne', 'नेपाली')" class="lang-item">
+                <img src="https://flagcdn.com/w40/np.png" alt="NP" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>नेपाली (Nepali)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('no', 'Norsk')" class="lang-item">
+                <img src="https://flagcdn.com/w40/no.png" alt="NO" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Norsk (Norwegian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('pa', 'ਪੰਜਾਬੀ')" class="lang-item">
+                <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>ਪੰਜਾਬੀ (Punjabi)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ro', 'Română')" class="lang-item">
+                <img src="https://flagcdn.com/w40/ro.png" alt="RO" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Română (Romanian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('sr', 'Српски')" class="lang-item">
+                <img src="https://flagcdn.com/w40/rs.png" alt="RS" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Српски (Serbian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('si', 'සිංහල')" class="lang-item">
+                <img src="https://flagcdn.com/w40/lk.png" alt="LK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>සිංහල (Sinhala)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('sk', 'Slovenčina')" class="lang-item">
+                <img src="https://flagcdn.com/w40/sk.png" alt="SK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Slovenčina (Slovak)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('sl', 'Slovenščina')" class="lang-item">
+                <img src="https://flagcdn.com/w40/si.png" alt="SI" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Slovenščina (Slovenian)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('ta', 'தமிழ்')" class="lang-item">
+                <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>தமிழ் (Tamil)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('te', 'తెలుగు')" class="lang-item">
+                <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>తెలుగు (Telugu)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('uz', 'Oʻzbekcha')" class="lang-item">
+                <img src="https://flagcdn.com/w40/uz.png" alt="UZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Oʻzbekcha (Uzbek)</span>
+            </div>
+            <div onclick="pilihBahasaGlobal('cy', 'Cymraeg')" class="lang-item">
+                <img src="https://flagcdn.com/w40/gb-wls.png" alt="WLS" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+                <span>Cymraeg (Welsh)</span>
+            </div>
         </div>
     </div>
     
@@ -7422,6 +7736,22 @@ function setCustomTime() {
     }
     if (typeof updateETALabel === 'function') updateETALabel(customVal);
     if (typeof updateCircleProgress === 'function') updateCircleProgress();
+
+    if (typeof NotifSystem !== 'undefined') {
+        NotifSystem.tambah('timer', 'Mode Timer Custom', `Durasi kustom diatur ke ${customVal} menit.`, '⏱️');
+    }
+
+    const tempText = document.getElementById('temp-val')?.innerText?.replace(/[^\d.-]/g, '') || '--';
+    const humText = document.getElementById('hum-val')?.innerText?.replace(/[^\d.-]/g, '') || '--';
+    if (typeof appendProofingLog === 'function') {
+        appendProofingLog({
+            title: 'Proofing Manual (Custom)',
+            duration: customVal,
+            temp: tempText,
+            humidity: humText,
+            message: `Durasi kustom diatur — ${customVal} menit`
+        });
+    }
 
     // 4. Feedback
     const aiTipsEl = document.getElementById('ai-tips');
