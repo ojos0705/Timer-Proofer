@@ -2253,6 +2253,18 @@ body {
                 </div>
                 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
             </div>
+
+            <!-- Menu Berikan Saran (Feedback) -->
+            <div onclick="toggleModal('feedback-modal')" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.1rem;">💬</span>
+                    <div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Berikan Saran</div>
+                        <div style="font-size: 0.7rem; color: #888;">Kritik, masukan, & laporan bug</div>
+                    </div>
+                </div>
+                <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
+            </div>
         </div>
     </div>
     <div class="modal-bottom-actions">
@@ -2402,7 +2414,8 @@ body {
             <option value="lb">Luxembourgish</option>
             <option value="mk">Macedonian</option>
             <option value="mad">Madurese</option>
-            <option value="mai">Maithili</option><option value="mak">Makassar</option>
+            <option value="mai">Maithili</option>
+            <option value="mak">Makassar</option>
             <option value="mg">Malagasy</option>
             <option value="ms">Malay</option>
             <option value="ms-Arab">Malay (Jawi)</option>
@@ -2457,7 +2470,8 @@ body {
             <option value="gd">Scots Gaelic</option>
             <option value="nso">Sepedi</option>
             <option value="sr">Serbian</option>
-            <option value="st">Sesotho</option><option value="crs">Seychellois Creole</option>
+            <option value="st">Sesotho</option>
+            <option value="crs">Seychellois Creole</option>
             <option value="shn">Shan</option>
             <option value="sn">Shona</option>
             <option value="scn">Sicilian</option>
@@ -2913,6 +2927,46 @@ body {
 </div>
 <!-- AKHIR MODAL RATE US -->
 
+<!-- MODAL BERIKAN SARAN -->
+<div class="page-modal" id="feedback-modal" inert>
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+        <h3 style="margin: 0; display: flex; align-items: center; gap: 8px; color: #3e2723;">
+            <span>💬</span> Berikan Saran
+        </h3>
+        <button class="article-modal-close" onclick="toggleModal('feedback-modal')">×</button>
+    </div>
+    
+    <div class="modal-scroll-content">
+        <p style="font-size: 0.85rem; color: rgba(78, 52, 46, 0.8); margin-bottom: 15px; line-height: 1.5;">
+            Masukan Anda membantu kami mengembangkan Timer Proofing menjadi lebih baik.
+        </p>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; flex-direction: column;">
+                <label for="feedback-type" style="font-size: 0.75rem; font-weight: bold; color: #3e2723; margin-bottom: 5px;">Jenis Masukan</label>
+                <select id="feedback-type" style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 0.85rem; color: #3e2723; background: #fff; outline: none;">
+                    <option value="saran">💡 Saran Fitur Baru</option>
+                    <option value="bug">🐛 Laporan Bug/Error</option>
+                    <option value="pertanyaan">❓ Pertanyaan Umum</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; flex-direction: column;">
+                <label for="feedback-text" style="font-size: 0.75rem; font-weight: bold; color: #3e2723; margin-bottom: 5px;">Pesan Anda</label>
+                <textarea id="feedback-text" rows="4" placeholder="Tuliskan saran atau kendala yang Anda alami..." style="padding: 10px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 0.85rem; color: #3e2723; background: #fff; outline: none; resize: vertical;"></textarea>
+            </div>
+            
+            <button onclick="kirimSaran()" style="background: #e67e22; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: transform 0.1s; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.2);" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='none'">
+                Kirim Masukan
+            </button>
+        </div>
+    </div>
+    
+    <div class="modal-bottom-actions">
+        <button class="about-close-btn" style="margin: 0; width: 100%;" onclick="toggleModal('feedback-modal')">KEMBALI</button>
+    </div>
+</div>
+
 <!-- AKHIR MODAL TENTANG APLIKASI -->
     <!-- Bagian Bottom Navbar -->
     <div class="bottom-bar">
@@ -2923,6 +2977,10 @@ body {
         <div class="bottom-item" id="tab-recipe"  data-onclick="switchTab('recipe')">
             <span class="icon-bar">🧾</span>
             <span>Resep</span>
+        </div>
+        <div class="bottom-item" id="tab-tips" data-onclick="switchTab('tips')">
+            <span class="icon-bar">💡</span>
+            <span>Tips</span>
         </div>
     </div>
 
@@ -2957,6 +3015,41 @@ body {
             
             <input type="text" id="recipe-save-name" placeholder="Contoh: Donat Coklat Premium" maxlength="60" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.8rem; box-sizing: border-box; margin-bottom: 8px; color: #4E342E;">
             
+            <!-- FITUR FOTO RESEP & BAHAN (Golden Ratio Layout) -->
+            <div class="recipe-photo-section" style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 13px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <label for="recipe-photo-input" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; text-transform: uppercase; cursor: pointer;">📸 Dokumentasi Foto</label>
+                    <input type="file" id="recipe-photo-input" accept="image/*" multiple style="display: none;" onchange="window.prosesUnggahFotoResep(event)">
+                    <button type="button" onclick="document.getElementById('recipe-photo-input').click()" style="background: #E67E22; color: white; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; cursor: pointer;">+ Unggah Foto</button>
+                </div>
+                
+                <!-- Grid Tata Letak Berbasis Golden Ratio untuk Slot Penampung Foto -->
+                <div id="recipe-photo-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                    <!-- Slot 0: Foto Utama (Lebar Penuh di Atas) -->
+                    <div id="recipe-photo-slot-0" style="grid-column: span 4; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 100px; cursor: pointer;" onclick="document.getElementById('recipe-photo-input').click()">
+                        <span style="font-size: 1.2rem; color: #94a3b8;">📷</span>
+                        <span style="font-size: 0.6rem; color: #94a3b8; font-weight: 500; margin-top: 2px;">Foto Utama (1)</span>
+                    </div>
+                    <!-- Slot 1, 2, 3, 4: Foto Pendukung (Berjajar di Bawah) -->
+                    <div id="recipe-photo-slot-1" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 70px; cursor: pointer;" onclick="document.getElementById('recipe-photo-input').click()">
+                        <span style="font-size: 1rem; color: #94a3b8;">🖼️</span>
+                        <span style="font-size: 0.55rem; color: #94a3b8; font-weight: 500;">2</span>
+                    </div>
+                    <div id="recipe-photo-slot-2" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 70px; cursor: pointer;" onclick="document.getElementById('recipe-photo-input').click()">
+                        <span style="font-size: 1rem; color: #94a3b8;">🖼️</span>
+                        <span style="font-size: 0.55rem; color: #94a3b8; font-weight: 500;">3</span>
+                    </div>
+                    <div id="recipe-photo-slot-3" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 70px; cursor: pointer;" onclick="document.getElementById('recipe-photo-input').click()">
+                        <span style="font-size: 1rem; color: #94a3b8;">🖼️</span>
+                        <span style="font-size: 0.55rem; color: #94a3b8; font-weight: 500;">4</span>
+                    </div>
+                    <div id="recipe-photo-slot-4" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 70px; cursor: pointer;" onclick="document.getElementById('recipe-photo-input').click()">
+                        <span style="font-size: 1rem; color: #94a3b8;">🖼️</span>
+                        <span style="font-size: 0.55rem; color: #94a3b8; font-weight: 500;">5</span>
+                    </div>
+                </div>
+            </div>
+
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
                 <button type="button" class="btn" id="btn-muat-resep" onclick="window.tampilkanDaftarResepTersimpan()" style="background: #E67E22; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📂 DATABASE</button>
                 <button type="button" class="btn" onclick="window.eksporSemuaResep()" style="background: #2980b9; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📤 EKSPOR</button>
@@ -3021,20 +3114,19 @@ body {
         </div>
 
         <!-- FOLDER TABS KHUSUS UNTUK METODE PEMBUATAN -->
-<!-- FOLDER TABS KHUSUS UNTUK METODE PEMBUATAN -->
-<div class="recipe-method-section" style="margin-top: 15px;">
-    <div class="method-tabs" style="display: flex; gap: 4px; margin-bottom: 10px; font-size: 0.75rem; font-weight: bold;">
-        <button type="button" id="btn-tab-bahan" data-onclick="gantiTabMetode('bahan')" style="flex: 1; padding: 10px; background: #4E342E; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">📋 Bahan & HPP</button>
-        <button type="button" id="btn-tab-cara" data-onclick="gantiTabMetode('cara')" style="flex: 1; padding: 10px; background: #F2D2A9; color: #4E342E; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">🍩 Cara Pembuatan</button>
-    </div>
-    
-    <!-- KONTEN TAB: BAHAN & HPP (Form Tambah Bahan dipindahkan ke sini) -->
-    <div class="method-content" id="method-bahan-content" style="display: flex; flex-direction: column;">
-        <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
-            <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
-                📋 DAFTAR KOMPOSISI BAHAN ADONAN
+        <div class="recipe-method-section" style="margin-top: 15px;">
+            <div class="method-tabs" style="display: flex; gap: 4px; margin-bottom: 10px; font-size: 0.75rem; font-weight: bold;">
+                <button type="button" id="btn-tab-bahan" data-onclick="gantiTabMetode('bahan')" style="flex: 1; padding: 10px; background: #4E342E; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">📋 Bahan & HPP</button>
+                <button type="button" id="btn-tab-cara" data-onclick="gantiTabMetode('cara')" style="flex: 1; padding: 10px; background: #F2D2A9; color: #4E342E; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">🍩 Cara Pembuatan</button>
             </div>
-        <!-- DINAMIS TAMBAH BAHAN (Kini berada di dalam Tab Bahan & HPP) -->
+    
+        <!-- KONTEN TAB: BAHAN & HPP (Form Tambah Bahan dipindahkan ke sini) -->
+        <div class="method-content" id="method-bahan-content" style="display: flex; flex-direction: column;">
+            <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
+                <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
+                    📋 DAFTAR KOMPOSISI BAHAN ADONAN
+                </div>
+            <!-- DINAMIS TAMBAH BAHAN (Kini berada di dalam Tab Bahan & HPP) -->
         
 
         <!-- DAFTAR KOMPOSISI BAHAN UTAMA -->
@@ -3101,36 +3193,34 @@ body {
                 ➕ Tambah Bahan Baru ke Resep
             </button>
         </div>
-
     </div>
 
     <!-- KONTEN TAB: CARA PEMBUATAN -->
-    <!-- KONTEN TAB: CARA PEMBUATAN -->
-<div class="method-content" id="method-steps-content" style="display: none; flex-direction: column;"> 
-    <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
-        
-        <!-- HEADER -->
-        <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
-            📝 LANGKAH DEMI LANGKAH PRODUKSI
-        </div>
-        
-        <!-- WADAH SCROLL DAFTAR LANGKAH -->
-        <div id="container-daftar-langkah" style="padding: 12px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 12px;">
-            <!-- Kartu langkah akan dimuat di sini -->
-        </div>
+        <div class="method-content" id="method-steps-content" style="display: none; flex-direction: column;"> 
+            <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
+                
+                <!-- HEADER -->
+                <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
+                    📝 LANGKAH DEMI LANGKAH PRODUKSI
+                </div>
+                
+                <!-- WADAH SCROLL DAFTAR LANGKAH -->
+                <div id="container-daftar-langkah" style="padding: 12px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Kartu langkah akan dimuat di sini -->
+                </div>
 
-        <!-- TOMBOL AKSI SEKARANG BERADA DI BAWAH DAFTAR LANGKAH -->
-        <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px 12px 12px; background: white;">
-            <button type="button" onclick="muatTemplateLangkahDonat()" style="background: #f39c12; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
-                ⚡ Template
-            </button>
-            <button type="button" onclick="tambahLangkahProduksi()" style="background: #27ae60; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
-                ➕ Tambah
-            </button>
+                <!-- TOMBOL AKSI SEKARANG BERADA DI BAWAH DAFTAR LANGKAH -->
+                <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px 12px 12px; background: white;">
+                    <button type="button" onclick="muatTemplateLangkahDonat()" style="background: #f39c12; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                        ⚡ Template
+                    </button>
+                    <button type="button" onclick="tambahLangkahProduksi()" style="background: #27ae60; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                        ➕ Tambah
+                    </button>
+                </div>
+                
+            </div>
         </div>
-        
-    </div>
-</div>
 
         <!-- ESTIMASI BIZ & SUMMARY HPP BOX -->
         <div class="recipe-summary-box" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
@@ -3229,7 +3319,13 @@ body {
     </div>
     </div>
 </div>
+    </div>
 </div>
+<!-- PERBAIKAN: 2 tag </div> di atas ini SENGAJA ditambahkan untuk menutup
+     <div class="recipe-content"> (dibuka di baris ~3006) dan
+     <div id="recipe"> (dibuka di baris ~2988).
+     Sebelumnya kedua div ini tidak pernah ditutup, sehingga <div id="tips">
+     di bawah ini ikut "tersembunyi" di dalam halaman Resep saat disembunyikan. -->
 
 <!-- Floating Action Button (FAB) -->
 <!--<button id="fab-tambah-komponen" class="fab-btn" aria-label="Tambah Komponen Baru">
@@ -3271,6 +3367,114 @@ body {
   </div>
 </div>
 -->
+
+<!-- TAMBAHKAN HALAMAN / MODAL TIPS DI DALAM APLIKASI -->
+<div id="tips" class="tab-content recipe-modal" style="display: none; padding: 0; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: var(--cream); font-family: 'Segoe UI', sans-serif;">
+    
+    <!-- Header Halaman Tips -->
+    <div class="article-modal-header" style="padding: 15px 20px 10px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: var(--cream); position: sticky; top: 0; z-index: 10;">
+        <h3 style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 10px; font-size: 1.1rem;">
+            <span>💡</span> Tips & Troubleshooting Donat
+        </h3>
+        <button class="article-modal-close" onclick="switchTab('timer')" style="font-size: 28px; background: none; border: none; color: var(--chocolate); cursor: pointer; line-height: 1;">&times;</button>
+    </div>
+
+    <!-- Fitur Pencarian & Developer Analytics Monitor -->
+    <div style="padding: 12px 15px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;">
+        <div style="position: relative; display: flex; align-items: center;">
+            <span style="position: absolute; left: 12px; font-size: 0.9rem;">🔍</span>
+            <input type="text" id="tips-search-input" oninput="filterTipsAndTrack(this.value)" placeholder="Cari tips ragi, adonan, menggoreng, glaze..." style="width: 100%; padding: 10px 10px 10px 36px; border: 1.5px solid #F2D2A9; border-radius: 10px; font-size: 0.85rem; outline: none; color: var(--chocolate); background: #fdf8f4;">
+        </div>
+        <!-- Panel Monitor Developer (Menampilkan statistik pencarian real-time) -->
+        <div id="dev-analytics-panel" style="margin-top: 6px; font-size: 0.65rem; color: #888; display: flex; justify-content: space-between; align-items: center;">
+            <span id="dev-search-stat">Monitor Perilaku User: Belum ada kata kunci dicari</span>
+            <button type="button" onclick="exportSearchAnalytics()" style="background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; font-size: 0.65rem;">Ekspor Log</button>
+        </div>
+    </div>
+
+    <!-- Konten Tips (Bisa Di-scroll) -->
+    <div class="recipe-content" id="tips-container-list" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px;">
+
+        <!-- 1. PEMILIHAN BAHAN UTAMA -->
+        <div class="tip-card" data-keywords="ragi mauripan tepung telur gula cairan susu pelembut kentang labu sp halal">
+            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🛒 Cara Memilih & Menggunakan Bahan</h4>
+            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
+                <li><strong>Cara Memilih Ragi:</strong> Gunakan ragi aktif segar. Ragi Mauripan 3 gr ideal untuk takaran tepung 250 gr. Kebanyakan ragi menyebabkan adonan lembek, mudah over-proofing, dan donat berminyak saat digoreng.</li>
+                <li><strong>Cara Memilih Tepung:</strong> Gunakan tepung terigu protein tinggi untuk membentuk struktur gluten yang kuat dan menghasilkan *white ring* yang kokoh.</li>
+                <li><strong>Cara Menggunakan Telur:</strong> Gunakan kuning telur untuk memberikan kelembapan, kelembutan (*richness*), dan warna kuning alami pada remah donat.</li>
+                <li><strong>Cara Memilih Gula:</strong> Gula berfungsi memberi warna kulit donat agar lebih cantik. Tanpa gula, donat cenderung pucat. Kendalikan takarannya agar fermentasi stabil.</li>
+                <li><strong>Cara Memilih Cairan:</strong> Cairan maksimal 60% dari berat adonan kering agar mudah di-*rounding* dan dikunci bagian bawahnya. Gunakan air es atau susu dingin untuk menjaga suhu akhir adonan tetap di kisaran 24°C–27°C.</li>
+                <li><strong>Cara Memilih Susu (Cair/Bubuk):</strong> Susu bubuk full cream atau susu cair menambah aroma gurih dan tekstur empuk yang tahan lama.</li>
+                <li><strong>Cara Memilih Pelembut (Kentang, Labu, Biji, SP):</strong> Penambahan kentang atau labu kukus (20-30% dari berat terigu) mengikat air lebih lama sehingga donat empuk berhari-hari. Gunakan pelembut secukupnya sesuai dosis kemasan.</li>
+                <li><strong>Sertifikasi:</strong> Selalu gunakan produk halal untuk menjamin kualitas dan ketenangan produksi.</li>
+            </ul>
+        </div>
+
+        <!-- 2. PENGOLAHAN ADONAN & TEKNIK -->
+        <div class="tip-card" data-keywords="adonan lengket suhu play dough kalis double resting degasing">
+            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🥣 Pengolahan & Suhu Adonan</h4>
+            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
+                <li><strong>Adonan Lengket:</strong> Pastikan tangan bersih dan kering agar adonan mudah lepas dari jari saat dipegang.</li>
+                <li><strong>Suhu Adonan (Dough Temperature):</strong> Target suhu akhir setelah diuleni adalah 24°C – 27°C. Gunakan cairan dingin untuk meredam panas gesekan mixer.</li>
+                <li><strong>Konsistensi Adonan:</strong> Adonan yang pas harus padat seperti *play dough*. Jika bertekstur seperti *slime*, cairan berlebih; jika terlalu keras, kekurangan cairan.</li>
+                <li><strong>Double Resting & Degasing:</strong> Tanpa mixer, satukan bahan lalu *resting* 60 menit. Lakukan *degasing* (pembuangan gas) secara presisi dengan alat yang rata agar pori donat tidak belang.</li>
+            </ul>
+        </div>
+
+        <!-- 3. ROUNDING & PEMBULATAN -->
+        <div class="tip-card" data-keywords="rounding pembulatan suhu tepung dasar">
+            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">⚪ Rounding & Pembulatan</h4>
+            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
+                <li><strong>Suhu Ruangan Rounding:</strong> Ideal di 25°C – 28°C. Jika di atas 30°C, mentega dalam adonan meleleh dan membuat adonan lengket serta sulit dibulatkan.</li>
+                <li><strong>Kepadatan Rounding:</strong> Semakin padat *rounding*, semakin lama proses *proofing* dan hasil akhir struktur serat semakin bagus. Rounding padat juga mencegah lapisan kulit terbuka atau bocor saat digoreng.</li>
+                <li><strong>Fungsi Tepung di Dasar:</strong> Taburan tepung tipis di dasar adonan saat *rounding* mencegah adonan menempel di alas kerja.</li>
+            </ul>
+        </div>
+
+        <!-- 4. PROOFING (PENGEMBANGAN) -->
+        <div class="tip-card" data-keywords="proofing pengembangan white ring suhu lembab terbuka tertutup air panas">
+            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">⏱️ Proofing & Fermentasi</h4>
+            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
+                <li><strong>Suhu & Kelembaban:</strong> Suhu ideal 32°C – 35°C dengan kelembaban 75% – 85% untuk produksi gas CO₂ yang optimal. Di bawah 30°C sangat lambat; di atas 40°C pori-pori kasar dan beraroma asam tajam.</li>
+                <li><strong>Memotong Waktu Proofing:</strong> Jika ingin memotong waktu dari 60 menit ke 30–40 menit, naikkan suhu ruangan secara alami (misal menaruh semangkuk air panas di dalam wadah/lemari tertutup tempat adonan diistirahatkan) dengan tetap menjaga kelembapan tinggi[cite: 1].</li>
+                <li><strong>Proofing Terbuka vs Tertutup:</strong> *Proofing* tertutup menjaga kelembapan agar kulit adonan tidak kering. Kulit adonan transparan/kering pecah menandakan *over-proofing* atau *proofing* terbuka tanpa penutup.</li>
+                <li><strong>Mulai Proofing:</strong> Begitu ragi dimasukkan, proses *proofing* dimulai. Jangan biarkan terlalu lama sebelum masuk tahap *dividing*, *rounding*, *shaping*, dan *final proofing*.</li>
+            </ul>
+        </div>
+
+        <!-- 5. PENGGORENGAN & TROUBLESHOOTING -->
+        <div class="tip-card" data-keywords="menggoreng minyak wajan white ring keriput bergelembung tidak rata">
+            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🍳 Teknik Menggoreng & Solusi Masalah</h4>
+            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
+                <li><strong>Waktu & Suhu Minyak:</strong> Panaskan minyak 15–30 menit sebelum adonan *final proofing* selesai. Gunakan minyak sawit pada suhu 160°C – 170°C dengan wajan tebal (bukan teflon) dan api kecil konsisten untuk mendapatkan *white ring*.</li>
+                <li><strong>Minyak Padat vs Cair:</strong> Campuran 50% minyak cair : 50% minyak padat (atau 70% : 30%) sangat efektif membuat donat tidak berminyak dan mirip standar profesional. Gunakan minyak yang banyak agar donat mengapung dan tidak bersentuhan dengan dasar wajan (mencegah kulit jeruk). Letakkan di atas tisu penyerap setelah matang.</li>
+                <li><strong>Test Kematangan Proofing:</strong> Tekan adonan dengan jari; jika kembali dengan cepat = *under-proofing*, jika kembali lambat dan pas = waktu menggoreng tiba. Jika kulit transparan = *over-proofing*.</li>
+                <li><strong>Donat Bergelembung saat Digoreng:</strong> Disebabkan *over-proofing* (kurangi ragi), *under-proofing*, atau suhu ruang terlalu tinggi (>30°C). Atasi dengan metode 2x balik (masukkan, tunggu sisi bawah setengah matang, balik atas hingga matang, lalu balik kembali sisi awal).</li>
+                <li><strong>Donat Keriput / Retak Setelah Dingin:</strong> Disebabkan kurang kalis saat diuleni, minyak terlalu panas, minyak kotor, atau kelebihan ragi dan cairan.</li>
+            </ul>
+        </div>
+
+        <!-- 6. GLAZE & PENYIMPANAN -->
+        <div class="tip-card" data-keywords="glaze icing sugar gula donat penyimpanan">
+            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🍩 Glaze & Penyimpanan</h4>
+            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
+                <li><strong>Icing Sugar vs Gula Donat:</strong> Icing sugar adalah gula halus yang mudah menguap/larut, cocok untuk glaze yang dicampur susu. Gula donat adalah gula khusus taburan dingin yang tidak mudah meleleh.</li>
+                <li><strong>Resep Glaze Sederhana:</strong> Campurkan gula halus, sedikit air hangat, dan minyak kelapa/mentega cair dalam jumlah cukup agar saat dingin lemaknya membantu proses pemadatan glaze.</li>
+                <li><strong>Cara Penyimpanan:</strong> Simpan donat polos dalam wadah kedap udara pada suhu ruang, atau bekukan adonan setengah jadi pada tahap sebelum *final proofing* untuk stok jangka panjang.</li>
+            </ul>
+        </div>
+
+        <!-- 7. PENGARUH LINGKUNGAN -->
+        <div class="tip-card" data-keywords="suhu kelembaban tekanan udara ketinggian lingkungan">
+            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🌍 Pengaruh Lingkungan & Atmosfer</h4>
+            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
+                <li><strong>Suhu & Kelembaban:</strong> Suhu panas mempercepat kerja ragi; kelembaban rendah membuat permukaan adonan cepat kering berkulit.</li>
+                <li><strong>Tekanan Udara & Ketinggian:</strong> Daerah dataran tinggi (tekanan udara lebih rendah) membuat pengembangan gas dalam adonan terjadi lebih cepat sehingga waktu *proofing* harus dipersingkat.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <script>
 // ============================================================
 // KUMPULAN FUNGSI — DIKELOMPOKKAN BERDASARKAN FITUR/MODUL
@@ -4046,6 +4250,85 @@ async function renderUserProfile(summaryData = null) {
     updateVersion();
 }
 
+// =========================================================================
+// 1. DATA MILESTONE & REWARD (Konfigurasi Kurva Level)
+// =========================================================================
+const GamificationData = [
+    { level: 1, expRequired: 0, unlockKey: null, badgeTitle: "Novice Baker", icon: "🥚", message: "Selamat datang di dunia artisan!" },
+    { level: 2, expRequired: 50, unlockKey: "custom_alarm", badgeTitle: "Apprentice Baker", icon: "🔔", message: "Fitur Nada Alarm Kustom Terbuka!" },
+    { level: 3, expRequired: 150, unlockKey: "offline_mode", badgeTitle: "Journeyman Baker", icon: "📵", message: "Fitur Mode Luring Manual Terbuka!" },
+    { level: 4, expRequired: 350, unlockKey: "ble_thermometer", badgeTitle: "Artisan Baker", icon: "🌡️", message: "Koneksi Termometer Bluetooth Terbuka!" },
+    { level: 5, expRequired: 700, unlockKey: "ai_analytics", badgeTitle: "Master Baker", icon: "🏆", message: "AI Agent Premium Analytics Terbuka!" }
+];
+
+// =========================================================================
+// 2. MESIN LOGIKA GAMIFIKASI (Menyimpan & Memeriksa State)
+// =========================================================================
+class ProgressionSystem {
+    static getExp() { return parseInt(localStorage.getItem('user_exp')) || 0; }
+    static getLevel() { return parseInt(localStorage.getItem('user_level')) || 1; }
+    static getUnlockedFeatures() { return JSON.parse(localStorage.getItem('unlocked_features')) || []; }
+
+    // Metode untuk menambah EXP (Panggil ini saat Timer Proofing selesai atau tambah resep)
+    static addExp(amount) {
+        let currentExp = this.getExp() + amount;
+        localStorage.setItem('user_exp', currentExp);
+        this.checkLevelUp(currentExp);
+        
+        // Langsung perbarui UI kartu profil jika sedang terbuka
+        if (window.GamificationUI) window.GamificationUI.refresh();
+    }
+
+    static checkLevelUp(currentExp) {
+        let currentLevel = this.getLevel();
+        // Cari level tertinggi yang syarat EXP-nya terpenuhi
+        let nextLevelData = GamificationData.slice().reverse().find(g => currentExp >= g.expRequired);
+
+        if (nextLevelData && nextLevelData.level > currentLevel) {
+            localStorage.setItem('user_level', nextLevelData.level);
+            
+            if (nextLevelData.unlockKey) this.unlockFeature(nextLevelData.unlockKey);
+            
+            this.showAchievement(nextLevelData.badgeTitle, nextLevelData.message, nextLevelData.icon);
+        }
+    }
+
+    static unlockFeature(featureKey) {
+        let unlocked = this.getUnlockedFeatures();
+        if (!unlocked.includes(featureKey)) {
+            unlocked.push(featureKey);
+            localStorage.setItem('unlocked_features', JSON.stringify(unlocked));
+        }
+        this.applyUnlockedFeaturesUI();
+    }
+
+    static showAchievement(title, desc, icon) {
+        const popup = document.getElementById('achievement-popup');
+        const titleEl = document.getElementById('achievement-title');
+        const descEl = document.getElementById('ach-desc');
+        const iconEl = document.getElementById('ach-icon');
+
+        if (popup && titleEl && descEl && iconEl) {
+            titleEl.innerText = title;
+            descEl.innerText = desc;
+            iconEl.innerText = icon;
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 5000);
+        }
+    }
+
+    static applyUnlockedFeaturesUI() {
+        const unlocked = this.getUnlockedFeatures();
+        
+        // Contoh Penguncian Fitur di UI (Sesuaikan ID dengan HTML Anda)
+        const aiBox = document.getElementById('premium-ai-analysis-box');
+        if (aiBox) aiBox.style.display = unlocked.includes('ai_analytics') ? 'block' : 'none';
+
+        const btnBle = document.getElementById('btn-ble');
+        if (btnBle) btnBle.disabled = !unlocked.includes('ble_thermometer');
+    }
+}
+
 // Fungsi memuat data profil secara dinamis saat aplikasi dibuka / modal diakses
 /**
  * Memperbarui data pada halaman profil (user-modal) secara dinamis
@@ -4488,6 +4771,53 @@ function buatResepBaruForm() {
         NotifSystem.tambah('resep', 'Lembar Resep Baru', 'Form kalkulator dikosongkan untuk resep baru.', '✨');
     } else {
         alert("Lembar resep baru disiapkan.");
+    }
+}
+
+// ------------------------------------------------------------
+// FITUR FOTO RESEP & BAHAN (GOLDEN RATIO LAYOUT)
+// ------------------------------------------------------------
+function prosesUnggahFotoResep(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const heroContainer = document.getElementById('recipe-hero-photo');
+    const subContainer = document.getElementById('recipe-sub-photo');
+
+    // Foto pertama otomatis menjadi Hero / Hasil Akhir Utama
+    if (files[0] && heroContainer) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            heroContainer.style.background = `url('${e.target.result}') center/cover no-repeat`;
+            heroContainer.innerHTML = `<button type="button" onclick="event.stopPropagation(); hapusFotoResep('hero')" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 0.65rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>`;
+        };
+        reader.readAsDataURL(files[0]);
+    }
+
+    // Foto kedua otomatis menjadi foto pendukung bahan baku
+    if (files[1] && subContainer) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            subContainer.style.background = `url('${e.target.result}') center/cover no-repeat`;
+            subContainer.innerHTML = `<button type="button" onclick="event.stopPropagation(); hapusFotoResep('sub')" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 0.65rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>`;
+        };
+        reader.readAsDataURL(files[1]);
+    }
+}
+
+function hapusFotoResep(tipe) {
+    if (tipe === 'hero') {
+        const heroContainer = document.getElementById('recipe-hero-photo');
+        if (heroContainer) {
+            heroContainer.style.background = '#f8fafc';
+            heroContainer.innerHTML = `<span style="font-size: 1.2rem; color: #94a3b8;">📷</span><span style="font-size: 0.6rem; color: #94a3b8; font-weight: 500; margin-top: 4px;">Foto Utama</span>`;
+        }
+    } else if (tipe === 'sub') {
+        const subContainer = document.getElementById('recipe-sub-photo');
+        if (subContainer) {
+            subContainer.style.background = '#f8fafc';
+            subContainer.innerHTML = `<span style="font-size: 1.2rem; color: #94a3b8;">🖼️</span><span style="font-size: 0.6rem; color: #94a3b8; font-weight: 500; margin-top: 4px;">Foto Pendukung</span>`;
+        }
     }
 }
 
@@ -5277,6 +5607,83 @@ async function tanganiPerubahanResepRealtime(payload) {
     // Berikan notifikasi halus di UI
     if (typeof NotifSystem !== 'undefined') {
         NotifSystem.tambah('sistem', 'Resep Tersinkronisasi', 'Data resep baru saja diperbarui dari server.', '🔄');
+    }
+}
+
+// ------------------------------------------------------------
+// MANAJEMEN TIPS & PANDUAN
+// ------------------------------------------------------------
+// ============================================================
+// MODUL TAMBAHAN: PENCARIAN & BEHAVIOR MONITORING (ANALYTICS)
+// ============================================================
+
+// 1. Fungsi Pencarian Real-Time & Pelacakan Perilaku User
+function filterTipsAndTrack(query) {
+    const keyword = query.toLowerCase().trim();
+    const cards = document.querySelectorAll('.tip-card');
+    let matchCount = 0;
+
+    cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        const dataKeywords = card.getAttribute('data-keywords') || "";
+        if (text.includes(keyword) || dataKeywords.includes(keyword)) {
+            card.style.display = "block";
+            matchCount++;
+        } else {
+            card.style.display = "none";
+        }
+    });
+
+    // Catat perilaku pencarian user untuk keperluan developer monitoring
+    if (keyword.length > 1) {
+        logUserSearchBehavior(keyword, matchCount);
+    } else {
+        document.getElementById('dev-search-stat').innerText = "Monitor Perilaku User: Menampilkan semua tips";
+    }
+}
+
+// 2. Sistem Logging Perilaku Pengguna (Developer Monitoring)
+function logUserSearchBehavior(query, resultsCount) {
+    try {
+        let searchLogs = JSON.parse(localStorage.getItem('developer_search_analytics') || '[]');
+        
+        // Simpan query, timestamp, dan jumlah hasil yang ditemukan
+        searchLogs.push({
+            query: query,
+            resultsFound: resultsCount,
+            timestamp: new Date().toISOString()
+        });
+
+        // Batasi maksimal 100 log terakhir agar memori efisien
+        if (searchLogs.length > 100) searchLogs = searchLogs.slice(-100);
+
+        localStorage.setItem('developer_search_analytics', JSON.stringify(searchLogs));
+
+        // Update teks indikator real-time di panel developer
+        const statEl = document.getElementById('dev-search-stat');
+        if (statEl) {
+            statEl.innerText = `Log Aktif: "${query}" (${resultsCount} hasil ditemukan)`;
+        }
+    } catch (e) {
+        console.warn("Gagal menyimpan log penelusuran:", e);
+    }
+}
+
+// 3. Ekspor Log Perilaku User untuk Analisis Developer
+function exportSearchAnalytics() {
+    try {
+        const rawLogs = localStorage.getItem('developer_search_analytics') || '[]';
+        const blob = new Blob([rawLogs], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `user-search-analytics-${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        alert("Gagal mengekspor log analisis: " + err.message);
     }
 }
 
@@ -8585,35 +8992,52 @@ function toggleModal(modalId) {
 //======================================
 // MANAGEMENT SWITCH TAB & BOTTOM BAR
 //======================================
-function switchTab(target) {
-    // Pastikan semua variabel dideklarasikan menggunakan 'const' agar terbaca oleh sistem
-    const tabTimer = document.getElementById('tab-timer');
-    const tabRecipe = document.getElementById('tab-recipe');
-    
-    // Mencari kontainer konten resep secara fleksibel (id="recipe" atau id="recipe-modal")
+function switchTab(tabName) {
+    // Mencari kontainer resep secara fleksibel (id="recipe" atau id="recipe-modal")
     const recipeModal = document.getElementById('recipe') || document.getElementById('recipe-modal');
-    
-    if (target === 'recipe') {
-        if (tabTimer) tabTimer.classList.remove('active-tab');
-        if (tabRecipe) tabRecipe.classList.add('active-tab');
-        
+    const tipsModal = document.getElementById('tips');
+
+    // 1. Hapus kelas aktif dari semua item bottom bar
+    document.querySelectorAll('.bottom-item').forEach(item => {
+        item.classList.remove('active-tab');
+    });
+
+    // 2. Beri tanda aktif pada item yang diklik
+    const activeItem = document.getElementById(`tab-${tabName}`);
+    if (activeItem) {
+        activeItem.classList.add('active-tab');
+    }
+
+    // 3. Sembunyikan semua halaman sekunder terlebih dahulu
+    if (recipeModal) {
+        recipeModal.style.display = 'none';
+        recipeModal.classList.remove('active');
+    }
+    if (tipsModal) {
+        tipsModal.style.display = 'none';
+        tipsModal.classList.remove('active');
+    }
+
+    // 4. Tampilkan halaman berdasarkan tab yang dipilih
+    if (tabName === 'recipe') {
         if (recipeModal) {
+            recipeModal.style.display = 'flex';
             recipeModal.classList.add('active');
         } else {
             console.warn("Kontainer halaman resep ('recipe' / 'recipe-modal') tidak ditemukan di HTML.");
         }
         
-        // Jalankan kalkulator adonan jika fungsinya ada
+        // Tetap jalankan kalkulator adonan saat tab resep dibuka
         if (typeof calculateIngredients === 'function') {
             calculateIngredients();
         }
-    } else {
-        if (tabRecipe) tabRecipe.classList.remove('active-tab');
-        if (tabTimer) tabTimer.classList.add('active-tab');
-        
-        if (recipeModal) {
-            recipeModal.classList.remove('active');
+    } else if (tabName === 'tips') {
+        if (tipsModal) {
+            tipsModal.style.display = 'flex';
+            tipsModal.classList.add('active');
         }
+    } else if (tabName === 'timer') {
+        // Kembali ke halaman utama timer (modal tertutup otomatis)
     }
 }
 
@@ -8955,6 +9379,101 @@ function showToast(msg, duration = 2000) {
     // non-fatal
     console.warn('showToast error', e);
   }
+}
+
+// ==========================================
+// FUNGSI PENGIRIMAN SARAN KE SUPABASE + POP-UP
+// ==========================================
+async function kirimSaran() {
+    const type = document.getElementById('feedback-type').value;
+    const text = document.getElementById('feedback-text').value.trim();
+    const btn = document.querySelector('button[onclick="kirimSaran()"]');
+    
+    if (!text) {
+        alert("Pesan tidak boleh kosong. Silakan tuliskan masukan Anda.");
+        return;
+    }
+
+    const originalText = btn.innerText;
+    btn.innerText = "MENGIRIM...";
+    btn.disabled = true;
+
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        const { error } = await supabase.from('app_feedback').insert([
+            { 
+              user_id: user ? user.id : null, 
+              kategori: type, 
+              pesan: text,
+              created_at: new Date().toISOString()
+            }
+        ]);
+
+        if (error) throw error;
+
+        // 1. Reset form terlebih dahulu
+        document.getElementById('feedback-text').value = '';
+        
+        // 2. Tutup modal form "Berikan Saran"
+        if (typeof toggleModal === 'function') {
+            toggleModal('feedback-modal'); 
+        }
+
+        // 3. Tampilkan Pop-up Konfirmasi Berhasil yang Elegan
+        tampilkanPopupSukses("Terima Kasih!", "Saran atau laporan Anda telah berhasil dikirim ke sistem kami.");
+
+    } catch (err) {
+        console.error("Gagal mengirim saran ke Supabase:", err);
+        alert("Gagal mengirim pesan: " + err.message);
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+}
+
+// Fungsi pendukung untuk memunculkan pop-up
+function tampilkanPopupSukses(judul, pesan) {
+    // Cek apakah elemen pop-up sudah ada, jika belum buat secara otomatis
+    let popupOverlay = document.getElementById('custom-success-popup');
+    if (!popupOverlay) {
+        popupOverlay = document.createElement('div');
+        popupOverlay.id = 'custom-success-popup';
+        popupOverlay.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); display: flex; align-items: center;
+            justify-content: center; z-index: 99999; opacity: 0; transition: opacity 0.3s ease;
+        `;
+        popupOverlay.innerHTML = `
+            <div style="background: #fff; padding: 24px; border-radius: 16px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: scale(0.9); transition: transform 0.3s ease;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">✨</div>
+                <h3 id="popup-title" style="margin: 0 0 8px 0; color: #3e2723; font-size: 1.1rem; font-weight: bold;"></h3>
+                <p id="popup-message" style="margin: 0 0 20px 0; color: #666; font-size: 0.85rem; line-height: 1.4;"></p>
+                <button onclick="tutupPopupSukses()" style="background: #e67e22; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);">OK, MENGERTI</button>
+            </div>
+        `;
+        document.body.appendChild(popupOverlay);
+    }
+
+    document.getElementById('popup-title').innerText = judul;
+    document.getElementById('popup-message').innerText = pesan;
+
+    popupOverlay.style.display = 'flex';
+    setTimeout(() => {
+        popupOverlay.style.opacity = '1';
+        popupOverlay.firstElementChild.style.transform = 'scale(1)';
+    }, 10);
+}
+
+function tutupPopupSukses() {
+    const popupOverlay = document.getElementById('custom-success-popup');
+    if (popupOverlay) {
+        popupOverlay.style.opacity = '0';
+        popupOverlay.firstElementChild.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            popupOverlay.style.display = 'none';
+        }, 300);
+    }
 }
 
 // ============================================================
@@ -9735,19 +10254,6 @@ window.toggleRecipe = function() {
         }
     }
 };
-
-// ============================================
-// MENANGANI AKTIF/NONAKTIF ROW DENGAN CHECKBOX
-// ============================================
-//==============================================================================
-
-// =====================================
-// LOGIK MODAL UNTUK VARIATION DROPDOWN
-//======================================
-// ====================================================================================
-// SCRIPT HALAMAN RESEP - UPDATE PESAN TIPS DINAMIS BERDASARKAN PILIHAN BAHAN & VARIASI
-// ====================================================================================
-
 
 //================================
 // FUNGSI ALARM
@@ -10695,7 +11201,6 @@ window.eksporResepKePDF = function() {
     }, 300);
 };
 
-
 // Panggil fungsi ini saat data profil diperbarui atau saat halaman dimuat
 perbaruiTampilanUnitUsaha();
 
@@ -11169,8 +11674,6 @@ window.hubungkanKeSensorBluetoothProofer = async function() {
     }
 };
 
-
-
 /**
  * Fungsi untuk mengatur perpindahan tab internal folder bertumpuk (Business Analysis Insight)
  * @param {string} tabId - Nama tab target ('profit-margin', 'food-cost', atau 'unilever-badge')
@@ -11243,9 +11746,6 @@ if (typeof swapRightStats === 'function') {
 }
 
 window.tambahNotifikasi = tambahNotifikasi;
-
-
-
 
 /**
  * =========================================================================
@@ -11796,10 +12296,6 @@ if (typeof MAX_RESEP_TERSIMPAN === 'undefined') {
     const MAX_RESEP_TERSIMPAN = 10; 
 }
 
-
-
-
-
 // ==========================================
 // 4. FUNGSI EKSPOR & IMPOR FILE JSON
 // ==========================================
@@ -12182,8 +12678,6 @@ window.muatResepTersimpan = async function(resepId) {
     }
 };
 
-
-
 // Daftarkan ke semua alias fungsi agar tombol di HTML tidak meleset
 window.hapusResep = eksekusiHapusResepMaster;
 window.hapusResepTersimpan = eksekusiHapusResepMaster;
@@ -12300,7 +12794,6 @@ window.startProofing = startProofing;
     }
 })();
 
-
 (function(){
     function parseSimpleCall(code, el) {
         // match patterns like funcName('arg', this, 123)
@@ -12380,10 +12873,6 @@ window.startProofing = startProofing;
     }, true);
 })();
 
-
-
-
-
 window.tampilkanPopupAchievement = function(judul, desc) {
     console.log("Fungsi pop-up dipanggil dengan data:", judul); // Cek apakah baris ini muncul di console
     
@@ -12395,7 +12884,6 @@ window.tampilkanPopupAchievement = function(judul, desc) {
     
     popup.classList.add('show');
 }
-
 
 // Mengaitkan fungsi baru ke elemen DOM
 document.getElementById('btn-mode-initial')?.addEventListener('click', () => setProofingMode('Initial', 60));
