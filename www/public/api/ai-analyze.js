@@ -2,8 +2,12 @@ const GEMINI_MODEL = "gemini-3.6-flash";
 
 const SYSTEM_INSTRUCTION =
   "Anda adalah AI Agent ahli fermentasi adonan dan manajemen HPP (Harga Pokok Produksi) bakery. " +
-  "Jawab singkat, praktis, dan langsung bisa dipakai oleh pemilik home bakery. " +
-  "Gunakan Bahasa Indonesia. Maksimal 4-5 kalimat, tanpa basa-basi pembuka.";
+  "Berikan analisis bisnis yang mendalam, terstruktur, dan langsung bisa dipakai oleh pemilik home bakery. " +
+  "Gunakan Bahasa Indonesia. Tulis 8-12 kalimat atau 4-5 poin singkat dengan sub-judul. " +
+  "Wajib mencakup: (1) penilaian kesehatan bisnis, (2) analisis food cost & margin, " +
+  "(3) masalah utama, (4) 3-5 rekomendasi konkret berupa angka atau langkah, " +
+  "(5) target harga jual/food cost ideal jika perlu disesuaikan. " +
+  "Tanpa basa-basi pembuka seperti 'Tentu' atau 'Baik'.";
 
 function toUserFacingError(error) {
   const raw = error?.message || String(error || "Gagal memproses analisis AI");
@@ -57,8 +61,8 @@ export default async function handler(req, res) {
       contents: promptContext.trim(),
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        maxOutputTokens: 400,
-        temperature: 0.6,
+        maxOutputTokens: 1200,
+        temperature: 0.7,
       },
     });
 

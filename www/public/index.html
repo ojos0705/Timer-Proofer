@@ -8366,7 +8366,7 @@ async function mintaAnalisisAISungguhan() {
     const untungBersih = document.getElementById('profit-bersih')?.innerText || 'Rp 0';
 
     const promptContext =
-        `Analisis kondisi bisnis resep bakery berikut dan berikan insight + rekomendasi konkret:\n` +
+        `Analisis mendalam kondisi bisnis resep bakery berikut. Berikan insight detail dan rekomendasi konkret:\n` +
         `- Nama resep: ${namaResep}\n` +
         `- HPP (food cost) per pcs: ${hppPerPcs}\n` +
         `- Harga jual per pcs: Rp ${parseFloat(hargaJual) || 0}\n` +
@@ -8374,7 +8374,18 @@ async function mintaAnalisisAISungguhan() {
         `- Profit margin: ${profitMarginPersen}\n` +
         `- Estimasi keuntungan kotor per batch: ${untungBersih}\n` +
         `- Berat adonan per pcs: ${beratPerPcs} g\n\n` +
-        `Fokus jawaban pada: apakah harga & food cost ini sehat untuk bisnis home bakery, dan langkah konkret apa yang sebaiknya diambil.`;
+        `Susun jawaban dengan format:\n` +
+        `📊 Ringkasan Kondisi\n` +
+        `💰 Analisis Food Cost & Margin\n` +
+        `⚠️ Masalah Utama\n` +
+        `✅ Rekomendasi Konkret (minimal 3 langkah dengan angka jika memungkinkan)\n` +
+        `🎯 Target Ideal (harga jual & food cost yang disarankan)`;
+
+    const formatHasilAI = (teks) => {
+        return teks
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+    };
 
     const tampilkanFallback = (alasan) => {
         const pesan = typeof alasan === 'string' ? alasan : 'AI Agent sedang tidak tersedia';
@@ -8397,7 +8408,7 @@ async function mintaAnalisisAISungguhan() {
 
     // 2. Panggil endpoint AI sungguhan, dengan timeout supaya tidak menggantung di app native
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     try {
         const response = await fetch(getVercelApiUrl('/api/ai-analyze'), {
@@ -8423,7 +8434,7 @@ async function mintaAnalisisAISungguhan() {
 
         resultBox.innerHTML =
             `<div style="font-weight:700; color:#6c3483; margin-bottom:6px; font-size:0.8rem;">🤖 Analisis AI Mendalam</div>` +
-            `<div>${data.result.replace(/\n/g, '<br>')}</div>`;
+            `<div style="line-height:1.6;">${formatHasilAI(data.result)}</div>`;
     } catch (error) {
         clearTimeout(timeoutId);
         // offline, timeout (AbortError), atau error jaringan lainnya
