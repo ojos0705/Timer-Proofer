@@ -3,7 +3,7 @@ const SYSTEM_INSTRUCTION =
   "Jawab singkat, praktis, dan langsung bisa dipakai oleh pemilik home bakery. " +
   "Gunakan Bahasa Indonesia. Maksimal 4-5 kalimat, tanpa basa-basi pembuka.";
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   // Selalu set header CORS di awal
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");

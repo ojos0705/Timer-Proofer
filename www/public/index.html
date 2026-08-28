@@ -51,7 +51,8 @@
     --radius-sm: 8px;
     --radius-md: 13px;
     --radius-lg: 21px;}
-        /* STYLE SELURUH PAGE*/
+
+        /* STYLE SELURUH PAGE */
         body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Hanya font yang ditambah */
         background-color: var(--cream); 
         color: var(--chocolate);  
@@ -7447,6 +7448,22 @@ function processGeocode(geoData, lat, lon) {
     };
 }
 
+// URL serverless Vercel: same-origin di web/PWA (hindari CORS), produksi untuk app native
+const VERCEL_API_ORIGIN = 'https://timer-proofer.vercel.app';
+function getVercelApiUrl(apiPath) {
+    const path = apiPath.startsWith('/') ? apiPath : `/${apiPath}`;
+    const isCapacitorNative = Boolean(
+        window.Capacitor?.isNativePlatform?.() ||
+        location.protocol === 'capacitor:' ||
+        (location.hostname === 'localhost' && location.protocol === 'https:')
+    );
+    if (isCapacitorNative) return `${VERCEL_API_ORIGIN}${path}`;
+    if (/\.vercel\.app$/i.test(location.hostname) || location.hostname === 'timer-proofer.vercel.app') {
+        return `${location.origin}${path}`;
+    }
+    return `${VERCEL_API_ORIGIN}${path}`;
+}
+
 // 1. Fungsi Utama Mengambil Data Backend Vercel & Distribusi Ke Grid UI Masing-Masing
 async function fetchLocationAndWeather(lat, lon, source) {
     window.DEBUG && console.log(`Mengambil cuaca dari sumber: ${source} (${lat}, ${lon})`);
@@ -7463,7 +7480,7 @@ async function fetchLocationAndWeather(lat, lon, source) {
 
     try {
         // 1. Ambil data dari serverless proxy Vercel
-        const url = `https://timer-proofer.vercel.app/api/weather?lat=${lat}&lon=${lon}`;
+        const url = `${getVercelApiUrl('/api/weather')}?lat=${lat}&lon=${lon}`;
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status} - Gagal mengambil data via serverless proxy Vercel`);
         
@@ -8375,7 +8392,7 @@ async function mintaAnalisisAISungguhan() {
     const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
-        const response = await fetch('https://timer-proofer.vercel.app/api/ai-analyze', {
+        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ promptContext }),
