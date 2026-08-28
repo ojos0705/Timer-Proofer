@@ -1550,18 +1550,18 @@ body {
         <div class="inputs-wrapper">
             <div class="form-group" id="group-name">
                 <label for="input-name">Nama Lengkap</label>
-                <input type="text" id="input-name" placeholder="Contoh: Budi Bakery">
+                <input type="text" id="input-name" name="name" autocomplete="name" placeholder="Contoh: Budi Bakery">
             </div>
             
             <div class="form-group">
                 <label for="input-email">Email</label>
-                <input type="email" id="input-email" required placeholder="nama@email.com">
+                <input type="email" id="input-email" name="email" autocomplete="email" required placeholder="nama@email.com">
             </div>
             
             <div class="form-group">
                 <label for="input-password">Kata Sandi</label>
                 <div style="position: relative; display: flex; align-items: center; width: 100%; margin-bottom: 8px;">
-                    <input type="password" id="input-password" required placeholder="Minimal 6 karakter" style="width: 100%; padding: 6px 36px 6px 8px; border-radius: 4px; border: 1px solid rgba(78, 52, 46, 0.2); background: #fff; font-size: 13px; box-sizing: border-box;">
+                    <input type="password" id="input-password" name="password" autocomplete="current-password" required placeholder="Minimal 6 karakter" style="width: 100%; padding: 6px 36px 6px 8px; border-radius: 4px; border: 1px solid rgba(78, 52, 46, 0.2); background: #fff; font-size: 13px; box-sizing: border-box;">
                     
                     <!-- Tombol Ikon Mata untuk Toggle Password -->
                     <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0; color: #888;" title="Tampilkan/Sembunyikan Password">
@@ -1570,7 +1570,7 @@ body {
             </div>
             <!-- Fitur Ingat Saya (Remember Me) -->
             <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px; margin-bottom: 12px;">
-                <input type="checkbox" id="remember-me-checkbox" style="width: 16px; height: 16px; cursor: pointer; accent-color: #3e2723;">
+                <input type="checkbox" id="remember-me-checkbox" name="remember-me" style="width: 16px; height: 16px; cursor: pointer; accent-color: #3e2723;">
                 <label for="remember-me-checkbox" style="font-size: 0.8rem; color: #3e2723; cursor: pointer; user-select: none;">
                     Ingat email & kata sandi
                 </label>
@@ -1590,7 +1590,7 @@ body {
         </p>
         
         <div class="form-group">
-            <input type="text" id="input-otp" placeholder="• • • • • •" maxlength="6" style="text-align: center; font-size: 1.4rem; letter-spacing: 8px; font-weight: 800; padding: 15px;">
+            <input type="text" id="input-otp" name="otp" autocomplete="one-time-code" inputmode="numeric" placeholder="• • • • • •" maxlength="6" style="text-align: center; font-size: 1.4rem; letter-spacing: 8px; font-weight: 800; padding: 15px;">
         </div>
         
         <button type="button" class="btn-submit" id="btn-verify-otp" onclick="verifyEmailOtp()">VERIFIKASI KODE</button>
@@ -3147,7 +3147,7 @@ body {
         </div>
         
         <!-- Filter Pills / Kategori Cepat -->
-        <div style="display: flex; gap: 6px; overflow-x: auto; pb-1; -ms-overflow-style: none; scrollbar-width: none;" class="no-scrollbar">
+        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; -ms-overflow-style: none; scrollbar-width: none;" class="no-scrollbar">
             <button onclick="filterByCategory('all')" class="tip-chip active" style="background: var(--chocolate, #4e342e); color: #fff; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;">Semua</button>
             <button onclick="filterByCategory('bahan')" class="tip-chip" style="background: #f1f5f9; color: #475569; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;">🌾 Bahan Utama</button>
             <button onclick="filterByCategory('teknik')" class="tip-chip" style="background: #f1f5f9; color: #475569; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;">🍳 Teknik &amp; Goreng</button>
@@ -3922,6 +3922,7 @@ function switchMode(mode) {
         if (nameGroup) nameGroup.classList.remove('active-form'); 
         
         document.getElementById('input-name')?.removeAttribute('required');
+        document.getElementById('input-password')?.setAttribute('autocomplete', 'current-password');
         submitBtn.innerText = "MASUK";
         btnLogin.classList.add('active');
         btnRegister.classList.remove('active');
@@ -3933,6 +3934,7 @@ function switchMode(mode) {
         if (nameGroup) nameGroup.classList.add('active-form'); 
         
         document.getElementById('input-name')?.setAttribute('required', 'true');
+        document.getElementById('input-password')?.setAttribute('autocomplete', 'new-password');
         submitBtn.innerText = "DAFTAR";
         btnRegister.classList.add('active');
         btnLogin.classList.remove('active');
