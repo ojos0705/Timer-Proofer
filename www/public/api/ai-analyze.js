@@ -1,13 +1,15 @@
-const { GoogleGenAI } = require("@google/genai");
+// Contoh Endpoint Backend (Node.js / Vercel Serverless)
+import { GoogleGenAI } from "@google/genai";
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const { promptContext } = req.body;
-
+    
+    // Inisialisasi SDK Google Gen AI menggunakan Environment Variable yang aman di server
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const response = await ai.models.generateContent({
@@ -22,4 +24,4 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-};
+}
