@@ -24,6 +24,7 @@
     "@capacitor/network": "^8.0.1",
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/share": "^8.0.1",
+    "@google/genai": "^2.19.0",
     "axios": "^1.16.1",
     "cordova-plugin-printer": "^0.8.0",
     "cors": "^2.8.6",
