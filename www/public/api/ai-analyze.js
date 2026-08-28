@@ -4,6 +4,7 @@ const SYSTEM_INSTRUCTION =
   "Gunakan Bahasa Indonesia. Maksimal 4-5 kalimat, tanpa basa-basi pembuka.";
 
 module.exports = async function handler(req, res) {
+  // Selalu set header CORS di awal
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader(
@@ -11,8 +12,9 @@ module.exports = async function handler(req, res) {
     "Content-Type, Authorization, Accept, X-Requested-With"
   );
 
+  // Tangani preflight OPTIONS dengan status 200 OK yang ramah bagi browser
   if (req.method === "OPTIONS") {
-    return res.status(204).end();
+    return res.status(200).send("OK");
   }
 
   if (req.method !== "POST") {
@@ -34,9 +36,10 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Load the ESM SDK lazily so CommonJS Vercel functions can answer preflight requests.
+    // Load ESM SDK secara lazy agar aman di lingkungan CommonJS Vercel
     const { GoogleGenAI } = await import("@google/genai");
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: promptContext.trim(),
@@ -55,6 +58,6 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ result: result.trim() });
   } catch (error) {
     console.error("ai-analyze error:", error);
-    return res.status(500).json({ error: "Gagal memproses analisis AI, coba lagi nanti" });
+    return res.status(500).json({ error: error.message || "Gagal memproses analisis AI" });
   }
 };
