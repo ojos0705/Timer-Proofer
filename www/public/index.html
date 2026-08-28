@@ -8377,14 +8377,22 @@ async function mintaAnalisisAISungguhan() {
         `Fokus jawaban pada: apakah harga & food cost ini sehat untuk bisnis home bakery, dan langkah konkret apa yang sebaiknya diambil.`;
 
     const tampilkanFallback = (alasan) => {
+        const pesan = typeof alasan === 'string' ? alasan : 'AI Agent sedang tidak tersedia';
         // Pakai kembali insight rule-based yang sudah ada (selalu tersedia & instan)
         // sebagai jaring pengaman kalau panggilan AI sungguhan gagal.
         const teksLokal = document.getElementById('text-analysis-fc')?.innerText
             || document.getElementById('text-analysis-pm')?.innerText
             || 'Analisis instan tidak tersedia.';
         resultBox.innerHTML =
-            `<div style="color:#e67e22; font-weight:700; margin-bottom:4px; font-size:0.72rem;">⚠️ ${alasan}, menampilkan analisis instan:</div>` +
+            `<div style="color:#e67e22; font-weight:700; margin-bottom:4px; font-size:0.72rem;">⚠️ ${pesan}, menampilkan analisis instan:</div>` +
             `<div>${teksLokal}</div>`;
+    };
+
+    const ekstrakPesanError = (data, status) => {
+        if (typeof data?.error === 'string') return data.error;
+        if (typeof data?.error?.message === 'string') return data.error.message;
+        if (typeof data?.message === 'string') return data.message;
+        return `Server Error: ${status}`;
     };
 
     // 2. Panggil endpoint AI sungguhan, dengan timeout supaya tidak menggantung di app native
@@ -8400,10 +8408,16 @@ async function mintaAnalisisAISungguhan() {
         });
         clearTimeout(timeoutId);
 
-        const data = await response.json().catch(() => ({}));
+        const rawText = await response.text();
+        let data = {};
+        try {
+            data = rawText ? JSON.parse(rawText) : {};
+        } catch (_) {
+            console.error('Server mengembalikan respons non-JSON:', rawText);
+        }
 
         if (!response.ok || !data.result) {
-            tampilkanFallback(data.error || 'AI Agent sedang tidak tersedia');
+            tampilkanFallback(ekstrakPesanError(data, response.status));
             return;
         }
 

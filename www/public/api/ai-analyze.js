@@ -1,7 +1,20 @@
+const GEMINI_MODEL = "gemini-3.6-flash";
+
 const SYSTEM_INSTRUCTION =
   "Anda adalah AI Agent ahli fermentasi adonan dan manajemen HPP (Harga Pokok Produksi) bakery. " +
   "Jawab singkat, praktis, dan langsung bisa dipakai oleh pemilik home bakery. " +
   "Gunakan Bahasa Indonesia. Maksimal 4-5 kalimat, tanpa basa-basi pembuka.";
+
+function toUserFacingError(error) {
+  const raw = error?.message || String(error || "Gagal memproses analisis AI");
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed?.error?.message === "string") return parsed.error.message;
+  } catch (_) {
+    // bukan JSON, pakai pesan asli
+  }
+  return raw;
+}
 
 export default async function handler(req, res) {
   // Selalu set header CORS di awal
@@ -36,12 +49,11 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Load ESM SDK secara lazy agar aman di lingkungan CommonJS Vercel
     const { GoogleGenAI } = await import("@google/genai");
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    
+
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: GEMINI_MODEL,
       contents: promptContext.trim(),
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
@@ -58,6 +70,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ result: result.trim() });
   } catch (error) {
     console.error("ai-analyze error:", error);
-    return res.status(500).json({ error: error.message || "Gagal memproses analisis AI" });
+    return res.status(500).json({ error: toUserFacingError(error) });
   }
 };
