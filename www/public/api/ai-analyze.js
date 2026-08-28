@@ -24,12 +24,6 @@ function setCorsHeaders(res) {
 }
 
 export default async function handler(req, res) {
-  setCorsHeaders(res);
-
-  // Preflight request dari browser/WebView untuk POST lintas origin
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
