@@ -1520,6 +1520,10 @@ body {
     filter: brightness(0.9);
 }
 
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
     </style>
 </head>
 <body class="logged-out">
@@ -3125,108 +3129,187 @@ body {
 -->
 
 <!-- TAMBAHKAN HALAMAN / MODAL TIPS DI DALAM APLIKASI -->
-<div id="tips" class="tab-content recipe-modal" style="display: none; padding: 0; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: var(--cream); font-family: 'Segoe UI', sans-serif;">
+<div id="tips" class="tab-content recipe-modal active" style="display: flex; padding: 0px; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: var(--cream, #fdfbf7); font-family: 'Segoe UI', system-ui, sans-serif;">
     
     <!-- Header Halaman Tips -->
-    <div class="article-modal-header" style="padding: 15px 20px 10px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: var(--cream); position: sticky; top: 0; z-index: 10;">
-        <h3 style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 10px; font-size: 1.1rem;">
-            <span>💡</span> Tips & Troubleshooting Donat
+    <div class="article-modal-header" style="padding: 16px 20px; border-bottom: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: var(--cream, #fdfbf7); position: sticky; top: 0; z-index: 10;">
+        <h3 style="margin: 0; color: var(--chocolate, #4e342e); display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 700;">
+            <span style="font-size: 1.2rem;">💡</span> Pusat Edukasi &amp; Troubleshooting
         </h3>
-        <button class="article-modal-close" onclick="switchTab('timer')" style="font-size: 28px; background: none; border: none; color: var(--chocolate); cursor: pointer; line-height: 1;">&times;</button>
+        <button class="article-modal-close" onclick="switchTab('timer')" style="font-size: 24px; background: rgba(0,0,0,0.04); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--chocolate, #4e342e); cursor: pointer; transition: background 0.2s;">&times;</button>
     </div>
 
-    <!-- Fitur Pencarian & Developer Analytics Monitor -->
-    <div style="padding: 12px 15px; background: #fff; border-bottom: 1px solid #e2e8f0; flex-shrink: 0;">
-        <div style="position: relative; display: flex; align-items: center;">
-            <span style="position: absolute; left: 12px; font-size: 0.9rem;">🔍</span>
-            <input type="text" id="tips-search-input" oninput="filterTipsAndTrack(this.value)" placeholder="Cari tips ragi, adonan, menggoreng, glaze..." style="width: 100%; padding: 10px 10px 10px 36px; border: 1.5px solid #F2D2A9; border-radius: 10px; font-size: 0.85rem; outline: none; color: var(--chocolate); background: #fdf8f4;">
+    <!-- Panel Pencarian & Filter Kategori Cepat (Chips) -->
+    <div style="padding: 12px 16px; background: #fff; border-bottom: 1px solid #eef2f6; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+        <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
+            <span style="position: absolute; left: 14px; font-size: 0.9rem; color: #94a3b8;">🔍</span>
+            <input type="text" id="tips-search-input" oninput="filterTipsAndTrack(this.value)" placeholder="Cari masalah, ragi, tepung, suhu, SP..." style="width: 100%; padding: 10px 12px 10px 38px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 0.85rem; outline: none; color: var(--chocolate, #4e342e); background: #f8fafc; transition: all 0.2s;">
         </div>
-        <!-- Panel Monitor Developer (Menampilkan statistik pencarian real-time) -->
-        <div id="dev-analytics-panel" style="margin-top: 6px; font-size: 0.65rem; color: #888; display: flex; justify-content: space-between; align-items: center;">
-            <span id="dev-search-stat">Monitor Perilaku User: Belum ada kata kunci dicari</span>
-            <button type="button" onclick="exportSearchAnalytics()" style="background: none; border: none; color: var(--accent); font-weight: 700; cursor: pointer; font-size: 0.65rem;">Ekspor Log</button>
+        
+        <!-- Filter Pills / Kategori Cepat -->
+        <div style="display: flex; gap: 6px; overflow-x: auto; pb-1; -ms-overflow-style: none; scrollbar-width: none;" class="no-scrollbar">
+            <button onclick="filterByCategory('all')" class="tip-chip active" style="background: var(--chocolate, #4e342e); color: #fff; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;">Semua</button>
+            <button onclick="filterByCategory('bahan')" class="tip-chip" style="background: #f1f5f9; color: #475569; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;">🌾 Bahan Utama</button>
+            <button onclick="filterByCategory('teknik')" class="tip-chip" style="background: #f1f5f9; color: #475569; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;">🍳 Teknik &amp; Goreng</button>
+            <button onclick="filterByCategory('solusi')" class="tip-chip" style="background: #f1f5f9; color: #475569; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;">⚠️ Mitos &amp; Solusi</button>
+            <button onclick="filterByCategory('simpan')" class="tip-chip" style="background: #f1f5f9; color: #475569; border: none; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s;">📦 Penyimpanan</button>
         </div>
     </div>
 
-    <!-- Konten Tips (Bisa Di-scroll) -->
-    <div class="recipe-content" id="tips-container-list" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px;">
+    <!-- Konten Tips (Model Accordion & Card Modern) -->
+    <div class="recipe-content" id="tips-container-list" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px;">
 
-        <!-- 1. PEMILIHAN BAHAN UTAMA -->
-        <div class="tip-card" data-keywords="ragi mauripan tepung telur gula cairan susu pelembut kentang labu sp halal">
-            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🛒 Cara Memilih & Menggunakan Bahan</h4>
-            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
-                <li><strong>Cara Memilih Ragi:</strong> Gunakan ragi aktif segar. Ragi Mauripan 3 gr ideal untuk takaran tepung 250 gr. Kebanyakan ragi menyebabkan adonan lembek, mudah over-proofing, dan donat berminyak saat digoreng.</li>
-                <li><strong>Cara Memilih Tepung:</strong> Gunakan tepung terigu protein tinggi untuk membentuk struktur gluten yang kuat dan menghasilkan *white ring* yang kokoh.</li>
-                <li><strong>Cara Menggunakan Telur:</strong> Gunakan kuning telur untuk memberikan kelembapan, kelembutan (*richness*), dan warna kuning alami pada remah donat.</li>
-                <li><strong>Cara Memilih Gula:</strong> Gula berfungsi memberi warna kulit donat agar lebih cantik. Tanpa gula, donat cenderung pucat. Kendalikan takarannya agar fermentasi stabil.</li>
-                <li><strong>Cara Memilih Cairan:</strong> Cairan maksimal 60% dari berat adonan kering agar mudah di-*rounding* dan dikunci bagian bawahnya. Gunakan air es atau susu dingin untuk menjaga suhu akhir adonan tetap di kisaran 24°C–27°C.</li>
-                <li><strong>Cara Memilih Susu (Cair/Bubuk):</strong> Susu bubuk full cream atau susu cair menambah aroma gurih dan tekstur empuk yang tahan lama.</li>
-                <li><strong>Cara Memilih Pelembut (Kentang, Labu, Biji, SP):</strong> Penambahan kentang atau labu kukus (20-30% dari berat terigu) mengikat air lebih lama sehingga donat empuk berhari-hari. Gunakan pelembut secukupnya sesuai dosis kemasan.</li>
-                <li><strong>Sertifikasi:</strong> Selalu gunakan produk halal untuk menjamin kualitas dan ketenangan produksi.</li>
-            </ul>
+        <!-- 1. PEMILIHAN RAGI -->
+        <div class="tip-card" data-category="bahan" data-keywords="ragi mauripan saf instant gold label aktif kering segar gula donat roti bakpau" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🔬</span> 1. Panduan Pemilihan Ragi (Yeast)
+                </h4>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+            </div>
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
+                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
+                    <li style="margin-bottom: 6px;"><strong>Jenis Berdasarkan Bentuk:</strong> <em>Ragi Instan</em> (praktis, campur langsung seperti Saf-Instant/Mauripan); <em>Ragi Aktif Kering</em> (wajib dilarutkan air hangat 35°C–40°C + sedikit gula); <em>Ragi Segar/Basah</em> (blok padat, super cepat namun singkat di kulkas).</li>
+                    <li style="margin-bottom: 6px;"><strong>Kadar Gula &amp; Gold Label:</strong> Gunakan ragi reguler (label merah) untuk adonan rendah gula (&lt;8%). Untuk adonan kaya gula seperti donat manis &amp; brioche (&gt;8%–10%), wajib <strong>Ragi Tahan Gula (Gold Label)</strong> agar sel ragi tidak dehidrasi.</li>
+                    <li style="margin-bottom: 6px;"><strong>Penerapan:</strong> Donat &amp; roti manis wajib gold label karena lemak/kuning telur tinggi. Bakpau &amp; roti tawar cukup ragi reguler.</li>
+                    <li><strong>Penyimpanan:</strong> Wadah kedap udara di kulkas/freezer setelah dibuka.</li>
+                </ul>
+            </div>
         </div>
 
-        <!-- 2. PENGOLAHAN ADONAN & TEKNIK -->
-        <div class="tip-card" data-keywords="adonan lengket suhu play dough kalis double resting degasing">
-            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🥣 Pengolahan & Suhu Adonan</h4>
-            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
-                <li><strong>Adonan Lengket:</strong> Pastikan tangan bersih dan kering agar adonan mudah lepas dari jari saat dipegang.</li>
-                <li><strong>Suhu Adonan (Dough Temperature):</strong> Target suhu akhir setelah diuleni adalah 24°C – 27°C. Gunakan cairan dingin untuk meredam panas gesekan mixer.</li>
-                <li><strong>Konsistensi Adonan:</strong> Adonan yang pas harus padat seperti *play dough*. Jika bertekstur seperti *slime*, cairan berlebih; jika terlalu keras, kekurangan cairan.</li>
-                <li><strong>Double Resting & Degasing:</strong> Tanpa mixer, satukan bahan lalu *resting* 60 menit. Lakukan *degasing* (pembuangan gas) secara presisi dengan alat yang rata agar pori donat tidak belang.</li>
-            </ul>
+        <!-- 2. PEMILIHAN TEPUNG -->
+        <div class="tip-card" data-category="bahan" data-keywords="tepung protein tinggi sedang rendah cakra kembar segitiga biru kunci gluten" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🌾</span> 2. Panduan Pemilihan Tepung Terigu
+                </h4>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+            </div>
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
+                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
+                    <li style="margin-bottom: 6px;"><strong>Klasifikasi Protein:</strong> Tinggi (&gt;11%–13%, misal Cakra Kembar) untuk gluten kuat; Sedang (10%–11%, misal Segitiga Biru) untuk struktur moderat; Rendah (&lt;9%–10%, misal Kunci Biru) untuk tekstur empuk.</li>
+                    <li style="margin-bottom: 6px;"><strong>Donat:</strong> Protein tinggi untuk struktur kokoh &amp; <em>white ring</em> tegas. Campur protein tinggi &amp; sedang (1:1 / 70:30) untuk tekstur lumer di mulut.</li>
+                    <li><strong>Bakpau &amp; Roti:</strong> Roti wajib protein tinggi tahan *oven spring*. Bakpau pakai protein rendah (+ pati gandum/Tang Mien) agar putih mulus dan tidak alot.</li>
+                </ul>
+            </div>
         </div>
 
-        <!-- 3. ROUNDING & PEMBULATAN -->
-        <div class="tip-card" data-keywords="rounding pembulatan suhu tepung dasar">
-            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">⚪ Rounding & Pembulatan</h4>
-            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
-                <li><strong>Suhu Ruangan Rounding:</strong> Ideal di 25°C – 28°C. Jika di atas 30°C, mentega dalam adonan meleleh dan membuat adonan lengket serta sulit dibulatkan.</li>
-                <li><strong>Kepadatan Rounding:</strong> Semakin padat *rounding*, semakin lama proses *proofing* dan hasil akhir struktur serat semakin bagus. Rounding padat juga mencegah lapisan kulit terbuka atau bocor saat digoreng.</li>
-                <li><strong>Fungsi Tepung di Dasar:</strong> Taburan tepung tipis di dasar adonan saat *rounding* mencegah adonan menempel di alas kerja.</li>
-            </ul>
+        <!-- 3. PENGGUNAAN TELUR -->
+        <div class="tip-card" data-category="bahan" data-keywords="telur kuning putih lesitin kelembapan donat roti bakpau" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🥚</span> 3. Peran &amp; Penggunaan Telur
+                </h4>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+            </div>
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
+                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
+                    <li style="margin-bottom: 6px;"><strong>Kuning vs Putih:</strong> Kuning telur kaya lemak &amp; lesitin (pengemulsi alami) untuk melembutkan serat (*crumb*) dan gurih. Putih telur menguatkan struktur (albumin), namun jika berlebih bikin liat.</li>
+                    <li style="margin-bottom: 6px;"><strong>Donat &amp; Roti Manis:</strong> Pakai kuning telur ekstra untuk mengunci kelembapan dan memunculkan *white ring*.</li>
+                    <li style="margin-bottom: 6px;"><strong>Bakpau:</strong> Hindari kuning telur agar warna putih bersih terjaga.</li>
+                    <li><strong>Suhu Ruang:</strong> Selalu gunakan telur bersuhu ruang agar tidak menurunkan suhu adonan/memperlambat ragi.</li>
+                </ul>
+            </div>
         </div>
 
-        <!-- 4. PROOFING (PENGEMBANGAN) -->
-        <div class="tip-card" data-keywords="proofing pengembangan white ring suhu lembab terbuka tertutup air panas">
-            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">⏱️ Proofing & Fermentasi</h4>
-            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
-                <li><strong>Suhu & Kelembaban:</strong> Suhu ideal 32°C – 35°C dengan kelembaban 75% – 85% untuk produksi gas CO₂ yang optimal. Di bawah 30°C sangat lambat; di atas 40°C pori-pori kasar dan beraroma asam tajam.</li>
-                <li><strong>Memotong Waktu Proofing:</strong> Jika ingin memotong waktu dari 60 menit ke 30–40 menit, naikkan suhu ruangan secara alami (misal menaruh semangkuk air panas di dalam wadah/lemari tertutup tempat adonan diistirahatkan) dengan tetap menjaga kelembapan tinggi[cite: 1].</li>
-                <li><strong>Proofing Terbuka vs Tertutup:</strong> *Proofing* tertutup menjaga kelembapan agar kulit adonan tidak kering. Kulit adonan transparan/kering pecah menandakan *over-proofing* atau *proofing* terbuka tanpa penutup.</li>
-                <li><strong>Mulai Proofing:</strong> Begitu ragi dimasukkan, proses *proofing* dimulai. Jangan biarkan terlalu lama sebelum masuk tahap *dividing*, *rounding*, *shaping*, dan *final proofing*.</li>
-            </ul>
+        <!-- 4. PEMILIHAN GULA -->
+        <div class="tip-card" data-category="bahan" data-keywords="gula pasir kastor brown sugar dextrose donat roti bakpau karamelisasi" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🧂</span> 4. Panduan Pemilihan Gula
+                </h4>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+            </div>
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
+                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
+                    <li style="margin-bottom: 6px;"><strong>Jenis:</strong> Gula Pasir (standar); Kastor (butiran halus, cepat larut); Brown Sugar (kelembapan ekstra &amp; aroma karamel); Dextrose / Gula Donat Khusus (taburan dingin tidak mudah meleleh).</li>
+                    <li style="margin-bottom: 6px;"><strong>Fungsi:</strong> Nutrisi ragi, pengikat air (higroskopis) agar roti awet empuk, dan pembentuk warna kulit keemasan.</li>
+                    <li><strong>Aplikasi:</strong> Gunakan gula halus/kastor untuk adonan roti/donat. Gula pasir putih halus untuk bakpau agar bagian dalam tetap putih bersih.</li>
+                </ul>
+            </div>
         </div>
 
-        <!-- 5. PENGGORENGAN & TROUBLESHOOTING -->
-        <div class="tip-card" data-keywords="menggoreng minyak wajan white ring keriput bergelembung tidak rata">
-            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🍳 Teknik Menggoreng & Solusi Masalah</h4>
-            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
-                <li><strong>Waktu & Suhu Minyak:</strong> Panaskan minyak 15–30 menit sebelum adonan *final proofing* selesai. Gunakan minyak sawit pada suhu 160°C – 170°C dengan wajan tebal (bukan teflon) dan api kecil konsisten untuk mendapatkan *white ring*.</li>
-                <li><strong>Minyak Padat vs Cair:</strong> Campuran 50% minyak cair : 50% minyak padat (atau 70% : 30%) sangat efektif membuat donat tidak berminyak dan mirip standar profesional. Gunakan minyak yang banyak agar donat mengapung dan tidak bersentuhan dengan dasar wajan (mencegah kulit jeruk). Letakkan di atas tisu penyerap setelah matang.</li>
-                <li><strong>Test Kematangan Proofing:</strong> Tekan adonan dengan jari; jika kembali dengan cepat = *under-proofing*, jika kembali lambat dan pas = waktu menggoreng tiba. Jika kulit transparan = *over-proofing*.</li>
-                <li><strong>Donat Bergelembung saat Digoreng:</strong> Disebabkan *over-proofing* (kurangi ragi), *under-proofing*, atau suhu ruang terlalu tinggi (>30°C). Atasi dengan metode 2x balik (masukkan, tunggu sisi bawah setengah matang, balik atas hingga matang, lalu balik kembali sisi awal).</li>
-                <li><strong>Donat Keriput / Retak Setelah Dingin:</strong> Disebabkan kurang kalis saat diuleni, minyak terlalu panas, minyak kotor, atau kelebihan ragi dan cairan.</li>
-            </ul>
+        <!-- 5. PEMILIHAN CAIRAN & SUSU -->
+        <div class="tip-card" data-category="bahan" data-keywords="cairan air susu cair bubuk santan hidrasi suhu" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">💧</span> 5. Pemilihan Cairan &amp; Susu
+                </h4>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+            </div>
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
+                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
+                    <li style="margin-bottom: 6px;"><strong>Pilihan Cairan:</strong> Air mineral (netral, gluten maksimal); Susu cair / bubuk full cream (memperkaya rasa, serat lembut); Susu skim (kontrol struktur presisi).</li>
+                    <li><strong>Suhu &amp; Hidrasi:</strong> Suhu ideal 35°C–38°C (&gt;45°C membunuh ragi). Tambahkan cairan bertahap (sisakan 10–15%) untuk antisipasi perbedaan daya serap tepung.</li>
+                </ul>
+            </div>
         </div>
 
-        <!-- 6. GLAZE & PENYIMPANAN -->
-        <div class="tip-card" data-keywords="glaze icing sugar gula donat penyimpanan">
-            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🍩 Glaze & Penyimpanan</h4>
-            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
-                <li><strong>Icing Sugar vs Gula Donat:</strong> Icing sugar adalah gula halus yang mudah menguap/larut, cocok untuk glaze yang dicampur susu. Gula donat adalah gula khusus taburan dingin yang tidak mudah meleleh.</li>
-                <li><strong>Resep Glaze Sederhana:</strong> Campurkan gula halus, sedikit air hangat, dan minyak kelapa/mentega cair dalam jumlah cukup agar saat dingin lemaknya membantu proses pemadatan glaze.</li>
-                <li><strong>Cara Penyimpanan:</strong> Simpan donat polos dalam wadah kedap udara pada suhu ruang, atau bekukan adonan setengah jadi pada tahap sebelum *final proofing* untuk stok jangka panjang.</li>
-            </ul>
+        <!-- 6. PELEMBUT, KENTANG, LABU & KOREKSI SP -->
+        <div class="tip-card" data-category="solusi" data-keywords="pelembut kentang labu bread improver sp ovalet tbm emulsifier" style="background: #fff; border-radius: 14px; border: 1px solid #fee2e2; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: #991b1b; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #fee2e2; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🥔</span> 6. Pelembut Alami, Improver &amp; Mitos SP
+                </h4>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+            </div>
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #fef2f2;">
+                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
+                    <li style="margin-bottom: 6px;"><strong>Kentang &amp; Labu (Alami):</strong> Gunakan 20%–35% dari berat terigu. Mengikat air lebih lama agar empuk berhari-hari. Labu juga memberi warna kuning alami.</li>
+                    <li style="margin-bottom: 6px;"><strong>Bread Improver:</strong> Enzim &amp; emulsifier untuk menguatkan gluten, maksimalkan volume oven, dan masa simpan (cukup 0.1%–0.5%).</li>
+                    <li>⚠️ <strong style="color: #991b1b;">Koreksi Fatal SP/Ovalet:</strong> SP dirancang untuk bolu/cake bersponsor telur berkecepatan tinggi. <strong>Jangan gunakan SP pada adonan beragi</strong> (donat/roti/bakpau) karena merusak ragi, bikin liat, dan berasa sabun.</li>
+                </ul>
+            </div>
         </div>
 
-        <!-- 7. PENGARUH LINGKUNGAN -->
-        <div class="tip-card" data-keywords="suhu kelembaban tekanan udara ketinggian lingkungan">
-            <h4 style="color: var(--accent); margin: 0 0 6px 0; font-size: 0.95rem; border-left: 3px solid var(--accent); padding-left: 8px;">🌍 Pengaruh Lingkungan & Atmosfer</h4>
-            <ul style="margin: 0; padding-left: 18px; font-size: 0.82rem; line-height: 1.5; color: #4e342e;">
-                <li><strong>Suhu & Kelembaban:</strong> Suhu panas mempercepat kerja ragi; kelembaban rendah membuat permukaan adonan cepat kering berkulit.</li>
-                <li><strong>Tekanan Udara & Ketinggian:</strong> Daerah dataran tinggi (tekanan udara lebih rendah) membuat pengembangan gas dalam adonan terjadi lebih cepat sehingga waktu *proofing* harus dipersingkat.</li>
-            </ul>
+        <!-- 7. TEKNIK MENGGORENG PROFESIONAL -->
+        <div class="tip-card" data-category="teknik" data-keywords="menggoreng minyak wajan white ring suhu 160 170 balik tiriskan" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🍳</span> 7. Teknik Menggoreng &amp; White Ring
+                </h4>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+            </div>
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
+                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
+                    <li style="margin-bottom: 6px;"><strong>Suhu Minyak (160°C–170°C):</strong> Gunakan termometer dapur. Terlalu panas = luar gosong dalam mentah. Terlalu dingin = donat berminyak (*enes*) dan gagal membentuk *white ring*.</li>
+                    <li><strong>Teknik Balik:</strong> Cukup balik satu kali setelah sisi bawah kuning keemasan. Tiriskan di atas rak kawat (*wire rack*) agar bawahnya tidak lembap.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 8. PENYIMPANAN PRODUK -->
+        <div class="tip-card" data-category="simpan" data-keywords="penyimpanan simpan roti donat bakpau kulkas freezer kedap udara" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">📦</span> 8. Panduan Penyimpanan Produk
+                </h4>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+            </div>
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
+                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
+                    <li style="margin-bottom: 6px;"><strong>Roti:</strong> Suhu ruang dalam wadah kedap udara (1–3 hari). <strong>Jangan masuk kulkas</strong> karena mempercepat pati mengeras. Simpan freezer untuk jangka panjang.</li>
+                    <li style="margin-bottom: 6px;"><strong>Donat:</strong> Donat polos tahan 1–2 hari di suhu ruang. Ber-filling krim/custard wajib *chiller* (habiskan 24 jam).</li>
+                    <li><strong>Bakpau:</strong> Kulkas (2–3 hari) atau freezer (3–4 minggu). Kukus langsung dari freezer (tanpa thawing) air mendidih 12–15 menit agar tidak berkerut.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 9. TAHAPAN PRODUKSI (PENGULENAN & FERMENTASI) -->
+        <div class="tip-card" data-category="teknik" data-keywords="pengulenan kneading mixing windowpane test fermentasi proofing" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🥣</span> 9. Pengulenan &amp; Fermentasi
+                </h4>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+            </div>
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
+                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
+                    <li style="margin-bottom: 6px;"><strong>Urutan Pengulenan:</strong> Campur bahan kering &amp; cairan. <strong>Masukkan lemak (mentega/minyak) di akhir</strong> setelah adonan setengah kalis agar gluten terbentuk sempurna.</li>
+                    <li style="margin-bottom: 6px;"><strong>Windowpane Test:</strong> Rentangkan adonan hingga membentuk selaput tipis transparan (roti/donat). Bakpau cukup sampai permukaan licin.</li>
+                    <li><strong>Proofing Cepat:</strong> Istirahatkan di suhu ruang ideal (26°C–28°C) atau manfaatkan mangkuk berisi air hangat di wadah tertutup untuk menjaga kelembapan stabil[cite: 1].</li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -5441,6 +5524,44 @@ function exportSearchAnalytics() {
     } catch (err) {
         alert("Gagal mengekspor log analisis: " + err.message);
     }
+}
+
+function toggleTipCard(headerEl) {
+    const bodyEl = headerEl.nextElementSibling;
+    const iconEl = headerEl.querySelector('.toggle-icon');
+    const isVisible = bodyEl.style.display === 'block';
+    
+    // Tutup semua card lain (opsional, agar lebih rapi)
+    // document.querySelectorAll('.tip-body').forEach(b => b.style.display = 'none');
+    // document.querySelectorAll('.toggle-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+
+    if (!isVisible) {
+        bodyEl.style.display = 'block';
+        iconEl.style.transform = 'rotate(180deg)';
+    } else {
+        bodyEl.style.display = 'none';
+        iconEl.style.transform = 'rotate(0deg)';
+    }
+}
+
+function filterByCategory(category) {
+    // Ubah status aktif tombol chips
+    document.querySelectorAll('.tip-chip').forEach(btn => {
+        btn.style.background = '#f1f5f9';
+        btn.style.color = '#475569';
+    });
+    event.currentTarget.style.background = 'var(--chocolate, #4e342e)';
+    event.currentTarget.style.color = '#fff';
+
+    // Filter card berdasarkan data-category
+    const cards = document.querySelectorAll('.tip-card');
+    cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 }
 
 // ------------------------------------------------------------
@@ -8154,14 +8275,17 @@ async function mintaAnalisisAISungguhan() {
     };
 
     const tampilkanFallback = (alasan) => {
-        const pesan = typeof alasan === 'string' ? alasan : 'AI Agent sedang tidak tersedia';
-        // Pakai kembali insight rule-based yang sudah ada (selalu tersedia & instan)
-        // sebagai jaring pengaman kalau panggilan AI sungguhan gagal.
+        let pesan = typeof alasan === 'string' ? alasan : 'AI Agent sedang tidak tersedia';
+        if (/quota|rate.?limit|resource_exhausted|kuota ai/i.test(pesan)) {
+            pesan = 'Kuota AI gratis habis. Gunakan analisis instan di bawah atau coba lagi nanti.';
+        } else if (pesan.length > 120) {
+            pesan = 'AI Agent sedang tidak tersedia';
+        }
         const teksLokal = document.getElementById('text-analysis-fc')?.innerText
             || document.getElementById('text-analysis-pm')?.innerText
             || 'Analisis instan tidak tersedia.';
         resultBox.innerHTML =
-            `<div style="color:#e67e22; font-weight:700; margin-bottom:4px; font-size:0.72rem;">⚠️ ${pesan}, menampilkan analisis instan:</div>` +
+            `<div style="color:#e67e22; font-weight:700; margin-bottom:4px; font-size:0.72rem;">⚠️ ${pesan}</div>` +
             `<div>${teksLokal}</div>`;
     };
 
@@ -8169,8 +8293,25 @@ async function mintaAnalisisAISungguhan() {
         if (typeof data?.error === 'string') return data.error;
         if (typeof data?.error?.message === 'string') return data.error.message;
         if (typeof data?.message === 'string') return data.message;
+        if (status === 429 || data?.code === 'QUOTA_EXCEEDED') {
+            return 'Kuota AI gratis habis. Coba lagi nanti.';
+        }
         return `Server Error: ${status}`;
     };
+
+    const cacheKey = 'ai_live_' + btoa(unescape(encodeURIComponent(
+        [namaResep, hppPerPcs, hargaJual, foodCostPersen, profitMarginPersen, beratPerPcs].join('|')
+    ))).slice(0, 48);
+    try {
+        const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+        if (cached?.result && Date.now() - cached.ts < 3600000) {
+            resultBox.innerHTML =
+                `<div style="font-weight:700; color:#6c3483; margin-bottom:6px; font-size:0.8rem;">🤖 Analisis AI Mendalam (tersimpan)</div>` +
+                `<div style="line-height:1.6;">${formatHasilAI(cached.result)}</div>`;
+            if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+            return;
+        }
+    } catch (_) { /* abaikan cache rusak */ }
 
     // 2. Panggil endpoint AI sungguhan, dengan timeout supaya tidak menggantung di app native
     const controller = new AbortController();
@@ -8197,6 +8338,10 @@ async function mintaAnalisisAISungguhan() {
             tampilkanFallback(ekstrakPesanError(data, response.status));
             return;
         }
+
+        try {
+            localStorage.setItem(cacheKey, JSON.stringify({ result: data.result, ts: Date.now() }));
+        } catch (_) { /* storage penuh */ }
 
         resultBox.innerHTML =
             `<div style="font-weight:700; color:#6c3483; margin-bottom:6px; font-size:0.8rem;">🤖 Analisis AI Mendalam</div>` +
