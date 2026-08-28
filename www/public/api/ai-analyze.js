@@ -1,14 +1,17 @@
 import { GoogleGenAI } from "@google/genai";
 
 export default async function handler(req, res) {
-  // Tangani preflight OPTIONS request secara eksplisit agar lolos dari blokir CORS browser
+  // Set header CORS secara global untuk semua jenis request (OPTIONS, POST, dll)
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+
+  // Tangani preflight OPTIONS request secara eksplisit
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
     return res.status(200).end();
   }
 
+  // Pastikan method yang diizinkan hanya POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
