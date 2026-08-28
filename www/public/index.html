@@ -3129,7 +3129,7 @@ body {
 -->
 
 <!-- TAMBAHKAN HALAMAN / MODAL TIPS DI DALAM APLIKASI -->
-<div id="tips" class="tab-content recipe-modal active" style="display: flex; padding: 0px; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: var(--cream, #fdfbf7); font-family: 'Segoe UI', system-ui, sans-serif;">
+<div id="tips" class="tab-content recipe-modal" style="display: none; padding: 0px; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: var(--cream, #fdfbf7); font-family: 'Segoe UI', system-ui, sans-serif;">
     
     <!-- Header Halaman Tips -->
     <div class="article-modal-header" style="padding: 16px 20px; border-bottom: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: var(--cream, #fdfbf7); position: sticky; top: 0; z-index: 10;">
@@ -3160,12 +3160,12 @@ body {
     <div class="recipe-content" id="tips-container-list" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px;">
 
         <!-- 1. PEMILIHAN RAGI -->
-        <div class="tip-card" data-category="bahan" data-keywords="ragi mauripan saf instant gold label aktif kering segar gula donat roti bakpau" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+        <div class="tip-card" data-category="bahan" data-keywords="ragi mauripan saf instant gold label aktif kering segar gula donat roti bakpau" style="background: rgb(255, 255, 255); border-radius: 14px; border: 1px solid rgb(226, 232, 240); overflow: hidden; box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px;">
             <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
                 <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
                     <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🔬</span> 1. Panduan Pemilihan Ragi (Yeast)
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.8rem; color: rgb(148, 163, 184); transition: transform 0.2s;">▼</span>
             </div>
             <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
                 <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
@@ -3185,7 +3185,7 @@ body {
                 </h4>
                 <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
+            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none !important; border-top: 1px solid #f8fafc;">
                 <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
                     <li style="margin-bottom: 6px;"><strong>Klasifikasi Protein:</strong> Tinggi (&gt;11%–13%, misal Cakra Kembar) untuk gluten kuat; Sedang (10%–11%, misal Segitiga Biru) untuk struktur moderat; Rendah (&lt;9%–10%, misal Kunci Biru) untuk tekstur empuk.</li>
                     <li style="margin-bottom: 6px;"><strong>Donat:</strong> Protein tinggi untuk struktur kokoh &amp; <em>white ring</em> tegas. Campur protein tinggi &amp; sedang (1:1 / 70:30) untuk tekstur lumer di mulut.</li>
