@@ -20,6 +20,21 @@ function toUserFacingError(error) {
   return raw;
 }
 
+function extractAnswerText(response) {
+  const parts = response?.candidates?.[0]?.content?.parts || [];
+  const fromParts = parts
+    .filter((part) => !part?.thought && typeof part?.text === "string")
+    .map((part) => part.text)
+    .join("")
+    .trim();
+  if (fromParts) return fromParts;
+  return typeof response?.text === "string" ? response.text.trim() : "";
+}
+
+function getFinishReason(response) {
+  return response?.candidates?.[0]?.finishReason || response?.finishReason || "";
+}
+
 export default async function handler(req, res) {
   // Selalu set header CORS di awal
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -61,17 +76,28 @@ export default async function handler(req, res) {
       contents: promptContext.trim(),
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        maxOutputTokens: 1200,
+        // Budget dipakai bersama thinking + jawaban; minimal thinking agar ruang cukup untuk output
+        maxOutputTokens: 4096,
         temperature: 0.7,
+        thinkingConfig: {
+          thinkingLevel: "minimal",
+        },
       },
     });
 
-    const result = response?.text;
-    if (typeof result !== "string" || result.trim() === "") {
+    const result = extractAnswerText(response);
+    const finishReason = getFinishReason(response);
+
+    if (!result) {
       return res.status(502).json({ error: "AI tidak mengembalikan hasil, coba lagi" });
     }
 
-    return res.status(200).json({ result: result.trim() });
+    const truncated = finishReason === "MAX_TOKENS";
+    const finalResult = truncated
+      ? `${result}\n\n_(Analisis terpotong karena batas token. Coba lagi atau sederhanakan resep.)_`
+      : result;
+
+    return res.status(200).json({ result: finalResult, truncated });
   } catch (error) {
     console.error("ai-analyze error:", error);
     return res.status(500).json({ error: toUserFacingError(error) });
