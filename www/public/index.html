@@ -3296,6 +3296,12 @@ body {
                         <div id="text-analysis-ub" style="line-height: 1.5; color: #4e342e;">Berat adonan (59.7g per pcs) sudah ideal dan presisi untuk standar grade komersial masal, menghasilkan konsistensi proofing yang stabil.</div>
                     </div>
                 </div>
+
+                <!-- ANALISIS AI SUNGGUHAN (panggilan on-demand ke Gemini via /api/ai-analyze) -->
+                <button type="button" id="btn-ai-live-analysis" data-onclick="mintaAnalisisAISungguhan()" style="margin-top: 10px; width: 100%; background: linear-gradient(135deg, #8e44ad, #6c3483); color: white; border: none; padding: 9px; font-weight: 700; border-radius: 50px; font-size: 0.75rem; cursor: pointer; box-shadow: 0 2px 6px rgba(142, 68, 173, 0.3);">
+                    🤖 Analisis AI Mendalam (Live)
+                </button>
+                <div id="ai-live-result" style="display: none; margin-top: 10px; padding: 12px 14px; background: #f5f0fa; border: 1px solid #d9c6ea; border-radius: 10px; font-size: 0.78rem; line-height: 1.5; color: #3e2723;"></div>
             </div>
 
         <!-- UTILITY ACTIONS BUTTONS -->
@@ -8315,6 +8321,85 @@ function panggilKembaliAIAgent() {
     // Sembunyikan tombol melayang agar layar kembali bersih
     const bubbleBtn = document.getElementById('ai-bubble-trigger');
     if (bubbleBtn) bubbleBtn.style.display = 'none';
+}
+
+// =================================================================================
+// ANALISIS AI SUNGGUHAN (Gemini via /api/ai-analyze) - dipanggil on-demand
+// lewat tombol "Analisis AI Mendalam (Live)", BUKAN otomatis tiap ketikan
+// seperti window.jalankanAnalisisAIAgent (yang murni rule-based & instan).
+// Kalau gagal/timeout/offline, fallback ke ringkasan lokal berbasis rule
+// yang sama supaya fitur tetap jalan di app native tanpa koneksi.
+// =================================================================================
+async function mintaAnalisisAISungguhan() {
+    const btn = document.getElementById('btn-ai-live-analysis');
+    const resultBox = document.getElementById('ai-live-result');
+    if (!resultBox) return;
+
+    resultBox.style.display = 'block';
+    resultBox.innerHTML = '<em><i class="fas fa-spinner fa-spin"></i> Menghubungi AI Agent...</em>';
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
+
+    // 1. Kumpulkan konteks resep yang sedang aktif dari elemen yang sudah dihitung
+    const namaResep = (document.getElementById('recipe-save-name')?.value || 'Resep ini').trim();
+    const hppPerPcs = document.getElementById('sum-hpp-gabungan')?.innerText || 'Rp 0';
+    const hargaJual = document.getElementById('input-harga-jual')?.value || '0';
+    const foodCostPersen = document.getElementById('food-cost-percent')?.innerText || '0%';
+    const profitMarginPersen = document.getElementById('sum-profit-margin')?.innerText || '0%';
+    const beratPerPcs = document.getElementById('sum-weight-pcs')?.innerText || '0';
+    const untungBersih = document.getElementById('profit-bersih')?.innerText || 'Rp 0';
+
+    const promptContext =
+        `Analisis kondisi bisnis resep bakery berikut dan berikan insight + rekomendasi konkret:\n` +
+        `- Nama resep: ${namaResep}\n` +
+        `- HPP (food cost) per pcs: ${hppPerPcs}\n` +
+        `- Harga jual per pcs: Rp ${parseFloat(hargaJual) || 0}\n` +
+        `- Food cost ratio: ${foodCostPersen}\n` +
+        `- Profit margin: ${profitMarginPersen}\n` +
+        `- Estimasi keuntungan kotor per batch: ${untungBersih}\n` +
+        `- Berat adonan per pcs: ${beratPerPcs} g\n\n` +
+        `Fokus jawaban pada: apakah harga & food cost ini sehat untuk bisnis home bakery, dan langkah konkret apa yang sebaiknya diambil.`;
+
+    const tampilkanFallback = (alasan) => {
+        // Pakai kembali insight rule-based yang sudah ada (selalu tersedia & instan)
+        // sebagai jaring pengaman kalau panggilan AI sungguhan gagal.
+        const teksLokal = document.getElementById('text-analysis-fc')?.innerText
+            || document.getElementById('text-analysis-pm')?.innerText
+            || 'Analisis instan tidak tersedia.';
+        resultBox.innerHTML =
+            `<div style="color:#e67e22; font-weight:700; margin-bottom:4px; font-size:0.72rem;">⚠️ ${alasan}, menampilkan analisis instan:</div>` +
+            `<div>${teksLokal}</div>`;
+    };
+
+    // 2. Panggil endpoint AI sungguhan, dengan timeout supaya tidak menggantung di app native
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+    try {
+        const response = await fetch('https://timer-proofer.vercel.app/api/ai-analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ promptContext }),
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || !data.result) {
+            tampilkanFallback(data.error || 'AI Agent sedang tidak tersedia');
+            return;
+        }
+
+        resultBox.innerHTML =
+            `<div style="font-weight:700; color:#6c3483; margin-bottom:6px; font-size:0.8rem;">🤖 Analisis AI Mendalam</div>` +
+            `<div>${data.result.replace(/\n/g, '<br>')}</div>`;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        // offline, timeout (AbortError), atau error jaringan lainnya
+        tampilkanFallback(error.name === 'AbortError' ? 'AI terlalu lama merespons' : 'Tidak ada koneksi ke AI Agent');
+    } finally {
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    }
 }
 
 async function generateBusinessInsight(recipeData) {

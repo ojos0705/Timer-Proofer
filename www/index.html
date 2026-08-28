@@ -5985,64 +5985,97 @@ window.eksekusiCetakPremium = async function() {
 //    }
 };
 
-window.jalankanAnalisisAIAgent = function() {
+// 1. FUNGSI UTAMA UNTUK FETCH KE SERVERLESS API (Tetap gunakan ini)
+async function jalankanAnalisisAI(dataKonteks) {
+    try {
+        const API_URL = 'https://backend-bakery-api.vercel.app/api/ai-analyze'; // Ganti dengan URL Vercel Anda
+        console.log("Menghubungi AI Agent...");
+
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ promptContext: dataKonteks })
+        });
+
+        if (!response.ok) throw new Error(`Kesalahan Server: ${response.status}`);
+        const data = await response.json();
+        return data.result; 
+
+    } catch (error) {
+        console.error("Gagal mendapatkan analisis AI:", error);
+        return null;
+    }
+}
+
+// 2. MODIFIKASI FUNGSI LAMA (Gabungan Perhitungan Lokal & Analisis Cloud Gemini)
+window.jalankanAnalisisAIAgent = async function(hppGabunganPerPcs, hargaJualPerPcs, weightPerPcs) {
     const boxAI = document.getElementById('premium-ai-analysis-box');
     const contentAI = document.getElementById('ai-analysis-content');
     const btnKirim = document.getElementById('btn-kirim-timer');
     if (!boxAI || !contentAI) return;
 
+    // Munculkan Box dan berikan indikator loading
     boxAI.style.display = "block";
+    contentAI.innerHTML = "<i>⏳ Menganalisis kondisi adonan dan HPP bersama AI Agent Cloud... Sedang memuat...</i>";
 
-    // A. BACA DATA RESEP
+    // --- A. LOGIKA LAMA (Perhitungan Waktu Lokal) ---
     const ragi = bakeryIngredients.find(x => x.category === "Bahan Pengembang" || x.id === "yeast");
     const gula = bakeryIngredients.find(x => x.name.toLowerCase().includes("gula"));
     
-    let rasioRagi = ragi ? ragi.ratio : 2.0; // default 2% jika tidak ditemukan
-    let rasioGula = gula ? gula.ratio : 18.0; // default 18%
+    let rasioRagi = ragi ? ragi.ratio : 2.0; 
+    let rasioGula = gula ? gula.ratio : 18.0; 
 
-    // B. BACA DATA SENSOR LINGKUNGAN (CUACA / SUHU)
-    // Mengambil variabel cuaca global yang sudah berhasil dideteksi oleh aplikasi Anda (misal dari GPS/Vercel)
-    let suhuSekitar = window.lastDetectedTemp || 29.5; 
-    let kelembabanSekitar = window.lastDetectedHumidity || 75;
+    let suhuSekitar = window.lastDetectedTemp || parseFloat(document.getElementById('temp-val')?.innerText) || 29.5; 
+    let kelembabanSekitar = window.lastDetectedHumidity || parseFloat(document.getElementById('hum-val')?.innerText) || 75;
 
-    // C. LOGIKA PREDIKSI OPTIMASI WAKTU PROOFING (RUMUS AI AGENT)
-    // Hubungan Fisika-Kimia: Makin panas/lembap = proofing makin cepat. Makin banyak ragi = makin cepat.
-    let baseMinutes = 60; // Waktu standar pada suhu 28 derajat dengan ragi 2%
-    
-    // Koreksi faktor ragi
+    let baseMinutes = 60; 
     let faktorRagi = 2.0 / rasioRagi;
-    // Koreksi faktor suhu lingkungan
     let faktorSuhu = 1.0 - ((suhuSekitar - 28) * 0.04); 
-
-    // Hitung estimasi final
     let estimasiWaktuMenit = Math.round(baseMinutes * faktorRagi * faktorSuhu);
     
-    // Batasi angka aman proofing donat (30 menit - 90 menit)
     if (estimasiWaktuMenit < 30) estimasiWaktuMenit = 30;
     if (estimasiWaktuMenit > 90) estimasiWaktuMenit = 90;
 
-    // D. TAMPILKAN ANALISIS KE LAYAR USER
-    contentAI.innerHTML = `
-        • <b>Kondisi Adonan:</b> Ragi ${rasioRagi}%, Gula ${rasioGula}%. Ketersediaan makanan ragi optimal.<br>
-        • <b>Kondisi Udara Sekitar:</b> Suhu ${suhuSekitar}°C, Kelembaban ${kelembabanSekitar}%.<br>
-        • <b>Rekomendasi AI:</b> Aktivitas gas CO2 tinggi. Waktu proofing ideal donat Anda diprediksi selama <b>${estimasiWaktuMenit} menit</b> untuk menghindari <i>over-proofing</i>.
+    // --- B. LOGIKA BARU (Memanggil Gemini API ke Vercel) ---
+    // Susun prompt yang cerdas untuk dikirim ke Gemini
+    const konteksPrompt = `
+      Suhu dapur saat ini: ${suhuSekitar}°C, Kelembaban: ${kelembabanSekitar}%.
+      Resep menggunakan Rasio Ragi: ${rasioRagi}%, Rasio Gula: ${rasioGula}%.
+      Data Keuangan: HPP per pcs: Rp${Math.round(hppGabunganPerPcs)}, Harga Jual: Rp${hargaJualPerPcs}, Berat adonan per pcs: ${weightPerPcs}g.
+      Tugas Anda: Berikan analisis singkat, padat, dan profesional (maksimal 3 kalimat) mengenai efisiensi HPP dan potensi keberhasilan proofing donat dengan kondisi suhu ini.
     `;
+    
+    // Tunggu hasil dari Cloud AI
+    const wawasanGemini = await jalankanAnalisisAI(konteksPrompt);
 
-    // E. SINKRONISASI TOMBOL LANGSUNG KE TIMER UTAMA
+    // --- C. TAMPILKAN GABUNGAN HASIL KE LAYAR USER ---
+    let htmlHasil = `
+        • <b>Kondisi Lingkungan:</b> Suhu ${suhuSekitar}°C | Ragi ${rasioRagi}%<br>
+        • <b>Rekomendasi Waktu Proofing:</b> <b>${estimasiWaktuMenit} menit</b><br>
+        <hr style="border:0; border-top:1px dashed rgba(230, 126, 34, 0.2); margin: 10px 0;">
+        • <b>💡 Wawasan AI Pakar (Gemini):</b><br>
+        ${wawasanGemini ? wawasanGemini.replace(/\n/g, '<br>') : '<i style="color:red;">Gagal memuat wawasan AI karena gangguan jaringan.</i>'}
+    `;
+    contentAI.innerHTML = htmlHasil;
+
+    // --- D. SINKRONISASI TOMBOL KE TIMER (Sesuai ID di index.html Anda) ---
     btnKirim.style.display = "block";
     btnKirim.onclick = function() {
-        // Cari elemen input menit pada kalkulator utama luar Anda
-        const mainInputMenit = document.getElementById('input-timer-menit') || document.getElementById('duration'); 
+        // Berdasarkan index.html Anda, ID input waktu manual adalah 'custom-time'
+        const mainInputMenit = document.getElementById('custom-time'); 
         if (mainInputMenit) {
             mainInputMenit.value = estimasiWaktuMenit;
-            // Jika ada fungsi trigger kalkulasi timer otomatis bawaan, jalankan fungsinya
-            if (typeof perbaruiKalkulasiWaktu === 'function') perbaruiKalkulasiWaktu();
+            
+            // Panggil fungsi set manual waktu yang ada di index.html Anda
+            if (typeof setCustomTime === 'function') setCustomTime(); 
             
             alert(`⏱️ Sukses memindahkan waktu ${estimasiWaktuMenit} menit ke Timer Proofer utama!`);
-            // Tutup modal resep otomatis agar pengguna kembali ke halaman utama timer
-            if (typeof toggleModal === 'function') toggleModal('modal-resep'); 
+            
+            // Tutup modal halaman resep agar kembali ke beranda timer
+            const btnCloseResep = document.getElementById('btn-recipe-close-bottom');
+            if (btnCloseResep) btnCloseResep.click(); 
         } else {
-            alert(`Waktu rekomendasi adalah ${estimasiWaktuMenit} menit. Sila masukan langsung pada kolom timer utama.`);
+            alert(`Waktu rekomendasi adalah ${estimasiWaktuMenit} menit. Sila masukan secara manual di timer.`);
         }
     };
 };
