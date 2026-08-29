@@ -1524,6 +1524,101 @@ body {
     display: none;
 }
 
+/* STYLE TOMBOL PILIHAN PROOFING */
+/* Container Wrapper Utama */
+.proofer-selector-wrapper {
+    background: linear-gradient(145deg, #ffffff, #fcf9f6);
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin: 10px 16px;
+    box-shadow: 0 4px 16px rgba(44, 24, 16, 0.05);
+    border: 1px solid rgba(211, 84, 0, 0.08);
+}
+
+.selector-header {
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.selector-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #8c7365;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+/* Segmented Pill untuk Pilihan Produk */
+.product-pills {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    background: #f2e9e4;
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.product-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 4px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    color: #5c4033;
+    font-weight: 600;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.product-pill:hover {
+    color: var(--accent, #d35400);
+}
+
+.product-pill.active {
+    background: #ffffff;
+    color: var(--accent, #d35400);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    font-weight: 700;
+}
+
+/* Tombol Tahapan di Bawahnya */
+.mode-grid {
+    display: grid;
+    gap: 6px;
+}
+
+.mode-btn {
+    background: #ffffff;
+    border: 1.5px solid #e8ded7;
+    border-radius: 10px;
+    padding: 10px 8px;
+    color: #4a3525;
+    font-weight: 600;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.mode-btn:hover {
+    border-color: var(--accent, #d35400);
+    background: #fffaf8;
+}
+
+.mode-btn.active, 
+.mode-grid .mode-btn[style*="background: var(--accent)"] {
+    background: linear-gradient(135deg, #e67e22, #d35400) !important;
+    color: white !important;
+    border-color: #d35400 !important;
+    box-shadow: 0 4px 10px rgba(211, 84, 0, 0.25);
+    font-weight: 700;
+}
     </style>
 </head>
 <body class="logged-out">
@@ -1813,8 +1908,27 @@ body {
             </div>
         </div>
 
+        <!-- [BARU] Pilihan Jenis Produk (Donat, Roti, Bakpao) -->
+        <div class="proofer-selector-wrapper">
+            <div class="selector-header">
+                <span class="selector-title">Pilih Jenis Produk</span>
+            </div>
+            
+            <!-- Tab Produk dengan Gaya Segmented Pill -->
+            <div class="product-pills">
+                <button class="product-pill active" onclick="selectProduct('donut')" id="prod-donut">
+                    <span>🍩</span> Donat
+                </button>
+                <button class="product-pill" onclick="selectProduct('roti')" id="prod-roti">
+                    <span>🍞</span> Roti
+                </button>
+                <button class="product-pill" onclick="selectProduct('bakpao')" id="prod-bakpao">
+                    <span>🥟</span> Bakpao
+                </button>
+            </div>
+
         <!--Bagian Tombol Proofing-->
-        <div class="mode-grid">
+        <div class="mode-grid" id="mode-grid-container" style="display: grid; gap: 8px; margin-top: 10px; margin-bottom: 15px;">
             <button class="mode-btn" id="btn-mode-initial">Initial</button>
             <button class="mode-btn" id="btn-mode-rounding">Rounding</button>
             <button class="mode-btn" id="btn-mode-final">Final</button>
@@ -6440,32 +6554,125 @@ function calculateAdaptiveTime(baseMinutes, currentTemp, currentHum) {
 // 3. EVENT LISTENER TOMBOL MODE PROOFING (UPDATED)
 // ==========================================
 // Mengganti nama fungsi menjadi setProofingMode untuk menghindari bentrok
-function setProofingMode(modeName, baseMinutes) {
-    if (typeof isTimerRunning !== 'undefined' && isTimerRunning) return; 
-    localStorage.setItem('activeMode', modeName);
-    
-    // 1. Ambil data suhu dari UI secara real-time
-    const temp = parseFloat(document.getElementById('temp-val')?.innerText) || 26;
-    const hum = parseFloat(document.getElementById('hum-val')?.innerText) || 70;
-    
-    // 2. TIMPA WAKTU GLOBAL DENGAN WAKTU ADAPTIF
-    globalTotalSeconds = calculateAdaptiveTime(baseMinutes, temp, hum);
-    
-    // 3. Ubah UI Tombol
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.style.background = 'rgba(0,0,0,0.03)';
-        btn.style.color = 'inherit';
-    });
-    const activeBtn = document.getElementById(`btn-mode-${modeName.toLowerCase()}`);
-    if (activeBtn) {
-        activeBtn.style.background = 'var(--accent)';
-        activeBtn.style.color = 'white';
-    }
+// 1. Pemetaan Opsi Tahapan Fermentasi Berdasarkan Produk
+const proofingStages = {
+    donut: [
+        { key: 'initial', name: 'Initial', minutes: 60, desc: 'Pengembangan awal setelah mixing.' },
+        { key: 'rounding', name: 'Rounding', minutes: 15, desc: 'Istirahat adonan setelah pembulatan.' },
+        { key: 'final', name: 'Final', minutes: 45, desc: 'Fermentasi akhir siap goreng (white ring).' }
+    ],
+    roti: [
+        { key: 'bulk', name: 'Bulk Ferment', minutes: 50, desc: 'Fermentasi awal ragi (First Rise) hingga 2x lipat.' },
+        { key: 'bench', name: 'Bench Rest', minutes: 12, desc: 'Melemaskan gluten sebelum dicetak (shaping).' },
+        { key: 'final_roti', name: 'Final Proofing', minutes: 55, desc: 'Pengembangan akhir optimal sebelum masuk oven.' }
+    ],
+    bakpao: [
+        { key: 'relaxing', name: 'Relaxing Awal', minutes: 10, desc: 'Istirahat singkat setelah adonan dibagi.' },
+        { key: 'final_bakpao', name: 'Final Proofing', minutes: 25, desc: 'Proofing akhir (Waspada over-proof agar tidak keriput).' }
+    ]
+};
 
-    // 4. Perbarui angka timer di layar secara instan (sebelum START ditekan)
+let currentActiveProduct = 'donut';
+
+// 2. Fungsi Eksekusi Saat User Mengganti Jenis Produk
+function selectProduct(productKey) {
+    if (typeof isTimerRunning !== 'undefined' && isTimerRunning) {
+        alert("Timer sedang berjalan! Harap reset terlebih dahulu jika ingin mengganti produk.");
+        return;
+    }
+    currentActiveProduct = productKey;
+    
+    // Perbarui gaya visual tombol pill produk yang aktif
+    ['donut', 'roti', 'bakpao'].forEach(p => {
+        const btn = document.getElementById(`prod-${p}`);
+        if (btn) {
+            if (p === productKey) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+    });
+
+    renderModeButtons(productKey);
+    
+    const stages = proofingStages[productKey];
+    if (stages && stages.length > 0) {
+        setProductStage(productKey, stages[0].key, stages[0].minutes, stages[0].desc);
+    }
+}
+
+// 3. Render Tombol Tahapan secara Dinamis
+function renderModeButtons(productKey) {
+    const container = document.getElementById('mode-grid-container');
+    if (!container) return;
+    
+    const stages = proofingStages[productKey] || [];
+    container.innerHTML = '';
+    
+    // Atur jumlah kolom grid menyesuaikan jumlah tahapan produk
+    container.style.gridTemplateColumns = `repeat(${stages.length}, 1fr)`;
+
+    stages.forEach((stage, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'mode-btn';
+        btn.id = `btn-mode-${stage.key}`;
+        btn.innerText = stage.name;
+        
+        // Tandai tombol pertama sebagai default aktif
+        if (idx === 0) {
+            btn.style.background = 'var(--accent)';
+            btn.style.color = 'white';
+        }
+
+        btn.onclick = () => {
+            // Reset warna semua tombol dalam grid
+            document.querySelectorAll('#mode-grid-container .mode-btn').forEach(b => {
+                b.style.background = 'rgba(0,0,0,0.03)';
+                b.style.color = 'inherit';
+            });
+            // Berikan warna aktif pada tombol yang diklik
+            btn.style.background = 'var(--accent)';
+            btn.style.color = 'white';
+            
+            setProductStage(productKey, stage.key, stage.minutes, stage.desc);
+        };
+        container.appendChild(btn);
+    });
+}
+
+// 4. Kalkulator Waktu & Penyesuaian Berdasarkan Kondisi Suhu/Kelembapan
+function setProductStage(productKey, modeKey, baseMinutes, description) {
+    if (typeof isTimerRunning !== 'undefined' && isTimerRunning) return;
+    localStorage.setItem('activeMode', `${productKey}_${modeKey}`);
+
+    // Ambil data sensor suhu & kelembapan real-time dari UI aplikasi Anda
+    const temp = parseFloat(document.getElementById('temp-val')?.innerText) || 28;
+    const hum = parseFloat(document.getElementById('hum-val')?.innerText) || 70;
+
+    // Hitung waktu adaptif menggunakan fungsi referensi cuaca yang sudah ada di aplikasi
+    globalTotalSeconds = typeof calculateAdaptiveTime === 'function' 
+        ? calculateAdaptiveTime(baseMinutes, temp, hum) 
+        : baseMinutes * 60;
+    
+    globalInitialSeconds = globalTotalSeconds;
+    totalDurationMinutes = Math.round(globalTotalSeconds / 60);
+
+    // Perbarui tampilan antarmuka timer
     let m = Math.floor(globalTotalSeconds / 60);
     let s = globalTotalSeconds % 60;
+    
     if (typeof updateTimeLabels === 'function') updateTimeLabels(m, s, false);
+    if (typeof updateTimerDisplay === 'function') updateTimerDisplay(globalTotalSeconds);
+    if (typeof updateCircleProgress === 'function') updateCircleProgress();
+    if (typeof updateETALabel === 'function') updateETALabel(totalDurationMinutes);
+    if (typeof persistProofingState === 'function') persistProofingState();
+
+    // Perbarui teks instruksi/tips AI di bawah timer
+    const tipsEl = document.getElementById('ai-tips');
+    if (tipsEl) {
+        tipsEl.innerText = `[${productKey.toUpperCase()} - ${modeKey.toUpperCase()}] ${description}\nDurasi disesuaikan ke ${totalDurationMinutes} menit (Suhu Dapur: ${temp}°C).`;
+    }
 }
 
 //========================================
