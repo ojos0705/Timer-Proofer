@@ -2144,16 +2144,7 @@ body {
         <!-- Wadah Menu Terjemahan (Memperbaiki Error Sebelumnya) -->
         <!-- UI Kustom Dropdown Anda (Tetap Elegan) -->
         <!-- Menu Pilihan Bahasa di Pengaturan -->
-        <div onclick="bukaModalBahasaWhatsApp()" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 1.1rem;">🌐</span>
-                <div>
-                    <div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Bahasa Aplikasi / App Language</div>
-                    <div id="label-bahasa-aktif" style="font-size: 0.7rem; color: #888;">Bahasa Indonesia (Default)</div>
-                </div>
-            </div>
-            <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
-        </div>
+        
 
         <div class="modal-scroll-content" style="padding-top: 0;">
         <div style="margin-top: 10px; border-top: 1px dashed rgba(78, 52, 46, 0.3); border-bottom: 1px dashed rgba(78, 52, 46, 0.3); padding: 15px 0; margin-bottom: 15px;">
@@ -2213,6 +2204,16 @@ body {
             </p>
             
             <hr style="border: 0; border-top: 1px solid rgba(78, 52, 46, 0.2); margin: 20px 0;">
+            <div onclick="bukaModalBahasaWhatsApp()" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.1rem;">🌐</span>
+                    <div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Bahasa Aplikasi / App Language</div>
+                        <div id="label-bahasa-aktif" style="font-size: 0.7rem; color: #888;">Bahasa Indonesia (Default)</div>
+                    </div>
+                </div>
+                <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
+            </div>
             <div onclick="openHelpSubModal()" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span style="font-size: 1.1rem;">❓</span>
@@ -2291,312 +2292,363 @@ body {
             Aplikasi akan diterjemahkan secara otomatis ke seluruh bahasa di bawah ini.
         </p>
 
+        <!-- Kotak Pencarian Bahasa (Real-time Filter) -->
+        <div style="margin-bottom: 12px;">
+            <input type="text" id="input-cari-bahasa" placeholder="🔍 Cari bahasa (contoh: Indonesia, English)..." onkeyup="filterDaftarBahasa()" style="width: 100%; padding: 10px 12px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; background: #fff; box-sizing: border-box;" />
+        </div>
+
         <!-- Daftar 60 Pilihan Bahasa Global -->
         <div id="list-pilihan-bahasa" style="display: flex; flex-direction: column; gap: 8px;">
 
     <!-- ========================================== -->
     <!-- ALFABET LATIN (A - Z)                      -->
     <!-- ========================================== -->
-    <div onclick="pilihBahasaGlobal('af', 'Afrikaans')" class="lang-item">
-        <img src="https://flagcdn.com/w40/za.png" alt="ZA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Afrikaans</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('az', 'Azərbaycan')" class="lang-item">
-        <img src="https://flagcdn.com/w40/az.png" alt="AZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Azərbaycan (Azerbaijani)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('id', 'Bahasa Indonesia')" class="lang-item">
-        <img src="https://flagcdn.com/w40/id.png" alt="ID" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;"> 
-        <span>Bahasa Indonesia</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ms', 'Bahasa Melayu')" class="lang-item">
-        <img src="https://flagcdn.com/w40/my.png" alt="MY" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Bahasa Melayu (Malay)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('bs', 'Bosanski')" class="lang-item">
-        <img src="https://flagcdn.com/w40/ba.png" alt="BA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Bosanski (Bosnian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ca', 'Català')" class="lang-item">
-        <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Català (Catalan)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('cy', 'Cymraeg')" class="lang-item">
-        <img src="https://flagcdn.com/w40/gb-wls.png" alt="WLS" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Cymraeg (Welsh)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('cs', 'Čeština')" class="lang-item">
-        <img src="https://flagcdn.com/w40/cz.png" alt="CZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Čeština (Czech)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('da', 'Dansk')" class="lang-item">
-        <img src="https://flagcdn.com/w40/dk.png" alt="DK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Dansk (Danish)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('de', 'Deutsch')" class="lang-item">
-        <img src="https://flagcdn.com/w40/de.png" alt="DE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Deutsch (German)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('et', 'Eesti')" class="lang-item">
-        <img src="https://flagcdn.com/w40/ee.png" alt="EE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Eesti (Estonian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('en', 'English')" class="lang-item">
-        <img src="https://flagcdn.com/w40/gb.png" alt="GB" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>English</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('es', 'Español')" class="lang-item">
-        <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Español (Spanish)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('eu', 'Euskara')" class="lang-item">
-        <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Euskara (Basque)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('fr', 'Français')" class="lang-item">
-        <img src="https://flagcdn.com/w40/fr.png" alt="FR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Français (French)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ga', 'Gaeilge')" class="lang-item">
-        <img src="https://flagcdn.com/w40/ie.png" alt="IE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Gaeilge (Irish)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('gl', 'Galego')" class="lang-item">
-        <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Galego (Galician)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('hr', 'Hrvatski')" class="lang-item">
-        <img src="https://flagcdn.com/w40/hr.png" alt="HR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Hrvatski (Croatian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('is', 'Íslenska')" class="lang-item">
-        <img src="https://flagcdn.com/w40/is.png" alt="IS" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Íslenska (Icelandic)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('it', 'Italiano')" class="lang-item">
-        <img src="https://flagcdn.com/w40/it.png" alt="IT" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Italiano (Italian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('sw', 'Kiswahili')" class="lang-item">
-        <img src="https://flagcdn.com/w40/ke.png" alt="KE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Kiswahili (Swahili)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('lv', 'Latviešu')" class="lang-item">
-        <img src="https://flagcdn.com/w40/lv.png" alt="LV" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Latviešu (Latvian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('lt', 'Lietuvių')" class="lang-item">
-        <img src="https://flagcdn.com/w40/lt.png" alt="LT" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Lietuvių (Lithuanian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('hu', 'Magyar')" class="lang-item">
-        <img src="https://flagcdn.com/w40/hu.png" alt="HU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Magyar (Hungarian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('nl', 'Nederlands')" class="lang-item">
-        <img src="https://flagcdn.com/w40/nl.png" alt="NL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Nederlands (Dutch)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('no', 'Norsk')" class="lang-item">
-        <img src="https://flagcdn.com/w40/no.png" alt="NO" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Norsk (Norwegian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('uz', 'Oʻzbekcha')" class="lang-item">
-        <img src="https://flagcdn.com/w40/uz.png" alt="UZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Oʻzbekcha (Uzbek)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('pl', 'Polski')" class="lang-item">
-        <img src="https://flagcdn.com/w40/pl.png" alt="PL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Polski (Polish)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('pt', 'Português')" class="lang-item">
-        <img src="https://flagcdn.com/w40/pt.png" alt="PT" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Português (Portuguese)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ro', 'Română')" class="lang-item">
-        <img src="https://flagcdn.com/w40/ro.png" alt="RO" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Română (Romanian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('sq', 'Shqip')" class="lang-item">
-        <img src="https://flagcdn.com/w40/al.png" alt="AL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Shqip (Albanian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('sk', 'Slovenčina')" class="lang-item">
-        <img src="https://flagcdn.com/w40/sk.png" alt="SK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Slovenčina (Slovak)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('sl', 'Slovenščina')" class="lang-item">
-        <img src="https://flagcdn.com/w40/si.png" alt="SI" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Slovenščina (Slovenian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('fi', 'Suomi')" class="lang-item">
-        <img src="https://flagcdn.com/w40/fi.png" alt="FI" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Suomi (Finnish)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('tl', 'Tagalog')" class="lang-item">
-        <img src="https://flagcdn.com/w40/ph.png" alt="PH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Tagalog (Filipino)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('vi', 'Tiếng Việt')" class="lang-item">
-        <img src="https://flagcdn.com/w40/vn.png" alt="VN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Tiếng Việt (Vietnamese)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('tr', 'Türkçe')" class="lang-item">
-        <img src="https://flagcdn.com/w40/tr.png" alt="TR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Türkçe (Turkish)</span>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- ALFABET YUNANI & KIRIL (GREEK & CYRILLIC)  -->
-    <!-- ========================================== -->
-    <div onclick="pilihBahasaGlobal('el', 'Ελληνικά')" class="lang-item">
-        <img src="https://flagcdn.com/w40/gr.png" alt="GR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Ελληνικά (Greek)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('bg', 'Български')" class="lang-item">
-        <img src="https://flagcdn.com/w40/bg.png" alt="BG" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Български (Bulgarian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('mk', 'Македонски')" class="lang-item">
-        <img src="https://flagcdn.com/w40/mk.png" alt="MK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Македонски (Macedonian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ru', 'Русский')" class="lang-item">
-        <img src="https://flagcdn.com/w40/ru.png" alt="RU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Русский (Russian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('sr', 'Српски')" class="lang-item">
-        <img src="https://flagcdn.com/w40/rs.png" alt="RS" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Српски (Serbian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('uk', 'Українська')" class="lang-item">
-        <img src="https://flagcdn.com/w40/ua.png" alt="UA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Українська (Ukrainian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('kk', 'Қазақ тілі')" class="lang-item">
-        <img src="https://flagcdn.com/w40/kz.png" alt="KZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Қазақ тілі (Kazakh)</span>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- ALFABET ARMENIA & IBRANI                   -->
-    <!-- ========================================== -->
-    <div onclick="pilihBahasaGlobal('hy', 'Հայերեն')" class="lang-item">
-        <img src="https://flagcdn.com/w40/am.png" alt="AM" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>Հայերեն (Armenian)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('he', 'עברית')" class="lang-item">
-        <img src="https://flagcdn.com/w40/il.png" alt="IL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>עברית (Hebrew)</span>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- AKSARA ARAB (KANAN KE KIRI)                -->
-    <!-- ========================================== -->
-    <div onclick="pilihBahasaGlobal('ur', 'اردو')" class="lang-item">
-        <img src="https://flagcdn.com/w40/pk.png" alt="PK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>اردو (Urdu)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ar', 'العربية')" class="lang-item">
-        <img src="https://flagcdn.com/w40/sa.png" alt="SA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>العربية (Arabic)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('fa', 'فارسی')" class="lang-item">
-        <img src="https://flagcdn.com/w40/ir.png" alt="IR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>فارسی (Persian)</span>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- AKSARA ASIA SELATAN & TENGGARA             -->
-    <!-- ========================================== -->
-    <div onclick="pilihBahasaGlobal('am', 'አማርኛ')" class="lang-item">
-        <img src="https://flagcdn.com/w40/et.png" alt="ET" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>አማርኛ (Amharic)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ne', 'नेपाली')" class="lang-item">
-        <img src="https://flagcdn.com/w40/np.png" alt="NP" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>नेपाली (Nepali)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('mr', 'मराठी')" class="lang-item">
-        <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>मराठी (Marathi)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('hi', 'हिन्दी')" class="lang-item">
-        <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>हिन्दी (Hindi)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('bn', 'বাংলা')" class="lang-item">
-        <img src="https://flagcdn.com/w40/bd.png" alt="BD" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>বাংলা (Bengali)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('pa', 'ਪੰਜਾਬੀ')" class="lang-item">
-        <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>ਪੰਜਾਬੀ (Punjabi)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('gu', 'ગુજરાતી')" class="lang-item">
-        <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>ગુજરાતી (Gujarati)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ta', 'தமிழ்')" class="lang-item">
-        <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>தமிழ் (Tamil)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('te', 'తెలుగు')" class="lang-item">
-        <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>తెలుగు (Telugu)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('kn', 'ಕನ್ನಡ')" class="lang-item">
-        <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>ಕನ್ನಡ (Kannada)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ml', 'മലയാളം')" class="lang-item">
-        <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>മലയാളം (Malayalam)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('si', 'සිංහල')" class="lang-item">
-        <img src="https://flagcdn.com/w40/lk.png" alt="LK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>සිංහල (Sinhala)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('th', 'ไทย')" class="lang-item">
-        <img src="https://flagcdn.com/w40/th.png" alt="TH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>ไทย (Thai)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('lo', 'ລາວ')" class="lang-item">
-        <img src="https://flagcdn.com/w40/la.png" alt="LA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>ລາວ (Lao)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('my', 'မြန်မာ')" class="lang-item">
-        <img src="https://flagcdn.com/w40/mm.png" alt="MM" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>မြန်မာ (Burmese)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('km', 'ខ្មែរ')" class="lang-item">
-        <img src="https://flagcdn.com/w40/kh.png" alt="KH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>ខ្មែរ (Khmer)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ka', 'ქართული')" class="lang-item">
+    <div id="list-pilihan-bahasa" style="display: flex; flex-direction: column; gap: 8px;">
+    <button type="button" onclick="pilihBahasaGlobal('ab', 'Abkhaz')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
         <img src="https://flagcdn.com/w40/ge.png" alt="GE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>ქართული (Georgian)</span>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- AKSARA ASIA TIMUR (CJK)                    -->
-    <!-- ========================================== -->
-    <div onclick="pilihBahasaGlobal('zh-CN', '中文 (Simplified)')" class="lang-item">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Abkhaz</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ach', 'Acholi')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ug.png" alt="UG" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Acholi</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('aa', 'Afar')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/et.png" alt="ET" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Afar</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('af', 'Afrikaans')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/za.png" alt="ZA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Afrikaans</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('sq', 'Albanian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/al.png" alt="AL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Albanian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('alz', 'Alur')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ug.png" alt="UG" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Alur</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('am', 'Amharic')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/et.png" alt="ET" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Amharic</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ar', 'Arabic')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/sa.png" alt="SA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Arabic</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('hy', 'Armenian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/am.png" alt="AM" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Armenian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('av', 'Avar')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Avar</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ay', 'Aymara')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/bo.png" alt="BO" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Aymara</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('az', 'Azerbaijani')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/az.png" alt="AZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Azerbaijani</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('bal', 'Baluchi')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/pk.png" alt="PK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Baluchi</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('bm', 'Bambara')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ml.png" alt="ML" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Bambara</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('bci', 'Baoulé')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ci.png" alt="CI" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Baoulé</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ba', 'Bashkir')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Bashkir</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('eu', 'Basque')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Basque</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('be', 'Belarusian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/by.png" alt="BY" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Belarusian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('bem', 'Bemba')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/zm.png" alt="ZM" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Bemba</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('bn', 'Bengali')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/bd.png" alt="BD" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Bengali</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('bik', 'Bikol')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ph.png" alt="PH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Bikol</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('bs', 'Bosnian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ba.png" alt="BA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Bosnian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('br', 'Breton')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/fr.png" alt="FR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Breton</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('bg', 'Bulgarian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/bg.png" alt="BG" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Bulgarian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('bua', 'Buryat')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Buryat</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('yue', 'Cantonese')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/hk.png" alt="HK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Cantonese</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ca', 'Catalan')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Catalan</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ceb', 'Cebuano')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ph.png" alt="PH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Cebuano</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ch', 'Chamorro')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/gu.png" alt="GU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Chamorro</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ce', 'Chechen')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Chechen</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ny', 'Chichewa')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/mw.png" alt="MW" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Chichewa</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('zh-CN', 'Chinese (Simplified)')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
         <img src="https://flagcdn.com/w40/cn.png" alt="CN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>中文 (Chinese Simplified)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('zh-TW', '中文 (Traditional)')" class="lang-item">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Chinese (Simplified)</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('zh-TW', 'Chinese (Traditional)')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
         <img src="https://flagcdn.com/w40/tw.png" alt="TW" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>中文 (Chinese Traditional)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ja', '日本語')" class="lang-item">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Chinese (Traditional)</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('chk', 'Chuukese')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/fm.png" alt="FM" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Chuukese</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('cv', 'Chuvash')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ru.png" alt="RU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Chuvash</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('co', 'Corsican')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/fr.png" alt="FR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Corsican</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('crh', 'Crimean Tatar (Cyrillic)')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ua.png" alt="UA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Crimean Tatar (Cyrillic)</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('crh-Latn', 'Crimean Tatar (Latin)')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ua.png" alt="UA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Crimean Tatar (Latin)</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('hr', 'Croatian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/hr.png" alt="HR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Croatian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('cs', 'Czech')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/cz.png" alt="CZ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Czech</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('da', 'Danish')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/dk.png" alt="DK" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Danish</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('fa-AF', 'Dari')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/af.png" alt="AF" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Dari</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('dv', 'Dhivehi')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/mv.png" alt="MV" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Dhivehi</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('din', 'Dinka')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ss.png" alt="SS" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Dinka</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('dov', 'Dombe')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ao.png" alt="AO" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Dombe</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('nl', 'Dutch')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/nl.png" alt="NL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Dutch</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('dyu', 'Dyula')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/bf.png" alt="BF" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Dyula</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('dz', 'Dzongkha')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/bt.png" alt="BT" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Dzongkha</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('en', 'English')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/gb.png" alt="GB" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">English</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('eo', 'Esperanto')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <span style="font-size: 1.2rem;">🌐</span>
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Esperanto</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('et', 'Estonian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ee.png" alt="EE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Estonian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ee', 'Ewe')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/gh.png" alt="GH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Ewe</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('fo', 'Faroese')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/fo.png" alt="FO" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Faroese</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('fj', 'Fijian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/fj.png" alt="FJ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Fijian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('tl', 'Filipino')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ph.png" alt="PH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Filipino</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('fi', 'Finnish')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/fi.png" alt="FI" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Finnish</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('fon', 'Fon')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/bj.png" alt="BJ" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Fon</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('fr', 'French')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/fr.png" alt="FR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">French</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('fr-CA', 'French (Canada)')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ca.png" alt="CA" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">French (Canada)</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('fy', 'Frisian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/nl.png" alt="NL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Frisian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('fur', 'Friulian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/it.png" alt="IT" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Friulian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ff', 'Fulani')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/sn.png" alt="SN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Fulani</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('gaa', 'Ga')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/gh.png" alt="GH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Ga</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('gl', 'Galician')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/es.png" alt="ES" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Galician</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ka', 'Georgian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ge.png" alt="GE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Georgian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('de', 'German')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/de.png" alt="DE" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">German</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('el', 'Greek')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/gr.png" alt="GR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Greek</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('gn', 'Guarani')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/py.png" alt="PY" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Guarani</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ht', 'Haitian Creole')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ht.png" alt="HT" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Haitian Creole</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('cnh', 'Hakha Chin')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/mm.png" alt="MM" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Hakha Chin</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ha', 'Hausa')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ng.png" alt="NG" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Hausa</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('haw', 'Hawaiian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/us.png" alt="US" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Hawaiian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('iw', 'Hebrew')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/il.png" alt="IL" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Hebrew</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('hil', 'Hiligaynon')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ph.png" alt="PH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Hiligaynon</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('hi', 'Hindi')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/in.png" alt="IN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Hindi</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('hmn', 'Hmong')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/cn.png" alt="CN" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Hmong</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('hu', 'Hungarian')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/hu.png" alt="HU" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Hungarian</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('hrx', 'Hunsrik')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/br.png" alt="BR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Hunsrik</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('iba', 'Iban')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/my.png" alt="MY" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Iban</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('is', 'Icelandic')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/is.png" alt="IS" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Icelandic</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ig', 'Igbo')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ng.png" alt="NG" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Igbo</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ilo', 'Ilocano')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/ph.png" alt="PH" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Ilocano</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('id', 'Bahasa Indonesia')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/id.png" alt="ID" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Bahasa Indonesia</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ms', 'Bahasa Melayu')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+        <img src="https://flagcdn.com/w40/my.png" alt="MY" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Bahasa Melayu (Malay)</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ja', 'Japanese')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
         <img src="https://flagcdn.com/w40/jp.png" alt="JP" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>日本語 (Japanese)</span>
-    </div>
-    <div onclick="pilihBahasaGlobal('ko', '한국어')" class="lang-item">
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Japanese</span>
+    </button>
+    <button type="button" onclick="pilihBahasaGlobal('ko', 'Korean')" class="lang-item" style="display: flex; align-items: center; gap: 10px; width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
         <img src="https://flagcdn.com/w40/kr.png" alt="KR" style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;">
-        <span>한국어 (Korean)</span>
-    </div>
+        <span style="font-size: 0.85rem; font-weight: 600; color: #3e2723;">Korean</span>
+    </button>
+</div>
 
 </div>
     </div>
@@ -3141,9 +3193,20 @@ body {
 
     <!-- Panel Pencarian & Filter Kategori Cepat (Chips) -->
     <div style="padding: 12px 16px; background: #fff; border-bottom: 1px solid #eef2f6; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-        <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
-            <span style="position: absolute; left: 14px; font-size: 0.9rem; color: #94a3b8;">🔍</span>
-            <input type="text" id="tips-search-input" oninput="filterTipsAndTrack(this.value)" placeholder="Cari masalah, ragi, tepung, suhu, SP..." style="width: 100%; padding: 10px 12px 10px 38px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 0.85rem; outline: none; color: var(--chocolate, #4e342e); background: #f8fafc; transition: all 0.2s;">
+        <div style="display: flex; gap: 8px; margin-bottom: 12px; position: relative;">
+            <div style="flex: 1; position: relative; min-width: 0;">
+                <i class="fas fa-search" style="position: absolute; left: 12px; top: 12px; color: #94a3b8; font-size: 0.9rem;"></i>
+                <input type="text" id="tips-search-input" oninput="filterTipsAndTrack(this.value)" onkeypress="handleTipsEnter(event)" placeholder="Cari masalah ragi, suhu, hidrasi..." style="box-sizing: border-box; width: 100%; padding: 10px 12px 10px 36px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 0.85rem; outline: none; color: #4e342e; background: #f8fafc; transition: all 0.2s;"
+                    id="tips-search-input" 
+                    oninput="filterTipsAndTrack(this.value)" 
+                    onkeypress="handleTipsEnter(event)" 
+                    placeholder="Cari masalah ragi, suhu, hidrasi..." 
+                    style="width: 100%; padding: 10px 12px 10px 36px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 0.85rem; outline: none; color: #4e342e; background: #f8fafc; transition: all 0.2s;">
+            </div>
+            
+            <button onclick="tanyaAITips()" style="background: #6c3483; color: white; border: none; border-radius: 12px; padding: 0 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 0.85rem;">
+                <i class="fas fa-robot"></i> AI
+            </button>
         </div>
         
         <!-- Filter Pills / Kategori Cepat -->
@@ -3157,156 +3220,157 @@ body {
     </div>
 
     <!-- Konten Tips (Model Accordion & Card Modern) -->
-    <div class="recipe-content" id="tips-container-list" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px;">
-
+    <div id="ai-tips-result" style="display: none; margin: 16px 16px 0 16px; padding: 14px; background: #fff; border: 1.5px solid #e8daef; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);"></div>
+        <div style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; box-sizing: border-box;">
+        
         <!-- 1. PEMILIHAN RAGI -->
-        <div class="tip-card" data-category="bahan" data-keywords="ragi mauripan saf instant gold label aktif kering segar gula donat roti bakpau" style="background: rgb(255, 255, 255); border-radius: 14px; border: 1px solid rgb(226, 232, 240); overflow: hidden; box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px;">
-            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
-                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🔬</span> 1. Panduan Pemilihan Ragi (Yeast)
+        <div class="tip-card" data-category="bahan" data-keywords="ragi mauripan saf instant gold label aktif kering segar gula donat roti bakpau" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+            <div onclick="toggleTipCard(this)" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #fef3c7; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">🔬</span> 1. Panduan Pemilihan Ragi (Yeast)
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: rgb(148, 163, 184); transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.75rem; color: #94a3b8; transition: transform 0.3s ease; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 50%;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
-                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
-                    <li style="margin-bottom: 6px;"><strong>Jenis Berdasarkan Bentuk:</strong> <em>Ragi Instan</em> (praktis, campur langsung seperti Saf-Instant/Mauripan); <em>Ragi Aktif Kering</em> (wajib dilarutkan air hangat 35°C–40°C + sedikit gula); <em>Ragi Segar/Basah</em> (blok padat, super cepat namun singkat di kulkas).</li>
-                    <li style="margin-bottom: 6px;"><strong>Kadar Gula &amp; Gold Label:</strong> Gunakan ragi reguler (label merah) untuk adonan rendah gula (&lt;8%). Untuk adonan kaya gula seperti donat manis &amp; brioche (&gt;8%–10%), wajib <strong>Ragi Tahan Gula (Gold Label)</strong> agar sel ragi tidak dehidrasi.</li>
-                    <li style="margin-bottom: 6px;"><strong>Penerapan:</strong> Donat &amp; roti manis wajib gold label karena lemak/kuning telur tinggi. Bakpau &amp; roti tawar cukup ragi reguler.</li>
+            <div class="tip-body" style="padding: 0 16px 16px; display: none; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+                <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 0.83rem; line-height: 1.65; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Jenis Berdasarkan Bentuk:</strong> <em>Ragi Instan</em> (praktis, campur langsung seperti Saf-Instant/Mauripan); <em>Ragi Aktif Kering</em> (wajib dilarutkan air hangat 35°C–40°C + sedikit gula); <em>Ragi Segar/Basah</em> (blok padat, super cepat namun singkat di kulkas).</li>
+                    <li style="margin-bottom: 8px;"><strong>Kadar Gula &amp; Gold Label:</strong> Gunakan ragi reguler (label merah) untuk adonan rendah gula (&lt;8%). Untuk adonan kaya gula seperti donat manis &amp; brioche (&gt;8%–10%), wajib <strong>Ragi Tahan Gula (Gold Label)</strong> agar sel ragi tidak dehidrasi.</li>
+                    <li style="margin-bottom: 8px;"><strong>Penerapan:</strong> Donat &amp; roti manis wajib gold label karena lemak/kuning telur tinggi. Bakpau &amp; roti tawar cukup ragi reguler.</li>
                     <li><strong>Penyimpanan:</strong> Wadah kedap udara di kulkas/freezer setelah dibuka.</li>
                 </ul>
             </div>
         </div>
 
         <!-- 2. PEMILIHAN TEPUNG -->
-        <div class="tip-card" data-category="bahan" data-keywords="tepung protein tinggi sedang rendah cakra kembar segitiga biru kunci gluten" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
-                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🌾</span> 2. Panduan Pemilihan Tepung Terigu
+        <div class="tip-card" data-category="bahan" data-keywords="tepung protein tinggi sedang rendah cakra kembar segitiga biru kunci gluten" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+            <div onclick="toggleTipCard(this)" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #fef3c7; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">🌾</span> 2. Panduan Pemilihan Tepung Terigu
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.75rem; color: #94a3b8; transition: transform 0.3s ease; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 50%;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none !important; border-top: 1px solid #f8fafc;">
-                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
-                    <li style="margin-bottom: 6px;"><strong>Klasifikasi Protein:</strong> Tinggi (&gt;11%–13%, misal Cakra Kembar) untuk gluten kuat; Sedang (10%–11%, misal Segitiga Biru) untuk struktur moderat; Rendah (&lt;9%–10%, misal Kunci Biru) untuk tekstur empuk.</li>
-                    <li style="margin-bottom: 6px;"><strong>Donat:</strong> Protein tinggi untuk struktur kokoh &amp; <em>white ring</em> tegas. Campur protein tinggi &amp; sedang (1:1 / 70:30) untuk tekstur lumer di mulut.</li>
+            <div class="tip-body" style="padding: 0 16px 16px; display: none; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+                <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 0.83rem; line-height: 1.65; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Klasifikasi Protein:</strong> Tinggi (&gt;11%–13%, misal Cakra Kembar) untuk gluten kuat; Sedang (10%–11%, misal Segitiga Biru) untuk struktur moderat; Rendah (&lt;9%–10%, misal Kunci Biru) untuk tekstur empuk.</li>
+                    <li style="margin-bottom: 8px;"><strong>Donat:</strong> Protein tinggi untuk struktur kokoh &amp; <em>white ring</em> tegas. Campur protein tinggi &amp; sedang (1:1 / 70:30) untuk tekstur lumer di mulut.</li>
                     <li><strong>Bakpau &amp; Roti:</strong> Roti wajib protein tinggi tahan *oven spring*. Bakpau pakai protein rendah (+ pati gandum/Tang Mien) agar putih mulus dan tidak alot.</li>
                 </ul>
             </div>
         </div>
 
         <!-- 3. PENGGUNAAN TELUR -->
-        <div class="tip-card" data-category="bahan" data-keywords="telur kuning putih lesitin kelembapan donat roti bakpau" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
-                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🥚</span> 3. Peran &amp; Penggunaan Telur
+        <div class="tip-card" data-category="bahan" data-keywords="telur kuning putih lesitin kelembapan donat roti bakpau" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+            <div onclick="toggleTipCard(this)" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #fef3c7; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">🥚</span> 3. Peran &amp; Penggunaan Telur
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.75rem; color: #94a3b8; transition: transform 0.3s ease; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 50%;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
-                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
-                    <li style="margin-bottom: 6px;"><strong>Kuning vs Putih:</strong> Kuning telur kaya lemak &amp; lesitin (pengemulsi alami) untuk melembutkan serat (*crumb*) dan gurih. Putih telur menguatkan struktur (albumin), namun jika berlebih bikin liat.</li>
-                    <li style="margin-bottom: 6px;"><strong>Donat &amp; Roti Manis:</strong> Pakai kuning telur ekstra untuk mengunci kelembapan dan memunculkan *white ring*.</li>
-                    <li style="margin-bottom: 6px;"><strong>Bakpau:</strong> Hindari kuning telur agar warna putih bersih terjaga.</li>
+            <div class="tip-body" style="padding: 0 16px 16px; display: none; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+                <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 0.83rem; line-height: 1.65; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Kuning vs Putih:</strong> Kuning telur kaya lemak &amp; lesitin (pengemulsi alami) untuk melembutkan serat (*crumb*) dan gurih. Putih telur menguatkan struktur (albumin), namun jika berlebih bikin liat.</li>
+                    <li style="margin-bottom: 8px;"><strong>Donat &amp; Roti Manis:</strong> Pakai kuning telur ekstra untuk mengunci kelembapan dan memunculkan *white ring*.</li>
+                    <li style="margin-bottom: 8px;"><strong>Bakpau:</strong> Hindari kuning telur agar warna putih bersih terjaga.</li>
                     <li><strong>Suhu Ruang:</strong> Selalu gunakan telur bersuhu ruang agar tidak menurunkan suhu adonan/memperlambat ragi.</li>
                 </ul>
             </div>
         </div>
 
         <!-- 4. PEMILIHAN GULA -->
-        <div class="tip-card" data-category="bahan" data-keywords="gula pasir kastor brown sugar dextrose donat roti bakpau karamelisasi" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
-                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🧂</span> 4. Panduan Pemilihan Gula
+        <div class="tip-card" data-category="bahan" data-keywords="gula pasir kastor brown sugar dextrose donat roti bakpau karamelisasi" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+            <div onclick="toggleTipCard(this)" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #fef3c7; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">🧂</span> 4. Panduan Pemilihan Gula
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.75rem; color: #94a3b8; transition: transform 0.3s ease; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 50%;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
-                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
-                    <li style="margin-bottom: 6px;"><strong>Jenis:</strong> Gula Pasir (standar); Kastor (butiran halus, cepat larut); Brown Sugar (kelembapan ekstra &amp; aroma karamel); Dextrose / Gula Donat Khusus (taburan dingin tidak mudah meleleh).</li>
-                    <li style="margin-bottom: 6px;"><strong>Fungsi:</strong> Nutrisi ragi, pengikat air (higroskopis) agar roti awet empuk, dan pembentuk warna kulit keemasan.</li>
+            <div class="tip-body" style="padding: 0 16px 16px; display: none; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+                <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 0.83rem; line-height: 1.65; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Jenis:</strong> Gula Pasir (standar); Kastor (butiran halus, cepat larut); Brown Sugar (kelembapan ekstra &amp; aroma karamel); Dextrose / Gula Donat Khusus (taburan dingin tidak mudah meleleh).</li>
+                    <li style="margin-bottom: 8px;"><strong>Fungsi:</strong> Nutrisi ragi, pengikat air (higroskopis) agar roti awet empuk, dan pembentuk warna kulit keemasan.</li>
                     <li><strong>Aplikasi:</strong> Gunakan gula halus/kastor untuk adonan roti/donat. Gula pasir putih halus untuk bakpau agar bagian dalam tetap putih bersih.</li>
                 </ul>
             </div>
         </div>
 
         <!-- 5. PEMILIHAN CAIRAN & SUSU -->
-        <div class="tip-card" data-category="bahan" data-keywords="cairan air susu cair bubuk santan hidrasi suhu" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
-                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">💧</span> 5. Pemilihan Cairan &amp; Susu
+        <div class="tip-card" data-category="bahan" data-keywords="cairan air susu cair bubuk santan hidrasi suhu" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+            <div onclick="toggleTipCard(this)" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #fef3c7; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">💧</span> 5. Pemilihan Cairan &amp; Susu
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.75rem; color: #94a3b8; transition: transform 0.3s ease; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 50%;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
-                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
-                    <li style="margin-bottom: 6px;"><strong>Pilihan Cairan:</strong> Air mineral (netral, gluten maksimal); Susu cair / bubuk full cream (memperkaya rasa, serat lembut); Susu skim (kontrol struktur presisi).</li>
+            <div class="tip-body" style="padding: 0 16px 16px; display: none; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+                <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 0.83rem; line-height: 1.65; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Pilihan Cairan:</strong> Air mineral (netral, gluten maksimal); Susu cair / bubuk full cream (memperkaya rasa, serat lembut); Susu skim (kontrol struktur presisi).</li>
                     <li><strong>Suhu &amp; Hidrasi:</strong> Suhu ideal 35°C–38°C (&gt;45°C membunuh ragi). Tambahkan cairan bertahap (sisakan 10–15%) untuk antisipasi perbedaan daya serap tepung.</li>
                 </ul>
             </div>
         </div>
 
         <!-- 6. PELEMBUT, KENTANG, LABU & KOREKSI SP -->
-        <div class="tip-card" data-category="solusi" data-keywords="pelembut kentang labu bread improver sp ovalet tbm emulsifier" style="background: #fff; border-radius: 14px; border: 1px solid #fee2e2; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
-                <h4 style="margin: 0; color: #991b1b; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #fee2e2; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🥔</span> 6. Pelembut Alami, Improver &amp; Mitos SP
+        <div class="tip-card" data-category="solusi" data-keywords="pelembut kentang labu bread improver sp ovalet tbm emulsifier" style="background: #ffffff; border-radius: 16px; border: 1.5px solid #fecaca; overflow: hidden; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.04); transition: all 0.2s ease;">
+            <div onclick="toggleTipCard(this)" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: #991b1b; font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #fee2e2; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">🥔</span> 6. Pelembut Alami, Improver &amp; Mitos SP
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.75rem; color: #94a3b8; transition: transform 0.3s ease; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #fef2f2; border-radius: 50%;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #fef2f2;">
-                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
-                    <li style="margin-bottom: 6px;"><strong>Kentang &amp; Labu (Alami):</strong> Gunakan 20%–35% dari berat terigu. Mengikat air lebih lama agar empuk berhari-hari. Labu juga memberi warna kuning alami.</li>
-                    <li style="margin-bottom: 6px;"><strong>Bread Improver:</strong> Enzim &amp; emulsifier untuk menguatkan gluten, maksimalkan volume oven, dan masa simpan (cukup 0.1%–0.5%).</li>
+            <div class="tip-body" style="padding: 0 16px 16px; display: none; border-top: 1px solid #fee2e2; background: #fff5f5;">
+                <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 0.83rem; line-height: 1.65; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Kentang &amp; Labu (Alami):</strong> Gunakan 20%–35% dari berat terigu. Mengikat air lebih lama agar empuk berhari-hari. Labu juga memberi warna kuning alami.</li>
+                    <li style="margin-bottom: 8px;"><strong>Bread Improver:</strong> Enzim &amp; emulsifier untuk menguatkan gluten, maksimalkan volume oven, dan masa simpan (cukup 0.1%–0.5%).</li>
                     <li>⚠️ <strong style="color: #991b1b;">Koreksi Fatal SP/Ovalet:</strong> SP dirancang untuk bolu/cake bersponsor telur berkecepatan tinggi. <strong>Jangan gunakan SP pada adonan beragi</strong> (donat/roti/bakpau) karena merusak ragi, bikin liat, dan berasa sabun.</li>
                 </ul>
             </div>
         </div>
 
         <!-- 7. TEKNIK MENGGORENG PROFESIONAL -->
-        <div class="tip-card" data-category="teknik" data-keywords="menggoreng minyak wajan white ring suhu 160 170 balik tiriskan" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
-                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🍳</span> 7. Teknik Menggoreng &amp; White Ring
+        <div class="tip-card" data-category="teknik" data-keywords="menggoreng minyak wajan white ring suhu 160 170 balik tiriskan" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+            <div onclick="toggleTipCard(this)" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #fef3c7; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">🍳</span> 7. Teknik Menggoreng &amp; White Ring
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.75rem; color: #94a3b8; transition: transform 0.3s ease; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 50%;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
-                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
-                    <li style="margin-bottom: 6px;"><strong>Suhu Minyak (160°C–170°C):</strong> Gunakan termometer dapur. Terlalu panas = luar gosong dalam mentah. Terlalu dingin = donat berminyak (*enes*) dan gagal membentuk *white ring*.</li>
+            <div class="tip-body" style="padding: 0 16px 16px; display: none; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+                <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 0.83rem; line-height: 1.65; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Suhu Minyak (160°C–170°C):</strong> Gunakan termometer dapur. Terlalu panas = luar gosong dalam mentah. Terlalu dingin = donat berminyak (*enes*) dan gagal membentuk *white ring*.</li>
                     <li><strong>Teknik Balik:</strong> Cukup balik satu kali setelah sisi bawah kuning keemasan. Tiriskan di atas rak kawat (*wire rack*) agar bawahnya tidak lembap.</li>
                 </ul>
             </div>
         </div>
 
         <!-- 8. PENYIMPANAN PRODUK -->
-        <div class="tip-card" data-category="simpan" data-keywords="penyimpanan simpan roti donat bakpau kulkas freezer kedap udara" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
-                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">📦</span> 8. Panduan Penyimpanan Produk
+        <div class="tip-card" data-category="simpan" data-keywords="penyimpanan simpan roti donat bakpau kulkas freezer kedap udara" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+            <div onclick="toggleTipCard(this)" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #fef3c7; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">📦</span> 8. Panduan Penyimpanan Produk
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.75rem; color: #94a3b8; transition: transform 0.3s ease; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 50%;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
-                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
-                    <li style="margin-bottom: 6px;"><strong>Roti:</strong> Suhu ruang dalam wadah kedap udara (1–3 hari). <strong>Jangan masuk kulkas</strong> karena mempercepat pati mengeras. Simpan freezer untuk jangka panjang.</li>
-                    <li style="margin-bottom: 6px;"><strong>Donat:</strong> Donat polos tahan 1–2 hari di suhu ruang. Ber-filling krim/custard wajib *chiller* (habiskan 24 jam).</li>
+            <div class="tip-body" style="padding: 0 16px 16px; display: none; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+                <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 0.83rem; line-height: 1.65; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Roti:</strong> Suhu ruang dalam wadah kedap udara (1–3 hari). <strong>Jangan masuk kulkas</strong> karena mempercepat pati mengeras. Simpan freezer untuk jangka panjang.</li>
+                    <li style="margin-bottom: 8px;"><strong>Donat:</strong> Donat polos tahan 1–2 hari di suhu ruang. Ber-filling krim/custard wajib *chiller* (habiskan 24 jam).</li>
                     <li><strong>Bakpau:</strong> Kulkas (2–3 hari) atau freezer (3–4 minggu). Kukus langsung dari freezer (tanpa thawing) air mendidih 12–15 menit agar tidak berkerut.</li>
                 </ul>
             </div>
         </div>
 
         <!-- 9. TAHAPAN PRODUKSI (PENGULENAN & FERMENTASI) -->
-        <div class="tip-card" data-category="teknik" data-keywords="pengulenan kneading mixing windowpane test fermentasi proofing" style="background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-            <div onclick="toggleTipCard(this)" style="padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
-                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #fef3c7; padding: 6px; border-radius: 8px; font-size: 0.9rem;">🥣</span> 9. Pengulenan &amp; Fermentasi
+        <div class="tip-card" data-category="teknik" data-keywords="pengulenan kneading mixing windowpane test fermentasi proofing" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: all 0.2s ease;">
+            <div onclick="toggleTipCard(this)" style="padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: #fff;">
+                <h4 style="margin: 0; color: var(--chocolate, #4e342e); font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #fef3c7; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);">🥣</span> 9. Pengulenan &amp; Fermentasi
                 </h4>
-                <span class="toggle-icon" style="font-size: 0.8rem; color: #94a3b8; transition: transform 0.2s;">▼</span>
+                <span class="toggle-icon" style="font-size: 0.75rem; color: #94a3b8; transition: transform 0.3s ease; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 50%;">▼</span>
             </div>
-            <div class="tip-body" style="padding: 0 16px 14px 16px; display: none; border-top: 1px solid #f8fafc;">
-                <ul style="margin: 10px 0 0 0; padding-left: 16px; font-size: 0.81rem; line-height: 1.6; color: #334155;">
-                    <li style="margin-bottom: 6px;"><strong>Urutan Pengulenan:</strong> Campur bahan kering &amp; cairan. <strong>Masukkan lemak (mentega/minyak) di akhir</strong> setelah adonan setengah kalis agar gluten terbentuk sempurna.</li>
-                    <li style="margin-bottom: 6px;"><strong>Windowpane Test:</strong> Rentangkan adonan hingga membentuk selaput tipis transparan (roti/donat). Bakpau cukup sampai permukaan licin.</li>
+            <div class="tip-body" style="padding: 0 16px 16px; display: none; border-top: 1px solid #f1f5f9; background: #fafaf9;">
+                <ul style="margin: 12px 0 0 0; padding-left: 18px; font-size: 0.83rem; line-height: 1.65; color: #334155;">
+                    <li style="margin-bottom: 8px;"><strong>Urutan Pengulenan:</strong> Campur bahan kering &amp; cairan. <strong>Masukkan lemak (mentega/minyak) di akhir</strong> setelah adonan setengah kalis agar gluten terbentuk sempurna.</li>
+                    <li style="margin-bottom: 8px;"><strong>Windowpane Test:</strong> Rentangkan adonan hingga membentuk selaput tipis transparan (roti/donat). Bakpau cukup sampai permukaan licin.</li>
                     <li><strong>Proofing Cepat:</strong> Istirahatkan di suhu ruang ideal (26°C–28°C) atau manfaatkan mangkuk berisi air hangat di wadah tertutup untuk menjaga kelembapan stabil[cite: 1].</li>
                 </ul>
             </div>
@@ -8181,13 +8245,41 @@ function performAIAnalysis(temp, humidity) {
 }
 
 // HAPUS KODE LAMA, GANTI DENGAN KODE BARU INI:
-function toggleAI() {
-    const box = document.getElementById('ai-analysis');
-    if (!box) return;
+async function toggleAI() {
+    const aiResultDiv = document.getElementById('ai-tips-result');
+    if (!aiResultDiv) return;
 
-    // Bersihkan sisa gaya bawaan agar sepenuhnya dikontrol oleh CSS
-    box.style.display = ''; 
-    box.classList.toggle('show');
+    // Tampilkan panel hasil dengan status loading
+    aiResultDiv.style.display = 'block';
+    aiResultDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 8px;"><span class="spinner"></span> Sedang menganalisis parameter adonan...</div>';
+
+    try {
+        // Kirim data parameter ke backend API (misalnya endpoint Python/Flask atau PHP)
+        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                suhuRuang: 28, // Ambil dari input atau sensor aktif
+                waktuProofing: '45 menit',
+                keterangan: 'Permukaan adonan mulai mengendur'
+            })
+        });
+
+        const data = await response.json();
+
+        // Tampilkan hasil analisis dari AI
+        aiResultDiv.innerHTML = `
+            <h4 style="margin: 0 0 6px 0; color: #6c3483; font-size: 0.9rem;">🤖 Hasil Analisis AI</h4>
+            <p style="margin: 0; font-size: 0.82rem; color: #334155; line-height: 1.5;">${data.analysis}</p>
+        `;
+    } catch (error) {
+        aiResultDiv.innerHTML = `
+            <strong style="color: #991b1b; font-size: 0.85rem;">Gagal Memuat Analisis</strong>
+            <p style="margin: 4px 0 0 0; font-size: 0.81rem; color: #475569;">Pastikan koneksi server atau agen AI aktif.</p>
+        `;
+    }
 }
 
 // Fungsi 1: Dipicu saat menekan tombol (✕) di Kotak AI Utama
@@ -8221,139 +8313,128 @@ function panggilKembaliAIAgent() {
 // =================================================================================
 async function mintaAnalisisAISungguhan() {
     const btn = document.getElementById('btn-ai-live-analysis');
-    const resultBox = document.getElementById('ai-live-result');
-    if (!resultBox) return;
+    const resultContainer = document.getElementById('ai-live-result');
+    const prevText = btn ? btn.innerText : '🤖 Analisis AI Mendalam (Live)';
 
-    resultBox.style.display = 'block';
-    resultBox.innerHTML = '<em><i class="fas fa-spinner fa-spin"></i> Menghubungi AI Agent...</em>';
-    if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; }
+    if (!resultContainer) return;
 
-    // 1. Kumpulkan konteks resep yang sedang aktif dari elemen yang sudah dihitung
-    const namaResep = (document.getElementById('recipe-save-name')?.value || 'Resep ini').trim();
-    const hppPerPcs = document.getElementById('sum-hpp-gabungan')?.innerText || 'Rp 0';
-    const hargaJual = document.getElementById('input-harga-jual')?.value || '0';
-    const foodCostPersen = document.getElementById('food-cost-percent')?.innerText || '0%';
-    const profitMarginPersen = document.getElementById('sum-profit-margin')?.innerText || '0%';
-    const beratPerPcs = document.getElementById('sum-weight-pcs')?.innerText || '0';
-    const untungBersih = document.getElementById('profit-bersih')?.innerText || 'Rp 0';
-
-    const promptContext =
-        `Analisis mendalam kondisi bisnis resep bakery berikut. Berikan insight detail dan rekomendasi konkret:\n` +
-        `- Nama resep: ${namaResep}\n` +
-        `- HPP (food cost) per pcs: ${hppPerPcs}\n` +
-        `- Harga jual per pcs: Rp ${parseFloat(hargaJual) || 0}\n` +
-        `- Food cost ratio: ${foodCostPersen}\n` +
-        `- Profit margin: ${profitMarginPersen}\n` +
-        `- Estimasi keuntungan kotor per batch: ${untungBersih}\n` +
-        `- Berat adonan per pcs: ${beratPerPcs} g\n\n` +
-        `Susun jawaban dengan format (tanpa simbol markdown # atau *):\n` +
-        `📊 Ringkasan Kondisi\n` +
-        `💰 Analisis Food Cost & Margin\n` +
-        `⚠️ Masalah Utama\n` +
-        `✅ Rekomendasi Konkret (minimal 3 langkah dengan angka jika memungkinkan)\n` +
-        `🎯 Target Ideal (harga jual & food cost yang disarankan)`;
-
-    const formatHasilAI = (teks) => {
-        let html = teks
-            // Judul markdown (#, ##, ###)
-            .replace(/^#{1,6}\s*(.+)$/gm, '<div style="font-weight:700;margin-top:10px;color:#5b2c6f;">$1</div>')
-            // Bold **teks**
-            .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
-            // Italic _teks_
-            .replace(/_([^_\n]+)_/g, '<em>$1</em>')
-            // Bullet * item atau - item
-            .replace(/^[\*\-]\s+(.+)$/gm, '<div style="padding-left:10px;margin:3px 0;">• $1</div>')
-            // Daftar bernomor
-            .replace(/^(\d+)\.\s+(.+)$/gm, '<div style="padding-left:10px;margin:3px 0;"><strong>$1.</strong> $2</div>');
-
-        // Bersihkan sisa simbol markdown yang tidak terkonversi
-        html = html
-            .replace(/#{1,6}\s*/g, '')
-            .replace(/\*\*/g, '')
-            .replace(/\*/g, '')
-            .replace(/_/g, '');
-
-        return html.replace(/\n/g, '<br>');
-    };
-
-    const tampilkanFallback = (alasan) => {
-        let pesan = typeof alasan === 'string' ? alasan : 'AI Agent sedang tidak tersedia';
-        if (/quota|rate.?limit|resource_exhausted|kuota ai/i.test(pesan)) {
-            pesan = 'Kuota AI gratis habis. Gunakan analisis instan di bawah atau coba lagi nanti.';
-        } else if (pesan.length > 120) {
-            pesan = 'AI Agent sedang tidak tersedia';
-        }
-        const teksLokal = document.getElementById('text-analysis-fc')?.innerText
-            || document.getElementById('text-analysis-pm')?.innerText
-            || 'Analisis instan tidak tersedia.';
-        resultBox.innerHTML =
-            `<div style="color:#e67e22; font-weight:700; margin-bottom:4px; font-size:0.72rem;">⚠️ ${pesan}</div>` +
-            `<div>${teksLokal}</div>`;
-    };
-
-    const ekstrakPesanError = (data, status) => {
-        if (typeof data?.error === 'string') return data.error;
-        if (typeof data?.error?.message === 'string') return data.error.message;
-        if (typeof data?.message === 'string') return data.message;
-        if (status === 429 || data?.code === 'QUOTA_EXCEEDED') {
-            return 'Kuota AI gratis habis. Coba lagi nanti.';
-        }
-        return `Server Error: ${status}`;
-    };
-
-    const cacheKey = 'ai_live_' + btoa(unescape(encodeURIComponent(
-        [namaResep, hppPerPcs, hargaJual, foodCostPersen, profitMarginPersen, beratPerPcs].join('|')
-    ))).slice(0, 48);
-    try {
-        const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
-        if (cached?.result && Date.now() - cached.ts < 3600000) {
-            resultBox.innerHTML =
-                `<div style="font-weight:700; color:#6c3483; margin-bottom:6px; font-size:0.8rem;">🤖 Analisis AI Mendalam (tersimpan)</div>` +
-                `<div style="line-height:1.6;">${formatHasilAI(cached.result)}</div>`;
-            if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-            return;
-        }
-    } catch (_) { /* abaikan cache rusak */ }
-
-    // 2. Panggil endpoint AI sungguhan, dengan timeout supaya tidak menggantung di app native
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    if (btn) {
+        btn.innerText = "⏳ AI Agent Menganalisis...";
+        btn.disabled = true;
+    }
+    resultContainer.style.display = "block";
+    resultContainer.innerHTML = "<div style='font-size:0.8rem; color:#6c3483; text-align:center;'><i class='fas fa-spinner fa-spin'></i> Mengkalkulasi rasio bahan dan efisiensi...</div>";
 
     try {
-        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), {
+        const hppGabungan = document.getElementById('sum-hpp-gabungan')?.innerText || "Rp 0";
+        const marginProfit = document.getElementById('sum-profit-margin')?.innerText || "0%";
+        const fcPersen = document.getElementById('food-cost-percent')?.innerText || "0%";
+        const beratPerPcs = document.getElementById('sum-weight-pcs')?.innerText || "0";
+
+        const daftarBahan = (window.bakeryIngredients || []).map(b => 
+            `- ${b.name} (${b.category}): ${b.ratio}%, Berat: ${b.weight}g, Cost: Rp${Math.round(b.cost)}`
+        ).join('\n');
+
+        const daftarLangkah = (window.activeRecipeSteps || []).map((l, i) => 
+            `${i + 1}. ${l}`
+        ).join('\n');
+
+        // Prompt dimodifikasi agar AI lebih disiplin menggunakan paragraf dan list
+        const aiPrompt = `
+Bertindaklah sebagai Konsultan Artisan Bakery. Analisis resep ini:
+
+[METRIK FINANSIAL & FISIK]
+HPP per Pcs: ${hppGabungan} | Profit Margin: ${marginProfit} | Food Cost: ${fcPersen} | Berat Adonan per Pcs: ${beratPerPcs}g
+
+[KOMPOSISI BAHAN]
+${daftarBahan || "Belum ada bahan."}
+
+[METODOLOGI PROSES]
+${daftarLangkah || "Belum ada langkah."}
+
+Gunakan struktur ini:
+🔬 Analisis Adonan & Komposisi
+⚙️ Rekomendasi Optimalisasi Proses
+📊 Ringkasan Kondisi Finansial
+💰 Analisis Food Cost & Margin
+
+ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul dengan titik dua (contoh: "Potensi Masalah:"), gunakan simbol (-) HANYA untuk list, dan angka (1.) HANYA untuk urutan langkah.`;
+
+        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ promptContext }),
-            signal: controller.signal
+            body: JSON.stringify({ promptContext: aiPrompt }) 
         });
-        clearTimeout(timeoutId);
 
-        const rawText = await response.text();
-        let data = {};
-        try {
-            data = rawText ? JSON.parse(rawText) : {};
-        } catch (_) {
-            console.error('Server mengembalikan respons non-JSON:', rawText);
-        }
+        if (!response.ok) throw new Error(`Server AI merespons dengan status ${response.status}`);
+        const data = await response.json();
+        
+        // --- FUNGSI FORMATTING BARU (LEBIH CERDAS & RAPI) ---
+        const formatHasilAI = (teks) => {
+            if (!teks) return "Analisis tidak tersedia.";
 
-        if (!response.ok || !data.result) {
-            tampilkanFallback(ekstrakPesanError(data, response.status));
-            return;
-        }
+            // 1. Perbaiki spasi bocor dari AI (misal simbol '-' lalu enter)
+            let cleanText = teks.replace(/([\*\-\•])\s*\n\s*/g, '$1 ');
 
-        try {
-            localStorage.setItem(cacheKey, JSON.stringify({ result: data.result, ts: Date.now() }));
-        } catch (_) { /* storage penuh */ }
+            // 2. Format Bold & Italic Bawaan Markdown
+            cleanText = cleanText
+                .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/_([^_\n]+)_/g, '<em>$1</em>');
 
-        resultBox.innerHTML =
-            `<div style="font-weight:700; color:#6c3483; margin-bottom:6px; font-size:0.8rem;">🤖 Analisis AI Mendalam</div>` +
-            `<div style="line-height:1.6;">${formatHasilAI(data.result)}</div>`;
+            const lines = cleanText.split('\n');
+            let htmlLines = [];
+
+            lines.forEach(line => {
+                let t = line.trim();
+                // Abaikan baris kosong atau simbol nyasar
+                if (!t || t === '•' || t === '-' || t === '*') return; 
+
+                // A. Deteksi Judul Utama (Ada Emoji di awal atau pakai #) -> Jadi Title Case
+                if (/^([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])\s*(.+)$/.test(t) || /^#\s/.test(t)) {
+                    t = t.replace(/^#\s*/, '').toLowerCase();
+                    htmlLines.push(`<div style="font-weight:900; margin:24px 0 12px 0; color:#4a235a; font-size:1.05rem; border-bottom:2px solid #e8daef; padding-bottom:6px; text-transform:capitalize; letter-spacing:0.3px;">${t}</div>`);
+                }
+                // B. Deteksi Sub-Judul (Berakhiran ":" atau pakai ##) -> Warna Biru
+                else if (t.endsWith(':') || /^#{2,6}\s/.test(t)) {
+                    t = t.replace(/^#{2,6}\s*/, '');
+                    htmlLines.push(`<div style="font-weight:800; margin:16px 0 6px 0; color:#2980b9; font-size:0.95rem;">${t}</div>`);
+                }
+                // C. Deteksi List Angka (1. 2. 3.) -> Warna Oranye
+                else if (/^(\d+)\.\s+(.+)/.test(t)) {
+                    const match = t.match(/^(\d+)\.\s+(.+)/);
+                    htmlLines.push(`<div style="padding-left:12px; margin-bottom:8px; display:flex; line-height:1.5; font-size:0.9rem;"><span style="margin-right:8px; font-weight:900; color:#d35400;">${match[1]}.</span><span>${match[2]}</span></div>`);
+                }
+                // D. Deteksi List Bullet (- atau *) -> Warna Oranye
+                else if (/^[\*\-\•]\s+/.test(t)) {
+                    t = t.replace(/^[\*\-\•]\s+/, '');
+                    htmlLines.push(`<div style="padding-left:12px; margin-bottom:8px; display:flex; line-height:1.5; font-size:0.9rem;"><span style="margin-right:10px; color:#d35400; font-size:1.2rem; line-height:0.8;">•</span><span>${t}</span></div>`);
+                }
+                // E. Paragraf Biasa (Narasi)
+                else {
+                    htmlLines.push(`<div style="margin-bottom:10px; line-height:1.6; font-size:0.9rem; color:#444; text-align:justify;">${t}</div>`);
+                }
+            });
+
+            return htmlLines.join('');
+        };
+
+        resultContainer.innerHTML = `
+            <div style="font-weight:900; color:#6c3483; margin-bottom:10px; font-size:0.9rem; text-align:center; background:#f5eef8; padding:8px; border-radius:6px; letter-spacing:0.5px;">
+                <i class="fas fa-robot"></i> LAPORAN ANALISIS AI
+            </div>
+            <div>${formatHasilAI(data.result)}</div>
+        `;
+
     } catch (error) {
-        clearTimeout(timeoutId);
-        // offline, timeout (AbortError), atau error jaringan lainnya
-        tampilkanFallback(error.name === 'AbortError' ? 'AI terlalu lama merespons' : 'Tidak ada koneksi ke AI Agent');
+        resultContainer.innerHTML = `
+            <div style="background:#fee2e2; border:1px solid #ef4444; padding:10px; border-radius:8px; color:#b91c1c; font-size:0.75rem;">
+                ⚠️ Gagal memproses analisis AI: ${error.message}
+            </div>`;
     } finally {
-        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+        if (btn) {
+            btn.innerText = prevText;
+            btn.disabled = false;
+        }
     }
 }
 
@@ -8990,9 +9071,6 @@ function updateDurationLabel(minutes) {
     }
 }
 
-// ------------------------------------------------------------
-// UI UMUM, TEMA & NAVIGASI
-// ------------------------------------------------------------
 //=======================================================================
 // TOGGLE MODAL (ENTAH INI UNTUK APA DAN KENAPA PALING ATAS DI JAVASCRIPT)
 //=======================================================================
@@ -9513,6 +9591,71 @@ function tutupPopupSukses() {
         setTimeout(() => {
             popupOverlay.style.display = 'none';
         }, 300);
+    }
+}
+
+// ============================================================
+// FUNGSI PENCARIAN DAN TANYA AI UNTUK TIPS TEKNIS ADONAN
+// ============================================================
+// Izinkan pengguna menekan tombol Enter di keyboard untuk memanggil AI
+function handleTipsEnter(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        tanyaAITips();
+    }
+}
+
+async function tanyaAITips() {
+    const inputEl = document.getElementById('tips-search-input');
+    const resultBox = document.getElementById('ai-tips-result');
+    const pertanyaan = inputEl.value.trim();
+
+    if (!pertanyaan) {
+        alert("Ketikkan masalah adonan atau pertanyaan Anda terlebih dahulu.");
+        return;
+    }
+
+    resultBox.style.display = "block";
+    resultBox.innerHTML = `
+        <div style='font-size:0.85rem; color:#6c3483; text-align:center;'>
+            <i class='fas fa-circle-notch fa-spin'></i> AI sedang memformulasikan solusi untuk "${pertanyaan}"...
+        </div>`;
+
+    try {
+        // Prompt khusus Asisten Tips
+        const aiPrompt = `
+Bertindaklah sebagai Asisten Teknis Artisan Bakery.
+Pengguna bertanya atau mengalami kendala berikut: "${pertanyaan}"
+
+Berikan jawaban teknis, padat, dan solutif.
+ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul dengan titik dua (contoh: "Solusi Cepat:"), gunakan simbol (-) HANYA untuk list, dan angka (1.) HANYA untuk urutan langkah.`;
+
+        // Panggil endpoint yang sama dengan fitur Live Analysis
+        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ promptContext: aiPrompt }) 
+        });
+
+        if (!response.ok) throw new Error(`Gangguan server: ${response.status}`);
+        const data = await response.json();
+
+        // Render hasil menggunakan fungsi formatting cerdas sebelumnya
+        resultBox.innerHTML = `
+            <div style="font-weight:900; color:#6c3483; margin-bottom:12px; font-size:0.85rem; text-align:center; background:#f5eef8; padding:8px; border-radius:6px; letter-spacing:0.5px;">
+                <i class="fas fa-robot"></i> JAWABAN ASISTEN AI
+            </div>
+            <div>${formatHasilAI(data.result)}</div>
+            <button onclick="document.getElementById('ai-tips-result').style.display='none'" style="margin-top:14px; width:100%; padding:10px; border-radius:8px; background:#f1f5f9; border:none; color:#475569; font-weight:bold; cursor:pointer;">
+                Tutup Jawaban
+            </button>
+        `;
+
+    } catch (error) {
+        resultBox.innerHTML = `
+            <div style="background:#fee2e2; padding:10px; border-radius:8px; color:#b91c1c; font-size:0.75rem;">
+                ⚠️ Gagal terhubung ke AI Asisten: ${error.message}
+            </div>`;
     }
 }
 
@@ -10424,12 +10567,6 @@ if ('serviceWorker' in navigator) {
         }
     });
 }
-
-
-// 1. FUNGSI UTAMA UNTUK MEMAKSA GPS AKURAT TERLEBIH DAHULU
-
-//==========================================================================
-
 
 // =========================================================================
 // LOGIK PENGAMBILAN DATA LOKASI & CUACA (MENDUKUNG WEB PWA & ANDROID APK)
@@ -13040,6 +13177,26 @@ document.getElementById('btn-mode-final')?.addEventListener('click', () => setPr
             }
         }, 2000); // Beri jeda 2 detik saat pertama buka
     });
+
+    function filterDaftarBahasa() {
+    const input = document.getElementById('input-cari-bahasa');
+    const filter = input.value.toLowerCase().trim();
+    const container = document.getElementById('list-pilihan-bahasa');
+    const items = container.getElementsByClassName('lang-item');
+
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const textValue = item.textContent || item.innerText;
+        const dataName = item.getAttribute('data-name') || '';
+
+        // Cocokkan teks pada elemen atau atribut data-name
+        if (textValue.toLowerCase().indexOf(filter) > -1 || dataName.indexOf(filter) > -1) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    }
+}
 </script>
 
 <!-- URL resmi pemanggil mesin Google Translate -->
