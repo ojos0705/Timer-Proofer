@@ -1619,6 +1619,14 @@ body {
     box-shadow: 0 4px 10px rgba(211, 84, 0, 0.25);
     font-weight: 700;
 }
+
+/* Animasi kedip untuk indikator perangkat yang sedang terhubung */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
     </style>
 </head>
 <body class="logged-out">
@@ -2261,63 +2269,29 @@ body {
         
 
         <div class="modal-scroll-content" style="padding-top: 0;">
-        <div style="margin-top: 10px; border-top: 1px dashed rgba(78, 52, 46, 0.3); border-bottom: 1px dashed rgba(78, 52, 46, 0.3); padding: 15px 0; margin-bottom: 15px;">
-            <h3 style="margin-top: 0;">🌡️ Koneksi Sensor</h3>
-            <button id="btn-ble" class="about-close-btn" style="background: #27ae60; margin-top: 10px;"  data-onclick="connectBluetoothThermometer()">
-                Hubungkan Termometer BLE
-            </button>
-            <p id="ble-status" style="font-size: 0.75rem; margin-top: 8px; margin-bottom: 0;">Status: Terputus</p>
-        </div>
-
-        <!-- NEW: Fitur Pengelolaan Sensor Tambahan (Multi-device) -->
-            <div class="multi-device-container" style="background: rgba(78, 52, 46, 0.05); padding: 10px; border-radius: 6px; border: 1px solid rgba(78, 52, 46, 0.1);">
-                <span style="font-size: 11px; font-weight: bold; color: var(--chocolate); opacity: 0.8;">Perangkat Terhubung (Multi-Device):</span>
-                <div id="ble-devices-list" style="font-size: 13px; margin-top: 5px;">
-                    <div style="display: flex; justify-content: space-between; padding: 6px 0; align-items: center;">
-                        <span id="sensor-ruang-status" style="font-size: 0.8rem; font-weight: 600;">🟢 Sensor Ruangan (Ruang A)</span>
-                        <!-- Tombol Putus / Disconnect -->
-                        <button id="btn-putus-ble" class="ble-action-btn btn-danger-ble" onclick="putuskanSensorBluetooth()">Putus</button>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 6px 0; color: #999; align-items: center;">
-                        <span id="sensor-adonan-status" style="font-size: 0.8rem;">⚫ Sensor Suhu Adonan</span>
-                        <!-- Tombol Pindai / Scan -->
-                        <button id="btn-pindai-ble" class="ble-action-btn btn-primary-ble" onclick="connectBluetoothThermometer()">Pindai</button>
-                    </div>
-                </div>
-            </div>
-
-        <div class="content">
-            <h3>Preferensi Aplikasi</h3>
-            <p>
-                <input type="checkbox" id="set-sound" checked> 
-                <label for="set-sound">Aktifkan Suara Alarm</label>
-            </p>
-            <div class="setting-sub-item" style="padding-left: 20px; margin-bottom: 15px; border-left: 2px solid rgba(78, 52, 46, 0.2);">
-                <label for="select-alarm-tone" style="display:block; font-size: 12px; margin-bottom: 4px; color: #666;">Nada Alarm:</label>
-                <select id="select-alarm-tone" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid rgba(78, 52, 46, 0.2); background: #fff; font-size: 13px; margin-bottom: 8px;">
-                    <option value="default">Default Digital Beep</option>
-                    <option value="soft-bell">Soft Bakery Bell</option>
-                    <option value="kitchen-timer">Classic Kitchen Timer</option>
-                    <option value="custom">Nada Kustom (Audio File)</option>
-                </select>
-                
-                <label for="range-alarm-volume" style="display:block; font-size: 12px; margin-bottom: 4px; color: #666;">Volume Alarm:</label>
-                <input type="range" id="range-alarm-volume" min="0" max="100" value="80" style="width: 100%; accent-color: var(--chocolate);">
-            </div>
-            <p>
-                <input type="checkbox" id="set-vib" checked> 
-                <label for="set-vib">Aktifkan Getaran (Haptics)</label>
-            </p>
-            
-            <hr style="border: 0; border-top: 1px solid rgba(78, 52, 46, 0.1); margin: 15px 0;">
-            
-            <h3>Konektivitas</h3>
-            <p>
-                <input type="checkbox" id="set-offline"> 
-                <label for="set-offline">Paksa Mode Luring (Manual)</label>
-            </p>
+                   
             
             <hr style="border: 0; border-top: 1px solid rgba(78, 52, 46, 0.2); margin: 20px 0;">
+            <div onclick="KoneksiBluetoothModal()" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.1rem;">🌡️</span>
+                    <div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Koneksi Sensor</div>
+                        <div style="font-size: 0.7rem; color: #888;">Hubungkan termometer BLE & perangkat IoT</div>
+                    </div>
+                </div>
+                <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
+            </div>
+            <div onclick="PreferensiModal()" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.1rem;">🎛️</span>
+                    <div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Preferensi Aplikasi</div>
+                        <div style="font-size: 0.7rem; color: #888;">Suara, getaran, & mode offline</div>
+                    </div>
+                </div>
+                <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
+            </div>
             <div onclick="bukaModalBahasaWhatsApp()" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span style="font-size: 1.1rem;">🌐</span>
@@ -2389,6 +2363,131 @@ body {
     </div>
     <div class="modal-bottom-actions">
         <button class="about-close-btn" style="margin: 0;"  data-onclick="toggleModal('settings-modal')">SIMPAN & KEMBALI</button>
+    </div>
+</div>
+
+<!-- MODAL KONEKSI BLUETOOTH -->
+<!-- MODAL KONEKSI SENSOR BLUETOOTH -->
+<div class="page-modal" id="modal-koneksi-sensor" inert>
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+        <h3 style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 8px;">
+            <span>🌡️</span> Koneksi Sensor
+        </h3>
+        <button class="article-modal-close" onclick="toggleModal('modal-koneksi-sensor')">×</button>
+    </div>
+    
+    <div class="modal-scroll-content">
+        
+        <!-- Kartu Utama: Pencarian Perangkat Baru -->
+        <div style="text-align: center; padding: 24px 15px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <div id="ble-main-icon" style="font-size: 2.2rem; margin-bottom: 12px; transition: 0.3s;">📶</div>
+            <button id="btn-ble" class="about-close-btn" style="background: #27ae60; margin: 0 auto; width: 100%; max-width: 250px; transition: 0.3s;" onclick="connectBluetoothThermometer('utama')">
+                Hubungkan Termometer BLE
+            </button>
+            <p id="ble-status-utama" style="font-size: 0.75rem; margin-top: 10px; margin-bottom: 0; color: #64748b; font-weight: 500;">Status: Belum Terhubung</p>
+        </div>
+
+        <!-- Daftar Multi-Device -->
+        <div class="multi-device-container" style="background: rgba(78, 52, 46, 0.03); padding: 16px; border-radius: 12px; border: 1px solid rgba(78, 52, 46, 0.08);">
+            <span style="font-size: 0.7rem; font-weight: bold; color: var(--chocolate); opacity: 0.8; display: block; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                Perangkat Tersimpan (Multi-Device)
+            </span>
+            
+            <div id="ble-devices-list" style="display: flex; flex-direction: column; gap: 10px;">
+                
+                <!-- Perangkat 1: Sensor Ruangan (Contoh Terhubung) -->
+                <div id="card-sensor-ruang" style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; opacity: 0.8; box-shadow: none;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <!-- Titik indikator diinisialisasi mati (⚫) -->
+                        <span id="dot-ruang" style="color: #94a3b8; font-size: 0.8rem;">⚫</span>
+                        <div>
+                            <div style="font-size: 0.8rem; font-weight: 700; color: var(--chocolate);">Sensor Ruangan (Ruang A)</div>
+                            <!-- Status teks diinisialisasi "Terputus", tanpa angka suhu palsu -->
+                            <div id="status-text-ruang" style="font-size: 0.65rem; color: #94a3b8; font-weight: 600;">Terputus</div>
+                        </div>
+                    </div>
+                    <button id="btn-ruang" style="background: var(--accent); color: rgb(255, 255, 255); border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; cursor: pointer; transition: 0.2s;" onclick="connectBluetoothThermometer('ruang')">Pindai</button>
+                </div>
+
+                <!-- Perangkat 2: Sensor Adonan (Contoh Terputus) -->
+                <div id="card-sensor-adonan" style="display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; opacity: 0.8;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span id="dot-adonan" style="color: #94a3b8; font-size: 0.8rem;">⚫</span>
+                        <div>
+                            <div style="font-size: 0.8rem; font-weight: 600; color: #64748b;">Sensor Suhu Adonan</div>
+                            <div id="status-text-adonan" style="font-size: 0.65rem; color: #94a3b8;">Terputus</div>
+                        </div>
+                    </div>
+                    <button id="btn-adonan" style="background: var(--accent); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; cursor: pointer; transition: 0.2s;" onclick="connectBluetoothThermometer('adonan')">Pindai</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-bottom-actions">
+        <button class="about-close-btn" style="margin: 0; width: 100%; background: #f1f5f9; color: #475569;" onclick="toggleModal('modal-koneksi-sensor')">TUTUP PENGATURAN</button>
+    </div>
+</div>
+
+<!-- MODAL PREFERENSI APLIKASI -->
+<div class="page-modal" id="modal-preferensi" inert>
+    <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+        <h3 style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 8px;">
+            <span>🎛️</span> Preferensi
+        </h3>
+        <!-- Memanggil fungsi toggle bawaan aplikasi -->
+        <button class="article-modal-close" onclick="toggleModal('modal-preferensi')">×</button>
+    </div>
+    
+    <div class="modal-scroll-content">
+        <!-- Section: Suara & Getaran -->
+        <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <h4 style="margin: 0 0 12px 0; color: var(--accent); font-size: 0.9rem;">🔊 Suara & Getaran</h4>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px dashed rgba(78, 52, 46, 0.1);">
+                <label for="set-sound" style="font-size: 0.85rem; font-weight: 600; color: var(--chocolate);">Aktifkan Suara Alarm</label>
+                <input type="checkbox" id="set-sound" style="width: 18px; height: 18px; accent-color: var(--accent);" onchange="handlerPratinjauSuara()">
+            </div>
+
+            <div id="alarm-settings-group" style="padding: 12px 0; border-bottom: 1px dashed rgba(78, 52, 46, 0.1); transition: opacity 0.2s;">
+                <label for="select-alarm-tone" style="display:block; font-size: 0.75rem; margin-bottom: 6px; font-weight: bold; color: rgba(78, 52, 46, 0.8);">Nada Alarm:</label>
+                <select id="select-alarm-tone" onchange="handlerPratinjauSuara()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.85rem; color: var(--chocolate); margin-bottom: 12px; outline: none;">
+                    <option value="default">Default Digital Beep</option>
+                    <option value="soft-bell">Soft Bakery Bell</option>
+                    <option value="kitchen-timer">Classic Kitchen Timer</option>
+                    <option value="custom">Nada Kustom (Audio File)</option>
+                </select>
+                
+                <label for="range-alarm-volume" style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 6px; font-weight: bold; color: rgba(78, 52, 46, 0.8);">
+                    <span>Volume Alarm:</span>
+                    <span id="vol-indicator">80%</span>
+                </label>
+                <input type="range" id="range-alarm-volume" min="0" max="100" value="80" oninput="perbaruiIndikatorVolume()" onchange="handlerPratinjauSuara()" style="width: 100%; accent-color: var(--accent);">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px;">
+                <label for="set-vib" style="font-size: 0.85rem; font-weight: 600; color: var(--chocolate);">Aktifkan Getaran (Haptics)</label>
+                <input type="checkbox" id="set-vib" style="width: 18px; height: 18px; accent-color: var(--accent);" onchange="handlerPratinjauGetaran()">
+            </div>
+        </div>
+
+        <!-- Section: Konektivitas -->
+        <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+            <h4 style="margin: 0 0 12px 0; color: var(--accent); font-size: 0.9rem;">🔌 Konektivitas</h4>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <label for="set-offline" style="font-size: 0.85rem; font-weight: 600; color: var(--chocolate); display: block;">Paksa Mode Luring</label>
+                    <span style="font-size: 0.7rem; color: #888;">Input parameter manual tanpa internet</span>
+                </div>
+                <input type="checkbox" id="set-offline" style="width: 18px; height: 18px; accent-color: var(--accent);">
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-bottom-actions">
+        <button class="about-close-btn" style="margin: 0; width: 100%;" onclick="simpanPreferensiLengkap()">SIMPAN PENGATURAN</button>
     </div>
 </div>
 
@@ -4267,46 +4366,112 @@ async function renderUserProfile(summaryData = null) {
 
     // 6. Versi aplikasi
     updateVersion();
+    ProgressionSystem.refreshUI();
 }
 
 // =========================================================================
-// 1. DATA MILESTONE & REWARD (Konfigurasi Kurva Level)
+// 1. DATA MILESTONE & REWARD (Konfigurasi Kurva Level) - GAMIFIKASI
+// =========================================================================
+// =========================================================================
+// 1. DATA MILESTONE, REWARD & MISION (Konfigurasi Kurva Level) - GAMIFIKASI
 // =========================================================================
 const GamificationData = [
-    { level: 1, expRequired: 0, unlockKey: null, badgeTitle: "Novice Baker", icon: "🥚", message: "Selamat datang di dunia artisan!" },
-    { level: 2, expRequired: 50, unlockKey: "custom_alarm", badgeTitle: "Apprentice Baker", icon: "🔔", message: "Fitur Nada Alarm Kustom Terbuka!" },
-    { level: 3, expRequired: 150, unlockKey: "offline_mode", badgeTitle: "Journeyman Baker", icon: "📵", message: "Fitur Mode Luring Manual Terbuka!" },
-    { level: 4, expRequired: 350, unlockKey: "ble_thermometer", badgeTitle: "Artisan Baker", icon: "🌡️", message: "Koneksi Termometer Bluetooth Terbuka!" },
-    { level: 5, expRequired: 700, unlockKey: "ai_analytics", badgeTitle: "Master Baker", icon: "🏆", message: "AI Agent Premium Analytics Terbuka!" }
+    { 
+        level: 1, 
+        expRequired: 0, 
+        unlockKey: null, 
+        badgeTitle: "Novice Baker", 
+        icon: "🥚", 
+        message: "Selamat datang di dunia artisan! Mulai buat resep pertamamu." 
+    },
+    { 
+        level: 2, 
+        expRequired: 50, 
+        unlockKey: "custom_alarm", 
+        badgeTitle: "Apprentice Baker", 
+        icon: "🔔", 
+        message: "Fitur Nada Alarm Kustom Terbuka! Atur suara alarm sesuai selera." 
+    },
+    { 
+        level: 3, 
+        expRequired: 150, 
+        unlockKey: "offline_mode", 
+        badgeTitle: "Journeyman Baker", 
+        icon: "📵", 
+        message: "Fitur Mode Luring Manual Terbuka! Tetap produktif tanpa koneksi." 
+    },
+    { 
+        level: 4, 
+        expRequired: 350, 
+        unlockKey: "ble_thermometer", 
+        badgeTitle: "Artisan Baker", 
+        icon: "🌡️", 
+        message: "Koneksi Termometer Bluetooth Terbuka! Sinkronisasi suhu presisi tinggi." 
+    },
+    { 
+        level: 5, 
+        expRequired: 700, 
+        unlockKey: "ai_analytics", 
+        badgeTitle: "Master Baker", 
+        icon: "🏆", 
+        message: "AI Agent Premium Analytics Terbuka! Analisis mendalam resep & HPP aktif." 
+    }
 ];
 
 // =========================================================================
 // 2. MESIN LOGIKA GAMIFIKASI (Menyimpan & Memeriksa State)
 // =========================================================================
 class ProgressionSystem {
-    static getExp() { return parseInt(localStorage.getItem('user_exp')) || 0; }
-    static getLevel() { return parseInt(localStorage.getItem('user_level')) || 1; }
-    static getUnlockedFeatures() { return JSON.parse(localStorage.getItem('unlocked_features')) || []; }
+    static getExp() { 
+        return parseInt(localStorage.getItem('user_exp')) || 0; 
+    }
+    
+    static getLevel() { 
+        return parseInt(localStorage.getItem('user_level')) || 1; 
+    }
+    
+    static getUnlockedFeatures() { 
+        try {
+            return JSON.parse(localStorage.getItem('unlocked_features')) || [];
+        } catch(e) {
+            return [];
+        }
+    }
 
-    // Metode untuk menambah EXP (Panggil ini saat Timer Proofing selesai atau tambah resep)
-    static addExp(amount) {
+    // Panggil saat user berhasil menyelesaikan 1 siklus Timer Proofing (+25 EXP)
+    static addProofing() {
+        this.addExp(25, "Menyelesaikan Sesi Proofing Adonan! 🍩");
+    }
+
+    // Panggil saat user berhasil menyimpan resep baru (+50 EXP)
+    static addRecipe() {
+        this.addExp(50, "Menyimpan Resep & Kalkulasi HPP Baru! 🧾");
+    }
+
+    // Metode utama penambahan EXP & Pengecekan Level
+    static addExp(amount, sourceMessage = "") {
         let currentExp = this.getExp() + amount;
         localStorage.setItem('user_exp', currentExp);
-        this.checkLevelUp(currentExp);
         
-        // Langsung perbarui UI kartu profil jika sedang terbuka
-        if (window.GamificationUI) window.GamificationUI.refresh();
+        // Tampilkan indikator perolehan EXP kecil jika diperlukan
+        if (sourceMessage && typeof showToast === 'function') {
+            showToast(`+${amount} EXP: ${sourceMessage}`);
+        }
+
+        this.checkLevelUp(currentExp);
+        this.refreshUI();
     }
 
     static checkLevelUp(currentExp) {
         let currentLevel = this.getLevel();
-        // Cari level tertinggi yang syarat EXP-nya terpenuhi
         let nextLevelData = GamificationData.slice().reverse().find(g => currentExp >= g.expRequired);
 
         if (nextLevelData && nextLevelData.level > currentLevel) {
             localStorage.setItem('user_level', nextLevelData.level);
             
-            if (nextLevelData.unlockKey) this.unlockFeature(nextLevelData.unlockKey);
+            if (nextLevelData.unlockKey) {
+                this.unlockFeature(nextLevelData.unlockKey);
+            }
             
             this.showAchievement(nextLevelData.badgeTitle, nextLevelData.message, nextLevelData.icon);
         }
@@ -4332,21 +4497,49 @@ class ProgressionSystem {
             descEl.innerText = desc;
             iconEl.innerText = icon;
             popup.classList.add('show');
-            setTimeout(() => popup.classList.remove('show'), 5000);
+            
+            // Suara / Haptics pendukung jika tersedia
+            if (typeof triggerVibration === 'function') triggerVibration();
+
+            setTimeout(() => popup.classList.remove('show'), 6000);
         }
     }
 
     static applyUnlockedFeaturesUI() {
         const unlocked = this.getUnlockedFeatures();
         
-        // Contoh Penguncian Fitur di UI (Sesuaikan ID dengan HTML Anda)
+        // Penguncian/Membuka Fitur AI Analytics di Halaman Resep
         const aiBox = document.getElementById('premium-ai-analysis-box');
-        if (aiBox) aiBox.style.display = unlocked.includes('ai_analytics') ? 'block' : 'none';
+        if (aiBox) {
+            aiBox.style.display = unlocked.includes('ai_analytics') ? 'block' : 'none';
+        }
 
+        // Penguncian Tombol Bluetooth Sensor
         const btnBle = document.getElementById('btn-ble');
-        if (btnBle) btnBle.disabled = !unlocked.includes('ble_thermometer');
+        if (btnBle) {
+            btnBle.disabled = !unlocked.includes('ble_thermometer');
+        }
+    }
+
+    // Sinkronisasi Tampilan Gamifikasi ke Profil Pengguna
+    static refreshUI() {
+        const currentExp = this.getExp();
+        const currentLevel = this.getLevel();
+        const currentBadgeData = GamificationData.find(g => g.level === currentLevel) || GamificationData[0];
+
+        // Perbarui Badge Title di Modal Profil Pengguna
+        const profileBadgeEl = document.getElementById('profile-status-badge');
+        if (profileBadgeEl) {
+            profileBadgeEl.innerHTML = `${currentBadgeData.icon} ${currentBadgeData.badgeTitle} (Lv. ${currentLevel})`;
+        }
+
+        // Terapkan aturan fitur terkunci saat UI dimuat
+        this.applyUnlockedFeaturesUI();
     }
 }
+
+// Daftarkan ke scope global agar modul lain bisa mengaksesnya
+window.GamificationUI = ProgressionSystem;
 
 // Fungsi memuat data profil secara dinamis saat aplikasi dibuka / modal diakses
 /**
@@ -4914,6 +5107,7 @@ async function simpanResepKeDatabase() {
     } finally {
         isSaving = false;
     }
+    ProgressionSystem.addRecipe();
 }
 
     // ==========================================
@@ -6058,6 +6252,7 @@ function handleTimerClick() {
     updateTimeLabels(0, 0);
     clearProofingState();
     document.getElementById('ai-tips').innerText = "Waktu dikosongkan. Silakan pilih mode atau atur manual.";
+    handleTimerClick()
 }
 
 function setControlsDisabled(disabled) {
@@ -6403,6 +6598,7 @@ function startProofing(isRestoring = false) {
             }
         }
     }, 1000);
+    ProgressionSystem.addProofing();
 }
 
 function setMode(mode) {
@@ -8293,23 +8489,28 @@ function tambahNotifikasi(pesan, kategori, icon) {
 // ========================================================
 async function requestNotificationPermission() {
     try {
-        // 1. Cek status izin saat ini di handphone
-        let check = await LocalNotifications.checkPermissions();
-        
-        // 2. Jika belum diizinkan, minta izin ke pengguna melalui pop-up native HP
-        if (check.display !== 'granted') {
-            let request = await LocalNotifications.requestPermissions();
-            if (request.display === 'granted') {
-                window.DEBUG && console.log("Izin notifikasi native berhasil diberikan oleh pengguna.");
+        // Langsung minta izin tanpa cek checkPermissions untuk menghindari error method tidak ditemukan
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) {
+            const { LocalNotifications } = window.Capacitor.Plugins;
+            
+            const permission = await LocalNotifications.requestPermissions();
+            if (permission.display === 'granted') {
+                console.log('Izin notifikasi diberikan.');
                 return true;
             } else {
-                console.warn("Pengguna menolak izin notifikasi native.");
+                console.warn('Izin notifikasi ditolak oleh pengguna.');
                 return false;
             }
+        } else if (typeof LocalNotifications !== 'undefined') {
+            // Jika menggunakan modul ES6 / import biasa
+            const permission = await LocalNotifications.requestPermissions();
+            return permission.display === 'granted';
+        } else {
+            console.warn('Plugin LocalNotifications tidak tersedia di lingkungan ini.');
+            return false;
         }
-        return true;
     } catch (error) {
-        console.error("Gagal memeriksa izin notifikasi Capacitor:", error);
+        console.error('Gagal meminta izin notifikasi Capacitor:', error);
         return false;
     }
 }
@@ -8451,42 +8652,140 @@ function performAIAnalysis(temp, humidity) {
     recEl.innerHTML = `<strong>Rekomendasi:</strong> ${recommendation}`;
 }
 
-// HAPUS KODE LAMA, GANTI DENGAN KODE BARU INI:
+// FUNGSI ANALISIS AI TIMER COUNTDOWN
 async function toggleAI() {
-    const aiResultDiv = document.getElementById('ai-tips-result');
-    if (!aiResultDiv) return;
+    const elSuhu = document.getElementById('status-text-ruang') || document.getElementById('temp-val');
+    const elWaktu = document.getElementById('input-waktu-proofing') || document.getElementById('waktu-val');
+    const elKeterangan = document.getElementById('input-keterangan-adonan');
 
-    // Tampilkan panel hasil dengan status loading
-    aiResultDiv.style.display = 'block';
-    aiResultDiv.innerHTML = '<div style="display: flex; align-items: center; gap: 8px;"><span class="spinner"></span> Sedang menganalisis parameter adonan...</div>';
+    let nilaiSuhu = 28;
+    if (elSuhu) {
+        let matchSuhu = elSuhu.innerText.match(/[\d.]+/);
+        if (matchSuhu) nilaiSuhu = parseFloat(matchSuhu[0]);
+    }
+
+    let nilaiWaktu = elWaktu ? (elWaktu.value || elWaktu.innerText) : '45 menit';
+    let nilaiKeterangan = elKeterangan ? elKeterangan.value : 'Permukaan adonan mulai mengendur';
+
+    const btnAi = document.getElementById('btn-ai-trigger');
+    if (btnAi) {
+        btnAi.innerText = "Menganalisis...";
+        btnAi.disabled = true;
+    }
 
     try {
-        // Kirim data parameter ke backend API (misalnya endpoint Python/Flask atau PHP)
-        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), { 
+        // Payload lengkap untuk mencakup seluruh kemungkinan parameter backend
+        const payloadData = {
+            promptContext: `Analisis fermentasi adonan dengan suhu ${nilaiSuhu}°C, durasi ${nilaiWaktu}, catatan: ${nilaiKeterangan}`,
+            suhuRuang: nilaiSuhu,
+            temperature: nilaiSuhu,
+            waktuProofing: nilaiWaktu,
+            time: nilaiWaktu,
+            keterangan: nilaiKeterangan,
+            note: nilaiKeterangan
+        };
+
+        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payloadData)
+        });
+
+        // Jika server masih menolak (400), ambil pesan error aslinya dari body response
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Pesan Penolakan dari Backend Vercel:", errorText);
+            throw new Error(`Bad Request (400): ${errorText}`);
+        }
+
+        const result = await response.json();
+        tampilkanHasilAnalisisAI(result);
+
+    } catch (error) {
+        console.error("Gagal melakukan analisis AI:", error);
+        alert("Gagal memproses analisis AI. Buka Console (F12) untuk melihat detail parameter yang ditolak server.");
+    } finally {
+        if (btnAi) {
+            btnAi.innerText = "Analisis AI";
+            btnAi.disabled = false;
+        }
+    }
+
+    try {
+        // PERHATIKAN: Sesuaikan nama key di bawah ini dengan apa yang 
+        // diterima oleh script backend /api/ai-analyze Anda di Vercel.
+        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
-                suhuRuang: 28, // Ambil dari input atau sensor aktif
-                waktuProofing: '45 menit',
-                keterangan: 'Permukaan adonan mulai mengendur'
+                // Sesuaikan dengan properti yang wajib diminta server backend Vercel Anda
+                promptContext: `Analisis proses proofing dengan suhu ruangan ${nilaiSuhu}°C, durasi waktu ${nilaiWaktu}, dan catatan keterangan: ${nilaiKeterangan}`,
+                
+                // Tetap sertakan properti lain jika backend Anda juga memerlukannya
+                suhuRuang: nilaiSuhu,
+                waktuProofing: nilaiWaktu,
+                keterangan: nilaiKeterangan
             })
         });
 
-        const data = await response.json();
+        // Tangkap teks/json error langsung dari response server Vercel
+        if (!response.ok) {
+            const errorBody = await response.text();
+            console.error("Detail Error dari Server Vercel:", errorBody);
+            throw new Error(`Server merespon status ${response.status}: ${errorBody}`);
+        }
 
-        // Tampilkan hasil analisis dari AI
-        aiResultDiv.innerHTML = `
-            <h4 style="margin: 0 0 6px 0; color: #6c3483; font-size: 0.9rem;">🤖 Hasil Analisis AI</h4>
-            <p style="margin: 0; font-size: 0.82rem; color: #334155; line-height: 1.5;">${data.analysis}</p>
-        `;
+        const result = await response.json();
+        tampilkanHasilAnalisisAI(result);
+
     } catch (error) {
-        aiResultDiv.innerHTML = `
-            <strong style="color: #991b1b; font-size: 0.85rem;">Gagal Memuat Analisis</strong>
-            <p style="margin: 4px 0 0 0; font-size: 0.81rem; color: #475569;">Pastikan koneksi server atau agen AI aktif.</p>
-        `;
+        console.error("Gagal melakukan analisis AI:", error);
+        alert("Gagal memproses analisis AI. Cek console browser (F12) untuk melihat detail penolakan server.");
+    } finally {
+        if (btnAi) {
+            btnAi.innerText = "Analisis AI";
+            btnAi.disabled = false;
+        }
     }
+}
+
+// Fungsi pembantu untuk menampilkan hasil dari backend
+function tampilkanHasilAnalisisAI(data) {
+    const containerHasil = document.getElementById('ai-result-container');
+    
+    // Jika kontainer hasil belum ada di HTML, buat secara otomatis agar tidak error
+    let targetContainer = containerHasil;
+    if (!targetContainer) {
+        const headerAnalisis = document.querySelector('.article-modal-header, h3'); // Cari elemen judul terdekat
+        targetContainer = document.createElement('div');
+        targetContainer.id = 'ai-result-container';
+        targetContainer.style.cssText = "margin-top: 15px; padding: 15px; background: #fdf8f4; border: 1px solid rgba(78,52,46,0.1); border-radius: 8px; font-size: 0.85rem; color: var(--chocolate); line-height: 1.5;";
+        
+        // Sisipkan di bawah judul "Analisis Kondisi Adonan"
+        const judulAnalisis = Array.from(document.querySelectorAll('h3, div')).find(el => el.innerText && el.innerText.includes('Analisis Kondisi Adonan'));
+        if (judulAnalisis && judulAnalisis.parentNode) {
+            judulAnalisis.parentNode.insertBefore(targetContainer, judulAnalisis.nextSibling);
+        } else {
+            document.body.appendChild(targetContainer);
+        }
+    }
+
+    // Ambil teks dari berbagai kemungkinan key yang dikirim backend
+    let teksHasil = "";
+    if (typeof data === 'string') {
+        teksHasil = data;
+    } else if (data) {
+        teksHasil = data.analisis || data.message || data.result || data.text || data.response || JSON.stringify(data, null, 2);
+    }
+
+    // Masukkan ke dalam elemen HTML
+    targetContainer.innerHTML = `<div style="font-weight: bold; margin-bottom: 5px; color: var(--accent);">💡 Hasil Analisis AI:</div><div>${teksHasil.replace(/\n/g, '<br>')}</div>`;
 }
 
 // Fungsi 1: Dipicu saat menekan tombol (✕) di Kotak AI Utama
@@ -8509,6 +8808,29 @@ function panggilKembaliAIAgent() {
     // Sembunyikan tombol melayang agar layar kembali bersih
     const bubbleBtn = document.getElementById('ai-bubble-trigger');
     if (bubbleBtn) bubbleBtn.style.display = 'none';
+}
+
+// =================================================================================
+// ANALISIS AI PADA ANALISIS KONDISI ADONAN
+// =================================================================================
+async function muatAnalisisAI(contextData) {
+    try {
+        const response = await fetch('/api/ai-analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ promptContext: contextData })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            // Masukkan hasil teks dari AI ke elemen HTML penampung
+            document.getElementById('container-analisis-adonan').innerText = data.result;
+        } else {
+            console.error("Gagal memuat analisis:", data.error);
+        }
+    } catch (err) {
+        console.error("Kesalahan jaringan:", err);
+    }
 }
 
 // =================================================================================
@@ -13273,7 +13595,361 @@ window.tampilkanPopupAchievement = function(judul, desc) {
 document.getElementById('btn-mode-initial')?.addEventListener('click', () => setProofingMode('Initial', 60));
 document.getElementById('btn-mode-rounding')?.addEventListener('click', () => setProofingMode('Rounding', 15));
 document.getElementById('btn-mode-final')?.addEventListener('click', () => setProofingMode('Final', 45));
+
+// Memanggil dan menyiapkan data sebelum modal terbuka
+function PreferensiModal() {
+    muatDataPreferensi();
+    toggleModal('modal-preferensi');
+}
+
+// Memuat data dari sistem ke elemen UI
+function muatDataPreferensi() {
+    const isSound = localStorage.getItem('app_sound') !== 'false'; // Default True
+    const isVib = localStorage.getItem('app_vib') !== 'false';
+    const isOffline = localStorage.getItem('app_force_offline') === 'true'; // Default False
+    const tone = localStorage.getItem('app_alarm_tone') || 'default';
+    const vol = localStorage.getItem('app_alarm_volume') || '80';
+
+    const elSound = document.getElementById('set-sound');
+    const elVib = document.getElementById('set-vib');
+    const elOffline = document.getElementById('set-offline');
+    const elTone = document.getElementById('select-alarm-tone');
+    const elVol = document.getElementById('range-alarm-volume');
+
+    if (elSound) elSound.checked = isSound;
+    if (elVib) elVib.checked = isVib;
+    if (elOffline) elOffline.checked = isOffline;
+    if (elTone) elTone.value = tone;
+    if (elVol) {
+        elVol.value = vol;
+        perbaruiIndikatorVolume();
+    }
+    kunciGrupSuara();
+}
+
+// Fungsi Simpan ke LocalStorage saat ditekan "SIMPAN PENGATURAN"
+function simpanPreferensiLengkap() {
+    const elSound = document.getElementById('set-sound');
+    const elVib = document.getElementById('set-vib');
+    const elOffline = document.getElementById('set-offline');
+    const elTone = document.getElementById('select-alarm-tone');
+    const elVol = document.getElementById('range-alarm-volume');
+
+    if (elSound) localStorage.setItem('app_sound', elSound.checked);
+    if (elVib) localStorage.setItem('app_vib', elVib.checked);
+    if (elTone) localStorage.setItem('app_alarm_tone', elTone.value);
+    if (elVol) localStorage.setItem('app_alarm_volume', elVol.value);
+    
+    if (elOffline) {
+        localStorage.setItem('app_force_offline', elOffline.checked);
+        // Panggil fungsi luring bawaan aplikasi jika ada
+        if (elOffline.checked && typeof handleOfflinePremium === 'function') {
+            handleOfflinePremium();
+        }
+    }
+
+    toggleModal('modal-preferensi');
+    
+    // Tampilkan notifikasi jika sistem NotifSystem Anda tersedia
+    if (typeof NotifSystem !== 'undefined') {
+        NotifSystem.tambah('sistem', 'Pengaturan Tersimpan', 'Preferensi aplikasi berhasil diperbarui.', '✅');
+    }
+}
+
+
+// ----------------------------------------------------
+// FUNGSI MODAL KONEKSI BLUETOOTH 
+// ----------------------------------------------------
+// Objek global untuk menyimpan referensi sesi perangkat GATT yang terkoneksi
+const koneksiGATT = {
+    utama: null,
+    ruang: null,
+    adonan: null
+};
+
+// Fungsi membuka modal
+function KoneksiBluetoothModal() {
+    if (typeof toggleModal === 'function') {
+        toggleModal('modal-koneksi-sensor');
+    }
+}
+
+// 1. FUNGSI UTAMA MENYAMBUNGKAN BLUETOOTH & PROFIL GATT
+async function connectBluetoothThermometer(idPerangkat) {
+    if (!navigator.bluetooth) {
+        alert("Browser Anda belum mendukung Web Bluetooth API.");
+        return;
+    }
+
+    updateUIBluetoothLoading(idPerangkat);
+
+    try {
+        // Melakukan request perangkat dan memfilter hanya layanan kesehatan/termometer (UUID 0x1809)
+        const device = await navigator.bluetooth.requestDevice({
+            filters: [
+                { services: ['health_thermometer'] } 
+            ],
+            optionalServices: ['battery_service', 'device_information']
+        });
+
+        // Membuka sambungan ke GATT Server perangkat fisik
+        const server = await device.gatt.connect();
+        koneksiGATT[idPerangkat] = device;
+        
+        // Listener jika perangkat terputus di tengah jalan
+        device.addEventListener('gattserverdisconnected', () => handlerSensorTerputus(idPerangkat));
+
+        // 2. PROFIL GATT: Mengambil laci layanan kesehatan termometer
+        const service = await server.getPrimaryService('health_thermometer');
+        
+        // 3. MEMBACA KARAKTERISTIK DATA: Mengakses karakteristik pengukuran suhu (UUID 0x2A1C)
+        const characteristic = await service.getCharacteristic('temperature_measurement');
+
+        // 4. EVENT LISTENER (UPDATE REAL-TIME): Berlangganan data yang dikirim sensor
+        await characteristic.startNotifications();
+        characteristic.addEventListener('characteristicvaluechanged', (event) => {
+            const dataBiner = event.target.value;
+            
+            // 5. KONVERSI BINER KE DESIMAL (PARSING)
+            // Format IEEE-11073 32-bit float untuk Health Thermometer
+            const suhuCelcius = parseHealthThermometerData(dataBiner);
+            
+            if (suhuCelcius !== null) {
+                updateUIRealtimeSuhu(idPerangkat, suhuCelcius);
+            }
+        });
+
+        updateUIBluetoothConnected(idPerangkat, device.name || "Termometer BLE");
+
+    } catch (error) {
+        if (error.name === 'NotFoundError') {
+            console.log("Pencarian dibatalkan oleh pengguna.");
+        } else {
+            console.warn("Bluetooth Error:", error);
+        }
+        handlerSensorTerputus(idPerangkat);
+    }
+}
+
+// Fungsi Parsing Data Biner Spesifik Health Thermometer (IEEE-11073 Float)
+function parseHealthThermometerData(dataView) {
+    try {
+        // Byte pertama adalah flags (menentukan unit Celsius/Fahrenheit dan format data)
+        const flags = dataView.getUint8(0);
+        const unitFahrenheit = (flags & 0x01) !== 0; // Bit 0: 0 = Celsius, 1 = Fahrenheit
+
+        // Pembacaan nilai float 32-bit pada byte ke-1
+        let tempValue = dataView.getFloat32(1, true);
+
+        if (unitFahrenheit) {
+            // Konversi Fahrenheit ke Celsius jika perangkat mengirim format F
+            tempValue = (tempValue - 32) * 5 / 9;
+        }
+
+        return tempValue.toFixed(1);
+    } catch (e) {
+        console.error("Gagal melakukan parsing biner sensor:", e);
+        return null;
+    }
+}
+
+// Fungsi memutuskan koneksi secara manual
+function putuskanSensorBluetooth(idPerangkat) {
+    if (koneksiGATT[idPerangkat] && koneksiGATT[idPerangkat].gatt.connected) {
+        koneksiGATT[idPerangkat].gatt.disconnect();
+    }
+    handlerSensorTerputus(idPerangkat);
+}
+
+// --- FUNGSI UPDATE UI DINAMIS & REAL-TIME ---
+
+function updateUIRealtimeSuhu(id, suhu) {
+    if (id === 'utama') {
+        const status = document.getElementById('ble-status-utama');
+        if (status) {
+            status.innerText = `Status: Terhubung • ${suhu}°C`;
+            status.style.color = "#27ae60";
+        }
+    } else {
+        const status = document.getElementById(`status-text-${id}`);
+        if (status) {
+            status.innerText = `Terhubung • ${suhu}°C`;
+            status.style.color = "#27ae60";
+        }
+    }
+}
+
+function updateUIBluetoothLoading(id) {
+    if (id === 'utama') {
+        const btn = document.getElementById('btn-ble');
+        const status = document.getElementById('ble-status-utama');
+        if (btn) {
+            btn.innerText = "Mencari Perangkat...";
+            btn.style.opacity = "0.7";
+            btn.disabled = true;
+        }
+        if (status) status.innerText = "Status: Memindai sinyal...";
+    } else {
+        const btn = document.getElementById(`btn-${id}`);
+        if (btn) {
+            btn.innerText = "Mencari...";
+            btn.disabled = true;
+        }
+    }
+}
+
+function updateUIBluetoothConnected(id, namaDevice) {
+    if (id === 'utama') {
+        const btn = document.getElementById('btn-ble');
+        const icon = document.getElementById('ble-main-icon');
+        const status = document.getElementById('ble-status-utama');
+        
+        if (btn) {
+            btn.innerText = "Putuskan Koneksi";
+            btn.style.background = "#ef4444";
+            btn.style.opacity = "1";
+            btn.disabled = false;
+            btn.onclick = () => putuskanSensorBluetooth('utama');
+        }
+        if (icon) icon.innerHTML = "🔗";
+        if (status) {
+            status.innerText = `Status: Terhubung ke ${namaDevice}`;
+            status.style.color = "#27ae60";
+        }
+    } else {
+        const btn = document.getElementById(`btn-${id}`);
+        const card = document.getElementById(`card-sensor-${id}`);
+        const dot = document.getElementById(`dot-${id}`);
+        const status = document.getElementById(`status-text-${id}`);
+        
+        if (btn) {
+            btn.innerText = "Putus";
+            btn.style.background = "#fee2e2";
+            btn.style.color = "#ef4444";
+            btn.disabled = false;
+            btn.onclick = () => putuskanSensorBluetooth(id);
+        }
+        if (card) {
+            card.style.border = "1px solid #27ae60";
+            card.style.opacity = "1";
+            card.style.boxShadow = "0 1px 3px rgba(39, 174, 96, 0.1)";
+        }
+        if (dot) {
+            dot.innerText = "🟢";
+            dot.style.animation = "pulse 2s infinite";
+        }
+        if (status) {
+            status.innerText = "Terhubung • Menunggu data...";
+            status.style.color = "#27ae60";
+        }
+    }
+}
+
+function handlerSensorTerputus(id) {
+    koneksiGATT[id] = null;
+
+    if (id === 'utama') {
+        const btn = document.getElementById('btn-ble');
+        const icon = document.getElementById('ble-main-icon');
+        const status = document.getElementById('ble-status-utama');
+        
+        if (btn) {
+            btn.innerText = "Hubungkan Termometer BLE";
+            btn.style.background = "#27ae60";
+            btn.disabled = false;
+            btn.onclick = () => connectBluetoothThermometer('utama');
+        }
+        if (icon) icon.innerHTML = "📶";
+        if (status) {
+            status.innerText = "Status: Belum Terhubung";
+            status.style.color = "#64748b";
+        }
+    } else {
+        const btn = document.getElementById(`btn-${id}`);
+        const card = document.getElementById(`card-sensor-${id}`);
+        const dot = document.getElementById(`dot-${id}`);
+        const status = document.getElementById(`status-text-${id}`);
+        
+        if (btn) {
+            btn.innerText = "Pindai";
+            btn.style.background = "var(--accent)";
+            btn.style.color = "#fff";
+            btn.disabled = false;
+            btn.onclick = () => connectBluetoothThermometer(id);
+        }
+        if (card) {
+            card.style.border = "1px solid #e2e8f0";
+            card.style.opacity = "0.8";
+            card.style.boxShadow = "none";
+        }
+        if (dot) {
+            dot.innerText = "⚫";
+            dot.style.animation = "none";
+        }
+        if (status) {
+            status.innerText = "Terputus";
+            status.style.color = "#94a3b8";
+        }
+    }
+}
+
+// ----------------------------------------------------
+// UI INTERACTION HELPERS  FUNGSI PREFERENSI APLIKASI 
+// ----------------------------------------------------
+
+function perbaruiIndikatorVolume() {
+    const elVol = document.getElementById('range-alarm-volume');
+    const ind = document.getElementById('vol-indicator');
+    if (elVol && ind) ind.innerText = elVol.value + '%';
+}
+
+function kunciGrupSuara() {
+    const soundCheck = document.getElementById('set-sound');
+    const group = document.getElementById('alarm-settings-group');
+    if (soundCheck && group) {
+        // Redupkan dan blokir interaksi menu volume/tone jika suara dimatikan
+        group.style.opacity = soundCheck.checked ? '1' : '0.4';
+        group.style.pointerEvents = soundCheck.checked ? 'auto' : 'none';
+    }
+}
+
+function handlerPratinjauSuara() {
+    kunciGrupSuara();
+    const elSound = document.getElementById('set-sound');
+    
+    // Test bunyi hanya jika dalam keadaan diceklis (ON)
+    if (elSound && elSound.checked && typeof playAlarmSound === 'function') {
+        // Timpa memori sementara agar playAlarmSound membaca setting form saat ini (preview)
+        const toneSementara = document.getElementById('select-alarm-tone').value;
+        const volSementara = document.getElementById('range-alarm-volume').value;
+        
+        const toneAsli = localStorage.getItem('app_alarm_tone');
+        const volAsli = localStorage.getItem('app_alarm_volume');
+        
+        localStorage.setItem('app_alarm_tone', toneSementara);
+        localStorage.setItem('app_alarm_volume', volSementara);
+        
+        playAlarmSound(); // Membunyikan suara tes
+        
+        // Kembalikan value lama (hingga tombol 'Simpan' yang meresmikannya)
+        if (toneAsli) localStorage.setItem('app_alarm_tone', toneAsli);
+        if (volAsli) localStorage.setItem('app_alarm_volume', volAsli);
+    }
+}
+
+function handlerPratinjauGetaran() {
+    const elVib = document.getElementById('set-vib');
+    if (elVib && elVib.checked) {
+        // Test getaran jika diizinkan browser/perangkat
+        if (typeof triggerVibration === 'function') {
+            triggerVibration();
+        } else if (navigator.vibrate) {
+            navigator.vibrate([100, 50, 100]);
+        }
+    }
+}
 </script>
+
 <!-- ========================================================================= -->
     <!-- LETAKKAN ENGINE GOOGLE TRANSLATE DI SINI, TEPAT SEBELUM </body> -->
     <!-- ========================================================================= -->
