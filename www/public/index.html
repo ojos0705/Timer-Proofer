@@ -10141,8 +10141,10 @@ window.initTipsAIAssistant = function() {
         `;
 
         try {
-            // Sesuaikan URL endpoint dengan lokasi file ai-tips.js Anda (misal: '/api/ai-tips' atau path server Anda)
-            const response = await fetch('/api/ai-tips', {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const endpoint = isLocal ? 'https://timer-proofer.vercel.app/api/ai-tips' : '/api/ai-tips';
+
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ promptContext: query })
@@ -10154,15 +10156,31 @@ window.initTipsAIAssistant = function() {
                 throw new Error(data.error || 'Gagal memproses analisis AI.');
             }
 
-            // Render hasil analisis AI ke antarmuka
+            // Render hasil analisis AI dengan fitur Scroll & Collapse Header
             container.innerHTML = `
-                <div style="background: #fff; padding: 18px; border-radius: 12px; border-left: 4px solid #b7791f; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <h4 style="margin: 0; color: #2c3e50; font-size: 1rem;">🧠 Hasil Analisis Sains AI</h4>
-                        <span style="font-size: 0.75rem; color: #718096; background: #feebc8; padding: 2px 8px; border-radius: 10px;">Akurat</span>
+                <div id="ai-result-card" style="background: #fff; padding: 18px; border-radius: 16px; border-left: 4px solid #b7791f; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="
+                        const body = document.getElementById('ai-body-content'); 
+                        const icon = document.getElementById('ai-toggle-icon'); 
+                        if(body.style.display === 'none'){ 
+                            body.style.display = 'block'; 
+                            icon.innerText = '▲'; 
+                        } else { 
+                            body.style.display = 'none'; 
+                            icon.innerText = '▼'; 
+                        }
+                    ">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <h4 style="margin: 0; color: #2c3e50; font-size: 1rem;">🧠 Hasil Analisis Sains AI</h4>
+                            <span style="font-size: 0.75rem; color: #718096; background: #feebc8; padding: 2px 8px; border-radius: 10px;">Akurat</span>
+                        </div>
+                        <span id="ai-toggle-icon" style="font-size: 0.8rem; color: #718096; font-weight: bold; padding: 4px 8px;">▲</span>
                     </div>
-                    <div style="margin: 0; font-size: 0.9rem; color: #4a5568; line-height: 1.6; white-space: pre-line;">
-                        ${data.result}
+                    
+                    <div id="ai-body-content" style="max-height: 280px; overflow-y: auto; overflow-x: hidden; padding-right: 8px; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 10px; scrollbar-width: thin; scroll-behavior: smooth;">
+                        <div style="margin: 0; font-size: 0.9rem; color: #4a5568; line-height: 1.6; white-space: pre-line;">
+                            ${data.result}
+                        </div>
                     </div>
                 </div>
             `;
