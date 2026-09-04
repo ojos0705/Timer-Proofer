@@ -80,8 +80,24 @@ function getFinishReason(response) {
   return response?.candidates?.[0]?.finishReason || response?.finishReason || "";
 }
 
+import { GoogleGenAI } from '@google/genai';
+
+const GEMINI_MODELS = [
+  "gemini-3.8-flash",
+  "gemini-3.7-flash",
+  "gemini-3.5-flash-lite",
+];
+
+const SYSTEM_INSTRUCTION = 
+  "Anda adalah AI Agent ahli sains pangan, ragi, fermentasi, dan troubleshooting pembuatan roti, donat, dan bakpau. " +
+  "Berikan penjelasan teknis yang akurat, solutif, dan mudah dipahami oleh home baker dalam Bahasa Indonesia. " +
+  "Gunakan emoji seminimal mungkin (hanya sesekali jika sangat diperlukan). " +
+  "Setiap judul bagian (section title) WAJIB ditulis dalam HURUF KAPITAL dan TEBAL (BOLD), tanpa menggunakan simbol markdown heading seperti # atau ###. " +
+  "Wajib mencakup: (1) analisis penyebab masalah, (2) parameter teknis ideal, (3) langkah solusi teknis konkret. " +
+  "Tanpa basa-basi pembuka seperti 'Tentu' atau 'Baik'. JANGAN gunakan tanda bintang ganda (**) di luar judul bagian.";
+
 export default async function handler(req, res) {
-  // Selalu set header CORS di awal
+  // Selalu set header CORS di awal agar aman diakses dari localhost maupun production
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader(
@@ -89,7 +105,7 @@ export default async function handler(req, res) {
     "Content-Type, Authorization, Accept, X-Requested-With"
   );
 
-  // Tangani preflight OPTIONS dengan status 200 OK yang ramah bagi browser
+  // Tangani preflight OPTIONS dengan status 200 OK
   if (req.method === "OPTIONS") {
     return res.status(200).send("OK");
   }
@@ -113,62 +129,45 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { GoogleGenAI } = await import("@google/genai");
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    let response = null;
+    let responseText = null;
     let usedModel = GEMINI_MODELS[0];
-    let lastQuotaError = null;
+    let lastError = null;
 
-    for (const model of GEMINI_MODELS) {
+    // Sistem otomatis mencoba model dari urutan teratas (3.8 -> 3.7 -> 3.5), 
+    // jika terkena high demand/error, otomatis lanjut ke model di bawahnya
+    for (const modelName of GEMINI_MODELS) {
       try {
-        response = await generateWithModel(ai, model, promptContext);
-        usedModel = model;
-        break;
-      } catch (error) {
-        if (isQuotaError(error)) {
-          lastQuotaError = error;
-          console.warn(`ai-analyze quota hit for ${model}, trying fallback...`);
-          continue;
-        }
-        throw error;
+        const response = await ai.models.generateContent({
+          model: modelName,
+          contents: promptContext,
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+          }
+        });
+
+        responseText = response.text;
+        usedModel = modelName;
+        break; // Berhasil, keluar dari loop
+      } catch (err) {
+        lastError = err;
+        console.warn(`Model ${modelName} gagal/sibuk, mencoba model cadangan berikutnya...`, err.message);
+        continue; // Lanjut ke model berikutnya
       }
     }
 
-    if (!response) {
-      const retrySec = parseRetrySeconds(lastQuotaError);
-      const retryHint = retrySec ? ` Coba lagi dalam ${retrySec} detik.` : "";
-      return res.status(429).json({
-        error: `Kuota AI gratis habis untuk semua model.${retryHint} Gunakan analisis instan atau coba lagi nanti.`,
-        code: "QUOTA_EXCEEDED",
-        retryAfter: retrySec,
+    if (!responseText) {
+      return res.status(500).json({ 
+        error: 'Semua model cadangan sedang sibuk atau mengalami lonjakan permintaan. Silakan coba beberapa saat lagi.',
+        details: lastError?.message 
       });
     }
 
-    const result = extractAnswerText(response);
-    const finishReason = getFinishReason(response);
+    return res.status(200).json({ result: responseText, model: usedModel });
 
-    if (!result) {
-      return res.status(502).json({ error: "AI tidak mengembalikan hasil, coba lagi" });
-    }
-
-    const truncated = finishReason === "MAX_TOKENS";
-    const finalResult = truncated
-      ? `${result}\n\n_(Analisis terpotong karena batas token. Coba lagi atau sederhanakan resep.)_`
-      : result;
-
-    return res.status(200).json({ result: finalResult, truncated, model: usedModel });
   } catch (error) {
-    console.error("ai-analyze error:", error);
-    if (isQuotaError(error)) {
-      const retrySec = parseRetrySeconds(error);
-      const retryHint = retrySec ? ` Coba lagi dalam ${retrySec} detik.` : "";
-      return res.status(429).json({
-        error: `Kuota AI gratis habis.${retryHint} Gunakan analisis instan atau coba lagi nanti.`,
-        code: "QUOTA_EXCEEDED",
-        retryAfter: retrySec,
-      });
-    }
-    return res.status(500).json({ error: toUserFacingError(error) });
+    console.error("ai-tips error:", error);
+    return res.status(500).json({ error: error.message || "Terjadi kesalahan pada server AI." });
   }
-};
+}
