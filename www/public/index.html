@@ -25,7 +25,7 @@
 }
 </script>
     <script>if (/^https?:$/.test(location.protocol)) { const manifestLink = document.createElement('link'); manifestLink.rel = 'manifest'; manifestLink.href = 'manifest.json'; document.head.appendChild(manifestLink); }</script>
-    <script src="assets/js/tipsData.js?v=20260904"></script>
+    <script src="assets/js/tipsData.js?v=20260905"></script>
     <script async src="https://www.googletagmanager.com/gtag.js?id=G-XXXXXXXXXX"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -679,95 +679,6 @@
             font-weight: 800;
             letter-spacing: 0.02em;
             text-transform: uppercase;
-        }
-        .tip-chip-strip {
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: flex-start;
-            align-items: center;
-            gap: var(--space-xs, 8px) !important;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: scroll !important;
-            overflow-y: hidden;
-            padding: 4px 2px 9px;
-            margin: 0 !important;
-            box-sizing: border-box;
-            scrollbar-width: thin;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-x: contain;
-            touch-action: pan-x;
-            cursor: grab;
-            user-select: none;
-            scroll-behavior: smooth;
-        }
-        .tip-chip-strip.is-dragging {
-            cursor: grabbing;
-            scroll-behavior: auto;
-        }
-        .tip-chip-strip::-webkit-scrollbar {
-            height: 4px;
-        }
-        .tip-chip-strip::-webkit-scrollbar-thumb {
-            background: rgba(78, 52, 46, 0.25);
-            border-radius: 999px;
-        }
-        .tip-chip-nav {
-            position: relative;
-            width: 100%;
-            margin-bottom: var(--space-md, 21px);
-        }
-        .tip-chip-next {
-            position: absolute;
-            z-index: 2;
-            top: 50%;
-            right: 4px;
-            width: 34px;
-            height: 34px;
-            padding: 0;
-            transform: translateY(-50%);
-            border: 1px solid rgba(78, 52, 46, 0.12);
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.94);
-            color: var(--chocolate);
-            box-shadow: 0 3px 13px rgba(78, 52, 46, 0.15);
-            cursor: pointer;
-            font-size: 1.15rem;
-            line-height: 1;
-            transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
-        }
-        .tip-chip-next:hover {
-            background: #fff5e8;
-        }
-        .tip-chip-next:active {
-            transform: translateY(-50%) scale(0.94);
-        }
-        .tip-chip-next[hidden] {
-            display: none;
-        }
-        .tip-chip-nav.has-more .tip-chip-strip {
-            padding-right: 42px;
-            mask-image: linear-gradient(to right, #000 calc(100% - 46px), transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 46px), transparent 100%);
-        }
-        .tip-chip {
-            flex: 0 0 auto;
-            min-height: 36px;
-            padding: 8px 13px !important;
-            border: 1px solid #cbd5e1;
-            border-radius: 999px;
-            white-space: nowrap;
-            line-height: 1.1;
-            transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
-        }
-        .tip-chip:active {
-            transform: scale(0.97);
-        }
-        .tip-chip.active,
-        .tip-chip[aria-pressed="true"] {
-            background: var(--chocolate) !important;
-            border-color: var(--chocolate) !important;
-            color: #fff !important;
         }
         .tip-card-body[hidden] {
             display: none !important;
@@ -3739,27 +3650,74 @@ body {
         <!-- Search Bar Tips -->
         <div style="margin-bottom: 14px;">
             <label for="tip-search-input" class="sr-only">Cari tips</label>
-            <input type="text" id="tip-search-input" oninput="window.filterTipsAndTrack(this.value)" placeholder="Cari tips...">
-        </div>
-
-        <!-- Kategori Filter Chips -->
-        <div class="tip-chip-nav">
-            <div class="tip-chip-strip" role="toolbar" aria-label="Filter kategori tips">
-            <button type="button" class="tip-chip active" data-tip-category="all" aria-pressed="true" style="background: var(--chocolate); color: #fff; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; cursor: pointer; white-space: nowrap;">Semua</button>
-            <button type="button" class="tip-chip" data-tip-category="bahan" aria-pressed="false" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; cursor: pointer; white-space: nowrap;">🌾 Bahan Baku</button>
-            <button type="button" class="tip-chip" data-tip-category="sains" aria-pressed="false" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; cursor: pointer; white-space: nowrap;">🔬 Sains</button>
-            <button type="button" class="tip-chip" data-tip-category="teknik" aria-pressed="false" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; cursor: pointer; white-space: nowrap;">👨‍🍳 Teknik</button>
-            <button type="button" class="tip-chip" data-tip-category="fermentasi" aria-pressed="false" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; cursor: pointer; white-space: nowrap;">🌡️ Fermentasi</button>
-            <button type="button" class="tip-chip" data-tip-category="penyimpanan" aria-pressed="false" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; cursor: pointer; white-space: nowrap;">📦 Penyimpanan</button>
-            </div>
-            <button type="button" class="tip-chip-next" aria-label="Tampilkan kategori tips berikutnya" title="Geser kategori ke kanan" hidden>›</button>
+            <input type="text" id="tip-search-input" oninput="window.filterTipsAndTrack(this.value)" placeholder="Cari tips (suhu, ragi, autolisis)..." autocomplete="off" oninput="filterTipsAndTrack(this.value)" style="width: 100%; padding: 11px 14px; font-size: 0.85rem; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; background: #fff; box-sizing: border-box; color: var(--chocolate); transition: border-color 0.2s;">
         </div>
 
         <div id="tip-empty-state" role="status" aria-live="polite" style="display: none; text-align: center; padding: 20px; color: #7f8c8d; font-size: 0.85rem;">
             Tips tidak ditemukan.
         </div>
-        <div id="tips-container" style="display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px;"></div>
+        <div id="tips-container">
+            <!-- Kategori: Bahan Baku -->
+            <div class="category-section">
+                <h3>Bahan Baku</h3>
+                <ul>
+                    <li>Cara memilih ragi yang tepat</li>
+                    <li>Cara memilih tepung terigu</li>
+                    <li>Cara menggunakan telur</li>
+                    <li>Cara memilih gula</li>
+                    <li>Cara memilih cairan & susu</li>
+                </ul>
+            </div>
+
+            <!-- Kategori: Sains Adonan -->
+            <div class="category-section">
+                <h3>Sains Adonan</h3>
+                <ul>
+                    <li>Mitos penggunaan SP / Ovalet</li>
+                    <li>Pelembut alami & bahan tambahan</li>
+                </ul>
+            </div>
+
+            <!-- Kategori: Fermentasi -->
+            <div class="category-section">
+                <h3>Fermentasi</h3>
+                <ul>
+                    <li>Kunci suhu & kelembapan</li>
+                </ul>
+            </div>
+
+            <!-- Kategori: Teknik Pengolahan dan Penggorengan -->
+            <div class="category-section">
+                <h3>Teknik Pengolahan dan Penggorengan</h3>
+                <ul>
+                    <li>Teknik Menggoreng Donat Sempurna</li>
+                    <li>Single Resting vs Double Resting</li>
+                    <li>Proofing Tertutup vs Terbuka</li>
+                </ul>
+            </div>
+
+            <!-- Kategori: Penyimpanan & Keawetan -->
+            <div class="category-section">
+                <h3>Penyimpanan & Keawetan</h3>
+                <ul>
+                    <li>Cara Penyimpanan Roti, Donat & Bakpau</li>
+                </ul>
+            </div>
+        </div>
     </div>
+
+    <!-- FITUR AI TIPS -->
+    <div class="ai-assistant-card" style="background: linear-gradient(135deg, #fdfbf7 0%, #f9f4ed 100%); border: 1px solid #e2d9cc; padding: 16px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #b7791f; background: #feebc8; padding: 3px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">✨ Tanya Pakar Sains AI</span>
+            <small style="color: #718096; font-size: 0.75rem;">Solusi Instan Kendala Adonan</small>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="ai-tips-input" placeholder="Misal: Kenapa donat saya keriput saat digoreng?" style="flex: 1; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none; background: #fff;">
+            <button type="button" id="ai-tips-btn" style="background: #2c3e50; color: #fff; border: none; padding: 0 16px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 0.9rem;">Analisis</button>
+        </div>
+    </div>
+    <div id="ai-tips-result-container"></div>
 </div>
 
 <script>
@@ -9934,15 +9892,78 @@ window.switchTab = function(tabName) {
     }
 };
 
-function renderTipsCards() {
+// Fungsi untuk menampilkan menu kategori utama
+// 1. Definisikan renderCategoryCards secara global (Grid Kotak 2 Kolom)
+window.renderCategoryCards = function() {
     const container = document.getElementById('tips-container');
-    if (!container || !Array.isArray(window.tipsData)) return;
+    if (!container || !Array.isArray(window.tipsKategori)) return;
 
     container.replaceChildren();
-    window.tipsData.forEach(tip => {
+    
+    const titleEl = document.createElement('div');
+    titleEl.innerHTML = `<h3 style="margin-bottom: 12px; font-size: 1.1rem; color: var(--text-color, #333);">Pilih Kategori Tips & Sains:</h3>`;
+    container.appendChild(titleEl);
+
+    const gridContainer = document.createElement('div');
+    gridContainer.style.cssText = "display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;";
+
+    window.tipsKategori.forEach(cat => {
+        const catCard = document.createElement('div');
+        catCard.className = 'category-menu-card';
+        catCard.style.cssText = "background: #fff; padding: 16px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; min-height: 120px; transition: transform 0.2s, box-shadow 0.2s;";
+        
+        catCard.innerHTML = `
+            <div style="font-size: 1.8rem; margin-bottom: 8px;">${cat.icon}</div>
+            <div>
+                <h4 style="margin: 0 0 4px 0; font-size: 0.95rem; color: #2c3e50; line-height: 1.3;">${cat.kategori}</h4>
+                <small style="color: #7f8c8d; font-size: 0.8rem;">${cat.items.length} Artikel</small>
+            </div>
+        `;
+
+        catCard.addEventListener('mouseover', () => {
+            catCard.style.transform = 'translateY(-2px)';
+            catCard.style.boxShadow = '0 4px 8px rgba(0,0,0,0.08)';
+        });
+        catCard.addEventListener('mouseout', () => {
+            catCard.style.transform = 'translateY(0)';
+            catCard.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
+        });
+
+        catCard.addEventListener('click', () => {
+            window.renderTipsByCategoryId(cat.id);
+        });
+
+        gridContainer.appendChild(catCard);
+    });
+
+    container.appendChild(gridContainer);
+};
+
+// 2. Definisikan renderTipsByCategoryId secara global (Lengkap dengan Tombol Kembali)
+window.renderTipsByCategoryId = function(categoryId) {
+    const container = document.getElementById('tips-container');
+    const selectedCategory = window.tipsKategori.find(c => c.id === categoryId);
+    if (!container || !selectedCategory) return;
+
+    container.replaceChildren();
+
+    const backBtn = document.createElement('button');
+    backBtn.innerHTML = "← Kembali ke Kategori";
+    backBtn.style.cssText = "background: #f1f2f6; border: none; color: #2c3e50; font-weight: 600; cursor: pointer; margin-bottom: 15px; padding: 8px 14px; font-size: 0.9rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);";
+    
+    backBtn.addEventListener('click', () => {
+        window.renderCategoryCards();
+    });
+    container.appendChild(backBtn);
+
+    const headerTitle = document.createElement('h3');
+    headerTitle.style.cssText = "margin-bottom: 15px; font-size: 1.2rem; color: #2c3e50;";
+    headerTitle.innerText = `${selectedCategory.icon} ${selectedCategory.kategori}`;
+    container.appendChild(headerTitle);
+
+    selectedCategory.items.forEach(tip => {
         const card = document.createElement('article');
         card.className = 'tip-card';
-        card.dataset.category = tip.category;
         card.dataset.keywords = tip.keywords;
 
         const header = document.createElement('div');
@@ -9961,7 +9982,13 @@ function renderTipsCards() {
             }
         });
         
-        header.innerHTML = `<span class="tip-card-index">${String(tip.id).padStart(2, '0')}</span><div><span class="tip-category-badge" style="background: ${tip.badgeBg}; color: ${tip.badgeColor};">${tip.categoryLabel}</span><h4>${tip.title}</h4></div><span class="toggle-icon" aria-hidden="true">▼</span>`;
+        header.innerHTML = `
+            <span class="tip-card-index">${String(tip.id).padStart(2, '0')}</span>
+            <div>
+                <h4>${tip.title}</h4>
+            </div>
+            <span class="toggle-icon" aria-hidden="true">▼</span>
+        `;
 
         const body = document.createElement('div');
         body.className = 'tip-card-body';
@@ -9980,7 +10007,10 @@ function renderTipsCards() {
         card.append(header, body);
         container.appendChild(card);
     });
-}
+};
+
+// 3. Panggil fungsi pertama kali saat halaman dimuat
+window.renderCategoryCards();
 
 window.toggleTipCard = function(headerEl) {
     const bodyEl = headerEl.nextElementSibling;
@@ -9999,20 +10029,6 @@ window.toggleTipCard = function(headerEl) {
         headerEl.setAttribute('aria-expanded', 'false');
         if (iconEl) iconEl.style.transform = 'rotate(0deg)';
     }
-};
-
-window.filterTipsByCategory = function(category, btnEl) {
-    window.tipFilterState.category = category;
-    document.querySelectorAll('.tip-chip').forEach(btn => {
-        btn.classList.remove('active');
-        btn.setAttribute('aria-pressed', 'false');
-    });
-    if (btnEl) {
-        btnEl.classList.add('active');
-        btnEl.setAttribute('aria-pressed', 'true');
-        btnEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-    window.filterTips();
 };
 
 window.filterTipsAndTrack = function(query) {
@@ -10055,90 +10071,6 @@ window.filterTips = function() {
         logUserSearchBehavior(searchQuery, visibleCount);
     }
 };
-
-// 3. Logika Geser Chips (Drag & Swipe) - Aman dari duplikasi deklarasi
-(function() {
-    var tipChipStrip = document.querySelector('.tip-chip-strip');
-    if (!tipChipStrip) return;
-
-    var tipChipNav = tipChipStrip.closest('.tip-chip-nav');
-    var tipChipNext = tipChipNav ? tipChipNav.querySelector('.tip-chip-next') : null;
-    
-    var isDown = false;
-    var startX;
-    var scrollLeft;
-    var dragged = false;
-
-    // A. Interaksi Mouse (Desktop)
-    tipChipStrip.addEventListener('mousedown', function(e) {
-        isDown = true;
-        dragged = false;
-        tipChipStrip.classList.add('is-dragging');
-        startX = e.pageX - tipChipStrip.offsetLeft;
-        scrollLeft = tipChipStrip.scrollLeft;
-    });
-
-    tipChipStrip.addEventListener('mouseleave', function() {
-        isDown = false;
-        tipChipStrip.classList.remove('is-dragging');
-    });
-
-    tipChipStrip.addEventListener('mouseup', function() {
-        isDown = false;
-        tipChipStrip.classList.remove('is-dragging');
-    });
-
-    tipChipStrip.addEventListener('mousemove', function(e) {
-        if (!isDown) return;
-        var x = e.pageX - tipChipStrip.offsetLeft;
-        var walk = (x - startX); 
-        if (Math.abs(walk) > 4) dragged = true; 
-        if (dragged) {
-            e.preventDefault();
-            tipChipStrip.scrollLeft = scrollLeft - walk;
-        }
-    });
-
-    // B. Interaksi Sentuh (Mobile/Tablet)
-    tipChipStrip.addEventListener('touchstart', function() { dragged = false; }, { passive: true });
-    tipChipStrip.addEventListener('touchmove', function() { dragged = true; }, { passive: true });
-
-    // C. EVENT DELEGATION: Menangani klik langsung dari parent
-    tipChipStrip.addEventListener('click', function(event) {
-        var chip = event.target.closest('.tip-chip');
-        if (!chip) return; 
-
-        if (dragged) {
-            event.preventDefault();
-            event.stopPropagation();
-            dragged = false;
-            return;
-        }
-        
-        var category = chip.getAttribute('data-tip-category') || chip.getAttribute('data-category') || 'all';
-        if (typeof window.filterTipsByCategory === 'function') {
-            window.filterTipsByCategory(category, chip);
-        }
-    });
-
-    // D. Pembaruan Visibilitas Panah Scroll
-    var updateTipChipArrow = function() {
-        if (!tipChipNav || !tipChipNext) return;
-        var hasMore = Math.ceil(tipChipStrip.scrollLeft + tipChipStrip.clientWidth) < tipChipStrip.scrollWidth - 2;
-        tipChipNav.classList.toggle('has-more', hasMore);
-        tipChipNext.hidden = !hasMore;
-    };
-    
-    if (tipChipNext) {
-        tipChipNext.addEventListener('click', function() {
-            tipChipStrip.scrollBy({ left: Math.max(180, tipChipStrip.clientWidth * 0.72), behavior: 'smooth' });
-        });
-    }
-    
-    tipChipStrip.addEventListener('scroll', updateTipChipArrow, { passive: true });
-    window.addEventListener('resize', updateTipChipArrow);
-    window.requestAnimationFrame(updateTipChipArrow);
-})();
 
 // 4. Developer Monitoring
 // 1. Variabel penampung timer untuk Debounce
@@ -10188,6 +10120,65 @@ function exportSearchAnalytics() {
         alert("Gagal mengekspor log analisis: " + err.message);
     }
 }
+
+// FUNGSI AI TIPS
+window.initTipsAIAssistant = function() {
+    const btn = document.getElementById('ai-tips-btn');
+    const input = document.getElementById('ai-tips-input');
+    const container = document.getElementById('ai-tips-result-container');
+
+    if (!btn || !input || !container) return;
+
+    btn.addEventListener('click', async () => {
+        const query = input.value.trim();
+        if (!query) return;
+
+        // Tampilkan loading interaktif
+        container.innerHTML = `
+            <div style="background: #fff; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; color: #718096; margin-bottom: 20px; font-size: 0.9rem;">
+                🤖 AI sedang menganalisis parameter sains adonan...
+            </div>
+        `;
+
+        try {
+            // Sesuaikan URL endpoint dengan lokasi file ai-tips.js Anda (misal: '/api/ai-tips' atau path server Anda)
+            const response = await fetch('/api/ai-tips', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ promptContext: query })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Gagal memproses analisis AI.');
+            }
+
+            // Render hasil analisis AI ke antarmuka
+            container.innerHTML = `
+                <div style="background: #fff; padding: 18px; border-radius: 12px; border-left: 4px solid #b7791f; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: #2c3e50; font-size: 1rem;">🧠 Hasil Analisis Sains AI</h4>
+                        <span style="font-size: 0.75rem; color: #718096; background: #feebc8; padding: 2px 8px; border-radius: 10px;">Akurat</span>
+                    </div>
+                    <div style="margin: 0; font-size: 0.9rem; color: #4a5568; line-height: 1.6; white-space: pre-line;">
+                        ${data.result}
+                    </div>
+                </div>
+            `;
+
+        } catch (error) {
+            container.innerHTML = `
+                <div style="background: #fff5f5; color: #c53030; padding: 14px; border-radius: 8px; border: 1px solid #feb2b2; font-size: 0.9rem; margin-bottom: 20px;">
+                    ${error.message || 'Terjadi kesalahan jaringan.'}
+                </div>
+            `;
+        }
+    });
+};
+
+// Panggil fungsi saat halaman dimuat
+window.initTipsAIAssistant();
 
 // ==========================================
 // 2. FUNGSI UTAMA: UPDATE TEMA & WAKTU DINAMIS
@@ -13493,84 +13484,6 @@ window.filterTips = function() {
         logUserSearchBehavior(searchQuery, visibleCount);
     }
 };
-
-// 3. Logika Geser Chips (Drag & Swipe) - Berbasis Event Delegation Murni
-var tipChipStrip = document.querySelector('.tip-chip-strip');
-if (tipChipStrip) {
-    var tipChipNav = tipChipStrip.closest('.tip-chip-nav');
-    var tipChipNext = tipChipNav ? tipChipNav.querySelector('.tip-chip-next') : null;
-    
-    var isDown = false;
-    var startX;
-    var scrollLeft;
-    var dragged = false;
-
-    tipChipStrip.addEventListener('mousedown', function(e) {
-        isDown = true;
-        dragged = false;
-        tipChipStrip.classList.add('is-dragging');
-        startX = e.pageX - tipChipStrip.offsetLeft;
-        scrollLeft = tipChipStrip.scrollLeft;
-    });
-
-    tipChipStrip.addEventListener('mouseleave', function() {
-        isDown = false;
-        tipChipStrip.classList.remove('is-dragging');
-    });
-
-    tipChipStrip.addEventListener('mouseup', function() {
-        isDown = false;
-        tipChipStrip.classList.remove('is-dragging');
-    });
-
-    tipChipStrip.addEventListener('mousemove', function(e) {
-        if (!isDown) return;
-        var x = e.pageX - tipChipStrip.offsetLeft;
-        var walk = (x - startX); 
-        if (Math.abs(walk) > 4) dragged = true; 
-        if (dragged) {
-            e.preventDefault();
-            tipChipStrip.scrollLeft = scrollLeft - walk;
-        }
-    });
-
-    tipChipStrip.addEventListener('touchstart', function() { dragged = false; }, { passive: true });
-    tipChipStrip.addEventListener('touchmove', function() { dragged = true; }, { passive: true });
-
-    tipChipStrip.addEventListener('click', function(event) {
-        var chip = event.target.closest('.tip-chip');
-        if (!chip) return; 
-
-        if (dragged) {
-            event.preventDefault();
-            event.stopPropagation();
-            dragged = false;
-            return;
-        }
-        
-        var category = chip.getAttribute('data-tip-category') || chip.getAttribute('data-category') || 'all';
-        if (typeof window.filterTipsByCategory === 'function') {
-            window.filterTipsByCategory(category, chip);
-        }
-    });
-
-    var updateTipChipArrow = function() {
-        if (!tipChipNav || !tipChipNext) return;
-        var hasMore = Math.ceil(tipChipStrip.scrollLeft + tipChipStrip.clientWidth) < tipChipStrip.scrollWidth - 2;
-        tipChipNav.classList.toggle('has-more', hasMore);
-        tipChipNext.hidden = !hasMore;
-    };
-    
-    if (tipChipNext) {
-        tipChipNext.addEventListener('click', function() {
-            tipChipStrip.scrollBy({ left: Math.max(180, tipChipStrip.clientWidth * 0.72), behavior: 'smooth' });
-        });
-    }
-    
-    tipChipStrip.addEventListener('scroll', updateTipChipArrow, { passive: true });
-    window.addEventListener('resize', updateTipChipArrow);
-    window.requestAnimationFrame(updateTipChipArrow);
-}
 
 window.addEventListener('online', async () => {
     console.log("Koneksi internet pulih. Mengirim antrean resep offline ke Supabase...");
