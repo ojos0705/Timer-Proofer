@@ -10129,11 +10129,63 @@ window.initTipsAIAssistant = function() {
 
     if (!btn || !input || !container) return;
 
+    // --- FUNGSI FORMATTING HASIL AI (Diadaptasi dari ai-analyze.js) ---
+    const formatHasilAI = (teks) => {
+        if (!teks) return "Analisis tidak tersedia.";
+
+        let cleanText = teks.replace(/([\*\-\•])\s*\n\s*/g, '$1 ');
+
+        cleanText = cleanText
+            .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+            .replace(/_([^_\n]+)_/g, '<em>$1</em>');
+
+        const lines = cleanText.split('\n');
+        let htmlLines = [];
+
+        lines.forEach(line => {
+            let t = line.trim();
+            if (!t || t === '•' || t === '-' || t === '*') return; 
+
+            // A. Deteksi Judul Utama (Mengandung Emoji)
+            if (/^([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])\s*(.+)$/.test(t) || /^#\s/.test(t)) {
+                t = t.replace(/^#\s*/, '').toLowerCase();
+                htmlLines.push(`<div style="font-weight:900; margin:24px 0 12px 0; color:#4a235a; font-size:1.05rem; border-bottom:2px solid #e8daef; padding-bottom:6px; text-transform:capitalize; letter-spacing:0.3px;">${t}</div>`);
+            }
+            // B. Deteksi Sub-Judul (Berakhiran ":")
+            else if (t.endsWith(':') || /^#{2,6}\s/.test(t)) {
+                t = t.replace(/^#{2,6}\s*/, '');
+                htmlLines.push(`<div style="font-weight:800; margin:16px 0 6px 0; color:#2980b9; font-size:0.95rem;">${t}</div>`);
+            }
+            // C. Deteksi List Angka
+            else if (/^(\d+)\.\s+(.+)/.test(t)) {
+                const match = t.match(/^(\d+)\.\s+(.+)/);
+                htmlLines.push(`<div style="padding-left:12px; margin-bottom:8px; display:flex; line-height:1.5; font-size:0.9rem;"><span style="margin-right:8px; font-weight:900; color:#d35400;">${match[1]}.</span><span>${match[2]}</span></div>`);
+            }
+            // D. Deteksi List Bullet
+            else if (/^[\*\-\•]\s+/.test(t)) {
+                t = t.replace(/^[\*\-\•]\s+/, '');
+                htmlLines.push(`<div style="padding-left:12px; margin-bottom:8px; display:flex; line-height:1.5; font-size:0.9rem;"><span style="margin-right:10px; color:#d35400; font-size:1.2rem; line-height:0.8;">•</span><span>${t}</span></div>`);
+            }
+            // E. Paragraf Biasa
+            else {
+                htmlLines.push(`<div style="margin-bottom:10px; line-height:1.6; font-size:0.9rem; color:#444; text-align:justify;">${t}</div>`);
+            }
+        });
+
+        return htmlLines.join('');
+    };
+
     btn.addEventListener('click', async () => {
         const query = input.value.trim();
         if (!query) return;
 
+        // Simpan teks tombol asli jika diperlukan untuk reset state
+        const prevText = btn.innerText;
+        btn.innerText = "⏳ AI Menganalisis...";
+        btn.disabled = true;
+
         // Tampilkan loading interaktif
+        container.style.display = "block";
         container.innerHTML = `
             <div style="background: #fff; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; color: #718096; margin-bottom: 20px; font-size: 0.9rem;">
                 🤖 AI sedang menganalisis parameter sains adonan...
@@ -10150,7 +10202,6 @@ window.initTipsAIAssistant = function() {
                 body: JSON.stringify({ promptContext: query })
             });
 
-            // Ambil respons sebagai teks terlebih dahulu untuk mencegah crash jika server mengembalikan HTML/Plain Text
             const responseText = await response.text();
             let data;
             try {
@@ -10163,7 +10214,7 @@ window.initTipsAIAssistant = function() {
                 throw new Error(data.error || data.details || 'Gagal memproses analisis AI.');
             }
 
-            // Render hasil analisis AI dengan fitur Scroll & Collapse Header
+            // Render hasil analisis AI menggunakan fungsi formatHasilAI yang lebih cerdas
             container.innerHTML = `
                 <div id="ai-result-card" style="background: #fff; padding: 18px; border-radius: 16px; border-left: 4px solid #b7791f; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="
@@ -10184,10 +10235,8 @@ window.initTipsAIAssistant = function() {
                         <span id="ai-toggle-icon" style="font-size: 0.8rem; color: #718096; font-weight: bold; padding: 4px 8px;">▲</span>
                     </div>
                     
-                    <div id="ai-body-content" style="max-height: 280px; overflow-y: auto; overflow-x: hidden; padding-right: 8px; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 10px; scrollbar-width: thin; scroll-behavior: smooth;">
-                        <div style="margin: 0; font-size: 0.9rem; color: #4a5568; line-height: 1.6; white-space: pre-line;">
-                            ${data.result}
-                        </div>
+                    <div id="ai-body-content" style="max-height: 320px; overflow-y: auto; overflow-x: hidden; padding-right: 8px; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 10px; scrollbar-width: thin; scroll-behavior: smooth;">
+                        ${formatHasilAI(data.result)}
                     </div>
                 </div>
             `;
@@ -10195,9 +10244,12 @@ window.initTipsAIAssistant = function() {
         } catch (error) {
             container.innerHTML = `
                 <div style="background: #fff5f5; color: #c53030; padding: 14px; border-radius: 8px; border: 1px solid #feb2b2; font-size: 0.9rem; margin-bottom: 20px;">
-                    ${error.message || 'Terjadi kesalahan jaringan.'}
+                    ⚠️ ${error.message || 'Terjadi kesalahan jaringan.'}
                 </div>
             `;
+        } finally {
+            btn.innerText = prevText;
+            btn.disabled = false;
         }
     });
 };
