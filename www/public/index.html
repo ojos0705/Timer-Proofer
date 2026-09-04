@@ -10171,44 +10171,6 @@ window.filterTipsAndTrack = function(query) {
     }, 800);
 };
 
-// 3. Fungsi Pencatat Log Perilaku User (Developer Monitoring)
-function logUserSearchBehavior(query, resultsCount) {
-    try {
-        // 1. Integrasi Google Analytics (GA4)
-        if (typeof gtag === 'function' && query) {
-            gtag('event', 'search', {
-                search_term: query,
-                results_count: resultsCount
-            });
-        }
-
-        // 2. Logika penyimpanan ke localStorage yang sudah ada
-        let searchLogs = JSON.parse(localStorage.getItem('developer_search_analytics') || '[]');
-        
-        const lastLog = searchLogs[searchLogs.length - 1];
-        if (lastLog && lastLog.query === query) {
-            return; 
-        }
-
-        searchLogs.push({
-            query: query,
-            resultsFound: resultsCount,
-            timestamp: new Date().toISOString()
-        });
-
-        if (searchLogs.length > 100) searchLogs = searchLogs.slice(-100);
-
-        localStorage.setItem('developer_search_analytics', JSON.stringify(searchLogs));
-
-        const statEl = document.getElementById('dev-search-stat');
-        if (statEl) {
-            statEl.innerText = `Log Aktif: "${query}" (${resultsCount} hasil ditemukan)`;
-        }
-    } catch (e) {
-        console.warn("Gagal menyimpan log penelusuran:", e);
-    }
-}
-
 // 4. Fungsi untuk Mengunduh Hasil Analitik (Bisa dihubungkan ke tombol ekspor di panel admin/developer)
 function exportSearchAnalytics() {
     try {
@@ -12286,8 +12248,22 @@ window.switchTab = function(tabId) {
 
 window.logUserSearchBehavior = function(query, resultsCount) {
     try {
+        // 1. Integrasi Google Analytics (GA4)
+        if (typeof gtag === 'function' && query) {
+            gtag('event', 'search', {
+                search_term: query,
+                results_count: resultsCount
+            });
+        }
+
+        // 2. Logika penyimpanan ke localStorage dengan pencegah duplikasi
         let searchLogs = JSON.parse(localStorage.getItem('developer_search_analytics') || '[]');
         
+        const lastLog = searchLogs[searchLogs.length - 1];
+        if (lastLog && lastLog.query === query) {
+            return; 
+        }
+
         searchLogs.push({
             query: query,
             resultsFound: resultsCount,
