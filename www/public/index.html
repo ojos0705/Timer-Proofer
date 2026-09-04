@@ -12244,8 +12244,6 @@ window.switchTab = function(tabId) {
 
 // Mendefinisikan kedua nama fungsi (alias) agar cocok dengan HTML manapun yang Anda pakai
 
-
-
 window.logUserSearchBehavior = function(query, resultsCount) {
     try {
         // 1. Integrasi Google Analytics (GA4)
@@ -13560,104 +13558,6 @@ window.filterTips = function() {
         logUserSearchBehavior(searchQuery, visibleCount);
     }
 };
-
-// 3. Logika Geser Chips (Drag & Swipe) - Berbasis Event Delegation Murni
-const tipChipStrip = document.querySelector('.tip-chip-strip');
-if (tipChipStrip) {
-    const tipChipNav = tipChipStrip.closest('.tip-chip-nav');
-    const tipChipNext = tipChipNav?.querySelector('.tip-chip-next');
-    
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-    let dragged = false;
-
-    // A. Interaksi Mouse (Desktop)
-    tipChipStrip.addEventListener('mousedown', (e) => {
-        isDown = true;
-        dragged = false;
-        tipChipStrip.classList.add('is-dragging');
-        startX = e.pageX - tipChipStrip.offsetLeft;
-        scrollLeft = tipChipStrip.scrollLeft;
-    });
-
-    tipChipStrip.addEventListener('mouseleave', () => {
-        isDown = false;
-        tipChipStrip.classList.remove('is-dragging');
-    });
-
-    tipChipStrip.addEventListener('mouseup', () => {
-        isDown = false;
-        tipChipStrip.classList.remove('is-dragging');
-    });
-
-    tipChipStrip.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        const x = e.pageX - tipChipStrip.offsetLeft;
-        const walk = (x - startX); 
-        if (Math.abs(walk) > 4) dragged = true; // Toleransi geser 4px
-        if (dragged) {
-            e.preventDefault();
-            tipChipStrip.scrollLeft = scrollLeft - walk;
-        }
-    });
-
-    // B. Interaksi Sentuh (Mobile/Tablet)
-    tipChipStrip.addEventListener('touchstart', () => { dragged = false; }, { passive: true });
-    tipChipStrip.addEventListener('touchmove', () => { dragged = true; }, { passive: true });
-
-    // C. EVENT DELEGATION: Menangani klik langsung dari parent (Anti-gagal)
-    tipChipStrip.addEventListener('click', (event) => {
-        // Cari elemen chip terdekat dari titik yang diklik
-        const chip = event.target.closest('.tip-chip');
-        if (!chip) return; 
-
-        // Cegat klik jika pengguna hanya berniat menggeser layar
-        if (dragged) {
-            event.preventDefault();
-            event.stopPropagation();
-            dragged = false;
-            return;
-        }
-        
-        // Ambil data dari atribut HTML dengan toleransi penamaan
-        const category = chip.getAttribute('data-tip-category') || chip.getAttribute('data-category') || 'all';
-        window.filterTipsByCategory(category, chip);
-    });
-
-    // D. Pembaruan Visibilitas Panah Scroll
-    const updateTipChipArrow = () => {
-        if (!tipChipNav || !tipChipNext) return;
-        const hasMore = Math.ceil(tipChipStrip.scrollLeft + tipChipStrip.clientWidth) < tipChipStrip.scrollWidth - 2;
-        tipChipNav.classList.toggle('has-more', hasMore);
-        tipChipNext.hidden = !hasMore;
-    };
-    
-    tipChipNext?.addEventListener('click', () => {
-        tipChipStrip.scrollBy({ left: Math.max(180, tipChipStrip.clientWidth * 0.72), behavior: 'smooth' });
-    });
-    
-    tipChipStrip.addEventListener('scroll', updateTipChipArrow, { passive: true });
-    window.addEventListener('resize', updateTipChipArrow);
-    window.requestAnimationFrame(updateTipChipArrow);
-}
-
-    // --- BINDING EVENT KLIK KE SETIAP CHIP ---
-    tipChips.forEach(chip => {
-        chip.addEventListener('click', event => {
-            // Evaluasi akhir: Cegat klik murni jika event ini berasal dari aksi drag/swipe
-            if (dragged) {
-                event.preventDefault();
-                event.stopPropagation();
-                dragged = false; // Reset state
-                return;
-            }
-            
-            const selectedCategory = chip.getAttribute('data-tip-category');
-            window.filterTipsByCategory(selectedCategory, chip);
-        });
-    });
-});
 
 window.addEventListener('online', async () => {
     console.log("Koneksi internet pulih. Mengirim antrean resep offline ke Supabase...");
