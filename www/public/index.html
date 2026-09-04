@@ -10174,12 +10174,20 @@ window.filterTipsAndTrack = function(query) {
 // 3. Fungsi Pencatat Log Perilaku User (Developer Monitoring)
 function logUserSearchBehavior(query, resultsCount) {
     try {
+        // 1. Integrasi Google Analytics (GA4)
+        if (typeof gtag === 'function' && query) {
+            gtag('event', 'search', {
+                search_term: query,
+                results_count: resultsCount
+            });
+        }
+
+        // 2. Logika penyimpanan ke localStorage yang sudah ada
         let searchLogs = JSON.parse(localStorage.getItem('developer_search_analytics') || '[]');
         
-        // Cek apakah kata kunci yang sama baru saja dicatat untuk menghindari duplikasi instan
         const lastLog = searchLogs[searchLogs.length - 1];
         if (lastLog && lastLog.query === query) {
-            return; // Lewati jika query-nya sama persis dengan sebelumnya
+            return; 
         }
 
         searchLogs.push({
@@ -10188,12 +10196,10 @@ function logUserSearchBehavior(query, resultsCount) {
             timestamp: new Date().toISOString()
         });
 
-        // Batasi maksimal 100 log terakhir agar memori penyimpanan tidak penuh
         if (searchLogs.length > 100) searchLogs = searchLogs.slice(-100);
 
         localStorage.setItem('developer_search_analytics', JSON.stringify(searchLogs));
 
-        // Update indikator real-time di panel developer (jika elemennya ada)
         const statEl = document.getElementById('dev-search-stat');
         if (statEl) {
             statEl.innerText = `Log Aktif: "${query}" (${resultsCount} hasil ditemukan)`;
