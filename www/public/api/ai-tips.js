@@ -1,7 +1,7 @@
 const GEMINI_MODELS = [
-  "gemini-3.6-flash",
-  "gemini-3.5-flash",
-  "gemini-3.1-flash-lite",
+  "gemini-3.8-flash",
+  "gemini-3.7-flash",
+  "gemini-3.5-flash-lite",
 ];
 
 const SYSTEM_INSTRUCTION =
@@ -11,6 +11,7 @@ const SYSTEM_INSTRUCTION =
   "Setiap judul bagian (section title) WAJIB ditulis dalam HURUF KAPITAL dan TEBAL (BOLD), tanpa menggunakan simbol markdown heading seperti # atau ###. " +
   "Wajib mencakup: (1) analisis penyebab masalah, (2) parameter teknis ideal, (3) langkah solusi teknis konkret. " +
   "Tanpa basa-basi pembuka seperti 'Tentu' atau 'Baik'.";
+  "JANGAN gunakan tanda bintang atau format markdown apa pun di dalam teks hasil keluaran."
 
 function toUserFacingError(error) {
   const raw = error?.message || String(error || "Gagal memproses analisis AI");
