@@ -10150,10 +10150,17 @@ window.initTipsAIAssistant = function() {
                 body: JSON.stringify({ promptContext: query })
             });
 
-            const data = await response.json();
+            // Ambil respons sebagai teks terlebih dahulu untuk mencegah crash jika server mengembalikan HTML/Plain Text
+            const responseText = await response.text();
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                throw new Error(responseText || 'Terjadi kesalahan internal pada server.');
+            }
 
             if (!response.ok) {
-                throw new Error(data.error || 'Gagal memproses analisis AI.');
+                throw new Error(data.error || data.details || 'Gagal memproses analisis AI.');
             }
 
             // Render hasil analisis AI dengan fitur Scroll & Collapse Header
