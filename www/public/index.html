@@ -3739,7 +3739,7 @@ body {
         <!-- Search Bar Tips -->
         <div style="margin-bottom: 14px;">
             <label for="tip-search-input" class="sr-only">Cari tips</label>
-            <input type="search" id="tip-search-input" placeholder="Cari tips (suhu, ragi, autolisis)..." autocomplete="off" oninput="filterTipsAndTrack(this.value)" style="width: 100%; padding: 11px 14px; font-size: 0.85rem; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; background: #fff; box-sizing: border-box; color: var(--chocolate); transition: border-color 0.2s;">
+            <input type="text" id="tip-search-input" oninput="window.filterTipsAndTrack(this.value)" placeholder="Cari tips...">
         </div>
 
         <!-- Kategori Filter Chips -->
@@ -10142,35 +10142,33 @@ window.filterTips = function() {
 
 // 4. Developer Monitoring
 // 1. Variabel penampung timer untuk Debounce
-let searchDebounceTimer = null;
+// 1. Deklarasi timer di ruang lingkup global (di luar fungsi)
+var searchDebounceTimer = null;
 
-// 2. Fungsi yang dipanggil langsung oleh HTML oninput="..."
 window.filterTipsAndTrack = function(query) {
-    const cleanQuery = query.trim().toLowerCase();
+    var cleanQuery = query.trim().toLowerCase();
     
-    // Perbarui state global dan jalankan filter visual secara instan (tanpa jeda)
+    // 2. Filter tampilan antarmuka secara instan
     window.tipFilterState.searchQuery = cleanQuery;
     window.filterTips(); 
 
-    // Bersihkan timer sebelumnya agar tidak menumpuk
+    // 3. Hapus antrean pengiriman log sebelumnya jika pengguna kembali mengetik
     clearTimeout(searchDebounceTimer);
 
-    // Jika kolom pencarian kosong, jangan simpan ke log
     if (!cleanQuery) return;
 
-    // Tunda pencatatan log selama 800ms (menunggu user selesai mengetik)
-    searchDebounceTimer = setTimeout(() => {
-        // Hitung berapa kartu yang saat ini tampil di layar setelah difilter
-        const visibleCards = document.querySelectorAll('.tip-card');
-        let currentVisibleCount = 0;
+    // 4. Tunda pengiriman data ke GA4 selama 1 detik (1000ms) setelah ketukan terakhir
+    searchDebounceTimer = setTimeout(function() {
+        var visibleCards = document.querySelectorAll('.tip-card');
+        var currentVisibleCount = 0;
         
-        visibleCards.forEach(card => {
+        visibleCards.forEach(function(card) {
             if (card.style.display !== 'none') currentVisibleCount++;
         });
 
-        // Simpan perilaku pencarian ke penyimpanan lokal
-        logUserSearchBehavior(cleanQuery, currentVisibleCount);
-    }, 800);
+        // Pengiriman data ke fungsi gtag() sekarang aman dan hanya mengirim kata utuh
+        window.logUserSearchBehavior(cleanQuery, currentVisibleCount);
+    }, 1000);
 };
 
 // 4. Fungsi untuk Mengunduh Hasil Analitik (Bisa dihubungkan ke tombol ekspor di panel admin/developer)
