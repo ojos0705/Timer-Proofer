@@ -9840,14 +9840,17 @@ window.switchTab = function(tabName) {
     const recipeModal = document.getElementById('recipe') || document.getElementById('recipe-modal');
     const tipsModal = document.getElementById('tips-page') || document.getElementById('tips');
 
+    // 1. Alihkan fokus keluar dari modal jika elemen di dalamnya sedang aktif/difokuskan
+    if (document.activeElement && (recipeModal?.contains(document.activeElement) || tipsModal?.contains(document.activeElement))) {
+        document.activeElement.blur();
+    }
+
     document.querySelectorAll('.bottom-item, .bottom-bar .bottom-item').forEach(item => {
         item.classList.remove('active-tab');
     });
 
     const activeItem = document.getElementById(`tab-${tabName}`);
-    if (activeItem) {
-        activeItem.classList.add('active-tab');
-    }
+    if (activeItem) activeItem.classList.add('active-tab');
 
     if (recipeModal) {
         recipeModal.style.display = 'none';
@@ -9860,9 +9863,7 @@ window.switchTab = function(tabName) {
         tipsModal.setAttribute('aria-hidden', 'true');
     }
 
-    if (tabName === 'timer') {
-        // Kembali ke timer utama
-    } else if (tabName === 'recipe') {
+    if (tabName === 'recipe') {
         if (recipeModal) {
             recipeModal.style.display = 'flex';
             recipeModal.classList.add('active');
@@ -9879,7 +9880,7 @@ window.switchTab = function(tabName) {
             tipsModal.classList.add('active');
             tipsModal.setAttribute('aria-hidden', 'false');
             renderTipsCards();
-            filterTips();
+            window.filterTips();
             window.requestAnimationFrame(() => document.getElementById('tip-search-input')?.focus());
         }
     }
@@ -10055,22 +10056,21 @@ window.filterTips = function() {
     }
 };
 
-// 3. Logika Geser Chips (Drag & Swipe)
 // 3. Logika Geser Chips (Drag & Swipe) - Aman dari duplikasi deklarasi
 (function() {
-    const tipChipStrip = document.querySelector('.tip-chip-strip');
+    var tipChipStrip = document.querySelector('.tip-chip-strip');
     if (!tipChipStrip) return;
 
-    const tipChipNav = tipChipStrip.closest('.tip-chip-nav');
-    const tipChipNext = tipChipNav?.querySelector('.tip-chip-next');
+    var tipChipNav = tipChipStrip.closest('.tip-chip-nav');
+    var tipChipNext = tipChipNav ? tipChipNav.querySelector('.tip-chip-next') : null;
     
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-    let dragged = false;
+    var isDown = false;
+    var startX;
+    var scrollLeft;
+    var dragged = false;
 
     // A. Interaksi Mouse (Desktop)
-    tipChipStrip.addEventListener('mousedown', (e) => {
+    tipChipStrip.addEventListener('mousedown', function(e) {
         isDown = true;
         dragged = false;
         tipChipStrip.classList.add('is-dragging');
@@ -10078,20 +10078,20 @@ window.filterTips = function() {
         scrollLeft = tipChipStrip.scrollLeft;
     });
 
-    tipChipStrip.addEventListener('mouseleave', () => {
+    tipChipStrip.addEventListener('mouseleave', function() {
         isDown = false;
         tipChipStrip.classList.remove('is-dragging');
     });
 
-    tipChipStrip.addEventListener('mouseup', () => {
+    tipChipStrip.addEventListener('mouseup', function() {
         isDown = false;
         tipChipStrip.classList.remove('is-dragging');
     });
 
-    tipChipStrip.addEventListener('mousemove', (e) => {
+    tipChipStrip.addEventListener('mousemove', function(e) {
         if (!isDown) return;
-        const x = e.pageX - tipChipStrip.offsetLeft;
-        const walk = (x - startX); 
+        var x = e.pageX - tipChipStrip.offsetLeft;
+        var walk = (x - startX); 
         if (Math.abs(walk) > 4) dragged = true; 
         if (dragged) {
             e.preventDefault();
@@ -10100,12 +10100,12 @@ window.filterTips = function() {
     });
 
     // B. Interaksi Sentuh (Mobile/Tablet)
-    tipChipStrip.addEventListener('touchstart', () => { dragged = false; }, { passive: true });
-    tipChipStrip.addEventListener('touchmove', () => { dragged = true; }, { passive: true });
+    tipChipStrip.addEventListener('touchstart', function() { dragged = false; }, { passive: true });
+    tipChipStrip.addEventListener('touchmove', function() { dragged = true; }, { passive: true });
 
-    // C. EVENT DELEGATION: Menangani klik langsung dari parent (Anti-gagal)
-    tipChipStrip.addEventListener('click', (event) => {
-        const chip = event.target.closest('.tip-chip');
+    // C. EVENT DELEGATION: Menangani klik langsung dari parent
+    tipChipStrip.addEventListener('click', function(event) {
+        var chip = event.target.closest('.tip-chip');
         if (!chip) return; 
 
         if (dragged) {
@@ -10115,23 +10115,25 @@ window.filterTips = function() {
             return;
         }
         
-        const category = chip.getAttribute('data-tip-category') || chip.getAttribute('data-category') || 'all';
+        var category = chip.getAttribute('data-tip-category') || chip.getAttribute('data-category') || 'all';
         if (typeof window.filterTipsByCategory === 'function') {
             window.filterTipsByCategory(category, chip);
         }
     });
 
     // D. Pembaruan Visibilitas Panah Scroll
-    const updateTipChipArrow = () => {
+    var updateTipChipArrow = function() {
         if (!tipChipNav || !tipChipNext) return;
-        const hasMore = Math.ceil(tipChipStrip.scrollLeft + tipChipStrip.clientWidth) < tipChipStrip.scrollWidth - 2;
+        var hasMore = Math.ceil(tipChipStrip.scrollLeft + tipChipStrip.clientWidth) < tipChipStrip.scrollWidth - 2;
         tipChipNav.classList.toggle('has-more', hasMore);
         tipChipNext.hidden = !hasMore;
     };
     
-    tipChipNext?.addEventListener('click', () => {
-        tipChipStrip.scrollBy({ left: Math.max(180, tipChipStrip.clientWidth * 0.72), behavior: 'smooth' });
-    });
+    if (tipChipNext) {
+        tipChipNext.addEventListener('click', function() {
+            tipChipStrip.scrollBy({ left: Math.max(180, tipChipStrip.clientWidth * 0.72), behavior: 'smooth' });
+        });
+    }
     
     tipChipStrip.addEventListener('scroll', updateTipChipArrow, { passive: true });
     window.addEventListener('resize', updateTipChipArrow);
@@ -13448,71 +13450,6 @@ if (btnCloseSettings) {
 window.tampilkanDaftarResepTersimpan = tampilkanDaftarResepTersimpan;
 /* ============================================================*/
 
-document.addEventListener("DOMContentLoaded", () => {
-    const tipChips = document.querySelectorAll('.tip-chip');
-    const tipChipNav = tipChipStrip?.closest('.tip-chip-nav');
-    const tipChipNext = tipChipNav?.querySelector('.tip-chip-next');
-
-    // 1. Amankan state global agar tidak terjadi ReferenceError
-    window.tipFilterState = window.tipFilterState || { category: 'all' };
-
-    let dragStartX = 0;
-    let dragStartScrollLeft = 0;
-    let dragged = false;
-
-    if (tipChipStrip) {
-        // --- LOGIKA GESER (DRAG / SWIPE) ---
-        tipChipStrip.addEventListener('pointerdown', event => {
-            if (event.pointerType === 'mouse' && event.button !== 0) return;
-            dragStartX = event.clientX;
-            dragStartScrollLeft = tipChipStrip.scrollLeft;
-            dragged = false;
-            tipChipStrip.classList.add('is-dragging');
-            tipChipStrip.setPointerCapture(event.pointerId);
-        });
-
-        tipChipStrip.addEventListener('pointermove', event => {
-            if (!tipChipStrip.hasPointerCapture(event.pointerId)) return;
-            const distance = event.clientX - dragStartX;
-            
-            // Toleransi gerak 4px untuk membedakan klik tidak sengaja vs geser sengaja
-            if (Math.abs(distance) > 4) dragged = true; 
-            
-            tipChipStrip.scrollLeft = dragStartScrollLeft - distance;
-            if (dragged) event.preventDefault();
-        });
-
-        const stopChipDrag = event => {
-            if (tipChipStrip.hasPointerCapture(event.pointerId)) {
-                tipChipStrip.releasePointerCapture(event.pointerId);
-            }
-            tipChipStrip.classList.remove('is-dragging');
-        };
-
-        tipChipStrip.addEventListener('pointerup', stopChipDrag);
-        tipChipStrip.addEventListener('pointercancel', stopChipDrag);
-
-        // --- UPDATE TOMBOL PANAH (UX INDIKATOR) ---
-        const updateTipChipArrow = () => {
-            if (!tipChipNav || !tipChipNext) return;
-            // Gunakan Math.ceil & toleransi 2px untuk bug pembulatan piksel di layar retina/mobile
-            const hasMore = Math.ceil(tipChipStrip.scrollLeft + tipChipStrip.clientWidth) < tipChipStrip.scrollWidth - 2;
-            tipChipNav.classList.toggle('has-more', hasMore);
-            tipChipNext.hidden = !hasMore;
-        };
-
-        if (tipChipNext) {
-            tipChipNext.addEventListener('click', () => {
-                // Geser responsif berbasis lebar layar, minimal 150px
-                tipChipStrip.scrollBy({ left: Math.max(150, tipChipStrip.clientWidth * 0.72), behavior: 'smooth' });
-            });
-        }
-
-        tipChipStrip.addEventListener('scroll', updateTipChipArrow, { passive: true });
-        window.addEventListener('resize', updateTipChipArrow);
-        window.requestAnimationFrame(updateTipChipArrow);
-    }
-
     // --- LOGIKA KLIK & PEMFILTERAN DATA ---
     // 2. Fungsi Filter Tunggal (Diperkuat: Case-Insensitive & Fallback)
 window.filterTips = function() {
@@ -13560,18 +13497,17 @@ window.filterTips = function() {
 };
 
 // 3. Logika Geser Chips (Drag & Swipe) - Berbasis Event Delegation Murni
-const tipChipStrip = document.querySelector('.tip-chip-strip');
+var tipChipStrip = document.querySelector('.tip-chip-strip');
 if (tipChipStrip) {
-    const tipChipNav = tipChipStrip.closest('.tip-chip-nav');
-    const tipChipNext = tipChipNav?.querySelector('.tip-chip-next');
+    var tipChipNav = tipChipStrip.closest('.tip-chip-nav');
+    var tipChipNext = tipChipNav ? tipChipNav.querySelector('.tip-chip-next') : null;
     
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-    let dragged = false;
+    var isDown = false;
+    var startX;
+    var scrollLeft;
+    var dragged = false;
 
-    // A. Interaksi Mouse (Desktop)
-    tipChipStrip.addEventListener('mousedown', (e) => {
+    tipChipStrip.addEventListener('mousedown', function(e) {
         isDown = true;
         dragged = false;
         tipChipStrip.classList.add('is-dragging');
@@ -13579,38 +13515,34 @@ if (tipChipStrip) {
         scrollLeft = tipChipStrip.scrollLeft;
     });
 
-    tipChipStrip.addEventListener('mouseleave', () => {
+    tipChipStrip.addEventListener('mouseleave', function() {
         isDown = false;
         tipChipStrip.classList.remove('is-dragging');
     });
 
-    tipChipStrip.addEventListener('mouseup', () => {
+    tipChipStrip.addEventListener('mouseup', function() {
         isDown = false;
         tipChipStrip.classList.remove('is-dragging');
     });
 
-    tipChipStrip.addEventListener('mousemove', (e) => {
+    tipChipStrip.addEventListener('mousemove', function(e) {
         if (!isDown) return;
-        const x = e.pageX - tipChipStrip.offsetLeft;
-        const walk = (x - startX); 
-        if (Math.abs(walk) > 4) dragged = true; // Toleransi geser 4px
+        var x = e.pageX - tipChipStrip.offsetLeft;
+        var walk = (x - startX); 
+        if (Math.abs(walk) > 4) dragged = true; 
         if (dragged) {
             e.preventDefault();
             tipChipStrip.scrollLeft = scrollLeft - walk;
         }
     });
 
-    // B. Interaksi Sentuh (Mobile/Tablet)
-    tipChipStrip.addEventListener('touchstart', () => { dragged = false; }, { passive: true });
-    tipChipStrip.addEventListener('touchmove', () => { dragged = true; }, { passive: true });
+    tipChipStrip.addEventListener('touchstart', function() { dragged = false; }, { passive: true });
+    tipChipStrip.addEventListener('touchmove', function() { dragged = true; }, { passive: true });
 
-    // C. EVENT DELEGATION: Menangani klik langsung dari parent (Anti-gagal)
-    tipChipStrip.addEventListener('click', (event) => {
-        // Cari elemen chip terdekat dari titik yang diklik
-        const chip = event.target.closest('.tip-chip');
+    tipChipStrip.addEventListener('click', function(event) {
+        var chip = event.target.closest('.tip-chip');
         if (!chip) return; 
 
-        // Cegat klik jika pengguna hanya berniat menggeser layar
         if (dragged) {
             event.preventDefault();
             event.stopPropagation();
@@ -13618,44 +13550,29 @@ if (tipChipStrip) {
             return;
         }
         
-        // Ambil data dari atribut HTML dengan toleransi penamaan
-        const category = chip.getAttribute('data-tip-category') || chip.getAttribute('data-category') || 'all';
-        window.filterTipsByCategory(category, chip);
+        var category = chip.getAttribute('data-tip-category') || chip.getAttribute('data-category') || 'all';
+        if (typeof window.filterTipsByCategory === 'function') {
+            window.filterTipsByCategory(category, chip);
+        }
     });
 
-    // D. Pembaruan Visibilitas Panah Scroll
-    const updateTipChipArrow = () => {
+    var updateTipChipArrow = function() {
         if (!tipChipNav || !tipChipNext) return;
-        const hasMore = Math.ceil(tipChipStrip.scrollLeft + tipChipStrip.clientWidth) < tipChipStrip.scrollWidth - 2;
+        var hasMore = Math.ceil(tipChipStrip.scrollLeft + tipChipStrip.clientWidth) < tipChipStrip.scrollWidth - 2;
         tipChipNav.classList.toggle('has-more', hasMore);
         tipChipNext.hidden = !hasMore;
     };
     
-    tipChipNext?.addEventListener('click', () => {
-        tipChipStrip.scrollBy({ left: Math.max(180, tipChipStrip.clientWidth * 0.72), behavior: 'smooth' });
-    });
+    if (tipChipNext) {
+        tipChipNext.addEventListener('click', function() {
+            tipChipStrip.scrollBy({ left: Math.max(180, tipChipStrip.clientWidth * 0.72), behavior: 'smooth' });
+        });
+    }
     
     tipChipStrip.addEventListener('scroll', updateTipChipArrow, { passive: true });
     window.addEventListener('resize', updateTipChipArrow);
     window.requestAnimationFrame(updateTipChipArrow);
 }
-
-    // --- BINDING EVENT KLIK KE SETIAP CHIP ---
-    tipChips.forEach(chip => {
-        chip.addEventListener('click', event => {
-            // Evaluasi akhir: Cegat klik murni jika event ini berasal dari aksi drag/swipe
-            if (dragged) {
-                event.preventDefault();
-                event.stopPropagation();
-                dragged = false; // Reset state
-                return;
-            }
-            
-            const selectedCategory = chip.getAttribute('data-tip-category');
-            window.filterTipsByCategory(selectedCategory, chip);
-        });
-    });
-});
 
 window.addEventListener('online', async () => {
     console.log("Koneksi internet pulih. Mengirim antrean resep offline ke Supabase...");
