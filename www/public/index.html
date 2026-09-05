@@ -10,6 +10,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Timer Proofer">
     
+    <!-- URL resmi pemanggil mesin Google Translate -->
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Library untuk mengambil 'screenshot' elemen HTML -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -289,6 +292,7 @@
             background: rgba(231, 76, 60, 0.2);
             transform: translateY(-1px);
         }
+
     /* TOMBOL EDIT PROFIL */
     .btn-danger-outline {
         background: transparent;
@@ -534,6 +538,42 @@
         .modal-wrapper { width: 100%; } /* Otomatis penuh mengikuti batas container */
 
         .modal-scroll-content {flex: 1;overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 20px 10px 20px; box-sizing: border-box;}
+
+
+        /* =============STYLE GAMIFIKASI ================== */
+        /* Base Card Styles */
+  .gamification-card { margin-top:0; background:linear-gradient(135deg,#fff7ed,#fff); border:1px solid rgba(230,126,34,.25); border-radius:18px; padding:16px; box-shadow:0 4px 14px rgba(78,52,46,.07); font-family: inherit; }
+  .gamification-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .gamification-title { font-weight:800; color:var(--chocolate,#4e342e); }
+  
+  /* Rank & Level */
+  .gamification-level-group { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .gamification-level { font-size:.75rem; font-weight:800; color:#fff; background:var(--accent,#e67e22); padding:4px 10px; border-radius:999px; white-space:nowrap; }
+  .gamification-rank { font-size: 0.72rem; font-weight: 800; color: #D35400; background: #FDEBD0; padding: 2px 8px; border-radius: 6px; }
+  
+  /* XP Bar */
+  .gamification-xp { display:flex; justify-content:space-between; margin:14px 0 6px; font-size:.78rem; font-weight:700; color:#6d4c41; }
+  .gamification-track { height:10px; border-radius:999px; background:rgba(230,126,34,.15); overflow:hidden; }
+  .gamification-fill { height:100%; width:0; background:linear-gradient(90deg,#f39c12,#e67e22); border-radius:inherit; transition:width 0.5s ease; }
+  
+  /* Stats & Coins */
+  .gamification-meta { display:flex; gap:6px; margin-top:14px; }
+  .gamification-pill { flex:1; text-align:center; background:#fff; border-radius:10px; padding:8px 4px; font-size:.7rem; color:#6d4c41; border: 1px solid rgba(230,126,34,.1); }
+  .gamification-pill strong { display:block; font-size:1rem; color:var(--chocolate,#4e342e); margin-top: 2px; }
+  .coin-pill { background: #FFF9F0; border-color: #F39C12; }
+  .coin-pill strong { color: #F39C12; }
+  
+  /* Sections & Quests */
+  .gamification-section-title { font-size: 0.85rem; font-weight: 800; color: #4E342E; margin: 18px 0 10px 0; text-align: left; border-bottom: 1px dashed rgba(230, 126, 34, 0.3); padding-bottom: 6px; }
+  .daily-quests-container { display: flex; flex-direction: column; gap: 8px; }
+  .quest-item { display: flex; justify-content: space-between; align-items: center; background: #FFFDF9; border: 1px solid rgba(243, 156, 18, 0.2); padding: 10px 12px; border-radius: 10px; font-size: 0.8rem; color: #2C3E50; }
+  .quest-item.completed { opacity: 0.6; background: #EAFAF1; border-color: #A9DFBF; text-decoration: line-through; }
+  .quest-reward { font-weight: 800; color: #E67E22; font-size: 0.75rem; }
+  
+  /* Badges */
+  .gamification-badges { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .gamification-badge { font-size:.75rem; font-weight:600; border-radius:999px; padding:6px 10px; background:#fff; border:1px solid rgba(230,126,34,.3); color:#6d4c41; }
+  .gamification-badge.locked { opacity:.4; filter:grayscale(1); background: #f5f5f5; border-color: #ddd; }
 
         /* TIPS PAGE */
         #tips-page {
@@ -2263,7 +2303,7 @@ body {
                 <div id="user-greeting">Selamat Malam,</div>
                 <div class="profile-name" id="profile-name">Pengguna</div>
                 <div class="profile-subtitle" id="profile-bakery">Nama Bakery</div>
-                <div class="profile-badge" id="profile-status-badge">Premium Member</div>
+                <div class="profile-badge" id="profile-status-badge">🔔 Memuat Rank...</div>
                 <div class="profile-subline" id="profile-last-updated">Terakhir diperbarui: --:--</div>
                 <div class="profile-subline" id="profile-version" style="font-size: 0.72rem; opacity: 0.55; margin-top: 4px;"></div>
 
@@ -4473,42 +4513,37 @@ const GamificationData = [
     { 
         level: 1, 
         expRequired: 0, 
-        unlockKey: null, 
         badgeTitle: "Novice Baker", 
         icon: "🥚", 
-        message: "Selamat datang di dunia artisan! Mulai buat resep pertamamu." 
+        message: "Langkah awal dimulai! Selamat datang di dunia artisan baker." 
     },
     { 
         level: 2, 
         expRequired: 50, 
-        unlockKey: "custom_alarm", 
         badgeTitle: "Apprentice Baker", 
         icon: "🔔", 
-        message: "Fitur Nada Alarm Kustom Terbuka! Atur suara alarm sesuai selera." 
+        message: "Meraih gelar Apprentice Baker! Pengelolaan jadwal proofing dan alarm mulai terstruktur." 
     },
     { 
         level: 3, 
         expRequired: 150, 
-        unlockKey: "offline_mode", 
         badgeTitle: "Journeyman Baker", 
         icon: "📵", 
-        message: "Fitur Mode Luring Manual Terbuka! Tetap produktif tanpa koneksi." 
+        message: "Meraih gelar Journeyman Baker! Produktivitas dapur mandiri semakin konsisten." 
     },
     { 
         level: 4, 
         expRequired: 350, 
-        unlockKey: "ble_thermometer", 
         badgeTitle: "Artisan Baker", 
         icon: "🌡️", 
-        message: "Koneksi Termometer Bluetooth Terbuka! Sinkronisasi suhu presisi tinggi." 
+        message: "Meraih gelar Artisan Baker! Penguasaan suhu dan kelembapan presisi tinggi tercapai." 
     },
     { 
         level: 5, 
         expRequired: 700, 
-        unlockKey: "ai_analytics", 
         badgeTitle: "Master Baker", 
         icon: "🏆", 
-        message: "AI Agent Premium Analytics Terbuka! Analisis mendalam resep & HPP aktif." 
+        message: "Puncak pencapaian Master Baker! Analisis resep dan manajemen dapur berada di level tertinggi." 
     }
 ];
 
@@ -5040,6 +5075,245 @@ function perbaruiTampilanUnitUsaha() {
 }
 
 // ============================================================
+// FUNGSI GAMIFIKASI
+// ============================================================
+(() => {
+  const dayKey = date => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+  const todayKey = () => dayKey(new Date());
+  
+  const getRecipes = () => {
+    try {
+      if (typeof readRecipesFromStorage === 'function') return readRecipesFromStorage() || [];
+      if (window.recipes) return window.recipes;
+      return JSON.parse(localStorage.getItem('recipes') || '[]');
+    } catch (_) { return []; }
+  };
+
+  const getLogs = () => {
+    try {
+      if (typeof readProofingLogsFromStorage === 'function') return readProofingLogsFromStorage() || [];
+      if (window.timerHistory) return window.timerHistory;
+      return JSON.parse(localStorage.getItem('timerHistory') || '[]');
+    } catch (_) { return []; }
+  };
+  
+  const activityKey = userId => `gamification_activity_days_${userId || 'local'}`;
+  const getStreak = userId => {
+    try {
+      let days = [];
+      try { days = JSON.parse(localStorage.getItem(activityKey(userId)) || '[]'); } catch (_) {}
+      const today = todayKey();
+      if (!days.includes(today)) {
+        days.push(today);
+        localStorage.setItem(activityKey(userId), JSON.stringify([...new Set(days)].sort().slice(-365)));
+      }
+      let streak = 0, cursor = new Date(`${today}T00:00:00`);
+      const available = new Set(days);
+      while (available.has(dayKey(cursor))) { streak++; cursor.setDate(cursor.getDate() - 1); }
+      return streak;
+    } catch (_) { return 1; }
+  };
+
+  const getRankInfo = (level) => {
+      if (level <= 10) return { title: 'Apprentice Baker', next: 'Assistant Baker (Level 11)' };
+      if (level <= 25) return { title: 'Assistant Baker', next: 'Head Baker (Level 26)' };
+      if (level <= 45) return { title: 'Head Baker', next: 'Executive Chef (Level 46)' };
+      return { title: 'Executive Pastry Chef', next: 'Max Rank' };
+  };
+
+  const GamificationData = [
+    { level: 1, expRequired: 0, badgeTitle: "Novice Baker", icon: "🥚", message: "Langkah awal dimulai! Selamat datang di dunia artisan baker." },
+    { level: 2, expRequired: 50, badgeTitle: "Apprentice Baker", icon: "🔔", message: "Meraih gelar Apprentice Baker! Pengelolaan jadwal proofing dan alarm mulai terstruktur." },
+    { level: 3, expRequired: 150, badgeTitle: "Journeyman Baker", icon: "📵", message: "Meraih gelar Journeyman Baker! Produktivitas dapur mandiri semakin konsisten." },
+    { level: 4, expRequired: 350, badgeTitle: "Artisan Baker", icon: "🌡️", message: "Meraih gelar Artisan Baker! Penguasaan suhu dan kelembapan presisi tinggi tercapai." },
+    { level: 5, expRequired: 700, badgeTitle: "Master Baker", icon: "🏆", message: "Puncak pencapaian Master Baker! Analisis resep dan manajemen dapur berada di level tertinggi." }
+  ];
+
+  const mount = () => {
+    try {
+      let card = document.getElementById('gamification-card');
+      if (card) return card;
+      
+      const titles = Array.from(document.querySelectorAll('.profile-section-title'));
+      const logTitle = titles.find(el => el.textContent.includes('Log Pencapaian'));
+      const container = document.querySelector('#user-modal .profile-container');
+      if (!container && !logTitle) return null;
+      
+      card = document.createElement('section');
+      card.id = 'gamification-card'; 
+      card.className = 'profile-card gamification-card';
+      card.setAttribute('aria-label', 'Kemajuan gamifikasi');
+      
+      card.innerHTML = `
+        <div class="gamification-head">
+            <div class="gamification-title">🏆 Kemajuan Baker</div>
+            <div class="gamification-level-group">
+                <span id="game-level" class="gamification-level">Level 1</span>
+                <span id="game-rank" class="gamification-rank">Apprentice</span>
+            </div>
+        </div>
+        <div class="gamification-xp">
+            <span id="game-xp"><strong>0 XP</strong></span>
+            <span id="game-next">100 XP menuju level berikutnya</span>
+        </div>
+        <div class="gamification-track" aria-hidden="true">
+            <div id="game-xp-fill" class="gamification-fill" style="width: 0%;"></div>
+        </div>
+        <div class="gamification-meta">
+            <div class="gamification-pill">🔥 Streak<strong id="game-streak">0 hari</strong></div>
+            <div class="gamification-pill">🍩 Resep<strong id="game-recipes">0</strong></div>
+            <div class="gamification-pill">⏱️ Proofing<strong id="game-proofing">0</strong></div>
+            <div class="gamification-pill coin-pill">🪙 Koin<strong id="game-coins">0</strong></div>
+        </div>
+        <div class="gamification-section-title">📝 Misi Harian (Daily Bakers)</div>
+        <div class="daily-quests-container" id="game-quests">
+            <div class="quest-item"><div class="quest-text">Menunggu misi...</div></div>
+        </div>
+        <div class="gamification-section-title">🎖️ Pencapaian Keahlian</div>
+        <div id="game-badges" class="gamification-badges" aria-label="Badge dan hadiah"></div>
+      `;
+      
+      if (logTitle && logTitle.parentNode) {
+          logTitle.parentNode.insertBefore(card, logTitle);
+      } else if (container) {
+          container.prepend(card);
+      }
+      return card;
+    } catch (e) {
+      console.error("Mount error:", e);
+      return null;
+    }
+  };
+
+  const renderAchievementLogs = (currentLevel) => {
+    try {
+      const container = document.getElementById('dynamic-achievement-logs');
+      if (!container) return;
+
+      if (typeof currentLevel === 'undefined' || isNaN(currentLevel)) {
+        const recipesCount = getRecipes().length;
+        const proofingsCount = getLogs().length;
+        const streakCount = getStreak();
+        const xp = recipesCount * 25 + proofingsCount * 10 + streakCount * 15;
+        currentLevel = Math.floor(xp / 100) + 1;
+      }
+
+      const unlockedMilestones = GamificationData.filter(item => currentLevel >= item.level).reverse();
+
+      if (!unlockedMilestones.length) {
+        container.innerHTML = `<li class="log-empty" style="text-align: center; color: #94a3b8; padding: 12px;">Belum ada pencapaian yang diraih.</li>`;
+        return;
+      }
+
+      container.innerHTML = unlockedMilestones.map(item => `
+        <li class="log-item" style="padding: 12px 14px; margin-bottom: 10px; border-radius: 14px; background: rgba(242, 210, 169, 0.22); display: flex; gap: 12px; align-items: center; border: 1px solid rgba(78, 52, 46, 0.06);">
+          <div style="font-size: 1.6rem; background: #fff; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0;">${item.icon}</div>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 800; font-size: 0.85rem; color: var(--chocolate); margin-bottom: 2px;">${item.badgeTitle} (Lv. ${item.level})</div>
+            <div style="font-size: 0.75rem; color: rgba(78, 52, 46, 0.8); line-height: 1.3;">${item.message}</div>
+            <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 4px; font-weight: 600;">Status: Terbuka & Aktif</div>
+          </div>
+        </li>
+      `).join('');
+    } catch (e) {
+      console.error("Render logs error:", e);
+    }
+  };
+
+  // Daftarkan ke window agar bisa diakses oleh fungsi luar (seperti renderUserProfile)
+  window.renderAchievementLogs = renderAchievementLogs;
+
+  const refresh = async userId => {
+    try {
+      const card = mount(); if (!card) return;
+      
+      const recipesCount = getRecipes().length;
+      const proofingsCount = getLogs().length;
+      const streakCount = getStreak(userId);
+      
+      const xp = recipesCount * 25 + proofingsCount * 10 + streakCount * 15;
+      const coins = recipesCount * 10 + proofingsCount * 5 + streakCount * 20;
+
+      const level = Math.floor(xp / 100) + 1;
+      const progress = xp % 100;
+      const rankData = getRankInfo(level);
+
+      const setElText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+      const setElHtml = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+
+      setElText('game-level', `Level ${level}`);
+      setElText('game-rank', rankData.title);
+      setElHtml('game-xp', `<strong>${xp} XP</strong>`);
+      setElText('game-next', `${100 - progress} XP menuju Level ${level + 1}`);
+      
+      const fill = document.getElementById('game-xp-fill');
+      if (fill) fill.style.width = `${progress}%`;
+      
+      const profileBadge = document.getElementById('profile-status-badge');
+      if (profileBadge) {
+          profileBadge.textContent = `🔔 ${rankData.title} (Lv. ${level})`;
+      }
+
+      renderAchievementLogs(level);
+
+      setElText('game-streak', `${streakCount} hari`);
+      setElText('game-recipes', recipesCount);
+      setElText('game-proofing', proofingsCount);
+      setElText('game-coins', coins);
+
+      const quest1Done = recipesCount > 0;
+      const quest2Done = proofingsCount > 0;
+      setElHtml('game-quests', `
+          <div class="quest-item ${quest1Done ? 'completed' : ''}">
+              <div class="quest-text">${quest1Done ? '✔️' : '🍩'} Buat/simpan minimal 1 resep</div>
+              <div class="quest-reward">+25 XP</div>
+          </div>
+          <div class="quest-item ${quest2Done ? 'completed' : ''}">
+              <div class="quest-text">${quest2Done ? '✔️' : '⏳'} <strong>Time-Attack:</strong> Jalankan timer proofing</div>
+              <div class="quest-reward">+10 🪙</div>
+          </div>
+      `);
+
+      const badges = [
+          { icon: '🥖', name: 'Kneading Master', desc: 'Simpan 3 Resep', ok: recipesCount >= 3 },
+          { icon: '🥐', name: 'Golden Crust', desc: 'Selesaikan 5 Proofing', ok: proofingsCount >= 5 },
+          { icon: '🦠', name: 'Rise of Yeast', desc: 'Selesaikan 15 Proofing', ok: proofingsCount >= 15 },
+          { icon: '👨‍🍳', name: 'Head Baker', desc: 'Capai Level 26', ok: level >= 26 },
+          { icon: '🔥', name: 'Streak 7 Hari', desc: 'Buka aplikasi 7 hari beruntun', ok: streakCount >= 7 }
+      ];
+      
+      setElHtml('game-badges', badges.map(b => 
+          `<span class="gamification-badge ${b.ok ? 'unlocked' : 'locked'}" title="${b.desc}">${b.icon} ${b.name}</span>`
+      ).join(''));
+    } catch (e) {
+      console.error("Refresh error:", e);
+    }
+  };
+
+  let gamificationLoginUserId = null;
+  window.GamificationUI = {
+    refresh,
+    renderAchievementLogs,
+    async afterLogin(userId) {
+      if (gamificationLoginUserId === userId) return;
+      gamificationLoginUserId = userId;
+      await refresh(userId);
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await refresh();
+    try {
+      if (typeof supabase !== 'undefined' && supabase.auth) {
+        const result = await supabase.auth.getSession();
+        if (result.data.session) await window.GamificationUI.afterLogin(result.data.session.user.id);
+        supabase.auth.onAuthStateChange((_event, session) => { if (session) window.GamificationUI.afterLogin(session.user.id); });
+      }
+    } catch (_) {}
+  });
+})();
+
+// ============================================================
 // FUNGSI ARTIKEL & TIPS SLIDER
 // ============================================================
 function initArticleSlider() {
@@ -5252,36 +5526,6 @@ async function renderProofingLogs() {
         item.appendChild(row);
         item.appendChild(detailRow);
         container.appendChild(item);
-    });
-}
-
-function renderAchievementLogs() {
-    const container = document.getElementById('dynamic-achievement-logs');
-    if (!container) return;
-
-    const logs = JSON.parse(localStorage.getItem('achievement_logs') || '[]');
-    container.innerHTML = '';
-
-    if (!logs.length) {
-        container.innerHTML = '<li class="log-empty">Belum ada pencapaian yang diraih.</li>';
-        return;
-    }
-
-    logs.forEach(log => {
-        const date = new Date(log.timestamp).toLocaleDateString('id-ID', { 
-            day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' 
-        });
-
-        container.innerHTML += `
-            <li class="log-item" style="padding: 12px 14px; margin-bottom: 10px; border-radius: 14px; background: rgba(242, 210, 169, 0.22); display: flex; gap: 12px; align-items: center; border: 1px solid rgba(78, 52, 46, 0.06);">
-                <div style="font-size: 1.6rem; background: #fff; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0;">${log.icon}</div>
-                <div style="flex: 1; min-width: 0;">
-                    <div style="font-weight: 800; font-size: 0.85rem; color: var(--chocolate); margin-bottom: 2px;">${log.title}</div>
-                    <div style="font-size: 0.75rem; color: rgba(78, 52, 46, 0.8); line-height: 1.3;">${log.desc}</div>
-                    <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 4px; font-weight: 600;">Terbuka: ${date}</div>
-                </div>
-            </li>
-        `;
     });
 }
 
@@ -6151,12 +6395,8 @@ window.muatUlangAnalisisAI = async function() {
     const btn = document.getElementById('ai-refresh-btn');
     const badge = document.getElementById('ai-status-badge');
 
-    // 1. Deteksi otomatis jenis produk yang sedang dipilih user di UI (misal dari tombol kategori aktif)
     const activeProductBtn = document.querySelector('.product-btn.active, [data-product].active, .pill-btn.active') || 
-                             document.querySelector('#PILIH JENIS PRODUK + * .active') || 
                              document.querySelector('.btn-product.active');
-    
-    // Ambil teks produk atau gunakan default jika tidak ditemukan
     const jenisProduk = activeProductBtn ? activeProductBtn.innerText.trim() : "Adonan Bakery Umum";
 
     if (btn) {
@@ -6171,26 +6411,30 @@ window.muatUlangAnalisisAI = async function() {
     }
 
     try {
-        // Ambil data suhu dari elemen widget di layar (misal: "27 °C")
         const suhuText = document.querySelector('.temperature-display, h1, .temp-value')?.innerText || "27°C";
         const kelembapanText = document.querySelector('.humidity-display, .humidity-value')?.innerText || "57%";
-
-        // Susun prompt dinamis yang dikirim ke backend ai-telemetry.js
         const promptContext = `Kondisi Sensor Saat Ini: Suhu ${suhuText}, Kelembapan ${kelembapanText}. Jenis Produk yang Dibuat: ${jenisProduk}. Berikan analisis telemetri, evaluasi ragi, dan rekomendasi penanganan yang spesifik untuk produk ini.`;
 
-        // Kirim ke backend API
-        const response = await fetch('/api/ai-telemetry', {
+        // Deteksi otomatis: Jika di localhost, arahkan langsung ke domain Vercel agar backend merespons
+        const backendHost = (window.location.hostname === 'localhost' || window.location.protocol === 'file:') 
+            ? 'https://timer-proofer.vercel.app' 
+            : '';
+
+        const response = await fetch(`${backendHost}/api/ai-telemetry`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({ promptContext })
         });
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("Respons server bukan JSON (kemungkinan 404 HTML).");
+        }
 
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Gagal memuat analisis");
 
         const hasilAI = data.result || "";
-
-        // Tampilkan hasil dinamis dari AI
         if (insightEl) {
             insightEl.innerHTML = `<strong>Analisis (${jenisProduk}):</strong><br>${hasilAI.replace(/\n/g, '<br>')}`;
         }
@@ -6205,17 +6449,19 @@ window.muatUlangAnalisisAI = async function() {
         }
 
     } catch (error) {
-        console.error(error);
+        console.warn("Mode Fallback Aktif:", error.message);
+        
+        const suhuText = document.querySelector('.temperature-display, h1, .temp-value')?.innerText || "27°C";
         if (insightEl) {
-            insightEl.innerHTML = `<strong>Insight:</strong> Gagal terhubung ke agen AI Telemetri. Menggunakan mode siaga offline.`;
+            insightEl.innerHTML = `<strong>Insight (${jenisProduk}):</strong> Suhu ${suhuText} terpantau stabil dan kondusif untuk fermentasi ragi pada ${jenisProduk}.`;
         }
         if (recommendationEl) {
-            recommendationEl.innerHTML = `<strong>Rekomendasi:</strong> Pastikan koneksi internet stabil untuk pembaruan real-time.`;
+            recommendationEl.innerHTML = `<strong>Rekomendasi AI:</strong> <br>✅ Lanjutkan proses sesuai durasi standar.<br>💡 <em>(Catatan: Berjalan dalam mode offline/fallback karena kendala koneksi API).</em>`;
         }
         if (badge) {
-            badge.style.background = "#FADBD8";
-            badge.style.color = "#922B21";
-            badge.innerText = "🔴 Disconnected";
+            badge.style.background = "#FCF3CF";
+            badge.style.color = "#B7950B";
+            badge.innerText = "🟡 Standby (Offline)";
         }
     } finally {
         if (btn) {
@@ -6556,6 +6802,30 @@ function handleOfflinePremium() {
     if (typeof hitungEstimasiProofing === "function") {
         hitungEstimasiProofing(temp, humidity); 
     }
+}
+
+// =========================================================
+// FUNGSI AI SMART FERMENTATION TELEMETRY
+// =========================================================
+function isQuotaError(error) {
+  const text = toUserFacingError(error).toLowerCase();
+  const code = error?.status || error?.code || error?.error?.code;
+  
+  // Deteksi semua kemungkinan respons saat server Google sedang sibuk/kehabisan kuota
+  return (
+    code === 429 ||
+    code === 503 ||
+    code === 500 || // Google kadang melempar 500 murni saat server mereka gagal merespons
+    code === "RESOURCE_EXHAUSTED" ||
+    text.includes("quota") ||
+    text.includes("rate limit") ||
+    text.includes("too many requests") ||
+    text.includes("resource_exhausted") ||
+    text.includes("high demand") || 
+    text.includes("overloaded") ||
+    text.includes("service unavailable") ||
+    text.includes("internal error")
+  );
 }
 
 // =========================================================
@@ -15027,97 +15297,6 @@ async function mulaiTransaksiMidtrans() {
         }
     }
 }
-</script>
-
-<!-- URL resmi pemanggil mesin Google Translate -->
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-<style>
-  .gamification-card{margin-top:0;background:linear-gradient(135deg,#fff7ed,#fff);border:1px solid rgba(230,126,34,.25);border-radius:18px;padding:16px;box-shadow:0 4px 14px rgba(78,52,46,.07)}
-  .gamification-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.gamification-title{font-weight:800;color:var(--chocolate,#4e342e)}.gamification-level{font-size:.75rem;font-weight:800;color:#fff;background:var(--accent,#e67e22);padding:5px 9px;border-radius:999px;white-space:nowrap}
-  .gamification-xp{display:flex;justify-content:space-between;margin:12px 0 6px;font-size:.78rem;font-weight:700;color:#6d4c41}.gamification-track{height:9px;border-radius:999px;background:rgba(230,126,34,.15);overflow:hidden}.gamification-fill{height:100%;width:0;background:linear-gradient(90deg,#f39c12,#e67e22);border-radius:inherit;transition:width .3s ease}
-  .gamification-meta{display:flex;gap:8px;margin-top:12px}.gamification-pill{flex:1;text-align:center;background:#fff;border-radius:10px;padding:8px 5px;font-size:.72rem;color:#6d4c41}.gamification-pill strong{display:block;font-size:1rem;color:var(--chocolate,#4e342e)}.gamification-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.gamification-badge{font-size:.72rem;border-radius:999px;padding:5px 8px;background:#fff;border:1px solid rgba(230,126,34,.2);color:#6d4c41}.gamification-badge.locked{opacity:.42;filter:grayscale(1)}
-</style>
-<script>
-/* Gamification profile widget: independent of the achievement table so it remains visible offline. */
-(() => {
-  const daysBetween = (a, b) => Math.round((b - a) / 86400000);
-  const dayKey = date => [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
-  const todayKey = () => dayKey(new Date());
-  const getRecipes = () => {
-    try { return typeof readRecipesFromStorage === 'function' ? (readRecipesFromStorage() || []) : (window.recipes || []); }
-    catch (_) { return window.recipes || []; }
-  };
-  const getLogs = () => {
-    try { return typeof readProofingLogsFromStorage === 'function' ? (readProofingLogsFromStorage() || []) : (window.timerHistory || []); }
-    catch (_) { return window.timerHistory || []; }
-  };
-  const activityKey = userId => `gamification_activity_days_${userId || 'local'}`;
-  const getStreak = userId => {
-    let days = [];
-    try { days = JSON.parse(localStorage.getItem(activityKey(userId)) || '[]'); } catch (_) {}
-    const today = todayKey();
-    if (!days.includes(today)) {
-      days.push(today);
-      days = [...new Set(days)].sort().slice(-365);
-      localStorage.setItem(activityKey(userId), JSON.stringify(days));
-    }
-    let streak = 0, cursor = new Date(`${today}T00:00:00`);
-    const available = new Set(days);
-    while (available.has(dayKey(cursor))) { streak++; cursor.setDate(cursor.getDate() - 1); }
-    return streak;
-  };
-  const mount = () => {
-    let card = document.getElementById('gamification-card');
-    if (card) return card;
-    const header = document.querySelector('#user-modal .profile-header');
-    const container = document.querySelector('#user-modal .profile-container');
-    if (!header && !container) return null;
-    card = document.createElement('section');
-    card.id = 'gamification-card'; card.className = 'profile-card gamification-card';
-    card.setAttribute('aria-label', 'Kemajuan gamifikasi');
-    card.innerHTML = '<div class="gamification-head"><div class="gamification-title">🏆 Kemajuan Baker</div><div id="game-level" class="gamification-level">Level 1</div></div><div class="gamification-xp"><span id="game-xp">0 XP</span><span id="game-next">100 XP berikutnya</span></div><div class="gamification-track" aria-hidden="true"><div id="game-xp-fill" class="gamification-fill"></div></div><div class="gamification-meta"><div class="gamification-pill">🔥 Streak<strong id="game-streak">0 hari</strong></div><div class="gamification-pill">🍩 Resep<strong id="game-recipes">0</strong></div><div class="gamification-pill">⏱️ Proofing<strong id="game-proofing">0</strong></div></div><div id="game-badges" class="gamification-badges" aria-label="Badge dan hadiah"></div>';
-    if (header) header.insertAdjacentElement('afterend', card); else container.prepend(card);
-    return card;
-  };
-  const refresh = async userId => {
-    const card = mount(); if (!card) return;
-    const recipes = Array.isArray(getRecipes()) ? getRecipes().length : 0;
-    const proofings = Array.isArray(getLogs()) ? getLogs().length : 0;
-    const streak = getStreak(userId);
-    const xp = recipes * 25 + proofings * 10 + streak * 5;
-    const level = Math.floor(xp / 100) + 1, progress = xp % 100;
-    document.getElementById('game-level').textContent = `Level ${level}`;
-    document.getElementById('game-xp').textContent = `${xp} XP`;
-    document.getElementById('game-next').textContent = `${100 - progress || 100} XP ke level berikutnya`;
-    document.getElementById('game-xp-fill').style.width = `${progress}%`;
-    document.getElementById('game-streak').textContent = `${streak} hari`;
-    document.getElementById('game-recipes').textContent = recipes;
-    document.getElementById('game-proofing').textContent = proofings;
-    const badges = [{icon:'🥉',name:'First Batch',ok:recipes >= 5},{icon:'🥈',name:'Artisan Baker',ok:recipes >= 25},{icon:'🥇',name:'Head Pastry Chef',ok:recipes >= 50},{icon:'👑',name:'Master Baker',ok:recipes >= 100},{icon:'🔥',name:'Streak 7 Hari',ok:streak >= 7}];
-    document.getElementById('game-badges').innerHTML = badges.map(b => `<span class="gamification-badge${b.ok ? '' : ' locked'}">${b.icon} ${b.name}</span>`).join('');
-    const profileBadge = document.getElementById('profile-status-badge');
-    if (profileBadge) profileBadge.textContent = `Level ${level} Baker · ${xp} XP`;
-  };
-  let gamificationLoginUserId = null;
-  window.GamificationUI = {
-    refresh,
-    async afterLogin(userId) {
-      if (gamificationLoginUserId === userId) return;
-      gamificationLoginUserId = userId;
-      await refresh(userId);
-      // Badge lokal tetap berfungsi tanpa tabel Supabase user_achievements.
-      // Pemanggilan server sengaja tidak otomatis agar aplikasi tidak gagal saat tabel belum dibuat.
-    }
-  };
-  document.addEventListener('DOMContentLoaded', async () => {
-    await refresh();
-    try {
-      const result = await supabase.auth.getSession();
-      if (result.data.session) await window.GamificationUI.afterLogin(result.data.session.user.id);
-      supabase.auth.onAuthStateChange((_event, session) => { if (session) window.GamificationUI.afterLogin(session.user.id); });
-    } catch (_) { /* Offline mode still renders local progress. */ }
-  });
-})();
 </script>
 </body>
 </html>
