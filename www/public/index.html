@@ -27,6 +27,11 @@
     <script>if (/^https?:$/.test(location.protocol)) { const manifestLink = document.createElement('link'); manifestLink.rel = 'manifest'; manifestLink.href = 'manifest.json'; document.head.appendChild(manifestLink); }</script>
     <script src="assets/js/tipsData.js?v=20260905"></script>
     <script async src="https://www.googletagmanager.com/gtag.js?id=G-XXXXXXXXXX"></script>
+
+<script type="text/javascript"
+  src="https://app.sandbox.midtrans.com/snap/snap.js"
+  data-client-key="YOUR_CLIENT_KEY"></script>
+
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -552,14 +557,16 @@
             padding-bottom: var(--space-lg, 34px) !important;
         }
         .tip-card {
-            min-width: 0;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(78, 52, 46, 0.08);
-            border-radius: var(--radius-lg, 21px);
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(78, 52, 46, 0.04), 0 13px 34px rgba(78, 52, 46, 0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative; /* KUNCI UTAMA: Agar garis ::before terikat di dalam kartu */
+    max-width: 600px; 
+    margin: 0 auto 12px auto; 
+    width: 100%; 
+    box-sizing: border-box;
+    background: #ffffff; 
+    border-radius: 12px;
+    border: 1px solid rgba(78, 52, 46, 0.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
         }
         .tip-card::before {
             content: "";
@@ -575,18 +582,18 @@
         }
         .tip-card-header {
             display: flex;
-            align-items: center;
-            width: 100%;
-            min-height: 68px;
-            padding: var(--space-md, 21px) !important;
-            gap: var(--space-sm, 13px);
-            text-align: left;
-            color: inherit;
-            border: 0 !important;
-            border-radius: 0 !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            transition: background 0.2s ease;
+    align-items: center;
+    width: 95%;
+    min-height: auto; /* Hapus batasan tinggi minimal yang kaku */
+    padding: 12px 16px !important; /* Rampingkan padding atas-bawah dan kiri-kanan */
+    gap: var(--space-sm, 13px);
+    text-align: left;
+    color: inherit;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transition: background 0.2s ease;
         }
         .tip-card-header:hover,
         .tip-card-header:focus-visible {
@@ -1461,14 +1468,12 @@
         #refresh-indicator { text-align: center; padding: 10px; font-size: 0.8rem; color: var(--accent); display: none; }
 
         /* ANALISIS AI - di versi baru dihilangkan*/
-        #ai-analysis-wrapper { position: relative; width: 100%; }
+        #ai-analysis-wrapper { position: relative; width: 95%; }
         #ai-toggle { position: relative; z-index: 60; cursor: pointer; margin-bottom: 5px; }
-        .ai-analysis-box {position: relative; /* Diubah agar mendesak elemen di bawahnya secara natural */
-    margin-top: 10px;   /* Pengganti top: 30px; */
-    width: 100%;        /* Pengganti left: 0; dan right: 0; */
-    box-sizing: border-box; /* Mencegah kotak meluber ke samping karena padding */
-    
-    /* Biarkan properti di bawah ini sesuai aslinya */
+        .ai-analysis-box {position: relative;
+    margin-top: 10px; 
+    width: 100%; 
+    box-sizing: border-box;
     background: #ffffff; 
     border: 2px solid #F2D2A9; 
     padding: 20px; 
@@ -1477,11 +1482,11 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
     transition: transform 0.3s ease, opacity 0.3s ease; 
     overflow: hidden; 
-    display: none; 
-    opacity: 0; 
+    display: block;     /* Pastikan selalu tampil */
+    opacity: 1;         /* Pastikan tidak transparan */
     color: #4E342E; 
     z-index: 150; 
-    transform: translateY(5px);}
+    transform: translateY(0);}
         .ai-analysis-box.show {display: block !important; opacity: 1; transform: translateY(0);}
         .ai-analysis-box h3 { font-size: 1rem; margin-top: 0; color: #E67E22; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
         #ai-insight { font-size: 0.95rem; line-height: 1.6; color: #444; }
@@ -1822,6 +1827,36 @@ body {
     100% { opacity: 1; }
 }
 
+/* STYLE PAYMENT GATEWAY */
+/* Styling untuk panel khusus di sebelah kanan */
+.payment-side-panel {
+    position: fixed;
+    top: 0;
+    right: -450px; /* Sembunyikan di luar layar sebelah kanan secara default */
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease-in-out; /* Animasi geser yang halus */
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Kelas aktif untuk memunculkan panel dari kanan */
+.payment-side-panel.open {
+    right: 0; 
+}
+.auth-card, .payment-card {
+    display: none; /* Sembunyikan secara default */
+}
+
+/* Tampilkan hanya jika memiliki kelas active */
+.auth-card.active, .payment-card.active {
+    display: block; 
+}
+
     </style>
 </head>
 <body class="logged-out">
@@ -2100,45 +2135,39 @@ body {
         </div>
     </div>
 
-        <!-- Bagian Analisis AI -->
-        <div id="ai-analysis-wrapper" style="background: linear-gradient(135deg, #FFFDF9 0%, #FFF5EB 100%); border: 1.5px solid #F39C12; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(243, 156, 18, 0.08); font-family: inherit;">
+    <!-- Bagian Analisis AI -->
+    <div id="ai-analysis-wrapper" style="background: linear-gradient(135deg, #FFFDF9 0%, #FFF5EB 100%); border: 1.5px solid #F39C12; border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(243, 156, 18, 0.08); font-family: inherit;">
     
-    <!-- Header Toggle & Status -->
-    <div id="ai-toggle" onclick="toggleAIAnalysisBox()" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.2rem;">🤖</span>
-            <span style="font-size: 0.85rem; font-weight: 800; color: #D35400; letter-spacing: 0.3px;">AI Smart Fermentation Telemetry</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-            <span id="ai-status-badge" style="font-size: 0.65rem; font-weight: 700; background: #D4EFDF; color: #196F3D; padding: 2px 8px; border-radius: 10px;">🟢 Live Agent</span>
-            <!-- Ubah rotasi panah menjadi 0deg agar menghadap ke bawah (terbuka) -->
-            <span id="ai-arrow-icon" style="font-size: 0.75rem; color: rgb(230, 126, 34); transition: transform 0.3s; transform: rotate(0deg);">▼</span>
-        </div>
-    </div>
-
-    <!-- Konten Analisis Dinamis -->
-    <!-- Ubah display menjadi block agar langsung tampil tanpa harus diklik -->
-    <div class="ai-analysis-box" id="ai-analysis-body" style="display: block; margin-top: 12px; border-top: 1px dashed rgba(243, 156, 18, 0.3); padding-top: 12px;">
-        
-        <!-- Insight Utama -->
-        <div id="ai-insight" style="font-size: 0.82rem; color: #4E342E; line-height: 1.6; margin-bottom: 10px;">
-            <strong>Insight:</strong> Suhu 27.04°C adalah suhu ideal untuk proofing adonan donat. Kelembaban tinggi dapat membuat adonan lengket.<br><br>
-            <strong>Action:</strong> Kondisi sangat stabil untuk fermentasi ragi. Taburi sedikit tepung saat membentuk adonan untuk mencegah lengket.
-        </div>
-        
-        <!-- Rekomendasi Tindakan -->
-        <div id="ai-recommendation" style="font-size: 0.82rem; color: #2C3E50; line-height: 1.5; background: rgba(255, 255, 255, 0.7); padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(243, 156, 18, 0.2);">
-            <strong>Rekomendasi:</strong> <br>
-            ✅ Kondisi sempurna, ikuti durasi standar proofing.<br>
-            💡 Rekomendasi: Taburi sedikit tepung saat membentuk donat.
+        <!-- Header Toggle & Status -->
+        <div id="ai-toggle" onclick="toggleAIAnalysisBox()" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.2rem;">🤖</span>
+                <span style="font-size: 0.85rem; font-weight: 800; color: #D35400; letter-spacing: 0.3px;">AI Smart Fermentation Telemetry</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <span id="ai-status-badge" style="font-size: 0.65rem; font-weight: 700; background: #D4EFDF; color: #196F3D; padding: 2px 8px; border-radius: 10px;">🟢 Live Agent</span>
+            </div>
         </div>
 
-        <!-- Tombol Sinkronisasi / Panggil Ulang Agen AI -->
-        <button type="button" onclick="window.muatUlangAnalisisAI()" style="margin-top: 12px; width: 100%; height: 38px; background: #E67E22; color: #FFFFFF; border: none; font-weight: 800; border-radius: 10px; font-size: 0.75rem; cursor: pointer; box-shadow: 0 2px 8px rgba(230, 126, 34, 0.2); transition: 0.2s;">
-            🔄 Perbarui Analisis Telemetry
-        </button>
+        <!-- Konten Analisis Dinamis -->
+        <!-- Ubah display menjadi none dan rotasi panah jadi -90deg -->
+        <div class="ai-analysis-box" id="ai-analysis-body" style="display: none; margin-top: 12px; border-top: 1.5px dashed rgba(243, 156, 18, 0.3); padding-top: 12px;">
+            <!-- Insight Utama (Netral / Menunggu Sinkronisasi) -->
+            <div id="ai-insight" style="font-size: 0.82rem; color: #4E342E; line-height: 1.6; margin-bottom: 10px;">
+                <strong>Insight:</strong> Memindai suhu ruang dan produk aktif untuk analisis fermentasi...
+            </div>
+            
+            <!-- Rekomendasi Tindakan -->
+            <div id="ai-recommendation" style="font-size: 0.82rem; color: #2C3E50; line-height: 1.5; background: rgba(255, 255, 255, 0.7); padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(243, 156, 18, 0.2);">
+                <strong>Rekomendasi AI:</strong> <br>⏳ Menyiapkan parameter telemetri sesuai adonan Anda.
+            </div>
+
+            <!-- Tombol Sinkronisasi -->
+            <button type="button" id="ai-refresh-btn" onclick="window.muatUlangAnalisisAI()" style="margin-top: 12px; width: 100%; height: 38px; background: rgb(230, 126, 34); color: rgb(255, 255, 255); border: none; font-weight: 800; border-radius: 10px; font-size: 0.75rem; cursor: pointer; box-shadow: rgba(230, 126, 34, 0.2) 0px 2px 8px; transition: 0.2s;">
+                🔄 Perbarui Analisis Telemetry
+            </button>
+        </div>
     </div>
-</div>
 
         <!-- [BARU] Pilihan Jenis Produk (Donat, Roti, Bakpao) -->
         <div class="proofer-selector-wrapper">
@@ -2158,12 +2187,13 @@ body {
                     <span>🥟</span> Bakpao
                 </button>
             </div>
-
-        <!--Bagian Tombol Proofing-->
-        <div class="mode-grid" id="mode-grid-container" style="display: grid; gap: 8px; margin-top: 10px; margin-bottom: 15px;">
-            <button class="mode-btn" id="btn-mode-initial">Initial</button>
-            <button class="mode-btn" id="btn-mode-rounding">Rounding</button>
-            <button class="mode-btn" id="btn-mode-final">Final</button>
+        
+            <!--Bagian Tombol Proofing-->
+            <div class="mode-grid" id="mode-grid-container" style="display: grid; gap: 8px; margin-top: 10px; margin-bottom: 15px;">
+                <button class="mode-btn" id="btn-mode-initial">Initial</button>
+                <button class="mode-btn" id="btn-mode-rounding">Rounding</button>
+                <button class="mode-btn" id="btn-mode-final">Final</button>
+            </div>
         </div>
 
         <!-- Bagian Timer Circle-->
@@ -2315,8 +2345,6 @@ body {
                 </div>
             </div>
 
-            
-
             <!-- LOG AKTIVITAS DINAMIS -->
             <div class="profile-card animation-fade">
                 <h3 class="profile-section-title">📜 Riwayat Aktivitas Proofing</h3>
@@ -2370,6 +2398,57 @@ body {
                             </tr>
                         </div>
                     </table>
+                </div>
+            </div>
+
+            <!-- MODAL PAYMENT GATEWAY -->
+            <div class="payment-checkout-container" style="background: #ffffff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 420px; margin: 0 auto; font-family: 'Segoe UI', sans-serif; text-align: center;">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">🧾</div>
+                <h4 style="margin: 0 0 8px 0; color: #4E342E; font-size: 1.1rem; font-weight: 800;">Konfirmasi Pembayaran</h4>
+                <p style="font-size: 0.8rem; color: #718096; margin-bottom: 20px;">Selesaikan transaksi Anda secara aman menggunakan berbagai metode pembayaran instan.</p>
+                
+                <!-- Ringkasan Tagihan -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 20px; text-align: left; font-size: 0.82rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="color: #64748b;">Produk / Layanan:</span>
+                        <span style="font-weight: 700; color: #4E342E;">Langganan / Pesanan Adonan</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        <span style="font-weight: 700; color: #4E342E;">Total Tagihan:</span>
+                        <span style="font-weight: 800; color: #E67E22;" id="pay-total-amount">Rp 50.000</span>
+                    </div>
+                </div>
+
+                <!-- Tombol Eksekusi Bayar -->
+                <button type="button" onclick="mulaiTransaksiMidtrans()" class="btn" style="background: var(--accent, #E67E22); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(230,126,34,0.25);">
+                    💳 BAYAR SEKARANG
+                </button>
+            </div>
+
+            <div class="page-modal" id="payment-modal" inert style="display: none;">
+                <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
+                    <h3 style="margin: 0; color: #4E342E;">Konfirmasi Pembayaran</h3>
+                    <button class="article-modal-close" onclick="toggleModal('payment-modal')">×</button>
+                </div>
+                <div class="modal-scroll-content" style="padding: 20px;">
+                    <div class="payment-checkout-container" style="background: #ffffff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 420px; margin: 0 auto; text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">🧾</div>
+                        <h4 style="margin: 0 0 8px 0; color: #4E342E; font-size: 1.1rem; font-weight: 800;">Konfirmasi Pembayaran</h4>
+                        <p style="font-size: 0.8rem; color: #718096; margin-bottom: 20px;">Selesaikan transaksi Anda secara aman menggunakan berbagai metode pembayaran instan.</p>
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 20px; text-align: left; font-size: 0.82rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                <span style="color: #64748b;">Produk / Layanan:</span>
+                                <span style="font-weight: 700; color: #4E342E;">Langganan / Pesanan Adonan</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                                <span style="font-weight: 700; color: #4E342E;">Total Tagihan:</span>
+                                <span style="font-weight: 800; color: #E67E22;">Rp 50.000</span>
+                            </div>
+                        </div>
+                        <button type="button" onclick="mulaiTransaksiMidtrans()" class="btn" style="background: var(--accent, #E67E22); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; font-size: 0.9rem;">
+                            💳 BAYAR SEKARANG
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2502,10 +2581,7 @@ body {
         <!-- UI Kustom Dropdown Anda (Tetap Elegan) -->
         <!-- Menu Pilihan Bahasa di Pengaturan -->
         
-
         <div class="modal-scroll-content" style="padding-top: 0;">
-                   
-            
             <hr style="border: 0; border-top: 1px solid rgba(78, 52, 46, 0.2); margin: 20px 0;">
             <div onclick="KoneksiBluetoothModal()" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;" onmouseover="this.style.background='#fdf8f4'" onmouseout="this.style.background='transparent'">
                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -3103,8 +3179,6 @@ body {
     </div>
 </div>
 
-
-
 <!-- MODAL TENTANG APLIKASI -->
 <div class="page-modal" id="about-modal" inert>
     <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
@@ -3237,7 +3311,6 @@ body {
 
 <!--HALAMAN RESEP-->
 <div id="recipe" class="tab-content recipe-modal" style="display: none; padding: 0; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: #FDF5E6; font-family: 'Segoe UI', sans-serif;"> 
-    
     <!-- HEADER HALAMAN RESEP (Seragam dengan Modal Notifikasi) -->
     <div class="article-modal-header" style="padding: 15px 20px 5px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
         <h3 id="recipe-modal-title" style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 13px; line-height: 1.618;">
@@ -3570,16 +3643,16 @@ body {
             <button id="btn-recipe-close-bottom" class="about-close-btn" style="margin: 0; width: 100%; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important; pointer-events: auto;">TUTUP KALKULATOR</button>
         </div>
 
-    <div id="recipe-list-modal" class="page-modal" style="z-index: 200;">
-        <div style="padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
-            <h3 style="margin: 0; color: var(--chocolate); font-size: 1rem;">📂 Resep Tersimpan di Perangkat</h3>
-            <button type="button"  data-onclick="window.tutupDaftarResepTersimpan()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--chocolate);">&times;</button>
+        <div id="recipe-list-modal" class="page-modal" style="z-index: 200;">
+            <div style="padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                <h3 style="margin: 0; color: var(--chocolate); font-size: 1rem;">📂 Resep Tersimpan di Perangkat</h3>
+                <button type="button"  data-onclick="window.tutupDaftarResepTersimpan()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--chocolate);">&times;</button>
+            </div>
+            <div id="recipe-list-container" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 15px;"></div>
+            <div style="padding: 12px 15px; border-top: 1px solid rgba(0,0,0,0.06); flex-shrink: 0;">
+                <button type="button" class="about-close-btn" style="margin: 0; width: 100%;"  data-onclick="window.tutupDaftarResepTersimpan()">TUTUP</button>
+            </div>
         </div>
-        <div id="recipe-list-container" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 15px;"></div>
-        <div style="padding: 12px 15px; border-top: 1px solid rgba(0,0,0,0.06); flex-shrink: 0;">
-            <button type="button" class="about-close-btn" style="margin: 0; width: 100%;"  data-onclick="window.tutupDaftarResepTersimpan()">TUTUP</button>
-        </div>
-    </div>
     </div>
 </div>
     </div>
@@ -3648,13 +3721,20 @@ body {
     <div class="modal-scroll-content" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 15px; box-sizing: border-box;">
         
         <!-- Search Bar Tips -->
-        <div style="margin-bottom: 14px;">
-            <label for="tip-search-input" class="sr-only">Cari tips</label>
-            <input type="text" id="tip-search-input" oninput="window.filterTipsAndTrack(this.value)" placeholder="Cari tips (suhu, ragi, autolisis)..." autocomplete="off" oninput="filterTipsAndTrack(this.value)" style="width: 100%; padding: 11px 14px; font-size: 0.85rem; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; background: #fff; box-sizing: border-box; color: var(--chocolate); transition: border-color 0.2s;">
+        <div class="search-input-wrapper" style="position: relative; display: flex; align-items: center; width: 100%; margin-bottom: 10px;">
+            <!-- Ikon Pencarian di Kiri -->
+            <span style="position: absolute; left: 14px; color: #95a5a6; pointer-events: none; font-size: 0.85rem; display: flex; align-items: center;">🔍</span>
+            
+            <!-- Input Pencarian -->
+            <input type="text" id="tip-search-input" oninput="handleSearchInput(this.value)" placeholder="Cari tips (suhu, ragi, autolisis)..." autocomplete="off" style="width: 100%; padding: 11px 38px 11px 40px; font-size: 0.85rem; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; background: #fff; box-sizing: border-box; color: var(--chocolate); transition: border-color 0.2s;">
+            
+            <!-- Tombol X Pembersih di Kanan (Awalnya Disembunyikan) -->
+            <button type="button" id="clear-search-btn" onclick="clearSearchInput()" style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: #95a5a6; font-size: 0.85rem; display: none; padding: 4px; align-items: center; justify-content: center;" aria-label="Hapus pencarian">✕</button>
         </div>
 
-        <div id="tip-empty-state" role="status" aria-live="polite" style="display: none; text-align: center; padding: 20px; color: #7f8c8d; font-size: 0.85rem;">
-            Tips tidak ditemukan.
+        <div id="tip-empty-state" role="status" aria-live="polite" style="display: none; text-align: center; padding: 24px; color: #7f8c8d; font-size: 0.85rem; background: rgba(255,255,255,0.6); border: 1px dashed rgba(78,52,46,0.2); border-radius: 12px; margin-top: 10px;">
+            🔍 Tidak ada tips yang cocok untuk pencarian <strong id="search-query-target" style="color: var(--accent);">""</strong>. 
+            <div style="font-size: 0.75rem; margin-top: 6px; opacity: 0.8;">Coba kata kunci lain seperti "ragi", "suhu", atau "autolisis".</div>
         </div>
         <div id="tips-container">
             <!-- Kategori: Bahan Baku -->
@@ -6048,35 +6128,110 @@ window.toggleAIAnalysisBox = function() {
     const arrow = document.getElementById('ai-arrow-icon');
     if (!body) return;
     
-    if (body.style.display === 'none') {
+    if (body.style.display === 'none' || body.style.display === '') {
         body.style.display = 'block';
         if (arrow) arrow.style.transform = 'rotate(0deg)';
+        
+        // Picu pengambilan data dinamis dari AI secara otomatis saat pertama kali dibuka
+        if (!window._aiTelemetryLoaded) {
+            window._aiTelemetryLoaded = true;
+            if (typeof window.muatUlangAnalisisAI === 'function') {
+                window.muatUlangAnalisisAI();
+            }
+        }
     } else {
         body.style.display = 'none';
         if (arrow) arrow.style.transform = 'rotate(-90deg)';
     }
 };
 
-window.muatUlangAnalisisAI = function() {
+window.muatUlangAnalisisAI = async function() {
     const insightEl = document.getElementById('ai-insight');
-    const recoEl = document.getElementById('ai-recommendation');
+    const recommendationEl = document.getElementById('ai-recommendation');
+    const btn = document.getElementById('ai-refresh-btn');
+    const badge = document.getElementById('ai-status-badge');
+
+    // 1. Deteksi otomatis jenis produk yang sedang dipilih user di UI (misal dari tombol kategori aktif)
+    const activeProductBtn = document.querySelector('.product-btn.active, [data-product].active, .pill-btn.active') || 
+                             document.querySelector('#PILIH JENIS PRODUK + * .active') || 
+                             document.querySelector('.btn-product.active');
     
-    if (insightEl) {
-        insightEl.innerHTML = "<strong>Insight:</strong> Menghubungkan ulang dengan modul agen AI cuaca dan fermentasi...";
+    // Ambil teks produk atau gunakan default jika tidak ditemukan
+    const jenisProduk = activeProductBtn ? activeProductBtn.innerText.trim() : "Adonan Bakery Umum";
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `⏳ Menganalisis Telemetri (${jenisProduk})...`;
+        btn.style.opacity = "0.7";
     }
-    if (recoEl) {
-        recoEl.innerHTML = "<strong>Rekomendasi:</strong> <br>⏳ Memproses ulang parameter sensor lokal...";
+    if (badge) {
+        badge.style.background = "#FCF3CF";
+        badge.style.color = "#B7950B";
+        badge.innerText = "🟡 Syncing...";
     }
-    
-    setTimeout(() => {
+
+    try {
+        // Ambil data suhu dari elemen widget di layar (misal: "27 °C")
+        const suhuText = document.querySelector('.temperature-display, h1, .temp-value')?.innerText || "27°C";
+        const kelembapanText = document.querySelector('.humidity-display, .humidity-value')?.innerText || "57%";
+
+        // Susun prompt dinamis yang dikirim ke backend ai-telemetry.js
+        const promptContext = `Kondisi Sensor Saat Ini: Suhu ${suhuText}, Kelembapan ${kelembapanText}. Jenis Produk yang Dibuat: ${jenisProduk}. Berikan analisis telemetri, evaluasi ragi, dan rekomendasi penanganan yang spesifik untuk produk ini.`;
+
+        // Kirim ke backend API
+        const response = await fetch('/api/ai-telemetry', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ promptContext })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Gagal memuat analisis");
+
+        const hasilAI = data.result || "";
+
+        // Tampilkan hasil dinamis dari AI
         if (insightEl) {
-            insightEl.innerHTML = "<strong>Insight:</strong> Suhu 27.04°C adalah suhu ideal untuk proofing adonan donat. Kelembaban tinggi dapat membuat adonan lengket.<br><br><strong>Action:</strong> Kondisi sangat stabil untuk fermentasi ragi. Taburi sedikit tepung saat membentuk adonan untuk mencegah lengket.";
+            insightEl.innerHTML = `<strong>Analisis (${jenisProduk}):</strong><br>${hasilAI.replace(/\n/g, '<br>')}`;
         }
-        if (recoEl) {
-            recoEl.innerHTML = "<strong>Rekomendasi:</strong> <br>✅ Kondisi sempurna, ikuti durasi standar proofing.<br>💡 Rekomendasi: Taburi sedikit tepung saat membentuk donat.";
+        if (recommendationEl) {
+            recommendationEl.innerHTML = `<strong>Status Model:</strong> Berhasil disinkronkan untuk produk ${jenisProduk}.`;
         }
-    }, 800);
+
+        if (badge) {
+            badge.style.background = "#D4EFDF";
+            badge.style.color = "#196F3D";
+            badge.innerText = "🟢 Live Agent";
+        }
+
+    } catch (error) {
+        console.error(error);
+        if (insightEl) {
+            insightEl.innerHTML = `<strong>Insight:</strong> Gagal terhubung ke agen AI Telemetri. Menggunakan mode siaga offline.`;
+        }
+        if (recommendationEl) {
+            recommendationEl.innerHTML = `<strong>Rekomendasi:</strong> Pastikan koneksi internet stabil untuk pembaruan real-time.`;
+        }
+        if (badge) {
+            badge.style.background = "#FADBD8";
+            badge.style.color = "#922B21";
+            badge.innerText = "🔴 Disconnected";
+        }
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = "🔄 Perbarui Analisis Telemetry";
+            btn.style.opacity = "1";
+        }
+    }
 };
+
+// Jalankan otomatis saat halaman dimuat
+document.addEventListener("DOMContentLoaded", () => {
+    if (typeof window.muatUlangAnalisisAI === 'function') {
+        window.muatUlangAnalisisAI();
+    }
+});
 
 //=======================================================
 // PASTIKAN FUNGSI INI ADA DAN SUDAH DITULIS DENGAN BENAR
@@ -8852,7 +9007,6 @@ function tampilkanSapaanAwalAI() {
         aiInsightBox.innerHTML = pesanNarasi;
         if (aiAnalysisWrapper) {
             aiAnalysisWrapper.style.display = 'block';
-            const arrowIcon = document.getElementById('ai-arrow-icon');
             if (arrowIcon) arrowIcon.style.transform = 'rotate(0deg)';
         }
     }
@@ -9844,6 +9998,41 @@ window.switchTab = function(tabName) {
     }
 };
 
+/**
+ * Menangani input real-time sekaligus menampilkan/menyembunyikan tombol X
+ */
+window.handleSearchInput = function(value) {
+    const clearBtn = document.getElementById('clear-search-btn');
+    
+    // Tampilkan tombol X jika input terisi, sembunyikan jika kosong
+    if (clearBtn) {
+        clearBtn.style.display = value.trim() ? 'flex' : 'none';
+    }
+    
+    // Panggil fungsi pencarian utama Anda
+    if (typeof window.filterTipsAndTrack === 'function') {
+        window.filterTipsAndTrack(value);
+    }
+};
+
+/**
+ * Membersihkan nilai input dan mereset tampilan tips
+ */
+window.clearSearchInput = function() {
+    const input = document.getElementById('tip-search-input');
+    const clearBtn = document.getElementById('clear-search-btn');
+    
+    if (input) {
+        input.value = '';
+        if (clearBtn) clearBtn.style.display = 'none';
+        
+        // Panggil filter dengan nilai kosong untuk memulihkan tampilan menu awal
+        if (typeof window.filterTipsAndTrack === 'function') {
+            window.filterTipsAndTrack('');
+        }
+    }
+};
+
 // 1. Amankan state global (Hanya SATU deklarasi)
 window.tipFilterState = { category: 'all', searchQuery: '' };
 
@@ -10016,9 +10205,11 @@ window.toggleTipCard = function(headerEl) {
     const bodyEl = headerEl.nextElementSibling;
     const iconEl = headerEl.querySelector('.toggle-icon');
     if (!bodyEl) return;
-    const isVisible = bodyEl.style.display !== 'none';
+    
+    // Cek status berdasarkan properti .hidden bawaan HTML
+    const isHidden = bodyEl.hidden || window.getComputedStyle(bodyEl).display === 'none';
 
-    if (!isVisible) {
+    if (isHidden) {
         bodyEl.hidden = false;
         bodyEl.style.display = 'block';
         headerEl.setAttribute('aria-expanded', 'true');
@@ -10029,11 +10220,6 @@ window.toggleTipCard = function(headerEl) {
         headerEl.setAttribute('aria-expanded', 'false');
         if (iconEl) iconEl.style.transform = 'rotate(0deg)';
     }
-};
-
-window.filterTipsAndTrack = function(query) {
-    window.tipFilterState.searchQuery = query.trim().toLowerCase();
-    window.filterTips(); 
 };
 
 // 2. Fungsi Filter Tunggal (Menghapus duplikasi)
@@ -10078,29 +10264,110 @@ window.filterTips = function() {
 var searchDebounceTimer = null;
 
 window.filterTipsAndTrack = function(query) {
-    var cleanQuery = query.trim().toLowerCase();
+    const keyword = (query || "").toLowerCase().trim();
+    const container = document.getElementById('tips-container');
+    const emptyState = document.getElementById('tip-empty-state');
+    const queryTarget = document.getElementById('search-query-target');
     
-    // 2. Filter tampilan antarmuka secara instan
-    window.tipFilterState.searchQuery = cleanQuery;
-    window.filterTips(); 
+    // 1. Jika kotak pencarian dikosongkan, kembalikan ke menu kategori utama
+    if (keyword === '') {
+        if (typeof window.renderCategoryCards === 'function') {
+            window.renderCategoryCards(); 
+        }
+        if (emptyState) emptyState.style.display = 'none';
+        return;
+    }
 
-    // 3. Hapus antrean pengiriman log sebelumnya jika pengguna kembali mengetik
-    clearTimeout(searchDebounceTimer);
+    // 2. Lakukan pencarian langsung ke dalam sumber DATA (bukan DOM)
+    let matchedTips = [];
+    
+    window.tipsKategori.forEach(category => {
+        category.items.forEach(tip => {
+            // Cek apakah keyword ada di judul, keywords, atau isi konten
+            const titleMatch = tip.title.toLowerCase().includes(keyword);
+            const keywordMatch = (tip.keywords || "").toLowerCase().includes(keyword);
+            const contentMatch = tip.content.some(paragraph => paragraph.toLowerCase().includes(keyword));
 
-    if (!cleanQuery) return;
+            if (titleMatch || keywordMatch || contentMatch) {
+                // Simpan data artikel yang cocok
+                matchedTips.push(tip); 
+            }
+        });
+    });
 
-    // 4. Tunda pengiriman data ke GA4 selama 1 detik (1000ms) setelah ketukan terakhir
-    searchDebounceTimer = setTimeout(function() {
-        var visibleCards = document.querySelectorAll('.tip-card');
-        var currentVisibleCount = 0;
-        
-        visibleCards.forEach(function(card) {
-            if (card.style.display !== 'none') currentVisibleCount++;
+    // 3. Bersihkan layar utama untuk menampilkan hasil pencarian
+    if (container) container.replaceChildren();
+
+    // 4. Render hasil jika ada artikel yang cocok
+    if (matchedTips.length > 0) {
+        if (emptyState) emptyState.style.display = 'none';
+
+        // Buat tombol kembali ke menu
+        const backBtn = document.createElement('button');
+        backBtn.innerHTML = "← Batal Pencarian";
+        backBtn.style.cssText = "background: #f1f2f6; border: none; color: #2c3e50; font-weight: 600; cursor: pointer; margin-bottom: 15px; padding: 8px 14px; font-size: 0.9rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);";
+        backBtn.addEventListener('click', () => {
+            document.getElementById('tip-search-input').value = ''; // Kosongkan input
+            window.renderCategoryCards(); // Render ulang menu utama
+        });
+        container.appendChild(backBtn);
+
+        // Cetak artikel (tip-card) yang cocok menggunakan logika render Anda
+        matchedTips.forEach(tip => {
+            const card = document.createElement('article');
+            card.className = 'tip-card';
+            card.dataset.keywords = tip.keywords;
+
+            const header = document.createElement('div');
+            header.className = 'tip-card-header';
+            header.setAttribute('role', 'button');
+            header.setAttribute('tabindex', '0');
+            const bodyId = `tip-body-${tip.id}`;
+            header.setAttribute('aria-expanded', 'false');
+            header.setAttribute('aria-controls', bodyId);
+            
+            header.addEventListener('click', () => window.toggleTipCard(header));
+            
+            header.innerHTML = `
+                <span class="tip-card-index">${String(tip.id).padStart(2, '0')}</span>
+                <div><h4>${tip.title}</h4></div>
+                <span class="toggle-icon" aria-hidden="true">▼</span>
+            `;
+
+            const body = document.createElement('div');
+            body.className = 'tip-card-body';
+            body.id = bodyId;
+            body.setAttribute('role', 'region');
+            body.hidden = true;
+            
+            tip.content.forEach((paragraph, index) => {
+                const paragraphElement = document.createElement('p');
+                paragraphElement.style.margin = index === tip.content.length - 1 ? '0' : '0 0 8px 0';
+                paragraphElement.innerHTML = paragraph;
+                body.appendChild(paragraphElement);
+            });
+
+            card.append(header, body);
+            container.appendChild(card);
         });
 
-        // Pengiriman data ke fungsi gtag() sekarang aman dan hanya mengirim kata utuh
-        window.logUserSearchBehavior(cleanQuery, currentVisibleCount);
-    }, 1000);
+    } else {
+        // 5. Tangani State Kosong (Tidak ada hasil)
+        if (emptyState) {
+            container.appendChild(emptyState); // Pastikan empty state tetap di dalam container
+            emptyState.style.display = 'block';
+        }
+        if (queryTarget) queryTarget.textContent = `"${query}"`;
+    }
+
+    // 6. Analitik Monitoring Developer
+    clearTimeout(searchDebounceTimer);
+    if (!keyword) return;
+    searchDebounceTimer = setTimeout(function() {
+        if (keyword.length > 3 && typeof window.logUserSearchBehavior === 'function') {
+            window.logUserSearchBehavior(keyword, matchedTips.length);
+        }
+    }, 2000);
 };
 
 // 4. Fungsi untuk Mengunduh Hasil Analitik (Bisa dihubungkan ke tombol ekspor di panel admin/developer)
@@ -11772,7 +12039,6 @@ document.addEventListener('click', function(event) {
     if (aiBox && aiBox.style.display !== 'none') {
         if (!aiBox.contains(event.target) && !aiToggle?.contains(event.target)) {
             aiBox.style.display = 'none';
-            const arrowIcon = document.getElementById('ai-arrow-icon');
             if (arrowIcon) arrowIcon.style.transform = 'rotate(-90deg)';
         }
     }
@@ -14683,6 +14949,81 @@ function handlerPratinjauGetaran() {
             item.style.display = 'flex';
         } else {
             item.style.display = 'none';
+        }
+    }
+}
+
+// ==========================================================
+// FUNGSI PAYMENT GATEWAY
+// ==========================================================
+async function mulaiTransaksiMidtrans() {
+    try {
+        // 1. Tampilkan indikator loading / ubah teks tombol
+        const btnBayar = document.querySelector('.payment-checkout-container button');
+        if (btnBayar) {
+            btnBayar.disabled = true;
+            btnBayar.innerText = "MENYIAPKAN TRANSAKSI...";
+        }
+
+        // 2. Kirim permintaan ke backend dengan payload lengkap
+        let response = await fetch('/api/create-payment-token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                order_id: 'ORDER-' + Date.now(),
+                gross_amount: 50000,
+                customer_details: {
+                    first_name: localStorage.getItem('profile_name') || 'Pelanggan',
+                    email: localStorage.getItem('profile_email') || 'user@domain.com'
+                }
+            })
+        });
+
+        // 3. Cek jika server mengembalikan error HTTP (misal: 404 Not Found atau 500)
+        if (!response.ok) {
+            let errorText = await response.text();
+            throw new Error(`Server error ${response.status}: ${errorText.substring(0, 100)}`);
+        }
+
+        let data = await response.json();
+        if (!data.token) throw new Error("Gagal menghasilkan token pembayaran dari server.");
+
+        // 4. Tutup modal checkout lokal aplikasi terlebih dahulu
+        if (typeof toggleModal === 'function') {
+            toggleModal('payment-modal'); // Sesuaikan dengan ID modal Anda
+        }
+
+        // 5. Panggil Midtrans Snap Popup menggunakan token yang diterima
+        window.snap.pay(data.token, {
+            onSuccess: function(result) {
+                alert("Pembayaran Berhasil! Terima kasih.");
+                console.log(result);
+            },
+            onPending: function(result) {
+                alert("Menunggu pembayaran Anda diselesaikan.");
+                console.log(result);
+            },
+            onError: function(result) {
+                alert("Pembayaran gagal atau dibatalkan.");
+                console.log(result);
+            },
+            onClose: function() {
+                alert('Anda menutup popup pembayaran sebelum menyelesaikan transaksi.');
+            }
+        });
+
+    } catch (error) {
+        console.error("Kesalahan Transaksi:", error.message);
+        alert("Terjadi kesalahan sistem pembayaran: " + error.message);
+    } finally {
+        // Kembalikan tombol seperti semula
+        const btnBayar = document.querySelector('.payment-checkout-container button');
+        if (btnBayar) {
+            btnBayar.disabled = false;
+            btnBayar.innerText = "💳 BAYAR SEKARANG";
         }
     }
 }
