@@ -1,79 +1,93 @@
-const CACHE_NAME = 'Timer Proofing-v0.1.2'; // Versi dinaikkan untuk memicu pembaruan
+const CACHE_NAME = 'Timer-Proofing-v0.1.3';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './logo-donat.png', // Pastikan nama file fisiknya sudah tanpa spasi
-  './assets/js/html2pdf.bundle.min.js',
-  
-  // PERHATIAN: 4 file di bawah ini sebelumnya 404 (Not Found).
-  // Jika file ini memang disatukan di dalam index.html (tidak dibuat terpisah), 
-  // Anda harus MENGHAPUSNYA dari daftar ini.
-  './assets/css/style.css',
-  './assets/js/app.js',
-  './main.js', 
-  './database-manager.js'
+  './logo-donat.svg',
+  './assets/js/tipsData.js',
+  './assets/js/html2pdf.bundle.min.js'
 ];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      console.log("[Service Worker] Memulai caching file satu per satu...");
-      
-      for (let asset of ASSETS) {
+      for (const asset of ASSETS) {
         try {
-          const request = new Request(asset, { cache: 'reload' }); 
+          const request = new Request(asset, { cache: 'reload' });
           const response = await fetch(request);
-          
-          if (response.ok) {
-            await cache.put(request, response);
-          } else {
-            console.warn(`⚠️ [Lewati] Gagal cache file: ${asset} (Status HTTP: ${response.status})`);
-          }
+          if (response.ok) await cache.put(request, response);
         } catch (error) {
-          console.error(`❌ [Error] File tidak ditemukan di direktori: ${asset}`);
+          console.warn('[Service Worker] Lewati cache:', asset, error && error.message);
         }
       }
-      console.log("[Service Worker] Proses caching selesai.");
     }).then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            console.log('[Service Worker] Menghapus cache lama:', key);
-            return caches.delete(key);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+    ).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+  const isSameOrigin = url.origin === self.location.origin;
+  const isNavigation = event.request.mode === 'navigate'
+    || (isSameOrigin && (url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname.endsWith('/')));
+
+  if (isNavigation) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return response;
+      }).catch(() =>
+        caches.match(event.request).then((cached) => cached || caches.match('./index.html'))
+      )
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((res) => res || fetch(event.request))
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).then((response) => {
+        if (isSameOrigin && response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return response;
+      }).catch(() => cached);
+    })
   );
 });
 
 self.addEventListener('message', async (event) => {
-    if (event.data.action === 'fetchWeather') {
-        const { lat, lon } = event.data;
-        const url = `https://proofing-donat-2.vercel.app/api/weather?lat=${lat}&lon=${lon}`;
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            const clients = await self.clients.matchAll();
-            clients.forEach(client => {
-                client.postMessage({ action: 'weatherData', data: data });
-            });
-        } catch (error) {
-            console.error("Gagal mengambil data cuaca via SW:", error);
-        }
+  const data = event.data || {};
+  if (data.type === 'SKIP_WAITING' || data.action === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
+  }
+
+  if (data.action === 'fetchWeather') {
+    const { lat, lon } = data;
+    const url = `https://timer-proofer.vercel.app/api/weather?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
+    try {
+      const response = await fetch(url);
+      const payload = await response.json();
+      const clients = await self.clients.matchAll();
+      clients.forEach((client) => {
+        client.postMessage({ action: 'weatherData', data: payload });
+      });
+    } catch (error) {
+      console.error('Gagal mengambil data cuaca via SW:', error);
     }
+  }
 });

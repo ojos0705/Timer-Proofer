@@ -12,8 +12,8 @@ const SYSTEM_INSTRUCTION =
   "Gunakan emoji seminimal mungkin (hanya sesekali jika sangat diperlukan). " +
   "Setiap judul bagian (section title) WAJIB ditulis dalam HURUF KAPITAL dan TEBAL (BOLD), tanpa menggunakan simbol markdown heading seperti # atau ###. " +
   "Wajib mencakup: (1) analisis penyebab masalah, (2) parameter teknis ideal, (3) langkah solusi teknis konkret. " +
-  "Tanpa basa-basi pembuka seperti 'Tentu' atau 'Baik'.";
-  "JANGAN gunakan tanda bintang atau format markdown apa pun di dalam teks hasil keluaran."
+  "Tanpa basa-basi pembuka seperti 'Tentu' atau 'Baik'. " +
+  "JANGAN gunakan tanda bintang atau format markdown apa pun di dalam teks hasil keluaran.";
 
 function toUserFacingError(error) {
   const raw = error?.message || String(error || "Gagal memproses analisis AI");

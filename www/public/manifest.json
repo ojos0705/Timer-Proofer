@@ -3,21 +3,22 @@
   "short_name": "Timer Proofer",
   "description": "Asisten pintar pemantau proofing adonan berbasis data cuaca",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#FDF5E6",
   "theme_color": "#E67E22",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "logo donat.png",
-      "sizes": "192x192",
-      "type": "image/png",
+      "src": "logo-donat.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "logo donat.png",
+      "src": "logo-donat.svg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "maskable"
     }
   ]

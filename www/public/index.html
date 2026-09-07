@@ -29,7 +29,9 @@
 </script>
     <script>if (/^https?:$/.test(location.protocol)) { const manifestLink = document.createElement('link'); manifestLink.rel = 'manifest'; manifestLink.href = 'manifest.json'; document.head.appendChild(manifestLink); }</script>
     <script src="assets/js/tipsData.js?v=20260905"></script>
-    <script async src="https://www.googletagmanager.com/gtag.js?id=G-XXXXXXXXXX"></script>
+    <link rel="icon" type="image/svg+xml" href="logo-donat.svg">
+    <link rel="apple-touch-icon" href="logo-donat.svg">
+    <script async src="https://www.googletagmanager.com/gtag.js?id=G-QNGDTC4HVF"></script>
 
 <script type="text/javascript"
   src="https://app.sandbox.midtrans.com/snap/snap.js"
@@ -43,30 +45,30 @@
 </script>
     <title>Timer Proofer</title>
     <style>
-        :root {--cream: #FDF5E6;
+        :root {
+    --cream: #FDF5E6;
     --dough: #F2D2A9;
     --chocolate: #4E342E;
     --accent: #E67E22;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    outline: none;
-
-    html {
-        background-color: #E2E8F0; /* Warna abu-abu lembut untuk latar luar area 480px */
-    }
-    /* VARIABEL GOLDEN RATIO (φ = 1.618) */
     --phi: 1.618;
-    --fs-small: 0.618rem;   /* base / φ */
-    --fs-base: 0.875rem;    /* 14px (Base) */
-    --fs-h3: 1.618rem;      /* 14px × φ ≈ 22.6px */
-    --fs-h2: 2.618rem;      /* h3 × φ */
+    --fs-small: 0.618rem;
+    --fs-base: 0.875rem;
+    --fs-h3: 1.618rem;
+    --fs-h2: 2.618rem;
     --space-xs: 8px;
     --space-sm: 13px;
     --space-md: 21px;
     --space-lg: 34px;
     --radius-sm: 8px;
     --radius-md: 13px;
-    --radius-lg: 21px;}
+    --radius-lg: 21px;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+    html {
+        background-color: #E2E8F0; /* Warna abu-abu lembut untuk latar luar area 480px */
+    }
 
         /*  STYLE SELURUH PAGE */
         body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Hanya font yang ditambah */
@@ -575,6 +577,7 @@
   .gamification-badge { font-size:.75rem; font-weight:600; border-radius:999px; padding:6px 10px; background:#fff; border:1px solid rgba(230,126,34,.3); color:#6d4c41; }
   .gamification-badge.locked { opacity:.4; filter:grayscale(1); background: #f5f5f5; border-color: #ddd; }
 
+
         /* TIPS PAGE */
         #tips-page {
             inset: 0;
@@ -969,15 +972,6 @@
     flex: 1 !important;     /* Column Sekunder (Porsi) */
 }
 
-        /* TIMER CIRCLE*/
-        .mini-mode .timer-circle { width: 110px; height: 110px; margin: 5px auto; }
-        .mini-mode svg { width: 110px; height: 110px; }
-        .mini-mode circle { cx: 55; cy: 55; r: 45; stroke-width: 6; }
-        .mini-mode #progress-circle { stroke-dasharray: 282.7; transform: scaleX(-1) rotate(-90deg); transform-origin: 50% 50%; }
-        .mini-mode #countdown { font-size: 1.2rem; margin: 1px 0; }
-        .mini-mode .time-info { font-size: 0.5rem; height: auto; }
-        .mini-mode .btn { padding: 6px 10px; font-size: 0.7rem; border-radius: 20px; }
-
         /* LOKASI DAN CUACA */
         .location { word-wrap: break-word; font-size: 0.9rem; line-height: 1.2; padding: 0px; text-align: center;}
         .weather-grid {display: grid; 
@@ -1017,6 +1011,70 @@
             letter-spacing: 0.1px;
             white-space: nowrap; /* Mencegah teks terpotong turun ke bawah */}
 
+
+        /* Wadah Utama Pills */
+.product-pills-container {
+    display: flex;
+    gap: 6px; /* Kurangi jarak antar tombol */
+    overflow-x: auto;
+    padding: 4px 4px 8px 4px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Sembunyikan scrollbar bawaan agar terlihat rapi */
+.product-pills-container::-webkit-scrollbar {
+    display: none;
+}
+.product-pills-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Desain Dasar Tombol Pill */
+.product-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    padding: 7px 10px; /* Kurangi padding horizontal sedikit agar muat */
+    border-radius: 20px;
+    font-size: 0.75rem; /* Sesuaikan ukuran font sedikit jika perlu */
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap; /* Mencegah teks turun ke bawah di dalam tombol */
+    flex-shrink: 0; /* Mencegah tombol ikut menyusut terpotong */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+}
+
+/* Efek saat disentuh / hover */
+.product-pill:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.product-pill:active {
+    transform: scale(0.96);
+}
+
+/* State Aktif (Terpilih) - Menggunakan warna aksen tema Anda */
+.product-pill.active {
+    background: var(--chocolate, #4E342E);
+    color: #ffffff;
+    border-color: var(--chocolate, #4E342E);
+    box-shadow: 0 4px 12px rgba(78, 52, 46, 0.2);
+}
+
+/* Ukuran Emoji Ikon */
+.product-pill .pill-icon {
+    font-size: 0.95rem;
+}
+
         /* TOMBOL DAN INTERAKSI */
         .btn { background: var(--chocolate); color: white; border: none; padding: 15px 40px; border-radius: 50px; cursor: pointer; width: 100%; font-weight: bold; letter-spacing: 1px; margin-top: 5px; transition: background 0.3s; transform: 0.1s;}
         /* Efek saat kursor di atas tombol */
@@ -1027,14 +1085,57 @@
         .btn:disabled {background: #cccccc; cursor: not-allowed; transform: none;}
         /* TOMBOL ABOUT */
         .about-btn { position: absolute; top: 12px; left: 10px; background: #6d4c41; color: white; font-size: 0.65rem; padding: 4px 8px; border-radius: 10px; cursor: pointer; font-weight: bold; z-index: 95;}
+       
         /* BOTTOM NAVBAR */
-        .bottom-bar {position: absolute;bottom: 0;left: 0;right: 0;height: calc(60px + env(safe-area-inset-bottom));padding-bottom: env(safe-area-inset-bottom);box-sizing: border-box;background-color: #ffffff; color: var(--chocolate);border-top: 1px solid rgba(0,0,0,0.08);display: flex;justify-content: space-around;align-items: center;z-index: 90; /*border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;*/ pointer-events: auto;}
+       /* Container untuk setiap halaman (Timer, Resep, Tips) */
+.app-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Tinggi total layar dikurangi tinggi bottom-bar (misal: 70px) */
+    height: calc(100% - 70px); 
+    overflow-y: auto; /* Mengizinkan scroll di dalam area halaman saja */
+    background: #fdf5e6;
+    display: none; /* Sembunyikan semua halaman secara default */
+    z-index: 10;
+}
+
+/* Halaman yang sedang aktif */
+.app-page.active {
+    display: flex; /* atau block, sesuai struktur Anda */
+    flex-direction: column;
+}
+
+/* Bottom Bar tetap diam di bawah */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px; /* Harus sama dengan nilai pengurang di .app-page */
+    background: white;
+    z-index: 9999; /* Pastikan selalu berada di paling atas */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
         .bottom-item {display: flex;flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: var(--chocolate); cursor: pointer; width: 50%; height: 100%; transition: background 0.2s;}
         button, input, select, textarea, div {outline: none; -webkit-focus-ring-color: transparent;}
         .bottom-item:hover { background: rgba(230, 126, 34, 0.05); }
         .bottom-item .icon-bar { font-size: 1.2rem; margin-bottom: 2px; }
         .bottom-item.active-tab { color: var(--accent); }
 
+                /* TIMER CIRCLE*/
+        .mini-mode .timer-circle { width: 110px; height: 110px; margin: 5px auto; }
+        .mini-mode svg { width: 110px; height: 110px; }
+        .mini-mode circle { cx: 55; cy: 55; r: 45; stroke-width: 6; }
+        .mini-mode #progress-circle { stroke-dasharray: 282.7; transform: scaleX(-1) rotate(-90deg); transform-origin: 50% 50%; }
+        .mini-mode #countdown { font-size: 1.2rem; margin: 1px 0; }
+        .mini-mode .time-info { font-size: 0.5rem; height: auto; }
+        .mini-mode .btn { padding: 6px 10px; font-size: 0.7rem; border-radius: 20px; }
+        
         /* TIPS - ada perubahan*/ 
         .tips {margin-top: 25px; font-size: 0.85rem; font-style: italic; color: var(--chocolate); opacity: 0.8; border-top: 1px dashed rgba(78, 52, 46, 0.3); padding-top: 15px; line-height: 1.6; /*max-width: 340px; margin-left: auto; margin-right: auto;*/ text-align: center;}
         .tips-scroll-area {
@@ -1508,7 +1609,7 @@
         #refresh-indicator { text-align: center; padding: 10px; font-size: 0.8rem; color: var(--accent); display: none; }
 
         /* ANALISIS AI - di versi baru dihilangkan*/
-        #ai-analysis-wrapper { position: relative; width: 95%; }
+        #ai-analysis-wrapper { position: relative; width: 90; }
         #ai-toggle { position: relative; z-index: 60; cursor: pointer; margin-bottom: 5px; }
         .ai-analysis-box {position: relative;
     margin-top: 10px; 
@@ -2216,15 +2317,26 @@ body {
             </div>
             
             <!-- Tab Produk dengan Gaya Segmented Pill -->
-            <div class="product-pills">
-                <button class="product-pill active" onclick="selectProduct('donut')" id="prod-donut">
-                    <span>🍩</span> Donat
+            <div class="product-pills-container">
+                <button class="product-pill" onclick="selectProduct('donut')" id="prod-donut">
+                    <span class="pill-icon">🍩</span> 
+                    <span class="pill-text">Donat</span>
                 </button>
                 <button class="product-pill" onclick="selectProduct('roti')" id="prod-roti">
-                    <span>🍞</span> Roti
+                    <span class="pill-icon">🍞</span> 
+                    <span class="pill-text">Roti</span>
                 </button>
                 <button class="product-pill" onclick="selectProduct('bakpao')" id="prod-bakpao">
-                    <span>🥟</span> Bakpao
+                    <span class="pill-icon">🥟</span> 
+                    <span class="pill-text">Bakpao</span>
+                </button>
+                <button class="product-pill" onclick="selectProduct('pizza')" id="prod-pizza">
+                    <span class="pill-icon">🍕</span> 
+                    <span class="pill-text">Pizza</span>
+                </button>
+                <button class="product-pill active" onclick="selectProduct('saltbread')" id="prod-saltbread">
+                    <span class="pill-icon">🥐</span> 
+                    <span class="pill-text">Salt Bread</span>
                 </button>
             </div>
         
@@ -2233,6 +2345,9 @@ body {
                 <button class="mode-btn" id="btn-mode-initial">Initial</button>
                 <button class="mode-btn" id="btn-mode-rounding">Rounding</button>
                 <button class="mode-btn" id="btn-mode-final">Final</button>
+            </div>
+            <div id="product-guide-container" style="margin-top: 15px;"></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             </div>
         </div>
 
@@ -3862,9 +3977,14 @@ body {
 
 // Auto-deteksi saat aplikasi pertama kali dimuat
 function initLanguage() {
-    const savedLang = localStorage.getItem('app_lang');
-    const deviceLang = navigator.language.split('-')[0];
-    setLanguage(savedLang || (i18n[deviceLang] ? deviceLang : 'id'));
+    try {
+        const savedLang = localStorage.getItem('app_lang');
+        const deviceLang = String(navigator.language || 'id').split('-')[0];
+        const lang = savedLang || deviceLang || 'id';
+        if (typeof window.setLanguage === 'function') window.setLanguage(lang);
+    } catch (e) {
+        console.warn('initLanguage gagal:', e);
+    }
 }
 
 async function initApp() {
@@ -4812,7 +4932,22 @@ async function loadDynamicProfile(showNotifications = false) {
     }
 }
 
-/** Buka bantuan dari profil — tutup profil dulu agar tidak tumpang tindih */
+/** Buka bantuan dari tombol profil (nama yang dipanggil di HTML) */
+function openHelpFromProfile() {
+    const userModal = document.getElementById('user-modal');
+    if (userModal && userModal.classList.contains('active') && typeof toggleModal === 'function') {
+        toggleModal('user-modal');
+    }
+    const helpModal = document.getElementById('help-modal');
+    if (helpModal && !helpModal.classList.contains('active') && typeof toggleModal === 'function') {
+        toggleModal('help-modal');
+        return;
+    }
+    if (typeof openHelpSubModal === 'function') openHelpSubModal();
+}
+window.openHelpFromProfile = openHelpFromProfile;
+
+/** Buka bantuan dari pengaturan — tutup pengaturan dulu agar tidak tumpang tindih */
 function openHelpSubModal() {
     // Tutup modal pengaturan terlebih dahulu secara aman
     const settingsModal = document.getElementById('settings-modal');
@@ -5794,15 +5929,73 @@ function handleResetProofing() {
         mainBtn.style.background = "var(--chocolate)"; // atau warna default Anda
     }
     
-    // PENTING: Cari tab mana yang sedang aktif saat ini (Initial / Rounding / Final)
-    // Jangan langsung paksa ke 30 menit!
-    const activeTab = document.querySelector('.proofing-tab.active'); 
+    // Cari tahap proofing yang sedang aktif (tombol mode dinamis atau tab lama)
+    const activeTab = document.querySelector('#mode-grid-container .mode-btn.active')
+        || document.querySelector('#mode-grid-container .mode-btn[style*="background: var(--accent)"]')
+        || document.querySelector('.proofing-tab.active');
     if (activeTab) {
-        // Jalankan fungsi untuk set ulang waktu berdasarkan tab yang aktif saat ini
-        setTimerByTab(activeTab); 
+        setTimerByTab(activeTab);
     } else {
-        // Jika tidak ada tab aktif, baru gunakan input manual (misal 30 menit)
         resetToManualInput();
+    }
+}
+
+function resetToManualInput() {
+    const customInput = document.getElementById('custom-time');
+    const minutes = parseInt(customInput && customInput.value, 10);
+    if (Number.isFinite(minutes) && minutes > 0) {
+        if (typeof setCustomTime === 'function') {
+            setCustomTime();
+            return;
+        }
+        globalTotalSeconds = minutes * 60;
+        globalInitialSeconds = globalTotalSeconds;
+        totalDurationMinutes = minutes;
+        if (typeof updateTimerDisplay === 'function') updateTimerDisplay(globalTotalSeconds);
+        if (typeof updateCircleProgress === 'function') updateCircleProgress();
+        if (typeof updateTimeLabels === 'function') updateTimeLabels(minutes, 0, false);
+        return;
+    }
+    globalTotalSeconds = 0;
+    globalInitialSeconds = 0;
+    totalDurationMinutes = 0;
+    const display = document.getElementById('countdown');
+    if (display) {
+        display.innerText = '00:00';
+        display.style.color = 'var(--chocolate)';
+    }
+    if (typeof updateCircleProgress === 'function') updateCircleProgress();
+}
+
+function setTimerByTab(tabEl) {
+    if (!tabEl) {
+        resetToManualInput();
+        return;
+    }
+    const modeKey = String(tabEl.id || '').replace('btn-mode-', '');
+    const activeMode = localStorage.getItem('activeMode') || '';
+    if (activeMode.includes('_') && typeof setProductStage === 'function' && typeof proofingStages !== 'undefined') {
+        const [productKey, stageKey] = activeMode.split('_');
+        const stages = proofingStages[productKey] || [];
+        const stage = stages.find(s => s.key === stageKey) || stages[0];
+        if (stage) {
+            setProductStage(productKey, stage.key, stage.minutes, stage.desc);
+            return;
+        }
+    }
+    if (['initial', 'rounding', 'final'].includes(modeKey) && typeof setMode === 'function') {
+        setMode(modeKey);
+        return;
+    }
+    resetToManualInput();
+}
+
+/** Alias tombol mode lama (Initial/Rounding/Final) ke setMode */
+function setProofingMode(label, _minutes) {
+    const map = { Initial: 'initial', Rounding: 'rounding', Final: 'final' };
+    const mode = map[label] || String(label || '').toLowerCase();
+    if (typeof setMode === 'function' && ['initial', 'rounding', 'final'].includes(mode)) {
+        setMode(mode);
     }
 }
 
@@ -5872,8 +6065,11 @@ function triggerMainProofing() {
             LocalNotifications.cancel({ notifications: [{ id: 1 }] }).catch(err => window.DEBUG && console.log(err));
         }
         }
-        document.getElementById('countdown').style.color = "var(--chocolate)";
-        document.getElementById('countdown').innerText = "00:00";
+        const countdownEl = document.getElementById('countdown');
+        if (countdownEl) {
+            countdownEl.style.color = "var(--chocolate)";
+            countdownEl.innerText = "00:00";
+        }
         totalDurationMinutes = 0;
         currentSelectedBaseDuration = 0;
         // FIX BUG: Reset globalTotalSeconds & globalInitialSeconds agar setMode() / processWeatherData()
@@ -6136,8 +6332,11 @@ async function fetchLocationAndWeather(lat, lon, source) {
             throw new Error("Server tidak mengembalikan JSON yang valid.");
         }
 
-        // Ekstraksi data OpenWeather
-        const weatherData = data.weather;
+        // Ekstraksi data OpenWeather (API proxy: { weather, geocode })
+        const weatherData = data.weather || data;
+        if (!weatherData || !weatherData.main) {
+            throw new Error("Struktur data cuaca tidak valid");
+        }
         const temp = weatherData.main.temp;
         const humidity = weatherData.main.humidity;
         const pressure = weatherData.main.pressure;
@@ -6325,11 +6524,15 @@ function processWeatherData(temp, hum) {
         updateTimeLabels(calculatedTime, 0);
         persistProofingState();
         
-        document.getElementById('ai-tips').innerHTML = `Suhu terdeteksi ${temp}°C. Dengan kelembaban ${hum}%. <br>Waktu proofing diatur otomatis ke ${calculatedTime} menit.`;
+        const tipsEl = document.getElementById('ai-tips');
+        if (tipsEl) {
+            tipsEl.innerHTML = `Suhu terdeteksi ${temp}°C. Dengan kelembaban ${hum}%. <br>Waktu proofing diatur otomatis ke ${calculatedTime} menit.`;
+        }
     } else {
         // Jangan ubah timer yang sedang berjalan jika user memilih waktu custom
         if (localStorage.getItem('activeMode') === 'custom') {
-            document.getElementById('ai-tips').innerHTML = `🔄 Cuaca Diperbarui! Suhu ${temp}°C.<br>Waktu custom (${totalDurationMinutes} menit) tetap berjalan.`;
+            const tipsCustom = document.getElementById('ai-tips');
+            if (tipsCustom) tipsCustom.innerHTML = `🔄 Cuaca Diperbarui! Suhu ${temp}°C.<br>Waktu custom (${totalDurationMinutes} menit) tetap berjalan.`;
             return;
         }
         if (globalTotalSeconds > 0) {
@@ -6352,13 +6555,18 @@ function processWeatherData(temp, hum) {
                 updateCircleProgress();
                 updateTimeLabels(m, s, false);
                 
-                document.getElementById('ai-tips').innerHTML = `🔄 Cuaca Diperbarui! Suhu bergeser ke ${temp}°C.<br>Durasi total disesuaikan dari ${oldCalculatedTime} mnt menjadi ${newCalculatedTime} mnt.`;
+                const tipsShift = document.getElementById('ai-tips');
+                if (tipsShift) tipsShift.innerHTML = `🔄 Cuaca Diperbarui! Suhu bergeser ke ${temp}°C.<br>Durasi total disesuaikan dari ${oldCalculatedTime} mnt menjadi ${newCalculatedTime} mnt.`;
             } else {
-                document.getElementById('ai-tips').innerHTML = `🔄 Cuaca Diperbarui! Suhu stabil pada ${temp}°C.<br>Waktu proofing tetap berjalan aman.`;
+                const tipsStable = document.getElementById('ai-tips');
+                if (tipsStable) tipsStable.innerHTML = `🔄 Cuaca Diperbarui! Suhu stabil pada ${temp}°C.<br>Waktu proofing tetap berjalan aman.`;
             }
         } else {
-            document.getElementById('ai-tips').innerHTML = `🔄 Cuaca Diperbarui!<br>Adonan saat ini sedang dalam status Over-proofing (+).`;
-            NotifSystem.tambah('cuaca', 'Cuaca diperbarui', `Suhu ${temp}°C terdeteksi. Adonan sedang dalam status over-proofing (+).`, '🔄');
+            const tipsOver = document.getElementById('ai-tips');
+            if (tipsOver) tipsOver.innerHTML = `🔄 Cuaca Diperbarui!<br>Adonan saat ini sedang dalam status Over-proofing (+).`;
+            if (typeof NotifSystem !== 'undefined') {
+                NotifSystem.tambah('cuaca', 'Cuaca diperbarui', `Suhu ${temp}°C terdeteksi. Adonan sedang dalam status over-proofing (+).`, '🔄');
+            }
 
         }
     }
@@ -6389,19 +6597,35 @@ window.toggleAIAnalysisBox = function() {
     }
 };
 
+// Pastikan deklarasi ini berada di luar fungsi lain dan dimuat lebih awal
 window.muatUlangAnalisisAI = async function() {
+    // 1. Deklarasikan variabel nilai awal di baris paling atas agar aman dari scope/reference error
+    let nilaiSuhu = 25;
+    let nilaiKelembapan = 83;
+
     const insightEl = document.getElementById('ai-insight');
     const recommendationEl = document.getElementById('ai-recommendation');
-    const btn = document.getElementById('ai-refresh-btn');
+    const btn = document.getElementById('ai-refresh-btn') || document.getElementById('btn-ai-trigger');
     const badge = document.getElementById('ai-status-badge');
 
-    const activeProductBtn = document.querySelector('.product-btn.active, [data-product].active, .pill-btn.active') || 
-                             document.querySelector('.btn-product.active');
+    const activeProductBtn = document.querySelector('.product-btn.active, [data-product].active, .pill-btn.active, .btn-product.active');
     const jenisProduk = activeProductBtn ? activeProductBtn.innerText.trim() : "Adonan Bakery Umum";
+
+    const elSuhu = document.getElementById('suhu-sekarang');
+    const elKelembapan = document.getElementById('kelembapan-sekarang');
+    
+    if (elSuhu && elSuhu.innerText) {
+        let m = elSuhu.innerText.match(/[\d.]+/);
+        if (m) nilaiSuhu = parseFloat(m[0]);
+    }
+    if (elKelembapan && elKelembapan.innerText) {
+        let m = elKelembapan.innerText.match(/[\d.]+/);
+        if (m) nilaiKelembapan = parseFloat(m[0]);
+    }
 
     if (btn) {
         btn.disabled = true;
-        btn.innerHTML = `⏳ Menganalisis Telemetri (${jenisProduk})...`;
+        btn.innerHTML = `⏳ Menganalisis Telemetri...`;
         btn.style.opacity = "0.7";
     }
     if (badge) {
@@ -6409,39 +6633,35 @@ window.muatUlangAnalisisAI = async function() {
         badge.style.color = "#B7950B";
         badge.innerText = "🟡 Syncing...";
     }
+    if (insightEl) insightEl.innerHTML = "<strong>Insight:</strong> Mengirim data telemetri ke Live Agent...";
 
     try {
-        const suhuText = document.querySelector('.temperature-display, h1, .temp-value')?.innerText || "27°C";
-        const kelembapanText = document.querySelector('.humidity-display, .humidity-value')?.innerText || "57%";
-        const promptContext = `Kondisi Sensor Saat Ini: Suhu ${suhuText}, Kelembapan ${kelembapanText}. Jenis Produk yang Dibuat: ${jenisProduk}. Berikan analisis telemetri, evaluasi ragi, dan rekomendasi penanganan yang spesifik untuk produk ini.`;
+        const isLocal = window.location.hostname === 'localhost' || window.location.protocol === 'file:';
+        const backendHost = isLocal ? 'https://timer-proofer.vercel.app' : '';
 
-        // Deteksi otomatis: Jika di localhost, arahkan langsung ke domain Vercel agar backend merespons
-        const backendHost = (window.location.hostname === 'localhost' || window.location.protocol === 'file:') 
-            ? 'https://timer-proofer.vercel.app' 
-            : '';
+        const payloadData = {
+            promptContext: `Kondisi Sensor Saat Ini: Suhu ${nilaiSuhu}°C, Kelembapan ${nilaiKelembapan}%. Produk: ${jenisProduk}. Berikan analisis telemetri, evaluasi ragi, dan rekomendasi penanganan yang spesifik.`,
+            suhuRuang: nilaiSuhu,
+            temperature: nilaiSuhu,
+            waktuProofing: "Otomatis"
+        };
 
         const response = await fetch(`${backendHost}/api/ai-telemetry`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({ promptContext })
+            body: JSON.stringify(payloadData)
         });
 
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            throw new Error("Respons server bukan JSON (kemungkinan 404 HTML).");
+        if (!response.ok) {
+            const err = await response.text();
+            throw new Error(`Server Error (${response.status}): ${err}`);
         }
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Gagal memuat analisis");
+        const hasilAI = data.result || data.analisis || data.insight || "";
 
-        const hasilAI = data.result || "";
-        if (insightEl) {
-            insightEl.innerHTML = `<strong>Analisis (${jenisProduk}):</strong><br>${hasilAI.replace(/\n/g, '<br>')}`;
-        }
-        if (recommendationEl) {
-            recommendationEl.innerHTML = `<strong>Status Model:</strong> Berhasil disinkronkan untuk produk ${jenisProduk}.`;
-        }
-
+        if (insightEl) insightEl.innerHTML = `<strong>Analisis (${jenisProduk} - Suhu ${nilaiSuhu}°C / ${nilaiKelembapan}%):</strong><br><br>${hasilAI.replace(/\n/g, '<br>')}`;
+        if (recommendationEl) recommendationEl.innerHTML = `<strong>Status Model:</strong> Berhasil dianalisis berdasarkan sensor real-time.`;
         if (badge) {
             badge.style.background = "#D4EFDF";
             badge.style.color = "#196F3D";
@@ -6449,19 +6669,15 @@ window.muatUlangAnalisisAI = async function() {
         }
 
     } catch (error) {
-        console.warn("Mode Fallback Aktif:", error.message);
+        console.warn("API Gagal:", error.message);
         
-        const suhuText = document.querySelector('.temperature-display, h1, .temp-value')?.innerText || "27°C";
         if (insightEl) {
-            insightEl.innerHTML = `<strong>Insight (${jenisProduk}):</strong> Suhu ${suhuText} terpantau stabil dan kondusif untuk fermentasi ragi pada ${jenisProduk}.`;
-        }
-        if (recommendationEl) {
-            recommendationEl.innerHTML = `<strong>Rekomendasi AI:</strong> <br>✅ Lanjutkan proses sesuai durasi standar.<br>💡 <em>(Catatan: Berjalan dalam mode offline/fallback karena kendala koneksi API).</em>`;
+            insightEl.innerHTML = `<strong>Insight Offline (${jenisProduk}):</strong> Suhu saat ini ${nilaiSuhu}°C dengan kelembapan ${nilaiKelembapan}%.<br><br>⚠️ <em>Tidak dapat terhubung ke server AI Vercel.</em>`;
         }
         if (badge) {
-            badge.style.background = "#FCF3CF";
-            badge.style.color = "#B7950B";
-            badge.innerText = "🟡 Standby (Offline)";
+            badge.style.background = "#FADBD8";
+            badge.style.color = "#922B21";
+            badge.innerText = "🔴 Disconnected";
         }
     } finally {
         if (btn) {
@@ -6471,13 +6687,6 @@ window.muatUlangAnalisisAI = async function() {
         }
     }
 };
-
-// Jalankan otomatis saat halaman dimuat
-document.addEventListener("DOMContentLoaded", () => {
-    if (typeof window.muatUlangAnalisisAI === 'function') {
-        window.muatUlangAnalisisAI();
-    }
-});
 
 //=======================================================
 // PASTIKAN FUNGSI INI ADA DAN SUDAH DITULIS DENGAN BENAR
@@ -6798,15 +7007,20 @@ function handleOfflinePremium() {
             hitungKebutuhan(); 
         }, 100);
     }
-    
-    if (typeof hitungEstimasiProofing === "function") {
-        hitungEstimasiProofing(temp, humidity); 
-    }
 }
 
 // =========================================================
 // FUNGSI AI SMART FERMENTATION TELEMETRY
 // =========================================================
+function toUserFacingError(error) {
+  const raw = error?.message || String(error || "Terjadi kesalahan");
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed?.error?.message === "string") return parsed.error.message;
+  } catch (_) { /* bukan JSON */ }
+  return raw;
+}
+
 function isQuotaError(error) {
   const text = toUserFacingError(error).toLowerCase();
   const code = error?.status || error?.code || error?.error?.code;
@@ -6906,10 +7120,14 @@ function startProofing(isRestoring = false) {
             if (!alarmTriggered) {
                 alarmTriggered = true;
                 
-                if (typeof playAlarmTone === 'function') playAlarmTone();
-                if (typeof triggerVibration === 'function') triggerVibration();
-                
-                // Integrasi sistem poin / progres pengguna
+                const soundOn = localStorage.getItem('app_sound') !== 'false';
+                if (soundOn) {
+                    if (typeof playAlarmSound === 'function') playAlarmSound();
+                    else if (typeof playAlarmTone === 'function') playAlarmTone();
+                }
+                const vibOn = localStorage.getItem('app_vib') !== 'false';
+                if (vibOn && typeof triggerVibration === 'function') triggerVibration();
+
                 if (typeof ProgressionSystem !== 'undefined') {
                     ProgressionSystem.addProofing();
                 }
@@ -6931,7 +7149,6 @@ function startProofing(isRestoring = false) {
             }
         }
     }, 1000);
-    ProgressionSystem.addProofing();
 }
 
 function setMode(mode) {
@@ -7085,48 +7302,149 @@ function calculateAdaptiveTime(baseMinutes, currentTemp, currentHum) {
 // 1. Pemetaan Opsi Tahapan Fermentasi Berdasarkan Produk
 const proofingStages = {
     donut: [
-        { key: 'initial', name: 'Initial', minutes: 60, desc: 'Pengembangan awal setelah mixing.' },
+        { key: 'initial', name: 'Initial', minutes: 30, desc: 'Pengembangan awal setelah mixing.' },
         { key: 'rounding', name: 'Rounding', minutes: 15, desc: 'Istirahat adonan setelah pembulatan.' },
         { key: 'final', name: 'Final', minutes: 45, desc: 'Fermentasi akhir siap goreng (white ring).' }
     ],
     roti: [
-        { key: 'bulk', name: 'Bulk Ferment', minutes: 50, desc: 'Fermentasi awal ragi (First Rise) hingga 2x lipat.' },
-        { key: 'bench', name: 'Bench Rest', minutes: 12, desc: 'Melemaskan gluten sebelum dicetak (shaping).' },
-        { key: 'final_roti', name: 'Final Proofing', minutes: 55, desc: 'Pengembangan akhir optimal sebelum masuk oven.' }
+        { key: 'initial', name: 'Bulk Ferment', minutes: 40, desc: 'Fermentasi awal ragi hingga mengembang optimal.' },
+        { key: 'rounding', name: 'Bench Rest', minutes: 20, desc: 'Melemaskan gluten sebelum dicetak (shaping).' },
+        { key: 'final', name: 'Final Proofing', minutes: 60, desc: 'Pengembangan akhir optimal sebelum masuk oven.' }
     ],
     bakpao: [
-        { key: 'relaxing', name: 'Relaxing Awal', minutes: 10, desc: 'Istirahat singkat setelah adonan dibagi.' },
-        { key: 'final_bakpao', name: 'Final Proofing', minutes: 25, desc: 'Proofing akhir (Waspada over-proof agar tidak keriput).' }
+        { key: 'initial', name: 'Relaxing Awal', minutes: 25, desc: 'Istirahat singkat setelah adonan dibagi.' },
+        { key: 'rounding', name: 'Intermediate', minutes: 10, desc: 'Pembentukan dan penataan isian.' },
+        { key: 'final', name: 'Final Proofing', minutes: 30, desc: 'Proofing akhir (Waspada over-proof agar tidak keriput).' }
+    ],
+    pizza: [
+        { key: 'initial', name: 'Bulk Ferment', minutes: 60, desc: 'Initial fermentasi adonan pizza lebih lama agar empuk.' },
+        { key: 'rounding', name: 'Ball Rest', minutes: 20, desc: 'Istirahat adonan setelah dibentuk bola (dough balls).' },
+        { key: 'final', name: 'Stretching Rest', minutes: 30, desc: 'Relaksasi adonan sebelum diregangkan di pan/loyang.' }
+    ],
+    saltbread: [
+        { key: 'initial', name: 'Bulk Ferment', minutes: 45, desc: 'Fermentasi awal ragi adonan dasar butter roll.' },
+        { key: 'rounding', name: 'Shaping Rest', minutes: 15, desc: 'Istirahat adonan sebelum digulung dengan mentega.' },
+        { key: 'final', name: 'Final Proofing', minutes: 50, desc: 'Salt bread butuh proofing mentega/gulung yang pas.' }
     ]
 };
 
-let currentActiveProduct = 'donut';
+
+// Panduan Cara Pembuatan Singkat Tiap Produk
+const ProductGuides = {
+    donut: {
+        title: "Cara Pembuatan Donat Artisan",
+        steps: [
+            "Campur terigu, ragi, gula, susu, dan telur. Uleni hingga setengah kalis.",
+            "Masukkan mentega dan garam, uleni hingga kalis elastis (Initial Proofing).",
+            "Timbang adonan, bagi rata, dan bulatkan (Rounding/Bench Rest).",
+            "Cetak bentuk cincang atau isi, lakukan Final Proofing hingga mengembang ringan.",
+            "Goreng dengan minyak sedang sekali balik hingga muncul white ring."
+        ]
+    },
+    roti: {
+        title: "Cara Pembuatan Roti Manis / Tawar",
+        steps: [
+            "Mixer semua bahan dasar hingga kalis sempurna (windowpane test).",
+            "Istirahatkan adonan hingga mengembang 2x lipat (Initial Proofing).",
+            "Kempiskan adonan, bagi, bentuk sesuai selera (Rounding/Shaping).",
+            "Susun di loyang dan lakukan Final Proofing di ruang hangat.",
+            "Panggang di oven dengan suhu pas hingga keemasan."
+        ]
+    },
+    bakpao: {
+        title: "Cara Pembuatan Bakpao Lembut",
+        steps: [
+            "Uleni adonan putih (terigu, ragi, gula, air/susu, sedikit shortening) sampai licin.",
+            "Istirahatkan sebentar agar rileks (Initial Proofing singkat).",
+            "Bagi adonan, isi dengan daging atau kacang hijau, bulatkan rapi (Rounding).",
+            "Letakkan di atas kertas baking, Final Proofing sampai mengembang ringan dan empuk.",
+            "Kukus dengan api sedang cenderung kecil selama 10-12 menit (jangan buka penutup kukusan)."
+        ]
+    },
+    pizza: {
+        title: "Cara Pembuatan Adonan Pizza Napoletana/Classic",
+        steps: [
+            "Larutkan ragi dan sedikit gula ke dalam air hangat, campur ke terigu dan garam.",
+            "Uleni hingga adonan licin, lalu fermentasi lama untuk rasa maksimal (Initial Proofing).",
+            "Bagi adonan menjadi beberapa ball (bola pizza), istirahatkan (Rounding/Ball fermentation).",
+            "Tekan dan lebarkan adonan dengan tangan (jangan menggunakan rolling pin agar pinggiran/crust berongga).",
+            "Beri saus tomat, keju mozzarella, dan topping, lalu panggang dengan suhu oven tinggi."
+        ]
+    },
+    saltbread: {
+        title: "Cara Pembuatan Salt Bread (Shio Pan)",
+        steps: [
+            "Buat adonan roti gulung dasar dengan mentega, susu, dan sedikit gula.",
+            "Fermentasi awal adonan hingga mengembang (Initial Proofing).",
+            "Bagi adonan, bentuk segitiga panjang, beri isian *cold butter* di bagian dasarnya, lalu gulung meruncing.",
+            "Lakukan Final Proofing hingga ukuran pas (jangan *overproof* agar mentega tidak bocor sebelum dipanggang).",
+            "Taburkan coarse salt (garam kasar) dan semprot sedikit air/mentega cair di atasnya sebelum dipanggang."
+        ]
+    }
+};
 
 // 2. Fungsi Eksekusi Saat User Mengganti Jenis Produk
+// 1. Deklarasikan variabel status global di bagian paling atas skrip
+let currentActiveProduct = 'donut';
+let isGuideVisible = true;
+
+// 2. Fungsi utama selectProduct
 function selectProduct(productKey) {
     if (typeof isTimerRunning !== 'undefined' && isTimerRunning) {
         alert("Timer sedang berjalan! Harap reset terlebih dahulu jika ingin mengganti produk.");
         return;
     }
-    currentActiveProduct = productKey;
     
-    // Perbarui gaya visual tombol pill produk yang aktif
-    ['donut', 'roti', 'bakpao'].forEach(p => {
+    const guideContainer = document.getElementById('product-guide-container');
+
+    // Jika user mengklik produk yang SAMA dan panduan sedang terbuka, sembunyikan (Toggle Hide)
+    if (currentActiveProduct === productKey && isGuideVisible) {
+        if (guideContainer) guideContainer.innerHTML = '';
+        isGuideVisible = false;
+        return;
+    }
+
+    // Jika produk berbeda atau panduan tertutup, aktifkan produk baru
+    currentActiveProduct = productKey;
+    isGuideVisible = true;
+
+    // Perbarui gaya visual tombol pill produk
+    ['donut', 'roti', 'bakpao', 'pizza', 'saltbread'].forEach(p => {
         const btn = document.getElementById(`prod-${p}`);
         if (btn) {
-            if (p === productKey) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
+            if (p === productKey) btn.classList.add('active');
+            else btn.classList.remove('active');
         }
     });
 
-    renderModeButtons(productKey);
+    // Render tombol mode tahap proofing
+    if (typeof renderModeButtons === 'function') {
+        renderModeButtons(productKey);
+    }
     
-    const stages = proofingStages[productKey];
-    if (stages && stages.length > 0) {
+    const stages = typeof proofingStages !== 'undefined' ? proofingStages[productKey] : null;
+    if (stages && stages.length > 0 && typeof setProductStage === 'function') {
         setProductStage(productKey, stages[0].key, stages[0].minutes, stages[0].desc);
+    }
+
+    // Tampilkan panduan cara pembuatan di bawah
+    if (guideContainer && typeof ProductGuides !== 'undefined' && ProductGuides[productKey]) {
+        const guide = ProductGuides[productKey];
+        guideContainer.innerHTML = `
+            <div style="background: rgba(242, 210, 169, 0.15); border-left: 4px solid var(--accent, #E67E22); padding: 12px 14px; border-radius: 8px; margin-top: 15px; animation: fadeIn 0.3s ease;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div style="font-weight: 800; font-size: 0.85rem; color: var(--chocolate, #4E342E);">📖 ${guide.title}</div>
+                    <button type="button" onclick="document.getElementById('product-guide-container').innerHTML=''; isGuideVisible=false;" style="background:none; border:none; color:#94a3b8; font-size:0.75rem; cursor:pointer; font-weight:bold;" title="Tutup panduan">✕ Tutup</button>
+                </div>
+                <ol style="margin: 0; padding-left: 16px; font-size: 0.75rem; color: rgba(78, 52, 46, 0.85); line-height: 1.4;">
+                    ${guide.steps.map(step => `<li style="margin-bottom: 4px;">${step}</li>`).join('')}
+                </ol>
+            </div>
+        `;
+    }
+
+    if (typeof updateProoferTimes === 'function') {
+        updateProoferTimes(productKey);
     }
 }
 
@@ -7269,7 +7587,7 @@ function dapatkanAudioContext(isUserGesture = false) {
 // 3. Fungsi Alarm bawaan Anda yang SUDAH DIOPTIMALKAN
 function playAlarmTone() {
     try {
-        const ctx = dapatkanAudioContext();
+        const ctx = dapatkanAudioContext(true);
         if (!ctx) return;
         
         const startTime = ctx.currentTime;
@@ -7305,6 +7623,7 @@ async function triggerVibration() {
 }
 
 function playAlarmSound() {
+    if (localStorage.getItem('app_sound') === 'false') return;
     const toneSelect = document.getElementById('select-alarm-tone');
     const volumeRange = document.getElementById('range-alarm-volume');
     const selectedTone = toneSelect ? toneSelect.value : 'default';
@@ -7503,7 +7822,6 @@ async function simpanResepKeDatabase() {
     } finally {
         isSaving = false;
     }
-    ProgressionSystem.addRecipe();
 }
 
 // ==========================================
@@ -9318,16 +9636,36 @@ function performAIAnalysis(temp, humidity) {
 }
 
 // FUNGSI ANALISIS AI TIMER COUNTDOWN
-async function toggleAI() {
-    const elSuhu = document.getElementById('status-text-ruang') || document.getElementById('temp-val');
-    const elWaktu = document.getElementById('input-waktu-proofing') || document.getElementById('waktu-val');
-    const elKeterangan = document.getElementById('input-keterangan-adonan');
-
-    let nilaiSuhu = 28;
-    if (elSuhu) {
-        let matchSuhu = elSuhu.innerText.match(/[\d.]+/);
-        if (matchSuhu) nilaiSuhu = parseFloat(matchSuhu[0]);
+// Fungsi pembantu untuk menentukan URL endpoint backend secara aman
+function resolveApiUrl(path) {
+    if (typeof window.getVercelApiUrl === 'function') {
+        return window.getVercelApiUrl(path);
     }
+    // Fallback otomatis jika helper global belum tersedia
+    const isLocal = window.location.hostname === 'localhost' || window.location.protocol === 'file:';
+    const base = isLocal ? 'https://timer-proofer.vercel.app' : '';
+    return base + path;
+}
+
+async function toggleAI() {
+    // Ambil elemen sensor berdasarkan ID aktual di HTML Anda (sesuaikan ID-nya jika berbeda)
+const elSuhu = document.getElementById('suhu-sekarang') || document.getElementById('status-text-ruang') || document.getElementById('temp-val');
+const elKelembapan = document.getElementById('kelembapan-sekarang') || document.getElementById('humidity-val');
+const elWaktu = document.getElementById('input-waktu-proofing') || document.getElementById('waktu-val');
+const elKeterangan = document.getElementById('input-keterangan-adonan');
+
+// Ekstraksi nilai angka secara dinamis dari teks elemen
+let nilaiSuhu = 28;
+if (elSuhu) {
+    let matchSuhu = elSuhu.innerText.match(/[\d.]+/);
+    if (matchSuhu) nilaiSuhu = parseFloat(matchSuhu[0]);
+}
+
+let nilaiKelembapan = 75;
+if (elKelembapan) {
+    let matchKelembapan = elKelembapan.innerText.match(/[\d.]+/);
+    if (matchKelembapan) nilaiKelembapan = parseFloat(matchKelembapan[0]);
+}
 
     let nilaiWaktu = elWaktu ? (elWaktu.value || elWaktu.innerText) : '45 menit';
     let nilaiKeterangan = elKeterangan ? elKeterangan.value : 'Permukaan adonan mulai mengendur';
@@ -9339,7 +9677,6 @@ async function toggleAI() {
     }
 
     try {
-        // Payload lengkap untuk mencakup seluruh kemungkinan parameter backend
         const payloadData = {
             promptContext: `Analisis fermentasi adonan dengan suhu ${nilaiSuhu}°C, durasi ${nilaiWaktu}, catatan: ${nilaiKeterangan}`,
             suhuRuang: nilaiSuhu,
@@ -9350,7 +9687,7 @@ async function toggleAI() {
             note: nilaiKeterangan
         };
 
-        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), {
+        const response = await fetch(resolveApiUrl('/api/ai-telemetry'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -9359,11 +9696,9 @@ async function toggleAI() {
             body: JSON.stringify(payloadData)
         });
 
-        // Jika server masih menolak (400), ambil pesan error aslinya dari body response
         if (!response.ok) {
             const errorText = await response.text();
-            console.error("Pesan Penolakan dari Backend Vercel:", errorText);
-            throw new Error(`Bad Request (400): ${errorText}`);
+            throw new Error(`Server menolak (Status ${response.status}): ${errorText}`);
         }
 
         const result = await response.json();
@@ -9371,47 +9706,12 @@ async function toggleAI() {
 
     } catch (error) {
         console.error("Gagal melakukan analisis AI:", error);
-        alert("Gagal memproses analisis AI. Buka Console (F12) untuk melihat detail parameter yang ditolak server.");
-    } finally {
-        if (btnAi) {
-            btnAi.innerText = "Analisis AI";
-            btnAi.disabled = false;
-        }
-    }
-
-    try {
-        // PERHATIKAN: Sesuaikan nama key di bawah ini dengan apa yang 
-        // diterima oleh script backend /api/ai-analyze Anda di Vercel.
-        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                // Sesuaikan dengan properti yang wajib diminta server backend Vercel Anda
-                promptContext: `Analisis proses proofing dengan suhu ruangan ${nilaiSuhu}°C, durasi waktu ${nilaiWaktu}, dan catatan keterangan: ${nilaiKeterangan}`,
-                
-                // Tetap sertakan properti lain jika backend Anda juga memerlukannya
-                suhuRuang: nilaiSuhu,
-                waktuProofing: nilaiWaktu,
-                keterangan: nilaiKeterangan
-            })
+        
+        // Tampilkan error secara elegan di UI alih-alih menggunakan alert() yang mengganggu
+        tampilkanHasilAnalisisAI({
+            analisis: `⚠️ Gagal memuat analisis AI dari server.<br><small style="color: #c0392b;">Detail: ${error.message}</small><br><br>💡 <em>Tips: Pastikan koneksi internet stabil atau periksa konfigurasi backend Anda.</em>`
         });
 
-        // Tangkap teks/json error langsung dari response server Vercel
-        if (!response.ok) {
-            const errorBody = await response.text();
-            console.error("Detail Error dari Server Vercel:", errorBody);
-            throw new Error(`Server merespon status ${response.status}: ${errorBody}`);
-        }
-
-        const result = await response.json();
-        tampilkanHasilAnalisisAI(result);
-
-    } catch (error) {
-        console.error("Gagal melakukan analisis AI:", error);
-        alert("Gagal memproses analisis AI. Cek console browser (F12) untuk melihat detail penolakan server.");
     } finally {
         if (btnAi) {
             btnAi.innerText = "Analisis AI";
@@ -9424,16 +9724,13 @@ async function toggleAI() {
 function tampilkanHasilAnalisisAI(data) {
     const containerHasil = document.getElementById('ai-result-container');
     
-    // Jika kontainer hasil belum ada di HTML, buat secara otomatis agar tidak error
     let targetContainer = containerHasil;
     if (!targetContainer) {
-        const headerAnalisis = document.querySelector('.article-modal-header, h3'); // Cari elemen judul terdekat
+        const judulAnalisis = Array.from(document.querySelectorAll('h3, div')).find(el => el.innerText && el.innerText.includes('Analisis Kondisi Adonan'));
         targetContainer = document.createElement('div');
         targetContainer.id = 'ai-result-container';
-        targetContainer.style.cssText = "margin-top: 15px; padding: 15px; background: #fdf8f4; border: 1px solid rgba(78,52,46,0.1); border-radius: 8px; font-size: 0.85rem; color: var(--chocolate); line-height: 1.5;";
+        targetContainer.style.cssText = "margin-top: 15px; padding: 15px; background: #fdf8f4; border: 1px solid rgba(78,52,46,0.1); border-radius: 8px; font-size: 0.85rem; color: var(--chocolate, #4E342E); line-height: 1.5;";
         
-        // Sisipkan di bawah judul "Analisis Kondisi Adonan"
-        const judulAnalisis = Array.from(document.querySelectorAll('h3, div')).find(el => el.innerText && el.innerText.includes('Analisis Kondisi Adonan'));
         if (judulAnalisis && judulAnalisis.parentNode) {
             judulAnalisis.parentNode.insertBefore(targetContainer, judulAnalisis.nextSibling);
         } else {
@@ -9441,7 +9738,6 @@ function tampilkanHasilAnalisisAI(data) {
         }
     }
 
-    // Ambil teks dari berbagai kemungkinan key yang dikirim backend
     let teksHasil = "";
     if (typeof data === 'string') {
         teksHasil = data;
@@ -9449,7 +9745,6 @@ function tampilkanHasilAnalisisAI(data) {
         teksHasil = data.analisis || data.message || data.result || data.text || data.response || JSON.stringify(data, null, 2);
     }
 
-    // Masukkan ke dalam elemen HTML
     targetContainer.innerHTML = `<div style="font-weight: bold; margin-bottom: 5px; color: var(--accent);">💡 Hasil Analisis AI:</div><div>${teksHasil.replace(/\n/g, '<br>')}</div>`;
 }
 
@@ -11301,7 +11596,12 @@ ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul deng
     // Browser/file:// fallback: native Capacitor and idb helpers are optional.
     const capacitorPlugins = window.Capacitor?.Plugins || {};
     const App = capacitorPlugins.App || { addListener: () => {}, minimizeApp: () => {} };
-    const LocalNotifications = capacitorPlugins.LocalNotifications || { requestPermissions: async () => ({ display: 'denied' }), schedule: async () => {} };
+    const LocalNotifications = capacitorPlugins.LocalNotifications || {
+        requestPermissions: async () => ({ display: 'denied' }),
+        checkPermissions: async () => ({ display: 'denied' }),
+        schedule: async () => {},
+        cancel: async () => {}
+    };
     const Preferences = capacitorPlugins.Preferences || { get: async ({ key }) => ({ value: localStorage.getItem(key) }), set: async ({ key, value }) => localStorage.setItem(key, value), remove: async ({ key }) => localStorage.removeItem(key) };
     const Share = capacitorPlugins.Share || { share: async ({ text, title }) => navigator.share ? navigator.share({ text, title }) : undefined };
     const Filesystem = capacitorPlugins.Filesystem || { writeFile: async () => { throw new Error('Filesystem native tidak tersedia'); } };
@@ -11505,11 +11805,6 @@ window.pindahLangkah = pindahLangkah;
 
 window.muatTemplateLangkahDonat = muatTemplateLangkahDonat;
 
-
-
-
-
-
 /* FUNGSI HALAMAN LOGIN*/
 document.addEventListener('DOMContentLoaded', function() {
     const loginBtn = document.getElementById('loginBtn');
@@ -11567,11 +11862,6 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     renderLangkahProduksi();
 });
-
-
-
-
-
 
 window.renderInventoryCards = function() {
     const container = document.getElementById('dynamic-inventory-cards');
@@ -11710,11 +12000,6 @@ window.openEditProfile = openEditProfile;
 window.closeEditProfile = closeEditProfile;
 // =============================================
 
-
-
-//==============================================
-
-
 window.saveProfile = saveProfile;
 // =============================================
 
@@ -11733,13 +12018,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 //===============================================
 
-
-
-
 // Daftarkan ke global window agar dapat diakses oleh atribut onclick HTML
 window.bukaStatistikDetail = bukaStatistikDetail;
-
-
 
 // TIPS TERBAIK: Jangan pakai setTimeout jika memungkinkan. 
 // Panggil fungsi `tampilkanSapaanAwalAI()` ini tepat di dalam fungsi 
@@ -11747,7 +12027,6 @@ window.bukaStatistikDetail = bukaStatistikDetail;
 
 
 window.escapeHtmlResep = escapeHtmlResep;
-
 
 window.jadwalkanAlarmProofing = jadwalkanAlarmProofing;
 
@@ -11781,7 +12060,13 @@ window.locationPermissionDenied = window.locationPermissionDenied ?? false; // P
 // SISTEM NOTIFIKASI — TIMER PROOFER
 // =========================================================
 const NotifSystem = (() => {
-    let notifs = JSON.parse(localStorage.getItem('tp_notifs') || '[]');
+    let notifs = [];
+    try {
+        const parsed = JSON.parse(localStorage.getItem('tp_notifs') || '[]');
+        notifs = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        notifs = [];
+    }
     let filterAktif = 'semua';
 
     function simpan() {
@@ -11926,12 +12211,10 @@ const NotifSystem = (() => {
 // Daftarkan ke skop global window agar aman diakses dari atribut onclick HTML
 window.NotifSystem = NotifSystem;
 
-
 // Daftarkan ke global window hanya SEKALI di paling bawah file
 window.filterNotif = filterNotif;
 window.bacaSemua = bacaSemua;
 window.closeNotifModal = closeNotifModal;
-
 
 // =========================================================
 // LOGIKA SLIDER ARTIKEL OTOMATIS & SWIPE MANUAL
@@ -12132,8 +12415,10 @@ let isFetchingLocation = false;
 // Listener untuk menerima data cuaca kembali dari Service Worker
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data.action === 'weatherData') {
-            const cuaca = event.data.data;
+        if (event.data && event.data.action === 'weatherData') {
+            const payload = event.data.data || {};
+            const cuaca = payload.weather || payload;
+            const geocode = payload.geocode || cuaca.geocode;
             
             if (cuaca && cuaca.main) {
                 const suhu = Math.round(cuaca.main.temp);
@@ -12169,7 +12454,7 @@ if ('serviceWorker' in navigator) {
                 }
 
                 if (typeof NotifSystem !== 'undefined') {
-                    const namaLokasi = (cuaca.geocode && cuaca.geocode.village) || 'Sidoarjo';
+                    const namaLokasi = (geocode && (geocode.village || geocode.address?.village || geocode.city)) || 'lokasi Anda';
                     const deskripsiCuaca = (cuaca.weather && cuaca.weather[0] && cuaca.weather[0].description) || 'Cerah Berawan';
 
                     NotifSystem.tambah(
@@ -12187,40 +12472,6 @@ if ('serviceWorker' in navigator) {
 // =========================================================================
 // LOGIK PENGAMBILAN DATA LOKASI & CUACA (MENDUKUNG WEB PWA & ANDROID APK)
 // =========================================================================
-async function handleLocationApiRequest(req, res) {
-  // Jalankan Header CORS agar localhost / production PWA bisa menembus API
-  res.setHeader('Access-Control-Allow-Origin', '*'); 
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Tangani preflight request dari browser
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  // Cek apakah routing benar, jika iya lanjutkan logic Open-Meteo kamu
-  const { lat, lon } = req.query;
-  if (!lat || !lon) {
-    return res.status(400).json({ error: "Missing latitude or longitude" });
-  }
-
-  try {
-    // Logic fetch ke Open-Meteo API di sini...
-    // const weatherData = ...
-    
-    res.status(200).json({
-      temperature: 30, // contoh dummy data hasil fetch
-      humidity: 75
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch weather data" });
-  }
-}
-
-//====================================================================================
-
-
 window.handleOfflinePremium = handleOfflinePremium;
 //==================================================================================
 
@@ -12303,7 +12554,7 @@ document.addEventListener('touchend', (e) => {
 // ===================================================================
 document.addEventListener('click', function(event) {
     
-    // --- 1. Logika Menutup Jendela Analisis AI Otomatis ---
+    const arrowIcon = document.querySelector('.accordion-arrow');
     const aiBox = document.getElementById('ai-analysis-body');
     const aiToggle = document.getElementById('ai-toggle');
     if (aiBox && aiBox.style.display !== 'none') {
@@ -12467,7 +12718,6 @@ window.hitungHPP = function() {
     if (typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal(); 
 };
 
-
 // ==========================================
 // 3. PRESET & INTERAKSI FORM UI (DIAMBIL DARI KODE LAMA)
 // ==========================================
@@ -12481,7 +12731,6 @@ const PRESET_BAHAN_CEPAT = [
     { label: 'Meses', name: 'Cokelat Meses', category: 'Bahan Toping', ratio: 8, price: 22000, pack: 500 },
     { label: 'Dus', name: 'Kotak Donat', category: 'Kemasan', ratio: 0.17, price: 2500, pack: 1 }
 ];
-
 
 window.pilihKategoriBahan = function(kategori) {
     const sel = document.getElementById('new-ing-type');
@@ -12565,12 +12814,15 @@ window.gantiTabMetode = function(metode) {
 };
 
 window.playAlarmSound = playAlarmSound;
-
-// Ekspos ke global window agar aman dipanggil dari mana saja
-window.playAlarmSound = playAlarmSound;
+window.playAlarmTone = playAlarmTone;
+window.setMode = setMode;
+window.setProofingMode = setProofingMode;
+window.setTimerByTab = setTimerByTab;
+window.resetToManualInput = resetToManualInput;
 
 window.perbaruiKomponenBahan = function(idBahan, properti, nilai) {
     const angkaValid = parseFloat(nilai) || 0;
+    if (!Array.isArray(window.bakeryIngredients)) window.bakeryIngredients = [];
 
     // 1. Cari data bahan di dalam array memori utama dan update nilainya
     const ing = window.bakeryIngredients.find(x => x.id === idBahan);
@@ -13636,11 +13888,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (typeof renderUserProfile === 'function') {
         renderUserProfile();
     }
-    if (typeof checkAndRestoreTimer === 'function') {
-        checkAndRestoreTimer(); 
-    } else {
-        console.warn("Peringatan: Fungsi checkAndRestoreTimer() belum dibuat atau tidak ditemukan.");
-    }
     if (typeof initApp === 'function') {
         initApp();
     }
@@ -14397,6 +14644,7 @@ window.tampilkanDaftarResepTersimpan = async function() {
             </div>
             <div style="display:flex; gap:6px;">
                 <button type="button" class="btn-load-resep" style="background:#27ae60; color:white; border:none; padding:6px 10px; border-radius:6px; font-size:0.72rem; font-weight:bold; cursor:pointer;">Muat / Edit</button>
+                <button type="button" class="btn-copy-resep" style="background:#3498db; color:white; border:none; padding:6px 8px; border-radius:6px; font-size:0.72rem; font-weight:bold; cursor:pointer;" data-id="${resep.id}">Salin</button>
                 <button type="button" class="btn-del-resep" style="background:#e74c3c; color:white; border:none; padding:6px 8px; border-radius:6px; font-size:0.72rem; font-weight:bold; cursor:pointer;">Hapus</button>
             </div>
         `;
@@ -14420,6 +14668,48 @@ window.tampilkanDaftarResepTersimpan = async function() {
                 NotifSystem.tambah('resep', 'Resep Dimuat', `Resep "${resep.nama}" dimuat untuk diedit.`, '📂');
             }
             alert(`Resep "${resep.nama}" dimuat. Anda dapat mengubah bahan/nama lalu klik "Simpan Resep" untuk memperbarui.`);
+        });
+
+        // 🟢 TAMBAHKAN LOGIKA TOMBOL SALIN DI SINI 🟢
+        itemDiv.querySelector('.btn-copy-resep').addEventListener('click', async () => {
+            // 1. Buat salinan objek resep
+            const duplicatedRecipe = {
+                ...resep,
+                id: Date.now(), // ID unik baru
+                nama: `${resep.nama} (Salinan)`,
+                waktuSimpan: new Date().toISOString()
+            };
+
+            // 2. Masukkan ke urutan PALING ATAS (unshift) agar langsung terlihat
+            daftarResep.unshift(duplicatedRecipe);
+            
+            // 3. Simpan ke storage perangkat
+            await simpanDaftarResepKePerangkat(daftarResep);
+
+            // 4. (Opsional) Sinkronisasi salinan ke Supabase jika online
+            if (navigator.onLine && typeof supabase !== 'undefined') {
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    const payload = {
+                        id: duplicatedRecipe.id,
+                        user_id: user ? user.id : null,
+                        name: duplicatedRecipe.nama,
+                        details: duplicatedRecipe,
+                        updated_at: new Date().toISOString()
+                    };
+                    await supabase.from('recipes').upsert([payload]);
+                } catch (err) {
+                    console.warn("Gagal sinkronisasi salinan ke cloud:", err);
+                }
+            }
+
+            // 5. Segarkan modal seketika (maka salinan akan langsung muncul di baris teratas)
+            window.tampilkanDaftarResepTersimpan();
+
+            // 6. Segarkan poin gamifikasi
+            if (window.GamificationUI && typeof window.GamificationUI.refresh === 'function') {
+                window.GamificationUI.refresh();
+            }
         });
 
         // Tombol Hapus Resep (Lokal & Supabase)
@@ -14733,10 +15023,7 @@ window.tampilkanPopupAchievement = function(judul, desc) {
     popup.classList.add('show');
 }
 
-// Mengaitkan fungsi baru ke elemen DOM
-document.getElementById('btn-mode-initial')?.addEventListener('click', () => setProofingMode('Initial', 60));
-document.getElementById('btn-mode-rounding')?.addEventListener('click', () => setProofingMode('Rounding', 15));
-document.getElementById('btn-mode-final')?.addEventListener('click', () => setProofingMode('Final', 45));
+// Listener mode proofing sudah diikat sekali di blok TIMER CONTROLS (setMode).
 
 // Memanggil dan menyiapkan data sebelum modal terbuka
 function PreferensiModal() {
