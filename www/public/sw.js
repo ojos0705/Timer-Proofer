@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Timer-Proofing-v0.1.3';
+const CACHE_NAME = 'Timer-Proofing-v0.1.4';
 const ASSETS = [
   './',
   './index.html',
@@ -78,16 +78,33 @@ self.addEventListener('message', async (event) => {
 
   if (data.action === 'fetchWeather') {
     const { lat, lon } = data;
+    if (typeof lat !== 'number' || typeof lon !== 'number') {
+      console.warn('[Service Worker] Invalid coordinates for weather fetch:', { lat, lon });
+      return;
+    }
     const url = `https://timer-proofer.vercel.app/api/weather?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
+      if (!response.ok) throw new Error(`Weather API returned ${response.status}`);
       const payload = await response.json();
       const clients = await self.clients.matchAll();
       clients.forEach((client) => {
-        client.postMessage({ action: 'weatherData', data: payload });
+        try {
+          client.postMessage({ action: 'weatherData', data: payload });
+        } catch (postErr) {
+          console.warn('[Service Worker] Failed to post message to client:', postErr);
+        }
       });
     } catch (error) {
       console.error('Gagal mengambil data cuaca via SW:', error);
+      const clients = await self.clients.matchAll();
+      clients.forEach((client) => {
+        try {
+          client.postMessage({ action: 'weatherError', error: error.message });
+        } catch (postErr) {
+          console.warn('[Service Worker] Failed to post error to client:', postErr);
+        }
+      });
     }
   }
 });

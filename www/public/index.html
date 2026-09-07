@@ -1291,8 +1291,7 @@
     z-index: 10;
 }
 
-        /* Modal Resep */
-        /*.recipe-modal {display: none; position: absolute; top: 0; left: 0;                                  width: 100%; height: 100%;                                    box-sizing: border-box;                   background: white;   padding: 20px;                                                                 z-index: 99; flex-direction: column; }*/
+        /* STYLE RESEP Modal Resep */
         .recipe-modal {display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box; background: white; padding: 20px; z-index: 99; flex-direction: column; }
         .recipe-modal.active {display: flex !important; /*transform: translateY(0); */}
         .recipe-modal h2 { text-align: center; margin-top: 10px; color: var(--accent); /*font-size: 1.3rem;*/ }
@@ -1301,6 +1300,41 @@
         /* di versi baru dihilangkan -*/
         .recipe-content p { margin-top: 0; margin-bottom: 15px; }
         .recipe-close-btn, .about-close-btn { background: var(--chocolate); color: white; border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; }
+        /* Detail resep harus memiliki area scroll sendiri; body dikunci agar navbar tetap stabil. */
+        #recipe.recipe-modal {
+            position: fixed;
+            top: 0;
+            bottom: 70px;
+            left: 0;
+            width: 100%;
+            height: auto !important;
+            max-height: calc(100dvh - 70px);
+            overflow: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        #recipe-master-view,
+        #recipe-detail-view {
+            min-height: 0;
+            height: 100%;
+        }
+        #recipe-detail-view .recipe-content,
+        #recipe-master-view #recipe-list-container {
+            min-height: 0;
+            overscroll-behavior: contain;
+            scrollbar-gutter: stable;
+        }
+        #recipe-detail-view .recipe-content {
+            overflow-y: auto !important;
+            overflow-x: hidden;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        }
+        /* Efek hover untuk tombol di dalam dropdown menu resep */
+    .recipe-dropdown-btn {
+        transition: background-color 0.2s ease;
+    }
+    .recipe-dropdown-btn:hover {
+        background-color: #f1f5f9 !important;
+    }
 
         /* Style Tabel Kalkulator Resep Dinamis */
         .table-responsive-wrapper {width: 100%; overflow-x: auto; /* Mengaktifkan scroll horizontal jika tabel melebihi layar */ -webkit-overflow-scrolling: touch; /* Scroll halus di iOS & Android */margin-bottom: 15px; border-radius: 8px; border: 1px solid rgba(78, 52, 46, 0.15); border-radius: 8px;}
@@ -3466,398 +3500,182 @@ body {
 
 <!--HALAMAN RESEP-->
 <div id="recipe" class="tab-content recipe-modal" style="display: none; padding: 0; max-width: 100%; box-sizing: border-box; height: 100%; flex-direction: column; background: #FDF5E6; font-family: 'Segoe UI', sans-serif;"> 
-    <!-- HEADER HALAMAN RESEP (Seragam dengan Modal Notifikasi) -->
-    <div class="article-modal-header" style="padding: 15px 20px 5px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
-        <h3 id="recipe-modal-title" style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 13px; line-height: 1.618;">
-            <span style="font-size: 1.618em; transform: translateY(-5%);">🍞</span> Resep
-        </h3>
 
-    <!-- HEADER KHUSUS CETAK PRINT/PDF (Tetap dipertahankan untuk kompatibilitas cetak) -->
-    <div class="print-header" style="display: none; flex-direction: column; gap: 2px;">
-        <h3 style="margin: 0; color: var(--chocolate); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; font-weight: bold;">
-            <span>🍞</span> TIMER PROOFING
-        </h3>
-        <p style="margin: 0; font-size: 0.7rem; color: #64748b; font-weight: 600; letter-spacing: 0.5px;">FORMULA RESEP &amp; ESTIMASI HPP</p>
-    </div>
-        <button id="btn-recipe-close-top" class="article-modal-close" style="font-size: 28px; background: none; border: none; color: #4E342E; cursor: pointer; line-height: 1;">&times;</button>
-    </div>
+    <!-- 1. MASTER VIEW: HALAMAN DAFTAR RESEP (TAMPILAN PERTAMA KETIKA MENU DIBUKA) -->
+    <div id="recipe-master-view" style="display: flex; flex-direction: column; height: 100%; box-sizing: border-box;">
+        <div class="article-modal-header" style="padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: #fff;">
+            <h3 style="margin: 0; color: var(--chocolate); display: flex; align-items: center; gap: 10px; font-size: 1.1rem;">
+                <span>🍞</span> Daftar Resep & Koleksi
+            </h3>
+            <button type="button" class="article-modal-close" onclick="tutupHalamanResepSecaraAman()" style="font-size: 28px; background: none; border: none; color: #4E342E; cursor: pointer; line-height: 1;">&times;</button>
+        </div>
 
-    <div class="recipe-content" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 15px; box-sizing: border-box;">
-        
-        <!-- PENGATURAN DATABASE RESEP -->
-        <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <label for="recipe-save-name" style="font-size: 0.68rem; font-weight: 600; color: #718096;">Nama Resep:</label>
-                <!-- Tombol Tambah Resep Baru / Reset Form -->
-                <button type="button" onclick="window.buatResepBaruForm()" style="background: none; border: none; color: #E67E22; font-size: 0.7rem; font-weight: 700; cursor: pointer; padding: 0;">+ Resep Baru</button>
-            </div>
+        <!-- Wadah List Resep & Card Tambah -->
+        <div id="recipe-list-container" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 15px; box-sizing: border-box;">
             
-            <input type="text" id="recipe-save-name" placeholder="Contoh: Donat Coklat Premium" maxlength="60" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.8rem; box-sizing: border-box; margin-bottom: 8px; color: #4E342E;">
+            <!-- Card Khusus: Buat Resep Baru (Posisi Teratas) -->
+            <div onclick="bukaDetailResepBaru()" style="background: #ffffff; border: 2px dashed #E67E22; border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 2px 6px rgba(230,126,34,0.05); transition: background 0.2s;">
+                <span style="font-size: 1.4rem; font-weight: bold; color: #E67E22;">+</span>
+                <strong style="font-size: 0.9rem; color: #E67E22;">Buat Resep Baru</strong>
+            </div>
+
+            <!-- Daftar Resep Dinamis akan disuntikkan oleh JS di sini -->
+        </div>
+
+        <!-- Tombol Tutup Utama di Master View -->
+        <div style="padding: 12px 15px; border-top: 1px solid rgba(0,0,0,0.06); flex-shrink: 0; background: #fff;">
+            <button type="button" class="about-close-btn" style="margin: 0; width: 100%;" onclick="tutupHalamanResepSecaraAman()">TUTUP</button>
+        </div>
+    </div>
+
+
+    <!-- 2. DETAIL VIEW: RUANG KERJA KALKULATOR & EDITOR RESEP -->
+    <div id="recipe-detail-view" style="display: none; flex-direction: column; height: 100%; box-sizing: border-box;">
+        
+        <!-- Header Detail -->
+        <div class="article-modal-header" style="padding: 12px 15px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: #fff;">
+            <div style="display: flex; align-items: center; gap: 10px; flex: 1; margin-right: 10px;">
+                <button type="button" onclick="kembaliKeMasterView()" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; width: 32px; height: 32px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold;" title="Kembali ke Daftar">←</button>
+                <input type="text" id="recipe-save-name" placeholder="Nama Resep Anda..." maxlength="60" style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.85rem; font-weight: bold; color: #4E342E; background: #fff; outline: none;">
+            </div>
+            <button type="button" onclick="simpanResepKeDatabase()" style="background: #27ae60; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; flex-shrink: 0;">💾 Simpan</button>
+        </div>
+
+        <!-- Konten Detail (Kalkulator, Foto, Bahan, Cara Pembuatan, HPP, AI) -->
+        <div class="recipe-content" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 15px; box-sizing: border-box;">
             
             <!-- FITUR FOTO RESEP & BAHAN (Golden Ratio Layout) -->
-            <div class="recipe-photo-section" style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <label for="recipe-photo-input" style="font-size: 0.75rem; font-weight: 800; color: #8D6E63; text-transform: uppercase; letter-spacing: 0.5px;">📸 Dokumentasi Foto</label>
-        <input type="file" id="recipe-photo-input" accept="image/*" multiple style="display: none;" onchange="handleRecipePhotosSelected(this)">
-        <button type="button" onclick="document.getElementById('recipe-photo-input').click()" style="background: #E67E22; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px rgba(230,126,34,0.2);">+ Unggah Foto</button>
-    </div>
-    
-    <!-- Tata Letak Golden Ratio (Asimetris: Kolom Utama Dominan & Kolom Pendukung Vertikal) -->
-    <div id="recipe-photo-grid" style="display: grid; grid-template-columns: 1.618fr 1fr; gap: 8px;">
-        
-        <!-- Slot 0: Foto Utama (Sisi Kiri - Ukuran Besar / Tinggi Penuh) -->
-        <div id="recipe-photo-slot-0" class="photo-slot" data-index="0" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 160px; cursor: pointer;" onclick="triggerPhotoInput()">
-            <span style="font-size: 1.8rem; color: #94a3b8; margin-bottom: 4px;">📷</span>
-            <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 700;">Foto Utama (1)</span>
-        </div>
-        
-        <!-- Sisi Kanan: Stack 4 Foto Pendukung (Tersusun Vertikal ke Bawah) -->
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-            <!-- Slot 1 -->
-            <div id="recipe-photo-slot-1" class="photo-slot" data-index="1" style="flex: 1; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 35px; cursor: pointer;" onclick="triggerPhotoInput()">
-                <span style="font-size: 0.9rem; color: #94a3b8;">🖼️ <small style="font-size: 0.55rem; font-weight: 700;">2</small></span>
-            </div>
-            <!-- Slot 2 -->
-            <div id="recipe-photo-slot-2" class="photo-slot" data-index="2" style="flex: 1; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 35px; cursor: pointer;" onclick="triggerPhotoInput()">
-                <span style="font-size: 0.9rem; color: #94a3b8;">🖼️ <small style="font-size: 0.55rem; font-weight: 700;">3</small></span>
-            </div>
-            <!-- Slot 3 -->
-            <div id="recipe-photo-slot-3" class="photo-slot" data-index="3" style="flex: 1; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 35px; cursor: pointer;" onclick="triggerPhotoInput()">
-                <span style="font-size: 0.9rem; color: #94a3b8;">🖼️ <small style="font-size: 0.55rem; font-weight: 700;">4</small></span>
-            </div>
-            <!-- Slot 4 -->
-            <div id="recipe-photo-slot-4" class="photo-slot" data-index="4" style="flex: 1; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 35px; cursor: pointer;" onclick="triggerPhotoInput()">
-                <span style="font-size: 0.9rem; color: #94a3b8;">🖼️ <small style="font-size: 0.55rem; font-weight: 700;">5</small></span>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
-                <button type="button" class="btn" id="btn-muat-resep" onclick="window.tampilkanDaftarResepTersimpan()" style="background: #E67E22; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📂 DATABASE</button>
-                <button type="button" class="btn" onclick="window.eksporSemuaResep()" style="background: #2980b9; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📤 EKSPOR</button>
-                <button type="button" class="btn" onclick="document.getElementById('recipe-import-input').click()" style="background: #27ae60; margin: 0; padding: 8px; font-size: 0.72rem; border-radius: 6px; color: white; font-weight: bold; border: none; cursor: pointer;">📥 IMPOR</button>
-            </div>
-            <input type="file" id="recipe-import-input" accept=".txt,.json" style="display: none;" onchange="window.prosesImporResep(event)">
-        </div>
-
-        <div class="print-meta-grid" style="display: none;">
-            <span id="print-date">-</span><span id="print-flour">-</span><span id="print-yield">-</span>
-        </div>
-
-        <!-- INPUT ACUAN TEPUNG & PORSI -->
-        <div style="background: white; padding: 13px; border-radius: 13px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); margin-bottom: 13px; display: flex; flex-wrap: wrap; gap: 13px; border: 1px solid #e2e8f0;">
-    
-            <!-- Kolom 1: Tepung Utama -->
-            <div style="flex: 1.618; min-width: 90px;">
-                <label for="base-flour" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Tepung (gr)</label>
-                <input type="number" id="base-flour" value="" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem; background: #fff; height: 38px;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
-            </div>
-            
-            <!-- Kolom 2: Total Porsi -->
-            <div style="flex: 1; min-width: 70px;">
-                <label for="recipe-yield" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Porsi</label>
-                <input type="number" id="recipe-yield" value="" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem; background: #fff; height: 38px;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
-            </div>
-
-            <!-- Kolom 3: Harga Jual (Terintegrasi) -->
-            <div style="flex: 1.5; min-width: 110px;">
-                <label for="input-harga-jual" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Harga/Pcs</label>
-                <div style="display: flex; align-items: center; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; background: #fff; padding: 0 8px; height: 38px;">
-                    <span style="font-size: 0.8rem; font-weight: 700; color: #8D6E63; margin-right: 4px;">Rp</span>
-                    <input type="number" id="input-harga-jual" value="" step="100" style="width: 100%; border: none; font-size: 0.875rem; font-weight: 700; color: #4E342E; outline: none; background: transparent; text-align: left;" data-oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
-                </div>
-            </div>
-        </div>
-
-        <!-- AI AGENT PREMIUM ANALYTICS BOX -->
-        <details id="premium-ai-analysis-box" class="premium-ai-accordion" style="background: linear-gradient(135deg, #fffcf7 0%, #fcf3e8 100%); border: 2px solid var(--accent, #E67E22); border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.08); overflow: hidden; display: none;" open>
-            <summary style="padding: 15px 20px; font-weight: 700; color: var(--chocolate, #4E342E); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; list-style: none;">
-                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.95rem;">
-                    <span>🤖</span>
-                    <span>AI AGENT PREMIUM ANALYTICS</span>
-                </div>
-                <span class="accordion-arrow" style="font-size: 0.8rem; color: var(--accent, #E67E22); transition: transform 0.3s ease;">▼</span>
-            </summary>
-            <div style="padding: 0 20px 20px 20px; border-top: 1px dashed rgba(230, 126, 34, 0.2); margin-top: 5px; padding-top: 15px;">
-                <div id="ai-analysis-content" style="font-size: 0.82rem; color: #5d4037; line-height: 1.5; text-align: left;">
-                    Menganalisis komposisi bahan baku...
-                </div>
-                <button type="button" id="btn-kirim-timer" style="margin-top: 12px; width: 100%; background: #e67e22; color: white; border: none; padding: 10px; font-weight: 700; border-radius: 50px; font-size: 0.78rem; cursor: pointer; display: none; box-shadow: 0 2px 6px rgba(230, 126, 34, 0.3);">
-                    ⏱️ KIRIM HASIL KE TIMER PROOFER
-                </button>
-            </div>
-        </details>
-
-        <!-- DINAMIS TAMBAH BAHAN -->
-        <!-- Tambah Komponen Manual Quick Chip - Premium Hybrid Version -->
-        
-        <div class="print-only-table-container" style="display: none;">
-            <table class="recipe-table"><tbody id="recipe-ingredients-body"></tbody></table>
-        </div>
-
-        <!-- FOLDER TABS KHUSUS UNTUK METODE PEMBUATAN -->
-        <div class="recipe-method-section" style="margin-top: 15px;">
-            <div class="method-tabs" style="display: flex; gap: 4px; margin-bottom: 10px; font-size: 0.75rem; font-weight: bold;">
-                <button type="button" id="btn-tab-bahan" data-onclick="gantiTabMetode('bahan')" style="flex: 1; padding: 10px; background: #4E342E; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">📋 Bahan & HPP</button>
-                <button type="button" id="btn-tab-cara" data-onclick="gantiTabMetode('cara')" style="flex: 1; padding: 10px; background: #F2D2A9; color: #4E342E; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">🍩 Cara Pembuatan</button>
-            </div>
-        </div>
-    
-        <!-- KONTEN TAB: BAHAN & HPP (Form Tambah Bahan dipindahkan ke sini) -->
-        <div class="method-content" id="method-bahan-content" style="display: flex; flex-direction: column;">
-            <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
-                <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
-                    📋 DAFTAR KOMPOSISI BAHAN ADONAN
-                </div>
-            <!-- DINAMIS TAMBAH BAHAN (Kini berada di dalam Tab Bahan & HPP) -->
-        
-
-        <!-- DAFTAR KOMPOSISI BAHAN UTAMA -->
-        
-            <div id="recipe-cards-container" style="padding: 6px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 6px;">
-                <!-- Komponen bahan dimuat secara dinamis via JavaScript -->
-            </div>
-            <details id="form-tambah-bahan" class="premium-ai-accordion" style="background: linear-gradient(135deg, #FFF9F0 0%, #FFF3E0 100%); border: 1px solid #F39C12; border-radius: 12px; margin-bottom: 14px; overflow: hidden; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.08);">
-            <summary style="padding: 14px 16px; font-weight: 700; color: #D35400; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; letter-spacing: 0.3px;">
-                <span style="display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #E67E22; color: white; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;">+</span> 
-                    Tambah Komponen Bahan Baru
-                </span>
-                <span class="accordion-arrow" style="font-size: 0.7rem; color: #E67E22; transition: transform 0.3s ease;">▼</span>
-            </summary>
-            
-            <div style="padding: 16px; background: #ffffff; border-top: 1px solid #FDEBD0; display: flex; flex-direction: column; gap: 12px;">
-                <!-- Baris 1: Nama & Kategori -->
-                <div style="display: flex; gap: 10px;">
-                    <div style="flex: 1.6;">
-                        <label for="new-ing-name" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Nama Bahan</label>
-                        <input type="text" id="new-ing-name" placeholder="Contoh: Cokelat Compound" style="width: 100%; padding: 10px 12px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; font-size: 0.82rem; background: #FAFAFA; color: #3E2723; outline: none;">
-                    </div>
-                    <div style="flex: 1.2;">
-                        <label for="new-ing-type" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Kategori</label>
-                        <select id="new-ing-type" style="width: 100%; padding: 9px 10px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; font-size: 0.8rem; background: #FAFAFA; color: #3E2723; height: 40px; outline: none;">
-                            <option value="Bahan Kering">🌾 Bahan Kering</option>
-                            <option value="Bahan Basah">💧 Bahan Basah</option>
-                            <option value="Bahan Pengembang">🔬 Pengembang</option>
-                            <option value="Bahan Tambahan">🧂 Tambahan</option>
-                            <option value="Bahan Toping">🍫 Toping</option>
-                            <option value="Kemasan">📦 Kemasan</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Baris 2: Rasio, Harga, Pack -->
-                <div style="display: flex; gap: 8px;">
-                    <div style="flex: 1;">
-                        <label for="new-ing-ratio" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Rasio (%)</label>
-                        <input type="number" id="new-ing-ratio" step="0.1" placeholder="0%" style="width: 100%; padding: 10px 8px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; text-align: center; font-size: 0.82rem; font-weight: bold; background: #FAFAFA; color: #3E2723; outline: none;">
-                    </div>
-                    <div style="flex: 1.3;">
-                        <label for="new-ing-price" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Harga Beli/kg</label>
-                        <input type="number" id="new-ing-price" placeholder="Rp 0" style="width: 100%; padding: 10px 8px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; text-align: center; font-size: 0.82rem; background: #FAFAFA; color: #3E2723; outline: none;">
-                    </div>
-                    <div style="flex: 1;">
-                        <label for="new-ing-pack" style="font-size: 0.7rem; font-weight: 700; color: #5D4037; display: block; margin-bottom: 4px; text-transform: uppercase;">Pack (gr)</label>
-                        <input type="number" id="new-ing-pack" placeholder="Gram" style="width: 100%; padding: 10px 8px; border: 1px solid #D7CCC8; border-radius: 8px; box-sizing: border-box; text-align: center; font-size: 0.82rem; background: #FAFAFA; color: #3E2723; outline: none;">
-                    </div>
-                </div>
-
-                <!-- Tombol Aksi -->
-                <div style="display: flex; gap: 10px; margin-top: 6px;">
-                    <button type="button" onclick="window.tambahBahanBakeryDinamis(true)" style="flex: 1; padding: 11px; background: #6D4C41; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.78rem;">➕ Simpan & Isi Lagi</button>
-                    <button type="button" onclick="window.tambahBahanBakeryDinamis(false)" style="flex: 1; padding: 11px; background: #E67E22; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.78rem;">Simpan & Tutup</button>
+            <div class="recipe-photo-section" style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <label style="font-size: 0.75rem; font-weight: 800; color: #8D6E63; text-transform: uppercase; letter-spacing: 0.5px;">📸 Dokumentasi Foto</label>
+                    <input type="file" id="recipe-photo-input" accept="image/*" multiple style="display: none;" onchange="handleRecipePhotosSelected(this)">
+                    <button type="button" onclick="document.getElementById('recipe-photo-input').click()" style="background: #E67E22; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">+ Unggah Foto</button>
                 </div>
                 
-                <div id="new-ing-error" style="color: #D32F2F; font-size: 0.72rem; text-align: center; font-weight: 600; display: none; background: #FFEBEE; padding: 6px; border-radius: 6px;"></div>
-            </div>
-        </details>
-
-            <button type="button" onclick="window.tambahBahanBaruDinamis()" style="width: 100%; background: #f1f5f9; color: #334155; border: 1px dashed #cbd5e1; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                ➕ Tambah Bahan Baru ke Resep
-            </button>
-        </div>
-    </div>
-
-    <!-- KONTEN TAB: CARA PEMBUATAN -->
-        <div class="method-content" id="method-steps-content" style="display: none; flex-direction: column;"> 
-            <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
-                
-                <!-- HEADER -->
-                <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem; letter-spacing: 0.3px;">
-                    📝 LANGKAH DEMI LANGKAH PRODUKSI
-                </div>
-                
-                <!-- WADAH SCROLL DAFTAR LANGKAH -->
-                <div id="container-daftar-langkah" style="padding: 12px; max-height: 500px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 12px;">
-                    <!-- Kartu langkah akan dimuat di sini -->
-                </div>
-
-                <!-- TOMBOL AKSI SEKARANG BERADA DI BAWAH DAFTAR LANGKAH -->
-                <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px 12px 12px; background: white;">
-                    <button type="button" onclick="muatTemplateLangkahDonat()" style="background: #f39c12; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
-                        ⚡ Template
-                    </button>
-                    <button type="button" onclick="tambahLangkahProduksi()" style="background: #27ae60; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px;">
-                        ➕ Tambah
-                    </button>
-                </div>
-                
-            </div>
-        </div>
-
-        <!-- ESTIMASI BIZ & SUMMARY HPP BOX -->
-        <div class="recipe-summary-box" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: #f8fafc; padding: 6px; border-radius: 8px; text-align: center; border: 1px solid #f1f5f9;">
-                <div>
-                    <span style="display:block; font-size:0.58rem; color:#64748b; font-weight:600;">NETTO ADONAN</span>
-                    <span id="sum-net-dough" style="font-size:0.8rem; font-weight:700; color:#4e342e;">0</span><small style="font-size:0.6rem; color:#64748b;"> g</small>
-                </div>
-                <div>
-                    <span style="display:block; font-size:0.58rem; color:#64748b; font-weight:600;">TOTAL TOPING</span>
-                    <span id="sum-net-topping" style="font-size:0.8rem; font-weight:700; color:#8e44ad;">0</span><small style="font-size:0.6rem; color:#64748b;"> g</small>
-                </div>
-                <div>
-                    <span style="display:block; font-size:0.58rem; color:#64748b; font-weight:600;">BERAT / PCS</span>
-                    <span id="sum-weight-pcs" style="font-size:0.8rem; font-weight:700; color:#e67e22;">0</span><small style="font-size:0.6rem; color:#64748b;"> g</small>
+                <div id="recipe-photo-grid" style="display: grid; grid-template-columns: 1.618fr 1fr; gap: 8px;">
+                    <div id="recipe-photo-slot-0" class="photo-slot" data-index="0" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 140px; cursor: pointer;" onclick="document.getElementById('recipe-photo-input').click()">
+                        <span style="font-size: 1.6rem; color: #94a3b8; margin-bottom: 4px;">📷</span>
+                        <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 700;">Foto Utama</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <div id="recipe-photo-slot-1" class="photo-slot" data-index="1" style="flex: 1; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 30px; cursor: pointer;">🖼️ <small>2</small></div>
+                        <div id="recipe-photo-slot-2" class="photo-slot" data-index="2" style="flex: 1; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 30px; cursor: pointer;">🖼️ <small>3</small></div>
+                        <div id="recipe-photo-slot-3" class="photo-slot" data-index="3" style="flex: 1; background: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 30px; cursor: pointer;">🖼️ <small>4</small></div>
+                    </div>
                 </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; color: #4E342E;">
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 3px;">
-                    <span style="color: #64748b;">Total Modal Bahan (1 Batch):</span>
-                    <span id="total-modal" style="font-weight: 700;">Rp 0</span>
+            <!-- INPUT ACUAN TEPUNG & PORSI -->
+            <div style="background: white; padding: 13px; border-radius: 13px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 10px; border: 1px solid #e2e8f0;">
+                <div style="flex: 1.618; min-width: 90px;">
+                    <label for="base-flour" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Tepung (gr)</label>
+                    <input type="number" id="base-flour" value="1000" min="100" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem; height: 38px;" oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
                 </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 3px;">
-                    <span style="color: #64748b; font-weight: 600;">Food Cost Bersih / Pcs (HPP):</span>
-                    <span id="sum-hpp-gabungan" style="font-weight: 800; color: #c0392b;">Rp 0</span>
+                <div style="flex: 1; min-width: 70px;">
+                    <label for="recipe-yield" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Porsi</label>
+                    <input type="number" id="recipe-yield" value="34" min="1" style="width: 100%; padding: 8px; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; text-align: center; font-weight: bold; color: #4E342E; font-size: 0.875rem; height: 38px;" oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
                 </div>
-                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px;">
-                    <span style="color: #64748b;">Estimasi Keuntungan Kotor:</span>
-                    <span id="profit-bersih" style="font-weight: 700; color: #27ae60;">Rp 0</span>
+                <div style="flex: 1.5; min-width: 110px;">
+                    <label for="input-harga-jual" style="font-size: 0.72rem; font-weight: bold; color: #8D6E63; display: block; margin-bottom: 4px; text-transform: uppercase;">Harga/Pcs</label>
+                    <div style="display: flex; align-items: center; border: 1px solid #F2D2A9; border-radius: 8px; box-sizing: border-box; background: #fff; padding: 0 8px; height: 38px;">
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #8D6E63; margin-right: 4px;">Rp</span>
+                        <input type="number" id="input-harga-jual" value="4500" step="100" style="width: 100%; border: none; font-size: 0.875rem; font-weight: 700; color: #4E342E; outline: none; background: transparent;" oninput="if(typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal()">
+                    </div>
                 </div>
             </div>
-            
-            <!-- Grid Input Harga Jual -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 6px; margin-top: 2px; align-items: center;">
-    
-                <!-- Kolom 1: Profit Margin -->
-                <div id="tab-profit-margin" class="folder-trigger" data-onclick="switchFolderTab('profit-margin')" style="background: rgb(244, 251, 247); border: 1px solid rgb(209, 242, 225); padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s;">
-                    <span style="display: block; font-size: 0.52rem; font-weight: 700; color: #218c4e;">PROFIT MARGIN</span>
-                    <span id="sum-profit-margin" style="font-size: 0.85rem; font-weight: 800; color: rgb(39, 174, 96);">51.8%</span>
+
+            <!-- FOLDER TABS: METODE PEMBUATAN & BAHAN -->
+            <div class="recipe-method-section" style="margin-top: 10px;">
+                <div class="method-tabs" style="display: flex; gap: 4px; margin-bottom: 10px; font-size: 0.75rem; font-weight: bold;">
+                    <button type="button" id="btn-tab-bahan" onclick="gantiTabMetode('bahan')" style="flex: 1; padding: 10px; background: #4E342E; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">📋 Bahan & HPP</button>
+                    <button type="button" id="btn-tab-cara" onclick="gantiTabMetode('cara')" style="flex: 1; padding: 10px; background: #F2D2A9; color: #4E342E; border: none; border-radius: 8px 8px 0 0; cursor: pointer;">🍩 Cara Pembuatan</button>
                 </div>
-
-                <!-- Kolom 2: Food Cost Ratio -->
-                <div id="tab-food-cost" class="folder-trigger" data-onclick="switchFolderTab('food-cost')" style="background: rgb(244, 251, 247); border: 1px solid rgb(209, 242, 225); padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s;">
-                    <span style="display: block; font-size: 0.52rem; font-weight: 700; color: #1e7e4a;">FOOD COST</span>
-                    <span id="food-cost-percent" style="font-size: 0.85rem; font-weight: 900; color: #34495e;">48.2%</span>
-                </div>
-
-                <!-- Kolom 3: Badge Overbudget -->
-                <div id="fc-badge" class="folder-trigger" data-onclick="switchFolderTab('unilever-badge')" style="display: flex; align-items: center; justify-content: center; font-size: 0.5rem; font-weight: 800; color: white; background: rgb(231, 76, 60); padding: 8px 4px; border-radius: 8px; text-transform: uppercase; text-align: center; cursor: pointer; transition: 0.2s;">🚨 OVERBUDGET</div>
-
             </div>
-
-            <!-- WADAH ARSIP FOLDER BERBENTUK KLIP/TUMPUK -->
-            <div id="biz-analysis-insight" style="margin-top: 12px; position: relative; font-family: inherit;">
-                <div class="folder-body" style="background: #fffdf9; border: 1px solid #e2d4c0; padding: 14px 16px; border-radius: 10px; font-size: 0.78rem; color: #3e2723; min-height: 80px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+        
+            <!-- KONTEN TAB 1: BAHAN & HPP -->
+            <div class="method-content" id="method-bahan-content" style="display: flex; flex-direction: column;">
+                <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
+                    <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem;">📋 DAFTAR KOMPOSISI BAHAN ADONAN</div>
                     
-                    <!-- Konten 1: Profit Margin (Default Tampil) -->
-                    <div id="page-profit-margin" style="display: block;">
-                        <div style="font-weight: 700; color: #27ae60; margin-bottom: 6px; font-size: 0.8rem;">📊 Analisis Profit Margin (AI Agent)</div>
-                        <div id="text-analysis-pm" style="line-height: 1.5; color: #4e342e;">Margin keuntungan sangat sehat di angka 60.8%. Harga jual memberikan bantalan laba yang sangat baik terhadap fluktuasi harga bahan baku.</div>
+                    <div id="recipe-cards-container" style="padding: 6px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                        <!-- Komponen bahan dimuat secara dinamis via JavaScript -->
+                    </div>
+                    
+                    <button type="button" onclick="window.tambahBahanBaruDinamis()" style="width: 100%; background: #f1f5f9; color: #334155; border: 1px dashed #cbd5e1; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        ➕ Tambah Bahan Baru ke Resep
+                    </button>
+                </div>
+            </div>
+
+            <!-- KONTEN TAB 2: CARA PEMBUATAN -->
+            <div class="method-content" id="method-steps-content" style="display: none; flex-direction: column;"> 
+                <div style="background: white; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); overflow: hidden; margin-bottom: 12px; border: 1px solid #e2e8f0;">
+                    <div style="background: #4E342E; color: white; padding: 10px 12px; font-weight: bold; font-size: 0.8rem;">📝 LANGKAH DEMI LANGKAH PRODUKSI</div>
+                    
+                    <div id="container-daftar-langkah" style="padding: 12px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Kartu langkah diproses via renderLangkahProduksi() -->
                     </div>
 
-                    <!-- Konten 2: Food Cost -->
-                    <div id="page-food-cost" style="display: none;">
-                        <div style="font-weight: 700; color: #e67e22; margin-bottom: 6px; font-size: 0.8rem;">💡 Rekomendasi Food Cost (AI Agent)</div>
-                        <div id="text-analysis-fc" style="line-height: 1.5; color: #4e342e;">Food Cost berada di kisaran 39.2%. Masih wajar, namun cari supplier alternatif untuk bahan berbiaya tinggi agar margin naik.</div>
-                    </div>
-
-                    <!-- Konten 3: Standar / Badge -->
-                    <div id="page-unilever-badge" style="display: none;">
-                        <div style="font-weight: 700; color: #2980b9; margin-bottom: 6px; font-size: 0.8rem;">🛡️ Analisis Standar Komersial (AI Agent)</div>
-                        <div id="text-analysis-ub" style="line-height: 1.5; color: #4e342e;">Berat adonan (59.7g per pcs) sudah ideal dan presisi untuk standar grade komersial masal, menghasilkan konsistensi proofing yang stabil.</div>
+                    <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px 12px 12px; background: white;">
+                        <button type="button" onclick="muatTemplateLangkahDonat()" style="background: #f39c12; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">⚡ Template</button>
+                        <button type="button" onclick="tambahLangkahProduksi()" style="background: #27ae60; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">➕ Tambah</button>
                     </div>
                 </div>
-
-                <!-- ANALISIS AI SUNGGUHAN (panggilan on-demand ke Gemini via /api/ai-analyze) -->
-                <button type="button" id="btn-ai-live-analysis" data-onclick="mintaAnalisisAISungguhan()" style="margin-top: 10px; width: 100%; background: linear-gradient(135deg, #8e44ad, #6c3483); color: white; border: none; padding: 9px; font-weight: 700; border-radius: 50px; font-size: 0.75rem; cursor: pointer; box-shadow: 0 2px 6px rgba(142, 68, 173, 0.3);">
-                    🤖 Analisis AI Mendalam (Live)
-                </button>
-                <div id="ai-live-result" style="display: none; margin-top: 10px; padding: 12px 14px; background: #f5f0fa; border: 1px solid #d9c6ea; border-radius: 10px; font-size: 0.78rem; line-height: 1.5; color: #3e2723;"></div>
             </div>
 
-        <!-- UTILITY ACTIONS BUTTONS -->
-        <div class="action-buttons-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-            <button type="button" class="btn" id="btn-simpan-resep" onclick="window.simpanResepKeDatabase()" style="background: #2c3e50; color: white; padding: 10px; border: none; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer;">💾 SIMPAN RESEP</button>
-            <button type="button"  data-onclick="window.eksekusiCetakPremium()" style="background: #c0392b; color: white; border: none; padding: 10px; font-weight: 700; border-radius: 8px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">📄 CETAK PDF</button>
-        </div>
-        <div class="sticky-bottom-action" style="position: fixed; bottom: 0; left: 0; width: 100%; box-sizing: border-box; padding: 15px 15px 25px 15px; z-index: 101; background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; pointer-events: none;">
-            <button id="btn-recipe-close-bottom" class="about-close-btn" style="margin: 0; width: 100%; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important; pointer-events: auto;">TUTUP KALKULATOR</button>
-        </div>
+            <!-- ESTIMASI BIZ & SUMMARY HPP BOX -->
+            <div class="recipe-summary-box" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: #f8fafc; padding: 6px; border-radius: 8px; text-align: center; border: 1px solid #f1f5f9;">
+                    <div><span style="display:block; font-size:0.58rem; color:#64748b; font-weight:600;">NETTO</span><span id="sum-net-dough" style="font-size:0.8rem; font-weight:700; color:#4e342e;">0</span>g</div>
+                    <div><span style="display:block; font-size:0.58rem; color:#64748b; font-weight:600;">TOPING</span><span id="sum-net-topping" style="font-size:0.8rem; font-weight:700; color:#8e44ad;">0</span>g</div>
+                    <div><span style="display:block; font-size:0.58rem; color:#64748b; font-weight:600;">BERAT/PCS</span><span id="sum-weight-pcs" style="font-size:0.8rem; font-weight:700; color:#e67e22;">0</span>g</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; color: #4E342E;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 3px;">
+                        <span style="color: #64748b;">Total Modal Bahan:</span> <span id="total-modal" style="font-weight: 700;">Rp 0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 3px;">
+                        <span style="color: #64748b; font-weight: 600;">Food Cost Bersih / Pcs (HPP):</span> <span id="sum-hpp-gabungan" style="font-weight: 800; color: #c0392b;">Rp 0</span>
+                    </div>
+                </div>
+            </div>
 
-        <div id="recipe-list-modal" class="page-modal" style="z-index: 200;">
-            <div style="padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
-                <h3 style="margin: 0; color: var(--chocolate); font-size: 1rem;">📂 Resep Tersimpan di Perangkat</h3>
-                <button type="button"  data-onclick="window.tutupDaftarResepTersimpan()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--chocolate);">&times;</button>
+            <!-- ANALISIS BISNIS & AI -->
+            <div id="premium-ai-analysis-box" class="recipe-summary-box" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.03); margin-bottom: 12px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 6px; margin-top: 2px; align-items: center;">
+                    <div id="tab-profit-margin" class="folder-trigger" data-onclick="switchFolderTab('profit-margin')" style="background: #f4fbf7; border: 1px solid #d1f2e1; padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s;">
+                        <span style="display: block; font-size: 0.52rem; font-weight: 700; color: #218c4e;">PROFIT MARGIN</span>
+                        <span id="sum-profit-margin" style="font-size: 0.85rem; font-weight: 800; color: #27ae60; cursor: pointer;">0.0%</span>
+                    </div>
+                    <div id="tab-food-cost" class="folder-trigger" data-onclick="switchFolderTab('food-cost')" style="background: #f4fbf7; border: 1px solid #d1f2e1; padding: 6px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s;">
+                        <span style="display: block; font-size: 0.52rem; font-weight: 700; color: #1e7e4a;">FOOD COST</span>
+                        <span id="food-cost-percent" style="font-size: 0.85rem; font-weight: 900; color: #34495e; cursor: pointer;">0.0%</span>
+                    </div>
+                    <div id="fc-badge" class="folder-trigger" data-onclick="switchFolderTab('unilever-badge')" style="display: flex; align-items: center; justify-content: center; min-height: 30px; font-size: 0.5rem; font-weight: 800; color: white; background: #95a5a6; padding: 8px 4px; border-radius: 8px; text-transform: uppercase; text-align: center; cursor: pointer; transition: 0.2s;">ℹ️ BELUM ADA DATA</div>
+                </div>
+                <div id="biz-analysis-insight" style="margin-top: 12px; position: relative; font-family: inherit;">
+                    <div class="folder-body" style="background: #fffdf9; border: 1px solid #e2d4c0; padding: 14px 16px; border-radius: 10px; font-size: 0.78rem; color: #3e2723; min-height: 80px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                        <div id="page-profit-margin" style="display: block;">
+                            <div style="font-weight: 700; color: #27ae60; margin-bottom: 6px; font-size: 0.8rem;">📊 Analisis Profit Margin (AI Agent)</div>
+                            <div id="text-analysis-pm" style="line-height: 1.5; color: #4e342e;">Masukkan bahan dan harga jual untuk melihat analisis margin.</div>
+                        </div>
+                        <div id="page-food-cost" style="display: none;">
+                            <div style="font-weight: 700; color: #e67e22; margin-bottom: 6px; font-size: 0.8rem;">💡 Rekomendasi Food Cost (AI Agent)</div>
+                            <div id="text-analysis-fc" style="line-height: 1.5; color: #4e342e;">Masukkan bahan dan harga jual untuk melihat rekomendasi food cost.</div>
+                        </div>
+                        <div id="page-unilever-badge" style="display: none;">
+                            <div style="font-weight: 700; color: #2980b9; margin-bottom: 6px; font-size: 0.8rem;">🛡️ Analisis Standar Komersial (AI Agent)</div>
+                            <div id="text-analysis-ub" style="line-height: 1.5; color: #4e342e;">Berat per pcs akan dianalisis setelah komposisi bahan dihitung.</div>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-ai-live-analysis" onclick="mintaAnalisisAISungguhan()" style="margin-top: 10px; width: 100%; background: linear-gradient(135deg, #8e44ad, #6c3483); color: white; border: none; padding: 9px; font-weight: 700; border-radius: 50px; font-size: 0.75rem; cursor: pointer; box-shadow: 0 2px 6px rgba(142, 68, 173, 0.3);">🤖 Analisis AI Mendalam (Live)</button>
+                    <div id="ai-live-result" style="display: none; margin-top: 10px; padding: 12px 14px; background: #f5f0fa; border: 1px solid #d9c6ea; border-radius: 10px; font-size: 0.78rem; line-height: 1.5; color: #3e2723;"></div>
+                </div>
             </div>
-            <div id="recipe-list-container" style="flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 15px;"></div>
-            <div style="padding: 12px 15px; border-top: 1px solid rgba(0,0,0,0.06); flex-shrink: 0;">
-                <button type="button" class="about-close-btn" style="margin: 0; width: 100%;"  data-onclick="window.tutupDaftarResepTersimpan()">TUTUP</button>
-            </div>
+
         </div>
     </div>
 </div>
-    </div>
-</div>
-<!-- PERBAIKAN: 2 tag </div> di atas ini SENGAJA ditambahkan untuk menutup
-     <div class="recipe-content"> (dibuka di baris ~3006) dan
-     <div id="recipe"> (dibuka di baris ~2988).
-     Sebelumnya kedua div ini tidak pernah ditutup, sehingga <div id="tips">
-     di bawah ini ikut "tersembunyi" di dalam halaman Resep saat disembunyikan. -->
-
-<!-- Floating Action Button (FAB) -->
-<!--<button id="fab-tambah-komponen" class="fab-btn" aria-label="Tambah Komponen Baru">
-  <span>➕</span>
-</button>
-
-<!-- Bottom Sheet Modal Container -->
-<!--<div id="bottom-sheet-modal" class="bottom-sheet">
-  <div class="bottom-sheet-overlay"></div>
-  <div class="bottom-sheet-content">
-    <!-- Handle Bar untuk estetika / gesture drag mobile --><!--
-    <div class="bottom-sheet-handle"></div>
-  -->
-<!--    <div class="bottom-sheet-header">
-      <h3>➕ Tambah Komponen Bahan Baru</h3>
-      <button id="close-bottom-sheet" class="close-btn">&times;</button>
-    </div>
-    
-    <div class="bottom-sheet-body">
-      <!-- Pindahkan formulir input Anda ke dalam sini --><!--
-      <div class="form-group-row">
-        <div class="input-box">
-          <label>Nama Komponen / Bahan</label>
-          <input type="text" id="new-nama" placeholder="Contoh: Susu Bubuk full cream..." list="daftar-bahan-baku">
-        </div>
-      </div>
-      <div class="form-group-row total-grid">
-        <div class="input-box">
-          <label>Rasio (%)</label>
-          <input type="number" id="new-rasio" step="0.1" placeholder="0.0">
-        </div>
-        <div class="input-box">
-          <label>Harga / Kg (Rp)</label>
-          <input type="number" id="new-harga" step="100" placeholder="0">
-        </div>
-      </div>
-      <button type="button" id="btn-submit-komponen" class="btn-primary-block">Masukkan ke Adonan</button>
-    </div>
-  </div>
-</div>
--->
 
 <!-- ========================================== -->
 <!-- HALAMAN TIPS & SAINS FERMENTASI            -->
@@ -3961,6 +3779,11 @@ body {
 // (Deklarasi function di-hoist JS, jadi urutannya di sini aman
 // diubah tanpa memengaruhi perilaku aplikasi.)
 // ============================================================
+
+<!-- ================================================================= -->
+<!-- SKRIP JAVASCRIPT: LOGIKA NAVIGASI & MANAJEMEN STATE (OPSI 1 HALAMAN RESEP)       -->
+<!-- ================================================================= -->
+let bakeryIngredients = [];
 
 // ------------------------------------------------------------
 // INISIALISASI APLIKASI
@@ -4761,7 +4584,15 @@ class ProgressionSystem {
         // Penguncian/Membuka Fitur AI Analytics di Halaman Resep
         const aiBox = document.getElementById('premium-ai-analysis-box');
         if (aiBox) {
-            aiBox.style.display = unlocked.includes('ai_analytics') ? 'block' : 'none';
+            // Ringkasan Profit Margin, Food Cost, dan badge adalah bagian inti
+            // kalkulator, sehingga tidak boleh ikut hilang saat AI premium terkunci.
+            aiBox.style.display = 'block';
+            const liveAnalysisButton = document.getElementById('btn-ai-live-analysis');
+            if (liveAnalysisButton) {
+                liveAnalysisButton.disabled = false;
+                liveAnalysisButton.title = 'Jalankan analisis AI mendalam';
+                liveAnalysisButton.style.opacity = '1';
+            }
         }
 
         // Penguncian Tombol Bluetooth Sensor
@@ -7668,6 +7499,83 @@ function playAlarmSound() {
 // =========================================================
 // FUNGSI RESEP / MANAJEMEN RESEP
 // =========================================================
+// 1. FUNGSI NAVIGASI ANTAR LAYAR (MASTER VS DETAIL)
+function bukaMasterViewResep() {
+    const elMaster = document.getElementById('recipe-master-view');
+    const elDetail = document.getElementById('recipe-detail-view');
+    if (elMaster) elMaster.style.display = 'flex';
+    if (elDetail) elDetail.style.display = 'none';
+    
+    // Refresh list saat kembali ke master view
+    if (typeof tampilkanDaftarResepTersimpan === 'function') {
+        tampilkanDaftarResepTersimpan();
+    }
+}
+
+function kembaliKeMasterView() {
+    if (currentEditingRecipeId) {
+        if (!confirm("Keluar dari editor? Perubahan yang belum disimpan mungkin akan hilang.")) return;
+    }
+    bukaMasterViewResep();
+}
+
+function bukaDetailResepBaru() {
+    currentEditingRecipeId = null;
+    document.getElementById('recipe-save-name').value = '';
+    document.getElementById('base-flour').value = '1000';
+    document.getElementById('recipe-yield').value = '34';
+    document.getElementById('input-harga-jual').value = '4500';
+    activeRecipeSteps = [];
+    
+    if (typeof renderLangkahProduksi === 'function') renderLangkahProduksi();
+
+    // Transisi ke Layar Detail
+    document.getElementById('recipe-master-view').style.display = 'none';
+    document.getElementById('recipe-detail-view').style.display = 'flex';
+}
+
+function bukaDetailResepEksisting(resep) {
+    currentEditingRecipeId = resep.id;
+    terapkanResepKeKalkulator(resep);
+    
+    if (resep.langkahProduksi && Array.isArray(resep.langkahProduksi)) {
+        activeRecipeSteps = [...resep.langkahProduksi];
+    } else {
+        activeRecipeSteps = [];
+    }
+    if (typeof renderLangkahProduksi === 'function') renderLangkahProduksi();
+
+    const nameInput = document.getElementById('recipe-save-name');
+    if (nameInput) nameInput.value = resep.nama || '';
+
+    // Transisi ke Layar Detail
+    document.getElementById('recipe-master-view').style.display = 'none';
+    document.getElementById('recipe-detail-view').style.display = 'flex';
+}
+
+function gantiTabMetode(target) {
+    const btnBahan = document.getElementById('btn-tab-bahan');
+    const btnCara = document.getElementById('btn-tab-cara');
+    const contentBahan = document.getElementById('method-bahan-content');
+    const contentCara = document.getElementById('method-steps-content');
+
+    if (target === 'bahan') {
+        btnBahan.style.background = '#4E342E';
+        btnBahan.style.color = 'white';
+        btnCara.style.background = '#F2D2A9';
+        btnCara.style.color = '#4E342E';
+        contentBahan.style.display = 'flex';
+        contentCara.style.display = 'none';
+    } else {
+        btnCara.style.background = '#4E342E';
+        btnCara.style.color = 'white';
+        btnBahan.style.background = '#F2D2A9';
+        btnBahan.style.color = '#4E342E';
+        contentCara.style.display = 'flex';
+        contentBahan.style.display = 'none';
+    }
+}
+
 // Fungsi untuk mereset form kalkulator resep menjadi baru/bersih
 function buatResepBaruForm() {
     // Konfirmasi jika sedang mengedit resep aktif agar tidak kehilangan data tidak sengaja
@@ -7700,6 +7608,25 @@ function buatResepBaruForm() {
         alert("Lembar resep baru disiapkan.");
     }
 }
+
+// 1. TAMBAHKAN FUNGSI INI DI LUAR (Global Scope) AGAR TOMBOL TITIK 3 BISA DIKLIK
+function toggleRecipeMenu(event) {
+    event.stopPropagation();
+    document.querySelectorAll('.recipe-dropdown').forEach(dropdown => {
+        if (dropdown !== event.currentTarget.nextElementSibling) dropdown.style.display = 'none';
+    });
+    const dropdown = event.currentTarget.nextElementSibling;
+    dropdown.style.display = dropdown.style.display === 'none' ? 'flex' : 'none';
+}
+
+// Tutup dropdown jika area luar diklik
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.recipe-menu-container')) {
+        document.querySelectorAll('.recipe-dropdown').forEach(dropdown => {
+            dropdown.style.display = 'none';
+        });
+    }
+});
 
 // ------------------------------------------------------------
 // FITUR FOTO RESEP & BAHAN (GOLDEN RATIO LAYOUT)
@@ -7824,6 +7751,90 @@ async function simpanResepKeDatabase() {
     }
 }
 
+// 2. FUNGSI RENDER LIST DI MASTER VIEW (DENGAN KEBAB MENU TITIK TIGA)
+async function tampilkanDaftarResepTersimpan() {
+    const container = document.getElementById('recipe-list-container');
+    if (!container) return;
+
+    // Pertahankan card Buat Resep Baru di atas
+    const cardBaruHTML = `
+        <div onclick="bukaDetailResepBaru()" style="background: #ffffff; border: 2px dashed #E67E22; border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 2px 6px rgba(230,126,34,0.05);">
+            <span style="font-size: 1.4rem; font-weight: bold; color: #E67E22;">+</span>
+            <strong style="font-size: 0.9rem; color: #E67E22;">Buat Resep Baru</strong>
+        </div>
+    `;
+
+    let resepList = readRecipesFromStorage();
+
+    // Sinkronisasi ringan dengan cloud Supabase jika online
+    if (navigator.onLine && typeof supabase !== 'undefined') {
+        try {
+            const { data, error } = await supabase.from('recipes').select('*');
+            if (!error && data && data.length > 0) {
+                resepList = data.map(item => item.details || { id: item.id, nama: item.name, ...item });
+                await simpanDaftarResepKePerangkat(resepList);
+            }
+        } catch (err) {
+            console.warn("Gagal sinkronisasi cloud ringkas:", err);
+        }
+    }
+
+    if (!resepList || resepList.length === 0) {
+        container.innerHTML = cardBaruHTML + '<div style="text-align:center; padding:30px; color:#94a3b8; font-style:italic;">Belum ada resep tersimpan.</div>';
+        return;
+    }
+
+    container.innerHTML = cardBaruHTML;
+
+    resepList.forEach((resep) => {
+        const card = document.createElement('div');
+        card.style.cssText = "background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);";
+        
+        card.innerHTML = `
+            <div>
+                <strong style="font-size:0.9rem; color:var(--chocolate); display:block; margin-bottom:2px;">${escapeHtmlResep(resep.nama || 'Tanpa Nama')}</strong>
+                <small style="color:#64748b; font-size:0.72rem;">Terigu: ${resep.tepungUtama || 1000}g | Porsi: ${resep.targetYield || 1} pcs</small><br>
+                <small style="color:#94a3b8; font-size:0.68rem;">Disimpan: ${formatTanggalResep ? formatTanggalResep(resep.waktuSimpan) : '-'}</small>
+            </div>
+            <div style="position: relative;" class="recipe-menu-container">
+                <button type="button" class="btn-menu-toggle" onclick="toggleRecipeMenu(event)" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--chocolate); padding: 0 8px; font-weight: bold;">&#8942;</button>
+                <div class="recipe-dropdown" style="display: none; position: absolute; right: 0; top: 100%; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 50; min-width: 130px; overflow: hidden; flex-direction: column; margin-top: 4px;">
+                    <button type="button" class="btn-muat-satuan" style="background:none; color:var(--chocolate); border:none; border-bottom:1px solid #f1f5f9; padding:10px 12px; font-size:0.75rem; font-weight:bold; text-align:left; cursor:pointer; width:100%;">✏️ Muat / Edit</button>
+                    <button type="button" class="btn-salin-satuan" style="background:none; color:#3498db; border:none; border-bottom:1px solid #f1f5f9; padding:10px 12px; font-size:0.75rem; font-weight:bold; text-align:left; cursor:pointer; width:100%;">📋 Salin</button>
+                    <button type="button" class="btn-hapus-satuan" style="background:none; color:#e74c3c; border:none; padding:10px 12px; font-size:0.75rem; font-weight:bold; text-align:left; cursor:pointer; width:100%;">🗑️ Hapus</button>
+                </div>
+            </div>
+        `;
+
+        // Tombol Muat / Edit (Beralih ke Detail View)
+        card.querySelector('.btn-muat-satuan').addEventListener('click', () => {
+            bukaDetailResepEksisting(resep);
+        });
+
+        // Tombol Salin
+        card.querySelector('.btn-salin-satuan').addEventListener('click', async () => {
+            const duplicated = {
+                ...resep,
+                id: "resep_" + Date.now(),
+                nama: `${resep.nama} (Salinan)`,
+                waktuSimpan: new Date().toISOString()
+            };
+            resepList.unshift(duplicated);
+            await simpanDaftarResepKePerangkat(resepList);
+            tampilkanDaftarResepTersimpan();
+        });
+
+        // Tombol Hapus
+        card.querySelector('.btn-hapus-satuan').addEventListener('click', async () => {
+            if (confirm(`Hapus resep "${resep.nama}" secara permanen?`)) {
+                await hapusResepBerdasarkanId(resep.id);
+                tampilkanDaftarResepTersimpan();
+            }
+        });
+
+        container.appendChild(card);
+    });
+}
 // ==========================================
 // FUNGSI SINKRONISASI DATA OFFLINE KE SUPABASE
 // ==========================================
@@ -8055,9 +8066,9 @@ async function bacaLegacyResepTunggal() {
 }
 
 async function bacaSemuaResepDariPerangkat() {
-    let raw = localStorage.getItem(RESEP_LIST_KEY);
+    let raw = localStorage.getItem('premium_saved_recipes');
     if (window.Capacitor) {
-        const { value } = await Preferences.get({ key: RESEP_LIST_KEY });
+        const { value } = await Preferences.get({ key: 'premium_saved_recipes' });
         if (value) raw = value;
     }
     if (raw) {
@@ -8088,16 +8099,40 @@ async function bacaSemuaResepDariPerangkat() {
 async function simpanDaftarResepKePerangkat(daftarResep) {
     const jsonString = JSON.stringify(daftarResep);
     try {
-        localStorage.setItem(RESEP_LIST_KEY, jsonString);
+        localStorage.setItem('premium_saved_recipes', jsonString);
     } catch (err) {
+        // Handle QuotaExceededError by clearing older data or notifying user
+        if (err.name === 'QuotaExceededError') {
+            console.error('localStorage penuh, mencoba cleanup data lama...');
+            try {
+                // Remove oldest recipes if quota exceeded
+                if (daftarResep.length > 0) {
+                    const trimmedRecipes = daftarResep.slice(Math.max(0, daftarResep.length - 5));
+                    localStorage.setItem('premium_saved_recipes', JSON.stringify(trimmedRecipes));
+                    console.warn('Menyimpan hanya 5 resep terbaru karena storage penuh.');
+                    if (typeof NotifSystem !== 'undefined') {
+                        NotifSystem.tambah('sistem', '⚠️ Storage Penuh', 'Hanya 5 resep terbaru yang disimpan.', '💾');
+                    }
+                    return;
+                }
+            } catch (trimErr) {
+                console.error('Gagal trim data:', trimErr);
+            }
+        }
         console.warn('Gagal menyimpan ke localStorage:', err);
-        // lanjutkan untuk mencoba Preferences jika tersedia
     }
     if (window.Capacitor && typeof Preferences !== 'undefined') {
         try {
-            await Preferences.set({ key: RESEP_LIST_KEY, value: jsonString });
+            await Preferences.set({ key: 'premium_saved_recipes', value: jsonString });
         } catch (err) {
-            console.warn('Gagal menyimpan ke Preferences native:', err);
+            if (err.name === 'QuotaExceededError') {
+                console.error('Preferences juga penuh, data tidak bisa disimpan');
+                if (typeof NotifSystem !== 'undefined') {
+                    NotifSystem.tambah('sistem', '🔴 Penyimpanan Penuh', 'Tidak dapat menyimpan data resep lebih lanjut.', '❌');
+                }
+            } else {
+                console.warn('Gagal menyimpan ke Preferences native:', err);
+            }
         }
     }
 }
@@ -8158,6 +8193,7 @@ function terapkanResepKeKalkulator(resep) {
     }
     if (resep.bahanBaku && Array.isArray(resep.bahanBaku)) {
         bakeryIngredients = JSON.parse(JSON.stringify(resep.bahanBaku));
+        window.bakeryIngredients = bakeryIngredients;
         if (typeof renderRecipeTableBakuTotal === 'function') {
             renderRecipeTableBakuTotal();
         }
@@ -8180,7 +8216,7 @@ async function tampilkanDaftarResepTersimpan() {
     modalList.removeAttribute('inert');
     container.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">Memuat daftar resep...</div>';
 
-    let resepList = readRecipesFromStorage();
+    let resepList = await bacaSemuaResepDariPerangkat();
 
     if (navigator.onLine) {
         try {
@@ -8312,21 +8348,24 @@ async function muatDataResep() {
     }
 }
 
-// Fungsi untuk menyimpan atau memperbarui resep ke Cloud Supabase
+// Fungsi untuk menyinkronkan resep dari Cloud Supabase ke lokal
 async function sinkronisasiAwalDariSupabase() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
     try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            console.log('Pengguna tidak terautentikasi, skip sinkronisasi cloud');
+            return;
+        }
+
         const { data, error } = await supabase.from('recipes').select('*').eq('user_id', user.id);
         if (error) throw error;
 
         if (data && data.length > 0) {
-            let resepLokal = readRecipesFromStorage() || [];
+            let resepLokal = await bacaSemuaResepDariPerangkat() || [];
             let adaPerubahan = false;
             
             data.forEach(serverRow => {
-                const resepServer = serverRow.details;
+                const resepServer = serverRow.details || serverRow;
                 const idxLokal = resepLokal.findIndex(r => r.id === resepServer.id);
                 
                 if (idxLokal >= 0) {
@@ -8355,17 +8394,21 @@ async function sinkronisasiAwalDariSupabase() {
 async function hapusResepBerdasarkanId(id) {
     try {
         // A. Filter dan hapus spesifik berdasarkan ID dari penyimpanan lokal
-        let list = readRecipesFromStorage();
-        list = list.filter(r => r.id !== id);
+        let list = await bacaSemuaResepDariPerangkat();
+        list = (list || []).filter(r => r.id !== id);
         await simpanDaftarResepKePerangkat(list);
 
         // B. Hapus spesifik baris data dari tabel Supabase berdasarkan ID
         if (navigator.onLine) {
-            const { error } = await supabase.from('recipes').delete().eq('id', id);
-            if (error) {
-                console.warn("Gagal hapus di Supabase:", error.message);
-            } else {
-                console.log(`Resep ID ${id} berhasil dihapus dari Supabase.`);
+            try {
+                const { error } = await supabase.from('recipes').delete().eq('id', id);
+                if (error) {
+                    console.warn("Gagal hapus di Supabase:", error.message);
+                } else {
+                    console.log(`Resep ID ${id} berhasil dihapus dari Supabase.`);
+                }
+            } catch (cloudErr) {
+                console.warn("Cloud delete bypassed:", cloudErr);
             }
         }
     } catch (err) {
@@ -8493,47 +8536,51 @@ function readRecipesFromStorage() {
     return Array.isArray(window.recipes) ? window.recipes : [];
 }
 
-// 2. Eksekutor Pembaruan Lokal
+// 2. Eksekutor Pembaruan Lokal (Real-time sync)
 async function tanganiPerubahanResepRealtime(payload) {
-    const dataServer = payload.new;
-    const tipeAksi = payload.eventType; // INSERT, UPDATE, atau DELETE
+    try {
+        const dataServer = payload.new || payload.old;
+        const tipeAksi = payload.eventType; // INSERT, UPDATE, atau DELETE
 
-    // Baca data lokal saat ini menggunakan fungsi bawaan Anda
-    let resepLokal = readRecipesFromStorage();
+        // Baca data lokal saat ini menggunakan fungsi async
+        let resepLokal = await bacaSemuaResepDariPerangkat() || [];
 
-    if (tipeAksi === 'INSERT' || tipeAksi === 'UPDATE') {
-        const index = resepLokal.findIndex(r => r.id === dataServer.id);
+        if (tipeAksi === 'INSERT' || tipeAksi === 'UPDATE') {
+            const index = resepLokal.findIndex(r => r.id === dataServer.id);
+            
+            // Ambil objek detail resep utuh dari server
+            const resepUtuh = dataServer.details || dataServer;
+
+            if (index >= 0) {
+                resepLokal[index] = resepUtuh; // Timpa dengan data baru (Update)
+            } else {
+                resepLokal.push(resepUtuh); // Tambahkan data baru (Insert)
+            }
+        } else if (tipeAksi === 'DELETE') {
+            const dataLama = payload.old || dataServer;
+            resepLokal = resepLokal.filter(r => r.id !== dataLama.id);
+        }
+
+        // Simpan paksa ke IndexedDB / Preferences
+        await simpanDaftarResepKePerangkat(resepLokal);
+
+        // 3. Reaktivitas UI (Hot Reload)
+        window.recipes = resepLokal; // Update variabel global
         
-        // Ambil objek detail resep utuh dari server
-        const resepUtuh = dataServer.details || dataServer;
-
-        if (index >= 0) {
-            resepLokal[index] = resepUtuh; // Timpa dengan data baru (Update)
-        } else {
-            resepLokal.push(resepUtuh); // Tambahkan data baru (Insert)
+        // Jika modal daftar resep sedang terbuka, refresh tampilannya
+        const modalDaftarResep = document.getElementById('recipe-list-modal');
+        if (modalDaftarResep && modalDaftarResep.classList.contains('active')) {
+            if (typeof window.tampilkanDaftarResepTersimpan === 'function') {
+                await window.tampilkanDaftarResepTersimpan();
+            }
         }
-    } else if (tipeAksi === 'DELETE') {
-        const dataLama = payload.old;
-        resepLokal = resepLokal.filter(r => r.id !== dataLama.id);
-    }
 
-    // Simpan paksa ke IndexedDB / Preferences menggunakan fungsi bawaan Anda
-    await simpanDaftarResepKePerangkat(resepLokal);
-
-    // 3. Reaktivitas UI (Hot Reload)
-    window.recipes = resepLokal; // Update variabel global
-    
-    // Jika modal daftar resep sedang terbuka, refresh tampilannya
-    const modalDaftarResep = document.getElementById('recipe-list-modal');
-    if (modalDaftarResep && modalDaftarResep.classList.contains('active')) {
-        if (typeof window.tampilkanDaftarResepTersimpan === 'function') {
-            window.tampilkanDaftarResepTersimpan();
+        // Berikan notifikasi halus di UI
+        if (typeof NotifSystem !== 'undefined') {
+            NotifSystem.tambah('sistem', 'Resep Tersinkronisasi', 'Data resep baru saja diperbarui dari server.', '🔄');
         }
-    }
-
-    // Berikan notifikasi halus di UI
-    if (typeof NotifSystem !== 'undefined') {
-        NotifSystem.tambah('sistem', 'Resep Tersinkronisasi', 'Data resep baru saja diperbarui dari server.', '🔄');
+    } catch (err) {
+        console.error("Gagal menangani perubahan realtime:", err);
     }
 }
 
@@ -8976,14 +9023,17 @@ function renderRecipeTableBakuTotal() {
     const container = document.getElementById('recipe-ingredients-body');
     const cardsContainer = document.getElementById('recipe-cards-container'); // Ambil kontainer kartu baru
     
-    if (!tbody) return;
+    // Tampilan mobile hanya memakai #recipe-cards-container; tbody merupakan
+    // elemen legacy untuk PDF dan memang tidak selalu ada di DOM aplikasi.
+    if (!cardsContainer && !tbody) return;
 
-    if (!container) {
+    if (!container && !cardsContainer) {
         console.warn("Elemen container untuk tabel bahan baku tidak ditemukan di DOM.");
         return; 
     }
 
-    container.innerHTML = '';
+    if (container) container.innerHTML = '';
+    if (cardsContainer) cardsContainer.innerHTML = '';
 
     let htmlContentTable = ""; // Untuk menampung HTML format tabel cetak
     let htmlContentCards = ""; // Untuk menampung HTML format kartu mobile
@@ -9111,11 +9161,11 @@ function renderRecipeTableBakuTotal() {
     });
 
     // Masukkan hasil kompilasi string HTML ke wadahnya masing-masing
-    tbody.innerHTML = htmlContentTable;
+    if (tbody) tbody.innerHTML = htmlContentTable;
 
     if (cardsContainer) {
         if (totalBahanDitambahkan === 0) {
-            container.innerHTML = `
+            cardsContainer.innerHTML = `
             <div style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; text-align: center; padding: 25px; color: #64748b;">
                 <p style="margin: 0 0 8px 0; font-size: 0.85rem; font-weight: 500;">Belum ada bahan baku yang ditambahkan.</p>
                 <button type="button" onclick="document.getElementById('form-tambah-bahan').open = true; document.getElementById('new-ing-name').focus();" style="background: #E67E22; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">+ Tambah Bahan Pertama</button>
@@ -9849,7 +9899,7 @@ Gunakan struktur ini:
 
 ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul dengan titik dua (contoh: "Potensi Masalah:"), gunakan simbol (-) HANYA untuk list, dan angka (1.) HANYA untuk urutan langkah.`;
 
-        const response = await fetch(getVercelApiUrl('/api/ai-analyze'), { 
+        const response = await fetch(resolveApiUrl('/api/ai-analyze'), { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ promptContext: aiPrompt }) 
@@ -13080,6 +13130,15 @@ window.switchTab = function(tabId) {
         if (recipeEl) {
             recipeEl.style.display = 'flex';
         }
+        const recipeMaster = document.getElementById('recipe-master-view');
+        const recipeDetail = document.getElementById('recipe-detail-view');
+        if (recipeMaster && recipeDetail) {
+            recipeMaster.style.display = 'flex';
+            recipeDetail.style.display = 'none';
+        }
+        if (typeof window.tampilkanDaftarResepTersimpan === 'function') {
+            window.tampilkanDaftarResepTersimpan();
+        }
         if (typeof renderRecipeTableBakuTotal === 'function') {
             renderRecipeTableBakuTotal();
         }
@@ -13742,13 +13801,28 @@ window.hubungkanKeSensorBluetoothProofer = async function() {
  * Fungsi untuk mengatur perpindahan tab internal folder bertumpuk (Business Analysis Insight)
  * @param {string} tabId - Nama tab target ('profit-margin', 'food-cost', atau 'unilever-badge')
  */
+window.switchFolderTab = function(tabId) {
+    const pages = {
+        'profit-margin': 'page-profit-margin',
+        'food-cost': 'page-food-cost',
+        'unilever-badge': 'page-unilever-badge'
+    };
+    Object.values(pages).forEach(id => {
+        const page = document.getElementById(id);
+        if (page) page.style.display = 'none';
+    });
+    const selectedPage = document.getElementById(pages[tabId] || pages['profit-margin']);
+    if (selectedPage) selectedPage.style.display = 'block';
+};
+
 document.addEventListener("DOMContentLoaded", function() {
     
     // Fungsi untuk menyembunyikan semua teks keterangan
     function hideAllInsights() {
-        document.getElementById('page-profit-margin').style.display = 'none';
-        document.getElementById('page-food-cost').style.display = 'none';
-        document.getElementById('page-unilever-badge').style.display = 'none';
+        ['page-profit-margin', 'page-food-cost', 'page-unilever-badge'].forEach(id => {
+            const page = document.getElementById(id);
+            if (page) page.style.display = 'none';
+        });
     }
 
     // 1. Menangkap klik dari elemen #sum-profit-margin milik Anda
@@ -13756,8 +13830,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (btnProfitMargin) {
         btnProfitMargin.style.cursor = 'pointer'; // Menambahkan efek pointer agar jelas bisa diklik
         btnProfitMargin.addEventListener('click', function() {
-            hideAllInsights();
-            document.getElementById('page-profit-margin').style.display = 'block';
+            window.switchFolderTab('profit-margin');
         });
     }
 
@@ -13766,8 +13839,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (btnFoodCost) {
         btnFoodCost.style.cursor = 'pointer';
         btnFoodCost.addEventListener('click', function() {
-            hideAllInsights();
-            document.getElementById('page-food-cost').style.display = 'block';
+            window.switchFolderTab('food-cost');
         });
     }
 
@@ -13776,8 +13848,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (btnBadge) {
         btnBadge.style.cursor = 'pointer';
         btnBadge.addEventListener('click', function() {
-            hideAllInsights();
-            document.getElementById('page-unilever-badge').style.display = 'block';
+            window.switchFolderTab('unilever-badge');
         });
     }
 
@@ -14394,9 +14465,6 @@ if (typeof MAX_RESEP_TERSIMPAN === 'undefined') {
 // ==========================================
 // 4. FUNGSI EKSPOR & IMPOR FILE JSON
 // ==========================================
-// ==========================================
-// 1. FUNGSI EKSPOR (CADANGKAN RESEP)
-// ==========================================
 window.eksporSemuaResep = async function() {
     try {
         let dataResepArray = [];
@@ -14571,14 +14639,21 @@ window.renderDaftarResepTersimpan = async function() {
         return;
     }
     container.innerHTML = daftar.map(resep => `
-        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:10px;">
-            <div style="font-weight:700;color:var(--chocolate);font-size:0.9rem;margin-bottom:4px;">${escapeHtmlResep(resep.nama || 'Resep Tanpa Nama')}</div>
-            <div style="font-size:0.72rem;color:#718096;margin-bottom:8px;">
-                ${escapeHtmlResep(resep.tepungUtama ?? '-')} gr · ${escapeHtmlResep(resep.targetYield ?? '-')} pcs · ${escapeHtmlResep(formatTanggalResep(resep.waktuSimpan))}
-            </div>
-            <div style="display:flex;gap:6px;">
-                <button type="button" data-resep-id="${escapeHtmlResep(resep.id)}" class="btn-muat-resep-item" style="flex:1;background:#E67E22;color:#fff;border:none;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;">MUAT</button>
-                <button type="button" data-resep-id="${escapeHtmlResep(resep.id)}" class="btn-hapus-resep-item" style="background:#fee2e2;color:#ef4444;border:none;padding:8px 12px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;">HAPUS</button>
+        <div>
+            <strong style="font-size:0.9rem; color:var(--chocolate); display:block; margin-bottom:2px;">${escapeHtmlResep(resep.nama)}</strong>
+            <small style="color:#64748b; font-size:0.72rem;">Terigu: ${resep.tepungUtama || 1000}g | Yield: ${resep.targetYield || 1} pcs</small><br>
+            <small style="color:#94a3b8; font-size:0.68rem;">Disimpan: ${formatTanggalResep ? formatTanggalResep(resep.waktuSimpan) : (resep.waktuSimpan || '-')}</small>
+        </div>
+        
+        <!-- Menu Titik Tiga -->
+        <div style="position: relative;">
+            <button type="button" class="btn-dropdown-toggle" onclick="toggleRecipeMenu(this)" style="background: transparent; color: #64748b; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; padding: 4px 8px; border-radius: 6px;">&#8942;</button>
+            
+            <!-- Dropdown Content -->
+            <div class="recipe-dropdown-menu" style="display: none; position: absolute; right: 0; top: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); z-index: 10; min-width: 120px; overflow: hidden; margin-top: 4px;">
+                <button type="button" class="btn-load-resep" style="display: block; width: 100%; text-align: left; background: none; border: none; padding: 8px 12px; font-size: 0.75rem; color: #27ae60; font-weight: bold; cursor: pointer;">Muat / Edit</button>
+                <button type="button" class="btn-copy-resep" data-id="${resep.id}" style="display: block; width: 100%; text-align: left; background: none; border: none; padding: 8px 12px; font-size: 0.75rem; color: #3498db; font-weight: bold; cursor: pointer; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9;">Salin</button>
+                <button type="button" class="btn-del-resep" style="display: block; width: 100%; text-align: left; background: none; border: none; padding: 8px 12px; font-size: 0.75rem; color: #e74c3c; font-weight: bold; cursor: pointer;">Hapus</button>
             </div>
         </div>
     `).join('');
@@ -14602,23 +14677,20 @@ window.tampilkanDaftarResepTersimpan = async function() {
 
     let daftarResep = readRecipesFromStorage();
 
-    // 1. Tarik juga data dari Supabase jika online agar sinkron
+    // Tarik juga data dari Supabase jika online agar sinkron
     if (navigator.onLine && typeof supabase !== 'undefined') {
         try {
             const { data: cloudRecipes, error } = await supabase.from('recipes').select('*');
             if (!error && cloudRecipes) {
-                // Konversi format Supabase (details) ke format objek resep lokal
                 cloudRecipes.forEach(cloudRow => {
                     if (cloudRow.details) {
                         const resepCloud = typeof cloudRow.details === 'string' ? JSON.parse(cloudRow.details) : cloudRow.details;
-                        // Cek apakah sudah ada di array lokal, jika belum / lebih baru, masukkan
                         const existingIdx = daftarResep.findIndex(r => r.id === resepCloud.id);
                         if (existingIdx < 0) {
                             daftarResep.push(resepCloud);
                         }
                     }
                 });
-                // Simpan kembali gabungan data terbaru ke penyimpanan lokal
                 await simpanDaftarResepKePerangkat(daftarResep);
             }
         } catch (err) {
@@ -14634,27 +14706,33 @@ window.tampilkanDaftarResepTersimpan = async function() {
     container.innerHTML = '';
     daftarResep.forEach((resep) => {
         const itemDiv = document.createElement('div');
+        // CSS Wadah Utama tetap dipertahankan
         itemDiv.style.cssText = "background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 3px rgba(0,0,0,0.02);";
         
+        // --- BAGIAN INI YANG DIUBAH MENJADI MENU TITIK 3 ---
         itemDiv.innerHTML = `
             <div>
                 <strong style="font-size:0.9rem; color:var(--chocolate); display:block; margin-bottom:2px;">${escapeHtmlResep(resep.nama)}</strong>
                 <small style="color:#64748b; font-size:0.72rem;">Terigu: ${resep.tepungUtama || 1000}g | Yield: ${resep.targetYield || 1} pcs</small><br>
                 <small style="color:#94a3b8; font-size:0.68rem;">Disimpan: ${formatTanggalResep ? formatTanggalResep(resep.waktuSimpan) : (resep.waktuSimpan || '-')}</small>
             </div>
-            <div style="display:flex; gap:6px;">
-                <button type="button" class="btn-load-resep" style="background:#27ae60; color:white; border:none; padding:6px 10px; border-radius:6px; font-size:0.72rem; font-weight:bold; cursor:pointer;">Muat / Edit</button>
-                <button type="button" class="btn-copy-resep" style="background:#3498db; color:white; border:none; padding:6px 8px; border-radius:6px; font-size:0.72rem; font-weight:bold; cursor:pointer;" data-id="${resep.id}">Salin</button>
-                <button type="button" class="btn-del-resep" style="background:#e74c3c; color:white; border:none; padding:6px 8px; border-radius:6px; font-size:0.72rem; font-weight:bold; cursor:pointer;">Hapus</button>
+            <div style="position: relative;" class="recipe-menu-container">
+                <button type="button" class="btn-menu-toggle" onclick="toggleRecipeMenu(event)" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--chocolate); padding: 0 8px; font-weight: bold;">&#8942;</button>
+                <div class="recipe-dropdown" style="display: none; position: absolute; right: 0; top: 100%; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 50; min-width: 140px; overflow: hidden; flex-direction: column; margin-top: 5px;">
+                    <button type="button" class="btn-load-resep recipe-dropdown-btn" style="background:none; color:var(--chocolate); border:none; border-bottom:1px solid #f1f5f9; padding:10px 15px; font-size:0.75rem; font-weight:bold; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:8px;">✏️ Muat / Edit</button>
+                    <button type="button" class="btn-copy-resep recipe-dropdown-btn" data-id="${resep.id}" style="background:none; color:#3498db; border:none; border-bottom:1px solid #f1f5f9; padding:10px 15px; font-size:0.75rem; font-weight:bold; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:8px;">📋 Salin</button>
+                    <button type="button" class="btn-del-resep recipe-dropdown-btn" style="background:none; color:#e74c3c; border:none; padding:10px 15px; font-size:0.75rem; font-weight:bold; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:8px;">🗑️ Hapus</button>
+                </div>
             </div>
         `;
+
+        // === Event Listener di bawah ini TETAP SAMA seperti milik Anda ===
 
         // Tombol Muat / Edit Resep
         itemDiv.querySelector('.btn-load-resep').addEventListener('click', () => {
             currentEditingRecipeId = resep.id;
             terapkanResepKeKalkulator(resep);
             
-            // Muat langkah produksi jika ada
             if (resep.langkahProduksi && Array.isArray(resep.langkahProduksi) && typeof activeRecipeSteps !== 'undefined') {
                 activeRecipeSteps = [...resep.langkahProduksi];
                 if (typeof renderLangkahProduksi === 'function') renderLangkahProduksi();
@@ -14670,23 +14748,18 @@ window.tampilkanDaftarResepTersimpan = async function() {
             alert(`Resep "${resep.nama}" dimuat. Anda dapat mengubah bahan/nama lalu klik "Simpan Resep" untuk memperbarui.`);
         });
 
-        // 🟢 TAMBAHKAN LOGIKA TOMBOL SALIN DI SINI 🟢
+        // Tombol Salin Resep
         itemDiv.querySelector('.btn-copy-resep').addEventListener('click', async () => {
-            // 1. Buat salinan objek resep
             const duplicatedRecipe = {
                 ...resep,
-                id: Date.now(), // ID unik baru
+                id: Date.now(),
                 nama: `${resep.nama} (Salinan)`,
                 waktuSimpan: new Date().toISOString()
             };
 
-            // 2. Masukkan ke urutan PALING ATAS (unshift) agar langsung terlihat
             daftarResep.unshift(duplicatedRecipe);
-            
-            // 3. Simpan ke storage perangkat
             await simpanDaftarResepKePerangkat(daftarResep);
 
-            // 4. (Opsional) Sinkronisasi salinan ke Supabase jika online
             if (navigator.onLine && typeof supabase !== 'undefined') {
                 try {
                     const { data: { user } } = await supabase.auth.getUser();
@@ -14703,22 +14776,19 @@ window.tampilkanDaftarResepTersimpan = async function() {
                 }
             }
 
-            // 5. Segarkan modal seketika (maka salinan akan langsung muncul di baris teratas)
             window.tampilkanDaftarResepTersimpan();
 
-            // 6. Segarkan poin gamifikasi
             if (window.GamificationUI && typeof window.GamificationUI.refresh === 'function') {
                 window.GamificationUI.refresh();
             }
         });
 
-        // Tombol Hapus Resep (Lokal & Supabase)
+        // Tombol Hapus Resep
         itemDiv.querySelector('.btn-del-resep').addEventListener('click', async () => {
             if (confirm(`Hapus resep "${resep.nama}" dari perangkat dan cloud?`)) {
                 daftarResep = daftarResep.filter(r => r.id !== resep.id);
                 await simpanDaftarResepKePerangkat(daftarResep);
 
-                // Hapus juga dari Supabase jika online
                 if (navigator.onLine && typeof supabase !== 'undefined') {
                     await supabase.from('recipes').delete().eq('id', resep.id);
                 }
@@ -14833,6 +14903,98 @@ window.cetakLaporanPdfNative = function() {
         });
     } else {
         console.warn("Elemen #konten-pdf atau library html2pdf tidak ditemukan.");
+    }
+};
+
+// Renderer kanonik daftar resep. Definisi lama yang memakai #recipe-list-modal
+// tidak sesuai dengan tampilan resep utama yang memakai #recipe-master-view.
+window.tampilkanDaftarResepTersimpan = async function() {
+    const container = document.getElementById('recipe-list-container');
+    const masterView = document.getElementById('recipe-master-view');
+    const detailView = document.getElementById('recipe-detail-view');
+    if (!container) return;
+
+    if (masterView) masterView.style.display = 'flex';
+    if (detailView) detailView.style.display = 'none';
+
+    const cardBaruHTML = `
+        <div onclick="bukaDetailResepBaru()" style="background:#fff;border:2px dashed #E67E22;border-radius:12px;padding:16px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;box-shadow:0 2px 6px rgba(230,126,34,.05);">
+            <span style="font-size:1.4rem;font-weight:bold;color:#E67E22;">+</span>
+            <strong style="font-size:.9rem;color:#E67E22;">Buat Resep Baru</strong>
+        </div>`;
+
+    container.innerHTML = cardBaruHTML +
+        '<div style="text-align:center;padding:20px;color:#64748b;">Memuat daftar resep...</div>';
+
+    let daftarResep = [];
+    try {
+        daftarResep = await bacaSemuaResepDariPerangkat();
+        if (!Array.isArray(daftarResep)) daftarResep = [];
+    } catch (error) {
+        console.error('Gagal membaca resep dari perangkat:', error);
+    }
+
+    // Cloud hanya menambah data yang belum ada; data lokal tidak ditimpa daftar kosong.
+    if (navigator.onLine && typeof supabase !== 'undefined') {
+        try {
+            const { data, error } = await supabase.from('recipes').select('*');
+            if (error) throw error;
+            for (const row of data || []) {
+                const cloudRecipe = typeof row.details === 'string'
+                    ? JSON.parse(row.details)
+                    : (row.details || { id: row.id, nama: row.name, ...row });
+                if (cloudRecipe && cloudRecipe.id != null &&
+                    !daftarResep.some(item => String(item.id) === String(cloudRecipe.id))) {
+                    daftarResep.push(cloudRecipe);
+                }
+            }
+            if (data?.length) await simpanDaftarResepKePerangkat(daftarResep);
+        } catch (error) {
+            console.warn('Sinkronisasi cloud resep dilewati:', error);
+        }
+    }
+
+    container.innerHTML = cardBaruHTML;
+    if (daftarResep.length === 0) {
+        container.insertAdjacentHTML(
+            'beforeend',
+            '<div style="text-align:center;padding:30px;color:#94a3b8;font-style:italic;">Belum ada resep tersimpan.</div>'
+        );
+        return;
+    }
+
+    for (const resep of daftarResep) {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.02);';
+        card.innerHTML = `
+            <div style="min-width:0;">
+                <strong style="font-size:.9rem;color:var(--chocolate);display:block;margin-bottom:2px;">${escapeHtmlResep(resep.nama || resep.name || 'Tanpa Nama')}</strong>
+                <small style="color:#64748b;font-size:.72rem;">Terigu: ${resep.tepungUtama || 1000}g | Porsi: ${resep.targetYield || 1} pcs</small><br>
+                <small style="color:#94a3b8;font-size:.68rem;">Disimpan: ${formatTanggalResep(resep.waktuSimpan || resep.updated_at)}</small>
+            </div>
+            <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button type="button" class="recipe-load-btn" style="background:#27ae60;color:#fff;border:none;padding:7px 9px;border-radius:6px;font-size:.72rem;font-weight:bold;cursor:pointer;">Muat</button>
+                <button type="button" class="recipe-delete-btn" style="background:#e74c3c;color:#fff;border:none;padding:7px 9px;border-radius:6px;font-size:.72rem;font-weight:bold;cursor:pointer;">Hapus</button>
+            </div>`;
+
+        card.querySelector('.recipe-load-btn').addEventListener('click', () => {
+            bukaDetailResepEksisting(resep);
+        });
+        card.querySelector('.recipe-delete-btn').addEventListener('click', async () => {
+            if (!confirm(`Hapus resep "${resep.nama || resep.name || 'Tanpa Nama'}"?`)) return;
+            const tersisa = daftarResep.filter(item => String(item.id) !== String(resep.id));
+            await simpanDaftarResepKePerangkat(tersisa);
+            if (navigator.onLine && typeof supabase !== 'undefined') {
+                try {
+                    const { error } = await supabase.from('recipes').delete().eq('id', resep.id);
+                    if (error) console.warn('Resep dihapus lokal, tetapi gagal di cloud:', error);
+                } catch (error) {
+                    console.warn('Resep dihapus lokal, tetapi cloud tidak tersedia:', error);
+                }
+            }
+            await window.tampilkanDaftarResepTersimpan();
+        });
+        container.appendChild(card);
     }
 };
 

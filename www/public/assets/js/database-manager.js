@@ -14,6 +14,8 @@ class DatabaseManager {
   constructor() {
     this.isNative = Capacitor.isNativePlatform();
     this.db = null;
+    this.syncTimeoutId = null;
+    this.syncDebounceMs = 3000;
   }
 
   async init() {
@@ -163,8 +165,16 @@ class DatabaseManager {
     }
 
     if (navigator.onLine) {
-      this.syncWithSupabase();
+      this.debouncedSync();
     }
+  }
+
+  // --- DEBOUNCED SYNC ---
+  debouncedSync() {
+    clearTimeout(this.syncTimeoutId);
+    this.syncTimeoutId = setTimeout(() => {
+      this.syncWithSupabase();
+    }, this.syncDebounceMs);
   }
 
   // --- SINKRONISASI & EVENT LISTENERS ---
@@ -194,14 +204,33 @@ class DatabaseManager {
     for (const item of outboxItems) {
       try {
         if (item.action === 'INSERT_UPDATE') {
-          const { error } = await supabase
-            .from(item.table_name)
-            .upsert({
+          let upsertData = { id: item.payload.id };
+          
+          // Handle recipes table
+          if (item.table_name === 'recipes') {
+            upsertData = {
               id: item.payload.id,
               name: item.payload.name,
               ingredients: item.payload.ingredients,
               last_modified: item.payload.last_modified
-            });
+            };
+          }
+          // Handle ingredients table
+          else if (item.table_name === 'ingredients') {
+            upsertData = {
+              id: item.payload.id,
+              name: item.payload.name,
+              category: item.payload.category,
+              ratio: item.payload.ratio,
+              price: item.payload.price,
+              pack: item.payload.pack,
+              isFlour: item.payload.isFlour
+            };
+          }
+          
+          const { error } = await supabase
+            .from(item.table_name)
+            .upsert(upsertData);
 
           if (error) throw error;
         }
@@ -221,28 +250,42 @@ class DatabaseManager {
     }
   }
 
-  // --- PULL DATA TERBARU DARI SUPABASE ---
+  // --- HELPER: TIMEOUT WRAPPER ---
+  async withTimeout(promise, ms = 10000) {
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`Operation timeout after ${ms}ms`)), ms)
+    );
+    return Promise.race([promise, timeoutPromise]);
+  }
+
+  // --- PULL DATA TERBARU DARI SUPABASE (DENGAN TIMEOUT) ---
   async pullFromSupabase() {
     if (!navigator.onLine) return;
 
     try {
-      const { data, error } = await supabase
+      const fetchPromise = supabase
         .from('recipes')
         .select('*');
+      
+      const { data, error } = await this.withTimeout(fetchPromise, 15000);
 
       if (error) throw error;
 
-      for (const item of data) {
-        if (this.isNative) {
-          await this.db.instance.run(
-            `INSERT OR REPLACE INTO recipes (id, name, ingredients, last_modified, is_synced) VALUES (?, ?, ?, ?, 1)`,
-            [item.id, item.name, JSON.stringify(item.ingredients), item.last_modified]
-          );
-        } else {
-          await this.db.instance.recipes.put({
-            ...item,
-            is_synced: 1
-          });
+      for (const item of data || []) {
+        try {
+          if (this.isNative) {
+            await this.db.instance.run(
+              `INSERT OR REPLACE INTO recipes (id, name, ingredients, last_modified, is_synced) VALUES (?, ?, ?, ?, 1)`,
+              [item.id, item.name, JSON.stringify(item.ingredients), item.last_modified]
+            );
+          } else {
+            await this.db.instance.recipes.put({
+              ...item,
+              is_synced: 1
+            });
+          }
+        } catch (itemErr) {
+          console.warn(`Gagal menyimpan item ${item.id}:`, itemErr);
         }
       }
     } catch (err) {
