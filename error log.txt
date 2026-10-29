@@ -1,0 +1,166 @@
+onboarding screen melebar tidak fit dengan layar
+<div class="ob-overlay active" id="onboarding-screen">
+<div class="ob-container">
+<!-- Header: Tombol Lewati -->
+<div class="ob-header">
+<button class="ob-skip-btn" id="ob-btn-skip">Lewati</button>
+</div>
+<!-- Slider Konten -->
+<div class="ob-slider-wrapper">
+<div class="ob-slider-track" id="ob-slider-track">
+<!-- Slide 1 -->
+<div class="ob-slide">
+<div class="ob-illustration">
+<span class="ob-emoji">🍩</span>
+</div>
+<h2 class="ob-title">Selamat Datang, Sobat Baker!</h2>
+<p class="ob-desc">Kelola dan pantau waktu proofing adonan donat &amp; roti kamu dengan akurasi tingkat tinggi.</p>
+</div>
+<!-- Slide 2 -->
+<div class="ob-slide">
+<div class="ob-illustration">
+<span class="ob-emoji">🌤️</span>
+</div>
+<h2 class="ob-title">Kalibrasi Cuaca Real-Time</h2>
+<p class="ob-desc">Waktu fermentasi otomatis menyesuaikan dengan suhu dan kelembaban udara di lokasi kamu.</p>
+</div>
+<!-- Slide 3 -->
+<div class="ob-slide">
+<div class="ob-illustration">
+<span class="ob-emoji">📊</span>
+</div>
+<h2 class="ob-title">Kalkulator Resep &amp; HPP</h2>
+<p class="ob-desc">Hitung formulasi adonan, rasio tepung Baker's %, hingga estimasi biaya produksi dengan praktis.</p>
+</div>
+</div>
+</div>
+<!-- Footer: Indicator Dots & Tombol Aksi -->
+<div class="ob-footer">
+<div class="ob-dots" id="ob-dots">
+<span class="ob-dot active" data-index="0"></span>
+<span class="ob-dot" data-index="1"></span>
+<span class="ob-dot" data-index="2"></span>
+</div>
+<button class="ob-primary-btn" id="ob-btn-next">Lanjutkan</button>
+</div>
+</div>
+</div>
+
+PADA HALAMAN DAFTAR
+ToS tidak bisa menampilkan halaman ToS saat disentuh
+saat dimuat tombol daftar sekarang bisa di klik, tapi setelah centang di klik lalu uncheck tombol daftar sekarang tidak bisa di klik
+<div class="auth-container" id="auth-wrapper">
+<!-- HEADER -->
+<div class="auth-header">
+<h2 id="auth-title">Buat Akun Baru</h2>
+<p id="auth-subtitle">Daftar untuk mulai menggunakan aplikasi</p>
+</div>
+<!-- TAB SWITCHER (MASUK & DAFTAR) -->
+<div class="tab-switch" id="auth-tab-switch" style="display: flex;">
+<button class="tab-btn" id="tab-login" type="button">Masuk</button>
+<button class="tab-btn active" id="tab-register" type="button">Daftar</button>
+</div>
+<!-- BOX PESAN ERROR / SUKSES -->
+<div class="auth-error" id="auth-error-box" style="display: none;"></div>
+<!-- FORM UTAMA -->
+<form id="auth-form" data-gtm-form-interact-id="0">
+<div class="inputs-wrapper">
+<!-- Form Group: Nama Lengkap (Khusus Mode Daftar) -->
+<div class="form-group" id="group-name" style="display: block;">
+<label for="input-name">Nama Lengkap</label>
+<input autocomplete="name" id="input-name" name="name" placeholder="Contoh: Budi Bakery" type="text" required="true">
+</div>
+<!-- Form Group: Email -->
+<div class="form-group" id="group-email">
+<label for="input-email">Email</label>
+<input autocomplete="email" id="input-email" name="email" placeholder="nama@email.com" required="" type="email">
+</div>
+<!-- Form Group: Password (Khusus Mode Login & Daftar) -->
+<div class="form-group" id="group-password" style="display: block;">
+<label for="input-password" id="label-password">Kata Sandi</label>
+<div style="position: relative; display: flex; align-items: center; width: 100%; margin-bottom: 8px;">
+<input autocomplete="current-password" id="input-password" name="password" placeholder="Minimal 6 karakter" style="width: 100%; padding: 6px 36px 6px 8px; border-radius: 4px; border: 1px solid rgba(78, 52, 46, 0.2); background: #fff; font-size: 13px; box-sizing: border-box;" type="password" required="true">
+<!-- Tombol Ikon Mata -->
+<button aria-label="Tampilkan atau sembunyikan kata sandi" data-action="togglePasswordVisibility" style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0; color: #888;" title="Tampilkan/Sembunyikan Password" type="button">
+                        👁️
+                    </button>
+</div>
+<!-- Link Lupa Password (Khusus Mode Login) -->
+<div id="forgot-link-wrapper" style="text-align: right; margin-top: -4px; margin-bottom: 8px; display: none;">
+<a href="#" id="link-forgot-password">Lupa Password?</a>
+</div>
+</div>
+<!-- Fitur Ingat Saya (Khusus Mode Login) -->
+<div id="group-remember" style="display: none; align-items: center; gap: 8px; margin-top: 8px; margin-bottom: 12px;">
+<input id="remember-me-checkbox" name="remember-me" style="width: 16px; height: 16px; cursor: pointer; accent-color: #3e2723;" type="checkbox">
+<label for="remember-me-checkbox" style="font-size: 0.8rem; color: #3e2723; cursor: pointer; user-select: none;">
+                    Ingat email &amp; kata sandi
+                </label>
+</div>
+<!-- Checkbox Syarat & Ketentuan (Khusus Mode Daftar) -->
+<div id="group-tos" style="display: block; margin-top: 10px; margin-bottom: 12px;">
+<div style="display: flex; align-items: flex-start; gap: 8px;">
+<input id="agree-tos-checkbox" name="agree-tos" onchange="validateSubmitButton()" style="width: 16px; height: 16px; margin-top: 2px; cursor: pointer; accent-color: #3e2723;" type="checkbox" data-gtm-form-interact-field-id="0">
+<label for="agree-tos-checkbox" style="font-size: 0.8rem; color: #3e2723; cursor: pointer; user-select: none; line-height: 1.3;">
+                        Saya telah membaca dan menyetujui 
+                        <a data-action="openTosModal" href="javascript:void(0)" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Syarat &amp; Ketentuan Layanan</a> 
+                        serta Kebijakan Privasi.
+                    </label>
+</div>
+</div>
+</div>
+<!-- Tombol Submit Utama -->
+<button class="btn-submit" id="btn-submit-main" type="submit">DAFTAR SEKARANG</button>
+</form>
+<!-- Link Kembali ke Login (Khusus Mode Lupa Password) -->
+<div id="back-to-login-wrapper" style="text-align: center; margin-top: 14px; display: none;">
+<a data-action="switchAuthTab" data-arg="login" href="javascript:void(0)" style="font-size: 0.8rem; color: var(--chocolate); font-weight: 700; text-decoration: underline;">← Kembali ke Halaman Masuk</a>
+</div>
+<!-- WADAH FORM VERIFIKASI OTP (Bila Diperlukan) -->
+<div id="otp-verification-box" style="display: none; text-align: center; margin-top: 10px;">
+<h3 style="color: var(--accent); margin-bottom: 5px; font-size: 1.1rem;">Verifikasi Email</h3>
+<p style="font-size: 0.8rem; color: rgba(78, 52, 46, 0.7); margin-bottom: 20px; line-height: 1.4;">
+            Masukkan 6 digit kode OTP yang baru saja kami kirimkan ke <br><strong id="verify-email-display" style="color: var(--chocolate);"></strong>
+</p>
+<div class="form-group">
+<input autocomplete="one-time-code" id="input-otp" inputmode="numeric" maxlength="6" name="otp" placeholder="• • • • • •" style="text-align: center; font-size: 1.4rem; letter-spacing: 8px; font-weight: 800; padding: 15px;" type="text">
+</div>
+<button class="btn-submit" data-action="verifyEmailOtp" id="btn-verify-otp" type="button">VERIFIKASI KODE</button>
+<button data-action="cancelVerification" style="background: none; border: none; color: #7f8c8d; font-size: 0.75rem; margin-top: 15px; cursor: pointer; text-decoration: underline; font-weight: 600;" type="button">Batal &amp; Kembali</button>
+</div>
+<!-- DIVIDER & LOGIN SOSIAL -->
+<div class="divider" id="auth-divider" style="display: flex;">ATAU MASUK DENGAN</div>
+<div class="social-grid" id="auth-social-grid" style="display: grid;">
+<!-- Google -->
+<button class="social-btn" data-action="signInWithProvider" data-arg="google" type="button">
+<svg class="social-icon" height="18" viewBox="0 0 24 24" width="18">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<span>Google</span>
+</button>
+<!-- Facebook -->
+<button class="social-btn" data-action="signInWithProvider" data-arg="facebook" type="button">
+<svg class="social-icon" fill="#1877F2" height="18" viewBox="0 0 24 24" width="18">
+<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path>
+</svg>
+<span>Facebook</span>
+</button>
+<!-- Apple -->
+<button class="social-btn" data-action="signInWithProvider" data-arg="apple" type="button">
+<svg class="social-icon" fill="currentColor" height="18" viewBox="0 0 24 24" width="18">
+<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.13c.63-.77 1.06-1.84.94-2.91-.91.04-2.02.61-2.67 1.37-.58.68-.1 1.85-.95 2.89.92-.04 2.01-.63 2.68-1.35z"></path>
+</svg>
+<span>Apple</span>
+</button>
+</div>
+<!-- WhatsApp Phone Auth / OTP -->
+<button class="whatsapp-btn" data-action="signInWithWhatsApp" id="auth-whatsapp-btn" style="display: flex;" type="button">
+<svg class="social-icon" fill="#ffffff" height="18" viewBox="0 0 24 24" width="18">
+<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.05 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+</svg>
+<span>Masuk / Daftar via WhatsApp</span>
+</button>
+</div>

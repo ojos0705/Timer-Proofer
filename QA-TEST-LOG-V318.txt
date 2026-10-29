@@ -1,0 +1,12 @@
+Timer-Proofer V318 — QA test log
+Date: 2026-10-28
+Product-facing version: V125 (unchanged)
+
+PASS: node --test tests/ai-utils.test.mjs (13 tests, including the response revision header)
+PASS: node scripts/sync-web-assets.mjs
+PASS: node scripts/verify-release.mjs
+PASS: node scripts/audit-function-names.mjs (0 duplicate declarations within a module; 14 cross-module repeated names are informational)
+PASS: node --test tests/*.test.mjs (411 tests, 0 failures, 0 cancelled)
+PASS: API file mirrors are identical after sync.
+
+Not tested here: deployment to the user's Vercel project, live Gemini requests using production credentials, real browser UI, installed PWA, Android Capacitor, and iOS runtime.

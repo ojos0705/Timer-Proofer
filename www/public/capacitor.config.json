@@ -1,5 +1,5 @@
 {
-  "appId": "com.timerproofing.app",
+  "appId": "com.example.app",
   "appName": "Timer Proofing",
-  "webDir": "public"
+  "webDir": "./"
 }

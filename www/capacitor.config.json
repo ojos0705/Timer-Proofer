@@ -1,0 +1,9 @@
+{
+  "appId": "com.timerproofing.app",
+  "appName": "Timer Proofing",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "hostname": "localhost"
+  }
+}

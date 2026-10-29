@@ -1,4 +1,4 @@
-window.tipsKategori = [
+export const tipsKategori = [
     {
         id: "bahan",
         kategori: "Bahan Baku",
@@ -154,3 +154,5 @@ window.tipsKategori = [
         ]
     }
 ];
+
+window.tipsKategori = tipsKategori;

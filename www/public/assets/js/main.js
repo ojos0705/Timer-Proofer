@@ -5,8 +5,11 @@ import { dbManager } from './database-manager.js';
 window.dbManager = dbManager;
 window.bakeryIngredients = []; // Inisialisasi array bahan global
 
+// Store cleanup functions for proper resource management
+const cleanupFunctions = [];
+
 // Menggabungkan logika initApp yang aman dengan fungsi DOMContentLoaded kamu
-document.addEventListener('DOMContentLoaded', async () => {
+const initHandler = async () => {
     try {
         // 1. Jalankan inisialisasi database lokal
         await dbManager.init();
@@ -54,7 +57,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error("Gagal melakukan inisialisasi database utama:", error);
     }
-});
+};
+
+// Add event listener with cleanup capability
+document.addEventListener('DOMContentLoaded', initHandler);
+cleanupFunctions.push(() => document.removeEventListener('DOMContentLoaded', initHandler));
+
+// Export cleanup function for proper resource management
+window.cleanupMainResources = () => {
+    cleanupFunctions.forEach(cleanup => {
+        try {
+            cleanup();
+        } catch (error) {
+            console.error("Error during cleanup:", error);
+        }
+    });
+    cleanupFunctions.length = 0; // Clear the array
+};
 
 // Helper untuk memperbarui seluruh dropdown bahan yang sedang aktif di UI (dengan error handling)
 function updateAllIngredientSelects() {

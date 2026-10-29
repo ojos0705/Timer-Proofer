@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Donut Proofing</string>
-    <string name="title_activity_main">Donut Proofing</string>
-    <string name="package_name">com.donutproofing.app</string>
-    <string name="custom_url_scheme">com.donutproofing.app</string>
+    <string name="app_name">Timer Proofing</string>
+    <string name="title_activity_main">Timer Proofing</string>
+    <string name="package_name">com.timerproofer.app</string>
+    <string name="custom_url_scheme">com.timerproofer.app</string>
 </resources>

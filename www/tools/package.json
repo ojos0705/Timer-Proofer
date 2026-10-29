@@ -1,0 +1,10 @@
+{
+  "name": "timer-proofer-tools",
+  "private": true,
+  "type": "commonjs",
+  "description": "Skrip CLI internal (ekstraksi string UI & pembuatan paket bahasa) — dipisah dari public/package.json karena ini bukan bagian aplikasi yang dibundel Capacitor.",
+  "devDependencies": {
+    "acorn": "^8.14.0",
+    "acorn-walk": "^8.3.4"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "Timer Proofing",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A simple timer app for proofing donuts",
+  "main": "app.js",
+  "scripts": {
+    "test": "node scripts/sync-web-assets.mjs && node scripts/verify-release.mjs && node scripts/audit-function-names.mjs && node --test tests/*.test.mjs",
+    "start": "node server.js",
+    "test:release": "node scripts/verify-release.mjs",
+    "test:unit": "node --test tests/*.test.mjs",
+    "test:audit-functions": "node scripts/audit-function-names.mjs",
+    "build:web": "node scripts/sync-web-assets.mjs",
+    "sync:android": "npm run build:web && node node_modules/@capacitor/cli/bin/capacitor sync android"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor-community/bluetooth-le": "^8.3.0",
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/geolocation": "^8.2.4",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.5.2",
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/network": "^8.0.1",
+    "@capacitor/preferences": "^8.0.1",
+    "@google/genai": "2.23.0",
+    "midtrans-client": "^1.4.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.3"
+  }
+}

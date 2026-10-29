@@ -1,0 +1,7 @@
+// DIHASILKAN OTOMATIS oleh tools/generate-packs.js — jangan diedit manual
+export const OFFLINE_LANG_PACKS = ["en"];
+export const OFFLINE_LANG_ALIASES = {};
+export const OFFLINE_LANG_VERSION = "7b47eb94";
+window.OFFLINE_LANG_PACKS = OFFLINE_LANG_PACKS;
+window.OFFLINE_LANG_ALIASES = OFFLINE_LANG_ALIASES;
+window.OFFLINE_LANG_VERSION = OFFLINE_LANG_VERSION;

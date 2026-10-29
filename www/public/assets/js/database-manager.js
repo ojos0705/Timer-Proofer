@@ -16,6 +16,7 @@ class DatabaseManager {
     this.db = null;
     this.syncTimeoutId = null;
     this.syncDebounceMs = 3000;
+    this.onlineHandler = null; // Store for cleanup
   }
 
   async init() {
@@ -179,10 +180,36 @@ class DatabaseManager {
 
   // --- SINKRONISASI & EVENT LISTENERS ---
   setupSyncListeners() {
-    window.addEventListener('online', () => {
+    this.onlineHandler = () => {
       console.log('Koneksi internet terdeteksi. Memulai sinkronisasi...');
       this.syncWithSupabase();
-    });
+    };
+    window.addEventListener('online', this.onlineHandler);
+  }
+
+  // Cleanup method to prevent memory leaks
+  cleanup() {
+    // Remove event listeners
+    if (this.onlineHandler) {
+      window.removeEventListener('online', this.onlineHandler);
+    }
+    
+    // Clear timeout
+    if (this.syncTimeoutId) {
+      clearTimeout(this.syncTimeoutId);
+      this.syncTimeoutId = null;
+    }
+    
+    // Close database connections if they exist
+    if (this.db && this.db.instance) {
+      if (this.db.type === 'indexeddb') {
+        this.db.instance.close();
+      } else if (this.db.type === 'sqlite') {
+        this.db.instance.close();
+      }
+    }
+    
+    console.log('DatabaseManager cleanup completed');
   }
 
   async syncWithSupabase() {
