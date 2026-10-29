@@ -1,7 +1,0 @@
-RINGKASAN RILIS — TIMER PROOFER V299
-
-V299 memindahkan binding Baca Semua dan Hapus Semua dari app-core ke notification-service, modul pemilik state notifikasi. Kontrak UI/ID dan dialog konfirmasi tetap sama; tes runtime baru mencakup perilaku baca/hapus serta persistensi.
-
-Suite penuh lulus 387/387 di sumber dan folder paket. Verifier rilis, audit fungsi, tes terarah, sintaks berkas yang berubah, dan lint PHP lulus. Arsip diverifikasi CRC.
-
-Browser/PWA penuh, backend, pembayaran sandbox, dan Android/iOS nyata belum tervalidasi. V299 belum production-ready.

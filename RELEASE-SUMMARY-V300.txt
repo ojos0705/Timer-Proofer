@@ -1,7 +1,0 @@
-RINGKASAN RILIS — TIMER PROOFER V300
-
-Fokus rilis: perbaikan packaging ES6 Module untuk Capacitor webDir=www. Aset sumber yang sebelumnya hanya berada di root kini disinkronkan secara deterministik ke www sebelum pengujian/build. Verifier dan tes menggunakan direktori produksi yang benar; cache boundary diperbarui.
-
-Validasi: npm test lulus 388/388; release verifier lulus (0 import lokal hilang, 0 ID duplikat, 0 inline handler); Capacitor sync Android sukses.
-
-Belum production-ready: APK/Gradle build penuh, browser E2E, Supabase auth nyata, dan perangkat Android/iOS fisik belum diuji.
