@@ -1,7 +1,0 @@
-{
-  "version": "V125",
-  "build": "release-managed-by-version-json",
-  "serviceWorker": "Timer-Proofing-v1.1.221",
-  "releaseDate": "2026-10-28",
-  "releaseToken": "20261027-v317"
-}
