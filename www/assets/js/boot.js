@@ -40,7 +40,7 @@ import './notification-service.js';
 import './features-onboarding.js';
 import './features-bluetooth-thermometer.js';
 import './features-preferences.js';
-import './features-auth-ui.js?v=20261030-v326';
+import './features-auth-ui.js?v=20261030-v327';
 
 // [AI-GENERATED][REFACTOR] Modal controller owns modal clicks independently from app-core.
 import './modal.js';

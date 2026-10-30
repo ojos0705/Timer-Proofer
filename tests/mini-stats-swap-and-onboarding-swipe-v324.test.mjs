@@ -59,9 +59,9 @@ test('onboarding slider allows horizontal swipe without blocking native vertical
     assert.match(html, /#onboarding-screen, \.ob-overlay\s*\{[^}]*overscroll-behavior:\s*contain/s);
 });
 
-test('technical cache advances to V326 while visible app version remains V125', () => {
+test('technical cache advances to V327 while visible app version remains V125', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261030-v326');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.228');
-    assert.match(html, /runtime-entry\.js\?v=20261030-v326/);
+    assert.equal(version.releaseToken, '20261030-v327');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.229');
+    assert.match(html, /runtime-entry\.js\?v=20261030-v327/);
 });

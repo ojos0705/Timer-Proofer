@@ -1,0 +1,41 @@
+QA TEST LOG — V327
+==================
+
+Command:
+  npm test
+
+Result:
+  tests: 452
+  pass: 452
+  fail: 0
+  skipped: 0
+  todo: 0
+
+Release verification:
+  JavaScript files checked: 250
+  HTML files checked: 2
+  HTML IDs checked: 300
+  missing relative imports: 0
+  duplicate HTML IDs: 0
+  inline event handlers: 0
+  body scroll-lock overrides outside modal owner: 0
+  release version: V125
+
+Function-name audit:
+  duplicate function declarations within the same module: 0
+  repeated names across separate modules: 14 (informational; no cross-module redeclaration)
+
+Focused V327 regression coverage:
+  - document/body fixed to viewport
+  - app-container fixed inside viewport shell
+  - inner .scrollable-content remains vertical scroller
+  - native Android Back enters system PiP only when proofing timer is active
+  - AndroidX dispatcher and legacy Activity Back route both intercept active timer
+  - fallback moves task to background when PiP fails
+  - PiP state event still restores normal WebView layout
+  - technical release token advances without changing visible V125 version
+
+Not executed:
+  - Gradle assembleDebug / Android SDK compile
+  - physical Android PiP hardware Back test
+  - PWA/browser end-to-end test
