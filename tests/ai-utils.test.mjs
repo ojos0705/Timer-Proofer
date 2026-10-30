@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   AI_UPSTREAM_TIMEOUT_MS,
+  AI_TOTAL_REQUEST_TIMEOUT_MS,
   AI_UPSTREAM_RETRY_OPTIONS,
   GEMINI_MODELS,
   createAIClient,
@@ -35,7 +36,9 @@ test('AI SDK client has an explicit upstream timeout and does not nest default r
   assert.ok(ai instanceof FakeGoogleGenAI);
   assert.equal(capturedOptions.apiKey, 'unit-test-key');
   assert.equal(capturedOptions.httpOptions.timeout, AI_UPSTREAM_TIMEOUT_MS);
-  assert.ok(AI_UPSTREAM_TIMEOUT_MS > 0 && AI_UPSTREAM_TIMEOUT_MS <= 30_000);
+  assert.ok(AI_UPSTREAM_TIMEOUT_MS >= 10_000, 'Gemini SDK requires a deadline of at least 10 seconds');
+  assert.ok(AI_UPSTREAM_TIMEOUT_MS <= AI_TOTAL_REQUEST_TIMEOUT_MS);
+  assert.ok(AI_TOTAL_REQUEST_TIMEOUT_MS < 30_000, 'fallback budget must stay below the frontend request timeout');
   assert.equal(capturedOptions.httpOptions.retryOptions.attempts, 1);
   assert.equal(AI_UPSTREAM_RETRY_OPTIONS.attempts, 1);
 });
@@ -166,7 +169,7 @@ test('AI service recognizes temporary high-demand and availability errors for mo
 
 
 test('AI backend revision is explicit so deployment logs identify the shipped fix', () => {
-  assert.equal(AI_BACKEND_REVISION, 'V318');
+  assert.equal(AI_BACKEND_REVISION, 'V319');
 });
 
 test('AI request deadline aborts provider call and rejects even if SDK promise hangs', async () => {
@@ -188,7 +191,7 @@ test('AI request deadline aborts provider call and rejects even if SDK promise h
 });
 
 test('upstream timeout and overload errors use availability fallback, not quota handling', () => {
-  const timeout = Object.assign(new Error('Gemini request timed out after 6000ms'), { code: 'AI_UPSTREAM_TIMEOUT' });
+  const timeout = Object.assign(new Error('Gemini request timed out after 11000ms'), { code: 'AI_UPSTREAM_TIMEOUT' });
   assert.equal(isTransientAvailabilityError(timeout), true);
   assert.equal(isQuotaError(timeout), false);
   assert.equal(isTransientAvailabilityError(new Error('This model is currently experiencing high demand. Please try again later.')), true);
@@ -200,6 +203,6 @@ test('AI endpoint exposes backend revision header for production deployment veri
   const headers = {};
   const res = { setHeader(name, value) { headers[name] = value; } };
   setupCORSHeaders({ method: 'POST' }, res);
-  assert.equal(headers['X-AI-Backend-Revision'], 'V318');
+  assert.equal(headers['X-AI-Backend-Revision'], 'V319');
   assert.equal(headers['Access-Control-Expose-Headers'], 'X-AI-Backend-Revision');
 });

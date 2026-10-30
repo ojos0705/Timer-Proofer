@@ -4,11 +4,12 @@
 // [AI-GENERATED][ROBUSTNESS][V205] Keep each upstream model call bounded and avoid
 // multiplying provider retries across the explicit model-fallback loop. Quota
 // responses are handled by trying the next configured model below.
-// Keep three sequential fallback attempts within the frontend 30s timeout.
-// Each request also receives an AbortSignal and a hard Promise deadline because
-// SDK/network timeout behavior can vary across runtime and SDK versions.
-const AI_UPSTREAM_TIMEOUT_MS = 6_000;
-const AI_BACKEND_REVISION = "V318";
+// Gemini's SDK rejects manually configured deadlines below 10 seconds. Use 11s
+// to stay safely above that provider minimum while retaining bounded fallback.
+// The complete provider/fallback loop must remain below the frontend 30s timeout.
+const AI_UPSTREAM_TIMEOUT_MS = 11_000;
+const AI_TOTAL_REQUEST_TIMEOUT_MS = 26_000;
+const AI_BACKEND_REVISION = "V319";
 const AI_UPSTREAM_RETRY_OPTIONS = Object.freeze({ attempts: 1 });
 
 export function createAIClient(GoogleGenAI, apiKey) {
@@ -163,17 +164,17 @@ async function generateWithModel(ai, model, promptContext, systemInstruction, ti
   const config = {
     systemInstruction,
     maxOutputTokens: 4096,
-    // [AI-GENERATED][ROBUSTNESS][V318] Do not let automatic continuation turn
+    // [AI-GENERATED][ROBUSTNESS][V319] Do not let automatic continuation turn
     // one provider call into several hidden calls beyond the request deadline.
     automaticContinuation: false,
-    // [AI-GENERATED][ROBUSTNESS][V318] Abort the HTTP request on timeout.
+    // [AI-GENERATED][ROBUSTNESS][V319] Abort the HTTP request on timeout.
     abortSignal: controller.signal,
   };
   if (useThinking) {
     config.thinkingConfig = { thinkingLevel: "minimal" };
   }
 
-  // [AI-GENERATED][ROBUSTNESS][V318] The explicit race is a second line of
+  // [AI-GENERATED][ROBUSTNESS][V319] The explicit race is a second line of
   // defense: even if an SDK/network layer fails to reject promptly on abort,
   // the serverless handler continues to the next fallback within a hard bound.
   const requestPromise = Promise.resolve().then(() => ai.models.generateContent({
@@ -217,7 +218,7 @@ function setupCORSHeaders(req, res) {
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, Accept, X-Requested-With"
   );
-  // [AI-GENERATED][OBSERVABILITY][V318] Expose the backend revision on every
+  // [AI-GENERATED][OBSERVABILITY][V319] Expose the backend revision on every
   // response, including preflight and errors, so production routing is verifiable.
   res.setHeader("Access-Control-Expose-Headers", "X-AI-Backend-Revision");
   res.setHeader("X-AI-Backend-Revision", AI_BACKEND_REVISION);
@@ -259,7 +260,7 @@ function handleQuotaError(error, res) {
 
 async function processAIRequest(req, res, systemInstruction, errorMessagePrefix) {
   setupCORSHeaders(req, res);
-  
+
   const preflightResponse = handlePreflight(req, res);
   if (preflightResponse) return preflightResponse;
 
@@ -287,8 +288,24 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
     let usedModel = GEMINI_MODELS[0];
     let lastQuotaError = null;
     let lastAvailabilityError = null;
+    const providerLoopStartedAt = Date.now();
 
     for (const model of GEMINI_MODELS) {
+      // [AI-GENERATED][ROBUSTNESS][V319] A Gemini SDK deadline must be >=10s;
+      // do not start another fallback when less than one valid call window remains.
+      const elapsedMs = Date.now() - providerLoopStartedAt;
+      if (elapsedMs + AI_UPSTREAM_TIMEOUT_MS > AI_TOTAL_REQUEST_TIMEOUT_MS) {
+        const deadlineError = new Error('AI provider fallback budget exhausted before next model attempt');
+        deadlineError.code = 'AI_UPSTREAM_TIMEOUT';
+        lastAvailabilityError = lastAvailabilityError || deadlineError;
+        console.warn(`[${errorMessagePrefix}][${AI_BACKEND_REVISION}] total provider deadline reached; skipping remaining fallback models.`, {
+          elapsedMs,
+          totalTimeoutMs: AI_TOTAL_REQUEST_TIMEOUT_MS,
+          nextModel: model,
+        });
+        break;
+      }
+
       try {
         response = await generateWithModel(ai, model, req.body.promptContext, systemInstruction);
         usedModel = model;
@@ -352,6 +369,7 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
 
 export {
   AI_UPSTREAM_TIMEOUT_MS,
+  AI_TOTAL_REQUEST_TIMEOUT_MS,
   AI_UPSTREAM_RETRY_OPTIONS,
   AI_BACKEND_REVISION,
   GEMINI_MODELS,
