@@ -5,6 +5,8 @@ import {
   AI_UPSTREAM_TIMEOUT_MS,
   AI_TOTAL_REQUEST_TIMEOUT_MS,
   AI_UPSTREAM_RETRY_OPTIONS,
+  AI_ANALYSIS_RETRY_OPTIONS,
+  getRetryOptionsForEndpoint,
   GEMINI_MODELS,
   createAIClient,
   validateRequestBody,
@@ -26,7 +28,7 @@ function createResponseHarness() {
   return { result, res };
 }
 
-test('AI SDK client has an explicit upstream timeout and does not nest default retries', () => {
+test('AI SDK client has an explicit upstream timeout and uses the selected endpoint retry policy', () => {
   let capturedOptions;
   class FakeGoogleGenAI {
     constructor(options) { capturedOptions = options; }
@@ -41,6 +43,30 @@ test('AI SDK client has an explicit upstream timeout and does not nest default r
   assert.ok(AI_TOTAL_REQUEST_TIMEOUT_MS < 30_000, 'fallback budget must stay below the frontend request timeout');
   assert.equal(capturedOptions.httpOptions.retryOptions.attempts, 1);
   assert.equal(AI_UPSTREAM_RETRY_OPTIONS.attempts, 1);
+});
+
+
+test('AI analysis and tips retry transient 5xx once while telemetry policy remains unchanged', () => {
+  assert.equal(getRetryOptionsForEndpoint('ai-telemetry'), AI_UPSTREAM_RETRY_OPTIONS);
+  assert.equal(getRetryOptionsForEndpoint('ai-analyze'), AI_ANALYSIS_RETRY_OPTIONS);
+  assert.equal(getRetryOptionsForEndpoint('ai-tips'), AI_ANALYSIS_RETRY_OPTIONS);
+  assert.equal(AI_UPSTREAM_RETRY_OPTIONS.attempts, 1, 'telemetry keeps its previous no-retry SDK policy');
+  assert.equal(AI_ANALYSIS_RETRY_OPTIONS.attempts, 2, 'analysis/tips get one retry only');
+  assert.deepEqual(AI_ANALYSIS_RETRY_OPTIONS.httpStatusCodes, [408, 500, 502, 503, 504]);
+  assert.equal(AI_ANALYSIS_RETRY_OPTIONS.initialDelay, 0.6);
+  assert.equal(AI_ANALYSIS_RETRY_OPTIONS.maxDelay, 1.2);
+});
+
+test('AI analysis retry policy is applied to SDK client without mutating the frozen policy', () => {
+  let capturedOptions;
+  class FakeGoogleGenAI {
+    constructor(options) { capturedOptions = options; }
+  }
+  createAIClient(FakeGoogleGenAI, 'unit-test-key', AI_ANALYSIS_RETRY_OPTIONS);
+  assert.equal(capturedOptions.httpOptions.retryOptions.attempts, 2);
+  assert.deepEqual(capturedOptions.httpOptions.retryOptions.httpStatusCodes, [408, 500, 502, 503, 504]);
+  assert.notStrictEqual(capturedOptions.httpOptions.retryOptions.httpStatusCodes, AI_ANALYSIS_RETRY_OPTIONS.httpStatusCodes);
+  assert.equal(Object.isFrozen(AI_ANALYSIS_RETRY_OPTIONS), true);
 });
 
 test('AI client creates independent HTTP options for each request handler instance', () => {
@@ -169,7 +195,7 @@ test('AI service recognizes temporary high-demand and availability errors for mo
 
 
 test('AI backend revision is explicit so deployment logs identify the shipped fix', () => {
-  assert.equal(AI_BACKEND_REVISION, 'V319');
+  assert.equal(AI_BACKEND_REVISION, 'V321');
 });
 
 test('AI request deadline aborts provider call and rejects even if SDK promise hangs', async () => {
@@ -203,6 +229,6 @@ test('AI endpoint exposes backend revision header for production deployment veri
   const headers = {};
   const res = { setHeader(name, value) { headers[name] = value; } };
   setupCORSHeaders({ method: 'POST' }, res);
-  assert.equal(headers['X-AI-Backend-Revision'], 'V319');
+  assert.equal(headers['X-AI-Backend-Revision'], 'V321');
   assert.equal(headers['Access-Control-Expose-Headers'], 'X-AI-Backend-Revision');
 });

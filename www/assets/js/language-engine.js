@@ -1,4 +1,4 @@
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v320'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v321'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { NativeCapacitorService } from './native-capacitor-service.js';
 import { toggleModal } from './modal.js';
 import { postJson } from './api-client-service.js';

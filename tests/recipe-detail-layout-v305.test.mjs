@@ -26,6 +26,6 @@ test('recipe overlay paints above the top navigation so its header and close con
 });
 
 test('V312 refreshes the runtime module URL and Service Worker cache', () => {
-  assert.match(html, /runtime-entry\.js\?v=20261030-v320/);
-  assert.match(sw, /Timer-Proofing-v1\.1\.222/);
+  assert.match(html, /runtime-entry\.js\?v=20261030-v321/);
+  assert.match(sw, /Timer-Proofing-v1\.1\.223/);
 });

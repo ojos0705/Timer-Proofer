@@ -1,23 +1,46 @@
 // Shared AI utility functions to avoid DRY violations
 // Used by ai-analyze.js, ai-telemetry.js, and ai-tips.js
 
-// [AI-GENERATED][ROBUSTNESS][V205] Keep each upstream model call bounded and avoid
-// multiplying provider retries across the explicit model-fallback loop. Quota
-// responses are handled by trying the next configured model below.
+// [AI-GENERATED][ROBUSTNESS][V321] Keep each upstream model call bounded.
+// Telemetry preserves its previous no-retry SDK policy; on-demand recipe analysis
+// and tips allow one short retry for transient 5xx before advancing model fallback.
+// Quota responses are handled by trying the next configured model below.
 // Gemini's SDK rejects manually configured deadlines below 10 seconds. Use 11s
 // to stay safely above that provider minimum while retaining bounded fallback.
 // The complete provider/fallback loop must remain below the frontend 30s timeout.
 const AI_UPSTREAM_TIMEOUT_MS = 11_000;
 const AI_TOTAL_REQUEST_TIMEOUT_MS = 26_000;
-const AI_BACKEND_REVISION = "V319";
+const AI_BACKEND_REVISION = "V321";
+// Keep telemetry latency/state behavior unchanged. Recipe analysis and tips are
+// on-demand, longer-form requests: retry transient 5xx once with short jitter.
+// `attempts` includes the first request, so 2 means one additional retry.
 const AI_UPSTREAM_RETRY_OPTIONS = Object.freeze({ attempts: 1 });
+const AI_ANALYSIS_RETRY_OPTIONS = Object.freeze({
+  attempts: 2,
+  initialDelay: 0.6,
+  maxDelay: 1.2,
+  expBase: 2,
+  jitter: 0.25,
+  httpStatusCodes: Object.freeze([408, 500, 502, 503, 504]),
+});
 
-export function createAIClient(GoogleGenAI, apiKey) {
+function getRetryOptionsForEndpoint(endpoint) {
+  return endpoint === "ai-analyze" || endpoint === "ai-tips"
+    ? AI_ANALYSIS_RETRY_OPTIONS
+    : AI_UPSTREAM_RETRY_OPTIONS;
+}
+
+export function createAIClient(GoogleGenAI, apiKey, retryOptions = AI_UPSTREAM_RETRY_OPTIONS) {
   return new GoogleGenAI({
     apiKey,
     httpOptions: {
       timeout: AI_UPSTREAM_TIMEOUT_MS,
-      retryOptions: { ...AI_UPSTREAM_RETRY_OPTIONS },
+      retryOptions: {
+        ...retryOptions,
+        ...(retryOptions.httpStatusCodes
+          ? { httpStatusCodes: [...retryOptions.httpStatusCodes] }
+          : {}),
+      },
     },
   });
 }
@@ -164,17 +187,17 @@ async function generateWithModel(ai, model, promptContext, systemInstruction, ti
   const config = {
     systemInstruction,
     maxOutputTokens: 4096,
-    // [AI-GENERATED][ROBUSTNESS][V319] Do not let automatic continuation turn
+    // [AI-GENERATED][ROBUSTNESS][V321] Do not let automatic continuation turn
     // one provider call into several hidden calls beyond the request deadline.
     automaticContinuation: false,
-    // [AI-GENERATED][ROBUSTNESS][V319] Abort the HTTP request on timeout.
+    // [AI-GENERATED][ROBUSTNESS][V321] Abort the HTTP request on timeout.
     abortSignal: controller.signal,
   };
   if (useThinking) {
     config.thinkingConfig = { thinkingLevel: "minimal" };
   }
 
-  // [AI-GENERATED][ROBUSTNESS][V319] The explicit race is a second line of
+  // [AI-GENERATED][ROBUSTNESS][V321] The explicit race is a second line of
   // defense: even if an SDK/network layer fails to reject promptly on abort,
   // the serverless handler continues to the next fallback within a hard bound.
   const requestPromise = Promise.resolve().then(() => ai.models.generateContent({
@@ -218,7 +241,7 @@ function setupCORSHeaders(req, res) {
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, Accept, X-Requested-With"
   );
-  // [AI-GENERATED][OBSERVABILITY][V319] Expose the backend revision on every
+  // [AI-GENERATED][OBSERVABILITY][V321] Expose the backend revision on every
   // response, including preflight and errors, so production routing is verifiable.
   res.setHeader("Access-Control-Expose-Headers", "X-AI-Backend-Revision");
   res.setHeader("X-AI-Backend-Revision", AI_BACKEND_REVISION);
@@ -280,9 +303,10 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
 
   try {
     const { GoogleGenAI } = await import("@google/genai");
-    // [AI-GENERATED][ROBUSTNESS][V205] Apply explicit per-request timeout and
-    // disable nested SDK retries; the model fallback loop already owns retries.
-    const ai = createAIClient(GoogleGenAI, process.env.GEMINI_API_KEY);
+    // [AI-GENERATED][ROBUSTNESS][V321] Apply the explicit per-request timeout
+    // and endpoint-specific retry policy; the model loop owns cross-model fallback.
+    const retryOptions = getRetryOptionsForEndpoint(errorMessagePrefix);
+    const ai = createAIClient(GoogleGenAI, process.env.GEMINI_API_KEY, retryOptions);
 
     let response = null;
     let usedModel = GEMINI_MODELS[0];
@@ -291,7 +315,7 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
     const providerLoopStartedAt = Date.now();
 
     for (const model of GEMINI_MODELS) {
-      // [AI-GENERATED][ROBUSTNESS][V319] A Gemini SDK deadline must be >=10s;
+      // [AI-GENERATED][ROBUSTNESS][V321] A Gemini SDK deadline must be >=10s;
       // do not start another fallback when less than one valid call window remains.
       const elapsedMs = Date.now() - providerLoopStartedAt;
       if (elapsedMs + AI_UPSTREAM_TIMEOUT_MS > AI_TOTAL_REQUEST_TIMEOUT_MS) {
@@ -371,6 +395,8 @@ export {
   AI_UPSTREAM_TIMEOUT_MS,
   AI_TOTAL_REQUEST_TIMEOUT_MS,
   AI_UPSTREAM_RETRY_OPTIONS,
+  AI_ANALYSIS_RETRY_OPTIONS,
+  getRetryOptionsForEndpoint,
   AI_BACKEND_REVISION,
   GEMINI_MODELS,
   toUserFacingError,
