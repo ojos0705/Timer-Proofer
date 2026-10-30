@@ -30,7 +30,7 @@
 <meta name="midtrans-snap-config" data-client-key="YOUR_CLIENT_KEY" data-environment="sandbox" content="Midtrans Snap runtime configuration"/>
 <!-- [AI-GENERATED][ES6 MODULE][V258] Supabase, modal bootstrap, and lazy PDF services use the module runtime. -->
 <!-- [AI-GENERATED][ES6 MODULE][V255] Runtime globals are initialized before the application module graph. -->
-<script type="module" src="./assets/js/runtime-entry.js?v=20261030-v324"></script>
+<script type="module" src="./assets/js/runtime-entry.js?v=20261030-v325"></script>
 <title>Timer Proofer</title>
 <style>
         :root {
@@ -946,7 +946,30 @@ outline-offset: 2px;
     }
 
     /* Mengelompokkan pengaturan lebar agar identik */
-    #app-container { min-height: 0; min-width: 0; overflow-y: hidden; }
+    #app-container {
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
+    /* The app shell is fixed; only this inner region scrolls. Height 0 plus
+       flex growth prevents the mobile WebView from turning this into a page scroll. */
+    #app-container > .scrollable-content {
+        flex: 1 1 0px;
+        height: 0;
+        min-height: 0;
+        max-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        touch-action: pan-y;
+    }
 
     .container, 
     .auth-container {
@@ -1775,6 +1798,30 @@ outline-offset: 2px;
   background-color: #ffffff;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 1;
+}
+
+/* Expanded instructions cover the timer instead of changing its flow position. */
+.cara-pembuatan-wrapper.overlay-open {
+  position: absolute;
+  top: var(--cara-overlay-top, 0px);
+  left: 16px;
+  right: 16px;
+  z-index: 40;
+  margin: 0;
+  max-height: min(68vh, 520px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  box-shadow: 0 14px 34px rgba(35, 22, 14, 0.24);
+}
+
+.cara-pembuatan-wrapper.overlay-open .cara-pembuatan-body {
+  max-height: min(58vh, 420px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .cara-pembuatan-header {
@@ -3002,7 +3049,7 @@ body.logged-out .bottom-bar {
 }
 
         /* Wadah untuk konten yang bisa scroll */
-        .scrollable-content {flex: 1 1 0%; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden; padding: 15px; padding-bottom: 100px; background-color: transparent; color: var(--chocolate); box-sizing: border-box;}
+        .scrollable-content {flex: 1 1 0px; height: 0; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; touch-action: pan-y; position: relative; padding: 15px; padding-bottom: 100px; background-color: transparent; color: var(--chocolate); box-sizing: border-box;}
         #loc-line1 { font-weight: bold; color: #4E342E !important; }
         #loc-line2 { font-size: 0.8rem; color: #6D4C41 !important; opacity: 0.9; }
         /* Mengubah arah susunan dari menyamping (row) menjadi atas-bawah (column) */
@@ -3265,6 +3312,7 @@ body {
 /* STYLE TOMBOL PILIHAN PROOFING */
 /* Container Wrapper Utama */
 .proofer-selector-wrapper {
+    position: relative;
     background: linear-gradient(145deg, #ffffff, #fcf9f6);
     border-radius: 16px;
     padding: 16px;
@@ -3397,7 +3445,60 @@ body {
     display: block; 
 }
 
-    </style>
+    
+/* [AI-GENERATED][NATIVE UX][V325] Minimal timer surface for Android system PiP. */
+body.native-pip #app-container {
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+body.native-pip .top-nav-bar,
+body.native-pip #location-section,
+body.native-pip #refresh-indicator,
+body.native-pip #achievement-popup,
+body.native-pip .bottom-bar,
+body.native-pip .about-btn { display: none !important; }
+body.native-pip #app-container > .scrollable-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 4px !important;
+    overflow: hidden !important;
+}
+body.native-pip .scrollable-content > :not(.proofer-selector-wrapper) { display: none !important; }
+body.native-pip .proofer-selector-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+body.native-pip .proofer-selector-wrapper > :not(.timer-circle) { display: none !important; }
+body.native-pip .timer-circle {
+    width: min(62vw, 190px) !important;
+    max-width: 62vw !important;
+    margin: auto !important;
+    flex-shrink: 0 !important;
+}
+body.native-pip #countdown { font-size: clamp(1.3rem, 8vw, 2.1rem) !important; }
+body.native-pip .timer-content-wrapper .time-info { font-size: clamp(0.48rem, 2.4vw, 0.75rem) !important; }
+
+</style>
 </head>
 <body class="auth-pending"> <!-- [AI-GENERATED][AUTH-BOOT][V313] Resolve persisted session before exposing login/register UI. -->
 <!-- KODE PENAMBAHAN BARU -->

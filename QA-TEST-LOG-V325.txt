@@ -1,0 +1,51 @@
+TIMER PROOFER ES6 MODULAR — QA RELEASE V325
+Tanggal: 2026-10-30
+Versi produk: V125
+Revisi teknis: V325
+Service Worker cache: Timer-Proofing-v1.1.227
+
+HASIL OTOMATIS
+- npm test: PASS
+- Node test runner: 442 passed, 0 failed
+- Static release verification: PASS
+- Required entrypoints: 8/8 present
+- Service Worker precache: 74 assets validated
+- Local ESM graph: 67 modules
+- JavaScript files checked: 248
+- HTML files checked: 2
+- HTML IDs checked: 300
+- Missing imports: 0
+- Duplicate HTML IDs: 0
+- Inline handlers: 0
+- Scroll-lock overrides: 0
+- Duplicate function declarations in the same module: 0
+- Product version remains V125
+
+FEATURE TESTS INCLUDED
+- Donut instructions resolve through canonical donut alias.
+- Recipe instructions render in an absolute overlay above timer-circle.
+- Late-loaded app-core still binds proofing mode, custom duration and start controls.
+- Start proofing does not block on notification permission.
+- Custom duration validates 1–120 minutes.
+- Fixed app shell uses a dedicated vertical scrolling content region.
+- Capacitor TimerPip plugin is registered in Android MainActivity.
+- Android manifest opts the activity into PiP and resizeability.
+- Hardware Back requests PiP only while the proofing timer is active.
+- Timer lifecycle persists the active deadline and restores on foreground.
+
+ANDROID BUILD / DEVICE VALIDATION LIMITATION
+The Android Java/Gradle compile and physical-device test were not completed in this environment.
+The build environment cannot reach services.gradle.org, and android/local.properties refers to a Windows SDK path that is not available here.
+Therefore the native PiP bridge has passed source/static and unit contract checks, but still requires a local Windows Android Studio/Gradle build and testing on an Android 8.0/API 26+ device that supports PiP.
+
+MANUAL VALIDATION AFTER INSTALL
+1. Set a custom duration, tap Set, then Start Proofing.
+2. Verify countdown ticks and persists when app moves to background.
+3. While countdown is active and no modal/tab overlay is open, press the physical Android Back button.
+4. Confirm Android enters PiP and countdown remains visible/running.
+5. Tap/expand PiP to return to app; confirm full UI is restored and countdown is accurate.
+6. Test donut instruction card; it should appear above timer-circle without pushing the circle down.
+7. Scroll the main content down and back up on a real phone; confirm no scroll trap.
+
+IMPORTANT
+System PiP is provided by the custom Capacitor Android plugin. It is not a promise of native PiP for a browser-installed PWA or iOS build.

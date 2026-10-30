@@ -1,5 +1,5 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v324'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v325'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
 import { init as initializeAppLifecycle } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v324'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v325'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -2739,11 +2739,13 @@ function triggerMainProofing() {
 // FUNGSI UNTUK TOMBOL CUSTOM TIME (SET) - MEMUNGKINKAN USER MENGATUR WAKTU PROOFING SECARA MANUAL
 function setCustomTime() {
     const customInput = document.getElementById('custom-time');
-    const customVal = parseInt(customInput.value);
+    if (!customInput) return false;
+    const customVal = Number.parseInt(customInput.value, 10);
 
-    if (isNaN(customVal) || customVal <= 0) {
-        alert("Mohon masukkan durasi yang valid.");
-        return;
+    if (!Number.isInteger(customVal) || customVal < 1 || customVal > 120) {
+        alert("Mohon masukkan durasi yang valid (1 - 120 menit).");
+        customInput.focus?.();
+        return false;
     }
 
     totalDurationMinutes = customVal;
@@ -2793,6 +2795,7 @@ function setCustomTime() {
     if (aiTipsEl) {
         aiTipsEl.innerText = `Waktu diatur manual ke ${customVal} menit.`;
     }
+    return true;
 }
 
 /** Alias & fungsi pendukung yang sebelumnya dipanggil via typeof guard */
@@ -4087,7 +4090,7 @@ const proofingStages = {
 
 // 1. Data Langkah Pembuatan per Produk
 const resepProduk = {
-  donat: [
+  donut: [
     "Campur tepung, ragi, gula, dan susu bubuk hingga rata.",
     "Tambahkan telur dan air es bertahap sambil diuleni hingga setengah kalis.",
     "Masukkan mentega dan garam, uleni hingga kalis elastis (windowpane test).",
@@ -4167,24 +4170,43 @@ if (productPillsContainer) {
   });
 }
 
-// 3. Event Listener khusus Tombol Toggle Cara Pembuatan
+// 3. Toggle Cara Pembuatan sebagai overlay di atas timer-circle.
+// Pengukuran dilakukan sebelum mengubah posisi ke absolute agar timer tidak terdorong.
 const toggleBtn = document.getElementById("toggle-cara-pembuatan");
 const contentBody = document.getElementById("cara-pembuatan-content");
+const caraPembuatanWrapper = document.getElementById("cara-pembuatan-container");
 
-if (toggleBtn && contentBody) {
+if (toggleBtn && contentBody && caraPembuatanWrapper && !toggleBtn.dataset.tpOverlayBound) {
+  toggleBtn.dataset.tpOverlayBound = 'v325';
   toggleBtn.addEventListener("click", function () {
-    // Toggle class hidden
-    contentBody.classList.toggle("hidden");
-    
-    // Toggle class active untuk rotasi ikon panah
-    toggleBtn.classList.toggle("active");
+    const willOpen = contentBody.classList.contains('hidden');
+    if (willOpen) {
+      const positioningParent = caraPembuatanWrapper.parentElement;
+      if (positioningParent) {
+        const parentRect = positioningParent.getBoundingClientRect();
+        const wrapperRect = caraPembuatanWrapper.getBoundingClientRect();
+        const top = wrapperRect.top - parentRect.top + positioningParent.scrollTop;
+        caraPembuatanWrapper.style.setProperty('--cara-overlay-top', `${Math.max(0, top)}px`);
+      }
+      contentBody.classList.remove('hidden');
+      caraPembuatanWrapper.classList.add('overlay-open');
+    } else {
+      contentBody.classList.add('hidden');
+      caraPembuatanWrapper.classList.remove('overlay-open');
+      caraPembuatanWrapper.style.removeProperty('--cara-overlay-top');
+    }
+    toggleBtn.classList.toggle("active", willOpen);
+    toggleBtn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
   });
 }
 
-// Set resep awal saat aplikasi dimuat pertama kali
-document.addEventListener("DOMContentLoaded", () => {
-  updateCaraPembuatanContent("donat");
-});
+// Set resep awal bekerja baik sebelum maupun sesudah DOMContentLoaded.
+const initializeDefaultRecipeInstructions = () => updateCaraPembuatanContent("donat");
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", initializeDefaultRecipeInstructions, { once: true });
+} else {
+  initializeDefaultRecipeInstructions();
+}
 
 // 2. Fungsi Eksekusi Saat User Mengganti Jenis Produk
 // 1. Deklarasikan variabel status global di bagian paling atas skrip
@@ -5649,6 +5671,22 @@ async function tanganiPerubahanResepRealtime(payload) {
 // 4. FUNGSI PIP (Picture-in-Picture) UNTUK TIMER
 // ==========================================
 async function aktifkanModePIP() {
+    // [AI-GENERATED][NATIVE PIP][V325] Android Capacitor must use the OS PiP
+    // window, not the CSS-only mini-mode fallback used by ordinary browsers.
+    if (NativeCapacitorService.isNativePlatform()) {
+        const nativePipPlugin = NativeCapacitorService.getPlugin('TimerPip');
+        if (typeof nativePipPlugin?.enterPictureInPicture === 'function') {
+            document.body?.classList.add('native-pip');
+            try {
+                const result = await nativePipPlugin.enterPictureInPicture();
+                if (result?.entered === true) return true;
+            } catch (error) {
+                console.warn('[Proofing][PiP] Gagal mengaktifkan PiP native:', error);
+            }
+            document.body?.classList.remove('native-pip');
+        }
+    }
+
     // 1. Validasi dukungan API Document Picture-in-Picture pada Browser
     if (!('documentPictureInPicture' in window)) {
         const container = document.getElementById('app-container');
@@ -8094,7 +8132,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261030-v324');
+        metadataUrl.searchParams.set('_release', '20261030-v325');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);
@@ -9765,6 +9803,8 @@ async function runBackgroundLifecycleTasks({
 // Timer persistence/restore remains in app-core; listener ownership lives in AppLifecycleService.
 initializeAppLifecycle({
     onForeground: (source) => {
+        // Expand the normal timer UI when Android restores the Activity from PiP.
+        document.body?.classList.remove('native-pip');
         if (document.readyState === 'loading') return;
         // [AI-GENERATED][ROBUSTNESS][V60] Always reconcile persisted timer state
         // on foreground. The V57 idempotency guard prevents duplicate restore
@@ -9777,6 +9817,23 @@ initializeAppLifecycle({
             window.DEBUG && console.log(`[AppLifecycle] Foreground (${source}): reconcile timer.`);
             return checkAndRestoreTimer();
         }
+    },
+    onBackButton: async () => {
+        const timerIsActive = Boolean(isTimerRunning && proofingTimerController.isRunning());
+        if (!timerIsActive || !NativeCapacitorService.isNativePlatform()) return false;
+
+        const pipPlugin = NativeCapacitorService.getPlugin('TimerPip');
+        if (typeof pipPlugin?.enterPictureInPicture !== 'function') return false;
+
+        document.body?.classList.add('native-pip');
+        try {
+            const result = await pipPlugin.enterPictureInPicture();
+            if (result?.entered === true) return true;
+        } catch (error) {
+            console.warn('[Proofing][PiP] Android gagal masuk Picture-in-Picture:', error);
+        }
+        document.body?.classList.remove('native-pip');
+        return false;
     },
     onBackground: async () => {
         // [AI-GENERATED][ROBUSTNESS][V235] Failures while stopping the clock or
@@ -9794,6 +9851,13 @@ initializeAppLifecycle({
 // lifecycle signal before a page is frozen, discarded, or moved into the back/forward
 // cache. Persist the absolute timer deadline synchronously through ProofingService's
 // LocalStorage write-through path; do not await native Preferences from this event.
+// [AI-GENERATED][NATIVE UX][V325] Android reports PiP enter/exit separately
+// from appState: the Activity can remain resumed when the PiP window expands.
+window.addEventListener('timerproofer:pipchange', (event) => {
+    const isInPictureInPictureMode = event?.detail?.isInPictureInPictureMode === true;
+    document.body?.classList.toggle('native-pip', isInPictureInPictureMode);
+});
+
 window.addEventListener('pagehide', () => {
     if (typeof isTimerRunning !== 'undefined' && isTimerRunning && typeof persistProofingState === 'function') {
         persistProofingState();
@@ -10656,6 +10720,66 @@ if (document.readyState === 'loading') {
     initLocationHeaderShrinkBehavior();
 }
 
+
+// [AI-GENERATED][REGRESSION FIX][V325] Bind essential timer controls even when
+// app-core is evaluated after DOMContentLoaded by the asynchronous ES-module boot chain.
+let proofingControlsInitialized = false;
+function initProofingControlBindings() {
+    if (proofingControlsInitialized) return true;
+    const startButton = document.getElementById('main-start-btn');
+    const setButton = document.getElementById('set-btn');
+    const customInput = document.getElementById('custom-time');
+    const modeButtons = document.querySelectorAll('.mode-btn[id^="btn-mode-"]');
+
+    modeButtons.forEach((button) => {
+        if (button.dataset.tpProofingModeBound === 'v325') return;
+        button.dataset.tpProofingModeBound = 'v325';
+        bindReplaceableClick(button, () => {
+            const mode = button.id.replace('btn-mode-', '');
+            if (typeof setMode === 'function') setMode(mode);
+        });
+    });
+
+    if (setButton && setButton.dataset.tpCustomTimeBound !== 'v325') {
+        setButton.dataset.tpCustomTimeBound = 'v325';
+        bindReplaceableClick(setButton, () => {
+            if (typeof setCustomTime === 'function') setCustomTime();
+        });
+    }
+
+    if (customInput && customInput.dataset.tpCustomTimeEnterBound !== 'v325') {
+        customInput.dataset.tpCustomTimeEnterBound = 'v325';
+        customInput.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            if (typeof setCustomTime === 'function') setCustomTime();
+        });
+    }
+
+    if (startButton && startButton.dataset.tpProofingStartBound !== 'v325') {
+        startButton.dataset.tpProofingStartBound = 'v325';
+        bindReplaceableClick(startButton, () => {
+            // Do not await notification permission here: the countdown must start
+            // synchronously from the user's gesture. Notification service requests
+            // permission independently while scheduling the native alarm.
+            if (typeof triggerMainProofing === 'function') {
+                triggerMainProofing();
+            } else {
+                console.warn('[Proofing] triggerMainProofing belum tersedia.');
+            }
+        });
+    }
+
+    proofingControlsInitialized = Boolean(startButton || setButton || customInput || modeButtons.length);
+    return proofingControlsInitialized;
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProofingControlBindings, { once: true });
+} else {
+    initProofingControlBindings();
+}
+
 /**
  * =========================================================================
  * INISIALISASI UTAMA APLIKASI (SINGLE DOMCONTENTLOADED EVENT)
@@ -10799,61 +10923,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // -----------------------------------------------------------------
-    // 5. TIMER CONTROLS & MODE PROSES
-    // -----------------------------------------------------------------
-    const tombolMode = document.querySelectorAll('.mode-btn[id^="btn-mode-"]');
-    tombolMode.forEach(button => {
-        button.addEventListener('click', () => {
-            const modeDipilih = button.id.replace('btn-mode-', '');
-            if (typeof setMode === 'function') {
-                setMode(modeDipilih);
-            } else {
-                console.warn("Fungsi setMode() asli belum dideklarasikan di dalam skrip.");
-            }
-        });
-    });
-
-    const btnSetCustomTime = document.getElementById('set-btn');
-    const inputCustomTime = document.getElementById('custom-time');
-    if (btnSetCustomTime && inputCustomTime) {
-        btnSetCustomTime.addEventListener('click', () => {
-            const waktuMenit = parseInt(inputCustomTime.value, 10);
-            if (!isNaN(waktuMenit) && waktuMenit > 0) {
-                window.DEBUG && console.log(`Menetapkan waktu proofer kustom secara aman: ${waktuMenit} menit.`);
-                if (typeof setCustomTime === 'function') {
-                    setCustomTime();
-                } else if (typeof updateTimerDisplay === 'function') {
-                    updateTimerDisplay(waktuMenit * 60);
-                }
-            } else {
-                alert("Mohon masukkan durasi menit yang valid (1 - 120 menit).");
-            }
-        });
-    }
-
-    const btnStartProofing = document.getElementById('main-start-btn');
-    if (btnStartProofing) {
-        btnStartProofing.addEventListener('click', async () => {
-            window.DEBUG && console.log("Tombol Start Proofing dipicu secara aman.");
-            let diizinkan = false;
-            if (typeof requestNotificationPermission === 'function') {
-                diizinkan = await requestNotificationPermission();
-            }
-            if (!diizinkan) {
-                console.warn("Melanjutkan tanpa notifikasi karena izin ditolak OS/User.");
-            }
-            if (typeof triggerMainProofing === 'function') {
-                triggerMainProofing();
-            } else {
-                console.warn("Fungsi triggerMainProofing() utama belum terdeteksi.");
-                if (typeof isProofingActive !== 'undefined') {
-                    isProofingActive = true;
-                    if (typeof startCountdownEngine === 'function') startCountdownEngine();
-                }
-            }
-        });
-    }
+    // Timer controls are initialized independently above so late ES-module
+    // evaluation cannot miss DOMContentLoaded or block START on notification permission.
 
     // -----------------------------------------------------------------
     // 7. REAL-TIME KALKULATOR RESEP & DATABASE BINDING

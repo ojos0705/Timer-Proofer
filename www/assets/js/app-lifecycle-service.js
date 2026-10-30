@@ -5,7 +5,7 @@
  */
 
 import { NativeCapacitorService } from './native-capacitor-service.js';
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v324'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v325'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 
 let lifecycleCallbacks = {};
 let initialized = false;

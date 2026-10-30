@@ -20,7 +20,7 @@ setTimeout(() => {
 
 // [AI-GENERATED][ES6 MODULE][V259] Initialize the critical modal module first, but isolate its failure.
 try {
-    const { initializeModalBootstrap } = await import('./modal-bootstrap.js?v=20261030-v324');
+    const { initializeModalBootstrap } = await import('./modal-bootstrap.js?v=20261030-v325');
     initializeModalBootstrap();
 } catch (error) {
     // A modal regression should be visible without preventing timer/auth startup.
@@ -75,7 +75,7 @@ await initializeRuntimeBootstrap();
 
 try {
     // [AI-GENERATED][CACHE BUSTING][V267] Update this token with every release.
-    await import('./boot.js?v=20261030-v324');
+    await import('./boot.js?v=20261030-v325');
     applicationBooted = true;
     // Boot's dependency graph has now registered lifecycle hooks. If the SDK won the race,
     // initialize by ESM export now; if it resolves later, the bridge callback does the same.

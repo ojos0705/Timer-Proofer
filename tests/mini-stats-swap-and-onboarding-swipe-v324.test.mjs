@@ -1,4 +1,4 @@
-/** [AI-GENERATED][QA][V324] Mini-stat delegated taps and mobile onboarding swipe. */
+/** [AI-GENERATED][QA][V325] Mini-stat delegated taps and mobile onboarding swipe. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -59,9 +59,9 @@ test('onboarding slider allows horizontal swipe without blocking native vertical
     assert.match(html, /#onboarding-screen, \.ob-overlay\s*\{[^}]*overscroll-behavior:\s*contain/s);
 });
 
-test('technical cache advances to V324 while visible app version remains V125', () => {
+test('technical cache advances to V325 while visible app version remains V125', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261030-v324');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.226');
-    assert.match(html, /runtime-entry\.js\?v=20261030-v324/);
+    assert.equal(version.releaseToken, '20261030-v325');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.227');
+    assert.match(html, /runtime-entry\.js\?v=20261030-v325/);
 });

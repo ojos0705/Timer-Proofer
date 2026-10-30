@@ -49,6 +49,6 @@ test('product instruction renderer uses the normalized resolver and text nodes, 
 
 test('product instruction helper stays precached for offline boot after V277 cache rollover', () => {
     assert.match(serviceWorkerSource, /\.\/assets\/js\/product-instructions\.js/);
-    assert.match(serviceWorkerSource, /Timer-Proofing-v1\.1\.226/);
+    assert.match(serviceWorkerSource, /Timer-Proofing-v1\.1\.227/);
 });
 

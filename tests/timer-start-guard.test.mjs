@@ -68,6 +68,6 @@ test('app-core rolls back running UI state after a synchronous first-tick except
 
 test('timer startup guard is included in Service Worker precache for first offline boot', () => {
     assert.match(serviceWorkerSource, /\.\/assets\/js\/core\/timer-start-guard\.js/);
-    assert.match(serviceWorkerSource, /Timer-Proofing-v1\.1\.226/);
+    assert.match(serviceWorkerSource, /Timer-Proofing-v1\.1\.227/);
 });
 
