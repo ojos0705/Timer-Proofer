@@ -219,7 +219,7 @@ if (version) {
         if (!/export\s+\{[^}]*\binit\b/.test(lifecycleSource) || !/function\s+init\(/.test(lifecycleSource)) {
             failures.push('app-lifecycle-service.js harus mengekspor initializer init sebagai ES6 Module.');
         }
-        if (!/import\s+\{\s*init\s+as\s+initializeAppLifecycle\s*\}\s+from\s+[\"']\.\/app-lifecycle-service\.js[\"']/.test(appCoreSource)) {
+        if (!/import\s+\{\s*init\s+as\s+initializeAppLifecycle\s*,?\s*(?:setTimerBackGuard\s*)?\}\s+from\s+["']\.\/app-lifecycle-service\.js["']/.test(appCoreSource)) {
             failures.push('app-core.js harus mengimpor initializer lifecycle melalui named export ES6 Module.');
         }
         if (!/initializeAppLifecycle\(\{/.test(appCoreSource) || /window\.AppLifecycleService\?\.init/.test(appCoreSource)) {

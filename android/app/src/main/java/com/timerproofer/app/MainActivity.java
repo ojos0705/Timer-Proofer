@@ -13,6 +13,13 @@ public class MainActivity extends BridgeActivity {
         super.onCreate(savedInstanceState);
     }
 
+    /** Enter PiP automatically when Android moves the active timer Activity to background. */
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        TimerPipPlugin.enterFromUserLeaveHint(this);
+    }
+
     /** Keep the WebView's compact timer surface in sync with Android PiP state. */
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {

@@ -202,7 +202,7 @@ test('browser Back normalizes an active modal when the modal bridge is incomplet
 test('native Back uses the same modal-before-tab precedence as browser Back', () => {
     const lifecycle = fs.readFileSync(new URL('../assets/js/app-lifecycle-service.js', import.meta.url), 'utf8');
     assert.match(lifecycle, /function closeTopmostModalOrTabOverlay\(\)/);
-    assert.match(lifecycle, /function handlePopState\(\)[\s\S]*?closeTopmostModalOrTabOverlay\(\);/);
+    assert.match(lifecycle, /async function handlePopState\(\)[\s\S]*?closeTopmostModalOrTabOverlay\(\)\)/);
     assert.match(lifecycle, /async function handleNativeBackButton\(\)[\s\S]*?if \(closeTopmostModalOrTabOverlay\(\)\) return;/);
     assert.match(lifecycle, /\.recipe-modal\.active, \.tips-modal\.active/);
 });

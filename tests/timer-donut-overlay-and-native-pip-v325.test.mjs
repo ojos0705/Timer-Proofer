@@ -79,7 +79,7 @@ test('Capacitor native bridge registers TimerPip and Android activity supports P
 
 test('hardware Back enters native PiP only while the proofing timer is running', () => {
     const lifecycleConfig = section(core, 'initializeAppLifecycle({', "// [AI-GENERATED][ROBUSTNESS][V137]");
-    assert.match(lifecycleConfig, /onBackButton:\s*async\s*\(\)\s*=>/);
+    assert.match(lifecycleConfig, /onBackButton:\s*async\s*\(source\s*=\s*'native-back'\)\s*=>/);
     assert.match(lifecycleConfig, /isTimerRunning\s*&&\s*proofingTimerController\.isRunning\(\)/);
     assert.match(lifecycleConfig, /NativeCapacitorService\.getPlugin\('TimerPip'\)/);
     assert.match(lifecycleConfig, /pipPlugin\.enterPictureInPicture\(\)/);

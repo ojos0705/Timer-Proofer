@@ -57,8 +57,8 @@ test('weather-driven accent is scoped to location header and no longer recolors 
 
 test('technical cache boundary advances while visible product version remains V125 while visible product version remains V125', () => {
   assert.equal(version.version, 'V125');
-  assert.equal(version.releaseToken, '20261030-v325');
-  assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.227');
-  assert.match(html, /runtime-entry\.js\?v=20261030-v325/);
-  assert.match(sw, /const CACHE_NAME = 'Timer-Proofing-v1\.1\.227'/);
+  assert.equal(version.releaseToken, '20261030-v326');
+  assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.228');
+  assert.match(html, /runtime-entry\.js\?v=20261030-v326/);
+  assert.match(sw, /const CACHE_NAME = 'Timer-Proofing-v1\.1\.228'/);
 });

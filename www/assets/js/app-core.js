@@ -1,7 +1,7 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v325'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v326'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
-import { init as initializeAppLifecycle } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
+import { init as initializeAppLifecycle, setTimerBackGuard } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
 import { formatHasilAI, formatTipsHasilAI } from './ai-formatters.js';
 import { StorageService } from './storage-service.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v325'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v326'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -2507,6 +2507,17 @@ function persistProofingState() {
     });
 }
 
+// [AI-GENERATED][NATIVE PIP][V326] Mirror timer-active state to the Android plugin.
+// Android 12+ uses this to prepare automatic PiP when the Activity is sent to background.
+function syncNativePictureInPictureTimerState(active) {
+    if (!NativeCapacitorService.isNativePlatform()) return;
+    const plugin = NativeCapacitorService.getPlugin('TimerPip');
+    if (typeof plugin?.setTimerActive !== 'function') return;
+    void Promise.resolve(plugin.setTimerActive({ active: Boolean(active) })).catch((error) => {
+        console.warn('[Proofing][PiP] Gagal menyinkronkan status timer ke Android:', error);
+    });
+}
+
 function clearProofingState() {
     // [AI-GENERATED][ROBUSTNESS][V75] Reset is also a state mutation. Invalidate
     // any restore read that may still be awaiting StorageService/Preferences.
@@ -2547,6 +2558,8 @@ function clearProofingState() {
     void ProofingNotificationService.cancel();
 
     isTimerRunning = false;
+    setTimerBackGuard(false);
+    syncNativePictureInPictureTimerState(false);
     ProofingCompletionService.reset();
 }
 
@@ -3704,6 +3717,8 @@ function startProofing(isRestoring = false, restoredTargetEndTime = null) {
     // [AI-GENERATED][REFACTOR] Scheduling, drift correction, and interval ownership
     // are delegated to the canonical proofing timer controller.
     isTimerRunning = true;
+    setTimerBackGuard(true);
+    syncNativePictureInPictureTimerState(true);
     // [AI-GENERATED][ROBUSTNESS][V226] start() immediately executes its first
     // callback. If a renderer throws there, the controller stops its interval
     // and rethrows before the assignment returns; without this guard, the app's
@@ -3762,6 +3777,8 @@ function startProofing(isRestoring = false, restoredTargetEndTime = null) {
         }
         timerInterval = null;
         isTimerRunning = false;
+        setTimerBackGuard(false);
+        syncNativePictureInPictureTimerState(false);
         try { setControlsDisabled(false); } catch (error) {
             console.warn('[Proofing] Gagal mengaktifkan ulang kontrol setelah startup error:', error);
         }
@@ -3788,6 +3805,8 @@ function startProofing(isRestoring = false, restoredTargetEndTime = null) {
     if (timerInterval === null || timerInterval === undefined) {
         // Controller rejects invalid durations; restore path remains state-safe.
         isTimerRunning = false;
+        setTimerBackGuard(false);
+        syncNativePictureInPictureTimerState(false);
         clearProofingState();
         return;
     }
@@ -5670,9 +5689,162 @@ async function tanganiPerubahanResepRealtime(payload) {
 // ==========================================
 // 4. FUNGSI PIP (Picture-in-Picture) UNTUK TIMER
 // ==========================================
-async function aktifkanModePIP() {
-    // [AI-GENERATED][NATIVE PIP][V325] Android Capacitor must use the OS PiP
-    // window, not the CSS-only mini-mode fallback used by ordinary browsers.
+// [AI-GENERATED][PWA VIDEO PIP][V326] Chrome Android does not implement the
+// Document Picture-in-Picture API. A canvas-backed muted video provides the
+// standards-based HTMLVideoElement PiP path on browsers that support it.
+let webVideoPipState = null;
+
+function canUseVideoPictureInPicture() {
+    return typeof HTMLVideoElement !== 'undefined'
+        && typeof HTMLVideoElement.prototype.requestPictureInPicture === 'function'
+        && document.pictureInPictureEnabled === true;
+}
+
+function drawWebVideoPipFrame(context, canvas) {
+    const width = canvas.width;
+    const height = canvas.height;
+    const countdown = document.getElementById('countdown')?.textContent?.trim() || '00:00';
+    const status = document.getElementById('ai-tips')?.textContent?.trim()
+        || (isTimerRunning ? 'Proofing sedang berjalan' : 'Timer Proofer');
+    const mainCountdown = document.getElementById('countdown');
+    const timerColor = mainCountdown ? getComputedStyle(mainCountdown).color : '#4E342E';
+    const isRunning = Boolean(isTimerRunning);
+
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = '#FDF5E6';
+    context.fillRect(0, 0, width, height);
+    context.fillStyle = '#E67E22';
+    context.font = '700 28px Segoe UI, sans-serif';
+    context.textAlign = 'center';
+    context.fillText('TIMER PROOFER', width / 2, 55);
+
+    context.fillStyle = timerColor;
+    context.font = '700 106px ui-monospace, SFMono-Regular, Consolas, monospace';
+    context.fillText(countdown, width / 2, 190);
+
+    context.fillStyle = '#6D4C41';
+    context.font = '600 25px Segoe UI, sans-serif';
+    context.fillText(isRunning ? 'PROOFING BERJALAN' : 'TIMER DIJEDA', width / 2, 242);
+
+    context.fillStyle = 'rgba(78,52,46,.18)';
+    context.fillRect(55, 282, width - 110, 12);
+    const initial = Math.max(1, Number(globalInitialSeconds) || 1);
+    const remaining = Math.max(0, Number(globalTotalSeconds) || 0);
+    const ratio = Math.max(0, Math.min(1, remaining / initial));
+    context.fillStyle = '#E67E22';
+    context.fillRect(55, 282, (width - 110) * ratio, 12);
+
+    context.fillStyle = '#6D4C41';
+    context.font = '18px Segoe UI, sans-serif';
+    const statusText = status.replace(/\s+/g, ' ').slice(0, 62);
+    context.fillText(statusText || 'Memantau proofing adonan', width / 2, 335);
+}
+
+function updatePipTriggerButton(isActive, mode = 'mini') {
+    const button = document.getElementById('pip-trigger-btn');
+    if (!button) return;
+    button.textContent = isActive ? (mode === 'video' ? '❌ Tutup PIP' : '❌ Tutup Mini') : '📺 PIP Mode';
+    button.style.background = isActive ? '#c0392b' : 'var(--accent)';
+}
+
+async function enterWebVideoPictureInPicture() {
+    if (!canUseVideoPictureInPicture()) return false;
+    if (document.pictureInPictureElement) return document.pictureInPictureElement === webVideoPipState?.video;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 360;
+    const context = canvas.getContext('2d');
+    if (!context || typeof canvas.captureStream !== 'function') return false;
+
+    drawWebVideoPipFrame(context, canvas);
+    const stream = canvas.captureStream(2);
+    const video = document.createElement('video');
+    video.muted = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.disablePictureInPicture = false;
+    video.setAttribute('aria-hidden', 'true');
+    video.tabIndex = -1;
+    Object.assign(video.style, {
+        position: 'fixed', left: '0', bottom: '0', width: '2px', height: '2px',
+        opacity: '0.01', pointerEvents: 'none', zIndex: '-1'
+    });
+    video.srcObject = stream;
+    document.body.appendChild(video);
+
+    let frameTimer = null;
+    const cleanup = () => {
+        if (frameTimer !== null) clearInterval(frameTimer);
+        frameTimer = null;
+        try { video.pause(); } catch (_) {}
+        try { stream.getTracks().forEach((track) => track.stop()); } catch (_) {}
+        video.srcObject = null;
+        video.remove();
+        if (webVideoPipState?.video === video) webVideoPipState = null;
+        document.body?.classList.remove('web-video-pip-active');
+        updatePipTriggerButton(false);
+    };
+
+    try {
+        await video.play();
+        // Request directly after play while the button's transient user activation
+        // is still available. The same call is attempted on PWA Back and falls
+        // back to the in-app mini widget if the browser rejects the activation.
+        const pipWindow = await video.requestPictureInPicture();
+        webVideoPipState = { video, stream, canvas, cleanup, pipWindow };
+        document.body.classList.add('web-video-pip-active');
+        updatePipTriggerButton(true, 'video');
+        frameTimer = setInterval(() => drawWebVideoPipFrame(context, canvas), 500);
+        webVideoPipState.frameTimer = frameTimer;
+        video.addEventListener('leavepictureinpicture', cleanup, { once: true });
+        return true;
+    } catch (error) {
+        console.warn('[Proofing][PiP] Video PiP browser tidak tersedia pada konteks ini:', error);
+        cleanup();
+        return false;
+    }
+}
+
+function activateInAppMiniTimer() {
+    const container = document.getElementById('app-container');
+    const pipButton = document.getElementById('pip-trigger-btn');
+    if (!container) return false;
+
+    const enabled = !container.classList.contains('mini-mode');
+    container.classList.toggle('mini-mode', enabled);
+    if (pipButton) updatePipTriggerButton(enabled, 'mini');
+    if (enabled && typeof NotifSystem !== 'undefined') {
+        NotifSystem.tambah('sistem', 'Mode Mini Aktif', 'Timer tetap terlihat dalam widget mini di halaman aplikasi.', '📱');
+    }
+    return true;
+}
+
+async function aktifkanModePIP(options = {}) {
+    const fromBack = options?.fromBack === true;
+
+    // If the user taps the PiP control while the in-app fallback is already
+    // compacted, treat the action as a close toggle before opening another mode.
+    const appContainer = document.getElementById('app-container');
+    if (!fromBack && !NativeCapacitorService.isNativePlatform()
+        && appContainer?.classList.contains('mini-mode')) {
+        return activateInAppMiniTimer();
+    }
+
+    // An explicit toolbar/button tap toggles an already-open browser PiP window
+    // closed. A Back action never closes an existing PiP window.
+    if (!fromBack && webVideoPipState?.video && document.pictureInPictureElement === webVideoPipState.video
+        && typeof document.exitPictureInPicture === 'function') {
+        try {
+            await document.exitPictureInPicture();
+            return true;
+        } catch (error) {
+            console.warn('[Proofing][PiP] Gagal menutup video PiP:', error);
+        }
+    }
+    if (document.pictureInPictureElement && fromBack) return true;
+
+    // Native Android uses the platform Activity PiP window.
     if (NativeCapacitorService.isNativePlatform()) {
         const nativePipPlugin = NativeCapacitorService.getPlugin('TimerPip');
         if (typeof nativePipPlugin?.enterPictureInPicture === 'function') {
@@ -5685,172 +5857,89 @@ async function aktifkanModePIP() {
             }
             document.body?.classList.remove('native-pip');
         }
+        return false;
     }
 
-    // 1. Validasi dukungan API Document Picture-in-Picture pada Browser
-    if (!('documentPictureInPicture' in window)) {
-        const container = document.getElementById('app-container');
-        const pipBtn = document.getElementById('pip-trigger-btn');
-        
-        if (container) {
-            // Aktifkan/nonaktifkan mode mini
-            container.classList.toggle('mini-mode');
-            
-            // Ubah tampilan tombol sebagai indikator
-            if (container.classList.contains('mini-mode')) {
-                pipBtn.innerHTML = "❌ Tutup Mini";
-                pipBtn.style.background = "#c0392b"; // Ubah merah saat aktif
-                if (typeof NotifSystem !== 'undefined') {
-                    NotifSystem.tambah('sistem', 'Mode Mini Aktif', 'Tampilan disederhanakan ke mode widget.', '📱');
-                }
-            } else {
-                pipBtn.innerHTML = "📺 PIP Mode";
-                pipBtn.style.background = "var(--accent)"; // Kembali oranye
+    // Desktop Chromium may open an arbitrary HTML Document PiP window.
+    if ('documentPictureInPicture' in window) {
+        if (pipWindowInstance) {
+            if (fromBack) {
+                pipWindowInstance.focus();
+                return true;
             }
-        }
-        return; // Hentikan eksekusi kode Desktop di bawah ini
-    }
-
-    // Jika PIP sudah terbuka, fokuskan kembali jendelanya
-    if (pipWindowInstance) {
-        pipWindowInstance.focus();
-        return;
-    }
-
-    try {
-        // 2. Buka jendela PIP melayang dengan aspek rasio mini kotak
-        pipWindowInstance = await window.documentPictureInPicture.requestWindow({
-            width: 280,
-            height: 180,
-        });
-
-        // 3. Salin CSS Stylesheet dari aplikasi utama agar font dan layout rapi
-        [...document.styleSheets].forEach((styleSheet) => {
-            try {
-                const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
-                const style = document.createElement('style');
-                style.textContent = cssRules;
-                pipWindowInstance.document.head.appendChild(style);
-            } catch (e) {
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = styleSheet.href;
-                pipWindowInstance.document.head.appendChild(link);
-            }
-        });
-
-        // 4. Suntikkan struktur HTML khusus ke dalam jendela pop-out PIP
-        pipWindowInstance.document.body.innerHTML = `
-            <div class="pip-container" style="
-                padding: 12px; 
-                text-align: center; 
-                background: #FDF5E6; 
-                height: 100vh; 
-                box-sizing: border-box;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                user-select: none;
-            ">
-                <div style="font-size: 10px; font-weight: bold; color: #E67E22; margin-bottom: 2px; letter-spacing: 0.5px;">PROOFER TIMER</div>
-                <div id="pip-countdown" style="font-size: 32px; font-weight: bold; color: #4E342E; font-family: monospace; line-height: 1.1;">00:00</div>
-                <div id="pip-status" style="font-size: 9px; margin-top: 4px; color: #5d4037; max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px;">Memantau ragi adonan...</div>
-                
-                <div style="margin-top: 10px; display: flex; gap: 8px;">
-                    <button id="pip-btn-control" style="background: #4E342E; color: white; border: none; padding: 6px 14px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: bold; transition: background 0.2s;">START</button>
-                    <button id="pip-btn-close" style="background: #bdc3c7; color: #4E342E; border: none; padding: 6px 14px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: bold;">Tutup</button>
-                </div>
-            </div>
-        `;
-
-        // 5. Ambil referensi elemen dari dalam dokumen PiP yang baru disuntikkan
-        const pipBtnControl = pipWindowInstance.document.getElementById('pip-btn-control');
-        const pipBtnClose = pipWindowInstance.document.getElementById('pip-btn-close');
-        const pipCountdown = pipWindowInstance.document.getElementById('pip-countdown');
-        const pipStatus = pipWindowInstance.document.getElementById('pip-status');
-
-        // 6. Sinkronisasi Data Real-Time secara dua arah dari DOM Aplikasi Utama
-        const updatePipDisplay = () => {
-            const mainCountdownText = document.getElementById('countdown')?.innerText || "00:00";
-            const mainStatusText = document.getElementById('ai-tips')?.innerText || "Memantau ragi adonan...";
-
-            if (pipCountdown) {
-                pipCountdown.innerText = mainCountdownText;
-                // Selaraskan warna countdown dari warna aslinya di aplikasi utama
-                const mainCountdownEl = document.getElementById('countdown');
-                if (mainCountdownEl) {
-                    const mainColor = window.getComputedStyle(mainCountdownEl).color;
-                    pipCountdown.style.color = mainColor;
-                }
-            }
-            if (pipStatus) {
-                pipStatus.innerText = mainStatusText;
-            }
-            
-            // Atur status tombol secara reaktif berdasarkan variabel global isTimerRunning
-            if (pipBtnControl && typeof isTimerRunning !== 'undefined') {
-                if (isTimerRunning) {
-                    pipBtnControl.innerText = "RESET";
-                    pipBtnControl.style.background = "#d32f2f"; 
-                } else {
-                    pipBtnControl.innerText = "START";
-                    pipBtnControl.style.background = "#4E342E";  
-                }
-            }
-        };
-
-        // Jalankan sinkronisasi DOM instan & berkala (200ms) selama jendela terbuka
-        updatePipDisplay();
-        pipIntervalInstance = setInterval(updatePipDisplay, 200);
-
-        // 7. Event Listener: Tombol START/RESET di dalam PiP
-        if (pipBtnControl) {
-            pipBtnControl.addEventListener('click', () => {
-                if (typeof isTimerRunning !== 'undefined' && isTimerRunning) {
-                    // Simulasikan klik pada elemen countdown utama untuk memicu reset/stop
-                    const countdownEl = document.getElementById('countdown');
-                    if (countdownEl) {
-                        countdownEl.click();
-                    } else {
-                        // Fallback jika elemen tidak ditemukan, panggil tombol utama
-                        document.getElementById('main-start-btn')?.click();
-                    }
-                } else {
-                    // Jika timer mati, jalankan fungsi start proofing bawaan aplikasi Anda
-                    const mainStartBtn = document.getElementById('main-start-btn');
-                    if (mainStartBtn) {
-                        mainStartBtn.click();
-                    } else if (typeof startProofing === 'function') {
-                        startProofing();
-                    }
-                }
-            });
-        }
-
-        // 8. Event Listener: Tombol Tutup di dalam PiP
-        if (pipBtnClose) {
-            pipBtnClose.addEventListener('click', () => {
-                pipWindowInstance.close();
-            });
-        }
-
-        // 9. Pembersihan memori interval saat jendela PiP ditutup oleh user
-        pipWindowInstance.addEventListener('pagehide', () => {
-            clearInterval(pipIntervalInstance);
+            try { pipWindowInstance.close(); } catch (_) {}
             pipWindowInstance = null;
+            if (pipIntervalInstance !== null) clearInterval(pipIntervalInstance);
             pipIntervalInstance = null;
-            if (typeof NotifSystem !== 'undefined') {
-                NotifSystem.tambah('sistem', 'Mode PIP Nonaktif', 'Kembali memantau adonan di halaman utama.', '📱');
-            }
-        });
-
-    } catch (error) {
-        console.error("Gagal membuka Document PIP:", error);
-        if (typeof NotifSystem !== 'undefined') {
-            NotifSystem.tambah('sistem', 'Gagal Membuka PIP', 'Harus dipicu oleh aksi sentuhan/klik langsung oleh user.', '❌');
+            updatePipTriggerButton(false);
+            return true;
+        }
+        try {
+            pipWindowInstance = await window.documentPictureInPicture.requestWindow({ width: 280, height: 180 });
+            [...document.styleSheets].forEach((styleSheet) => {
+                try {
+                    const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
+                    const style = document.createElement('style');
+                    style.textContent = cssRules;
+                    pipWindowInstance.document.head.appendChild(style);
+                } catch (_) {
+                    if (!styleSheet.href) return;
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = styleSheet.href;
+                    pipWindowInstance.document.head.appendChild(link);
+                }
+            });
+            pipWindowInstance.document.body.innerHTML = `
+                <div style="padding:12px;text-align:center;background:#FDF5E6;height:100vh;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:center;user-select:none;">
+                    <div style="font-size:10px;font-weight:bold;color:#E67E22;margin-bottom:2px;letter-spacing:.5px;">PROOFER TIMER</div>
+                    <div id="pip-countdown" style="font-size:32px;font-weight:bold;color:#4E342E;font-family:monospace;line-height:1.1;">00:00</div>
+                    <div id="pip-status" style="font-size:9px;margin-top:4px;color:#5d4037;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px;">Memantau ragi adonan...</div>
+                </div>`;
+            const pipCountdown = pipWindowInstance.document.getElementById('pip-countdown');
+            const pipStatus = pipWindowInstance.document.getElementById('pip-status');
+            const update = () => {
+                if (!pipCountdown || !pipStatus) return;
+                pipCountdown.textContent = document.getElementById('countdown')?.textContent || '00:00';
+                pipStatus.textContent = isTimerRunning ? 'PROOFING BERJALAN' : 'TIMER DIJEDA';
+            };
+            update();
+            pipIntervalInstance = setInterval(update, 500);
+            updatePipTriggerButton(true, 'video');
+            pipWindowInstance.addEventListener('pagehide', () => {
+                clearInterval(pipIntervalInstance);
+                pipWindowInstance = null;
+                pipIntervalInstance = null;
+                updatePipTriggerButton(false);
+            }, { once: true });
+            return true;
+        } catch (error) {
+            console.warn('[Proofing][PiP] Document PiP gagal:', error);
         }
     }
+
+    // Chrome Android supports video PiP, not Document PiP. The canvas stream
+    // mirrors the countdown as a native floating video window.
+    if (canUseVideoPictureInPicture()) {
+        const entered = await enterWebVideoPictureInPicture();
+        if (entered) return true;
+    }
+
+    // Browser/PWA fallback when system PiP is unavailable or denied. This is an
+    // in-app compact widget, not an OS-level always-on-top window.
+    if (fromBack) {
+        const container = document.getElementById('app-container');
+        if (container && !container.classList.contains('mini-mode')) {
+            container.classList.add('mini-mode');
+            const pipButton = document.getElementById('pip-trigger-btn');
+            if (pipButton) {
+                pipButton.textContent = '❌ Tutup Mini';
+                pipButton.style.background = '#c0392b';
+            }
+        }
+        return Boolean(container);
+    }
+    return activateInAppMiniTimer();
 }
 
 // ==========================================
@@ -8132,7 +8221,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261030-v325');
+        metadataUrl.searchParams.set('_release', '20261030-v326');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);
@@ -8174,8 +8263,18 @@ function bukaArtikelLengkap(id) {
     // Keep its intentional formatting; never replace this with user/API-supplied content.
     if (bodyElement && typeof artikel.content === 'string') bodyElement.innerHTML = artikel.content;
 
-    // Tampilkan overlay modal via class .active (CSS menangani display)
-    if (overlay) overlay.classList.add('active');
+    // [AI-GENERATED][ARTICLE FULLSCREEN][V326] The body is transformed and width-capped
+    // for the app shell. Portal this existing node to <html> while open so fixed
+    // positioning covers the whole viewport instead of being clipped to the shell.
+    if (overlay) {
+        if (!overlay.__tpPortalPlaceholder && overlay.parentNode !== document.documentElement) {
+            const placeholder = document.createComment('article-modal-origin');
+            overlay.parentNode?.insertBefore(placeholder, overlay);
+            overlay.__tpPortalPlaceholder = placeholder;
+        }
+        if (overlay.parentNode !== document.documentElement) document.documentElement.appendChild(overlay);
+        overlay.classList.add('active');
+    }
 }
 
 // FUNGSI UNTUK MENUTUP KEMBALI HALAMAN ARTIKEL
@@ -8188,6 +8287,14 @@ function tutupArtikelSecaraAman() {
     if (articleModal) {
         articleModal.classList.remove('active');
         articleModal.style.removeProperty('display');
+        const placeholder = articleModal.__tpPortalPlaceholder;
+        if (placeholder?.parentNode) {
+            placeholder.parentNode.insertBefore(articleModal, placeholder.nextSibling);
+            placeholder.remove();
+        } else if (articleModal.parentNode === document.documentElement && document.body) {
+            document.body.appendChild(articleModal);
+        }
+        delete articleModal.__tpPortalPlaceholder;
     }
     if (modalOverlay && modalOverlay !== articleModal) {
         modalOverlay.classList.remove('active');
@@ -9029,23 +9136,31 @@ window.suntikPresetBahanCepat = function(nama, kategori, rasio, harga, pack) {
 let pipWindowInstance = null;
 let pipIntervalInstance = null;
 
-// Inisialisasi Event Listener pemicu PIP aman setelah DOM selesai dimuat
-document.addEventListener('DOMContentLoaded', () => {
+// [AI-GENERATED][PWA PIP BINDING][V326] ES-module evaluation may occur after
+// DOMContentLoaded. Bind immediately when the DOM already exists.
+function bindPipAndRecipeShortcutButtons() {
     const pipTrigger = document.getElementById('pip-trigger-btn');
-    if (pipTrigger) {
-        pipTrigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            aktifkanModePIP();
+    if (pipTrigger && pipTrigger.dataset.tpPipBound !== 'v326') {
+        pipTrigger.dataset.tpPipBound = 'v326';
+        pipTrigger.addEventListener('click', (event) => {
+            event.preventDefault();
+            void aktifkanModePIP({ fromBack: false });
         });
     }
     const btnResep = document.getElementById('btn-buka-resep');
-    if (btnResep) {
+    if (btnResep && btnResep.dataset.tpRecipeShortcutBound !== 'v326') {
+        btnResep.dataset.tpRecipeShortcutBound = 'v326';
         btnResep.addEventListener('click', () => {
             if (typeof openRecipesFromProfile === 'function') openRecipesFromProfile();
             else if (typeof window.tampilkanDaftarResepTersimpan === 'function') window.tampilkanDaftarResepTersimpan();
         });
     }
-});
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindPipAndRecipeShortcutButtons, { once: true });
+} else {
+    bindPipAndRecipeShortcutButtons();
+}
 // =========================================================
 
 //=======================================
@@ -9818,22 +9933,35 @@ initializeAppLifecycle({
             return checkAndRestoreTimer();
         }
     },
-    onBackButton: async () => {
+    onBackButton: async (source = 'native-back') => {
         const timerIsActive = Boolean(isTimerRunning && proofingTimerController.isRunning());
-        if (!timerIsActive || !NativeCapacitorService.isNativePlatform()) return false;
+        if (!timerIsActive) return false;
 
-        const pipPlugin = NativeCapacitorService.getPlugin('TimerPip');
-        if (typeof pipPlugin?.enterPictureInPicture !== 'function') return false;
-
-        document.body?.classList.add('native-pip');
-        try {
-            const result = await pipPlugin.enterPictureInPicture();
-            if (result?.entered === true) return true;
-        } catch (error) {
-            console.warn('[Proofing][PiP] Android gagal masuk Picture-in-Picture:', error);
+        if (NativeCapacitorService.isNativePlatform()) {
+            const pipPlugin = NativeCapacitorService.getPlugin('TimerPip');
+            if (typeof pipPlugin?.enterPictureInPicture === 'function') {
+                document.body?.classList.add('native-pip');
+                try {
+                    const result = await pipPlugin.enterPictureInPicture();
+                    if (result?.entered === true) return true;
+                } catch (error) {
+                    console.warn('[Proofing][PiP] Android gagal masuk Picture-in-Picture:', error);
+                }
+                document.body?.classList.remove('native-pip');
+            }
+            // Do not allow the WebView to navigate away and show a browser
+            // beforeunload prompt. If system PiP is rejected, minimize the Activity.
+            const appPlugin = NativeCapacitorService.getPlugin('App');
+            try { await appPlugin?.minimizeApp?.(); } catch (error) {
+                console.warn('[Proofing][PiP] Gagal meminimalkan aplikasi:', error);
+            }
+            return true;
         }
-        document.body?.classList.remove('native-pip');
-        return false;
+
+        // PWA/browser Back is trapped by a history sentinel while the timer runs.
+        // Try system video PiP; use the legacy in-app mini widget if activation is denied.
+        const entered = await aktifkanModePIP({ fromBack: true, source });
+        return entered === true;
     },
     onBackground: async () => {
         // [AI-GENERATED][ROBUSTNESS][V235] Failures while stopping the clock or
@@ -9864,15 +9992,8 @@ window.addEventListener('pagehide', () => {
     }
 });
 
-window.addEventListener('beforeunload', (event) => {
-    if (isTimerRunning) { // variabel global proofer Anda
-        // [AI-GENERATED][ROBUSTNESS][V137] Keep the latest deadline durable before
-        // showing the browser's native leave-page confirmation.
-        if (typeof persistProofingState === 'function') persistProofingState();
-        event.preventDefault();
-        event.returnValue = 'Proses proofing sedang berjalan. Apakah Anda yakin ingin keluar?';
-    }
-});
+// [AI-GENERATED][PWA BACK UX][V326] No beforeunload confirmation: the absolute timer
+// deadline is persisted through pagehide/visibility lifecycle and restored on return.
 
 
 // Panggil fungsi restore bawaan kamu saat halaman selesai dimuat ulang (refresh)

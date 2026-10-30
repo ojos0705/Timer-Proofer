@@ -5,7 +5,7 @@
  */
 
 import { NativeCapacitorService } from './native-capacitor-service.js';
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v325'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v326'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 
 let lifecycleCallbacks = {};
 let initialized = false;
@@ -16,6 +16,13 @@ let lifecycleGeneration = 0;
 // duplicate consecutive transitions so restore/flush cannot race with itself.
 let lifecycleTransitionQueue = Promise.resolve();
 let lastScheduledLifecycleState = null;
+// [AI-GENERATED][PWA BACK GUARD][V326] Keep an active proofing session inside
+// the installed PWA when the browser's Back action is used. The guard is
+// deliberately independent of native Capacitor back handling.
+let webTimerBackGuardActive = false;
+let webTimerBackGuardInstalled = false;
+let suppressNextWebPopState = false;
+let webPopStateHandling = false;
 
 function isNativeApp() {
     // [AI-GENERATED][REFACTOR][V40] Native detection has one canonical owner.
@@ -154,9 +161,69 @@ function closeRecipeListModalIfOpen() {
     return true;
 }
 
-function handlePopState() {
-    if (closeRecipeListModalIfOpen()) return;
-    closeTopmostModalOrTabOverlay();
+function pushWebTimerBackGuard() {
+    if (isNativeApp() || !webTimerBackGuardActive || webTimerBackGuardInstalled) return false;
+    try {
+        const currentState = window.history.state && typeof window.history.state === 'object'
+            ? window.history.state
+            : {};
+        window.history.pushState({ ...currentState, __tpProofingTimerBackGuard: true }, '', window.location.href);
+        webTimerBackGuardInstalled = true;
+        return true;
+    } catch (error) {
+        console.warn('[AppLifecycle] Gagal memasang guard tombol Back PWA:', error);
+        return false;
+    }
+}
+
+/**
+ * Install/remove the browser history sentinel while the proofing countdown is active.
+ * Capacitor uses its native backButton event and never receives this browser guard.
+ */
+function setTimerBackGuard(active) {
+    webTimerBackGuardActive = Boolean(active) && !isNativeApp();
+    if (webTimerBackGuardActive) {
+        pushWebTimerBackGuard();
+        return true;
+    }
+
+    // If the sentinel is still the current history entry, consume it quietly so
+    // stopping the timer does not leave an extra no-op Back step for the user.
+    if (!isNativeApp() && webTimerBackGuardInstalled && window.history.state?.__tpProofingTimerBackGuard === true) {
+        suppressNextWebPopState = true;
+        try { window.history.back(); } catch (_) { suppressNextWebPopState = false; }
+    }
+    webTimerBackGuardInstalled = false;
+    return true;
+}
+
+async function handlePopState() {
+    if (suppressNextWebPopState) {
+        suppressNextWebPopState = false;
+        return;
+    }
+    if (webPopStateHandling) return;
+    webPopStateHandling = true;
+    try {
+        // Preserve existing precedence: close the topmost modal/tab before
+        // switching the active timer into PiP/minimized mode.
+        if (closeRecipeListModalIfOpen()) {
+            if (webTimerBackGuardActive) { webTimerBackGuardInstalled = false; pushWebTimerBackGuard(); }
+            return;
+        }
+        if (closeTopmostModalOrTabOverlay()) {
+            if (webTimerBackGuardActive) { webTimerBackGuardInstalled = false; pushWebTimerBackGuard(); }
+            return;
+        }
+
+        if (webTimerBackGuardActive && !isNativeApp()) {
+            webTimerBackGuardInstalled = false; // The browser has consumed the previous sentinel.
+            const handled = await callSafely('onBackButton', 'browser-popstate');
+            if (handled === true && webTimerBackGuardActive) pushWebTimerBackGuard();
+        }
+    } finally {
+        webPopStateHandling = false;
+    }
 }
 
 async function handleNativeBackButton() {
@@ -260,6 +327,10 @@ async function destroy() {
     document.removeEventListener('visibilitychange', handleVisibilityChange);
     window.removeEventListener('popstate', handlePopState);
     lifecycleCallbacks = {};
+    webTimerBackGuardActive = false;
+    webTimerBackGuardInstalled = false;
+    suppressNextWebPopState = false;
+    webPopStateHandling = false;
     initialized = false;
     await Promise.all(removals);
 }
@@ -290,7 +361,8 @@ function init(callbacks = {}) {
 window.AppLifecycleService = {
     init,
     destroy,
-    isNativeApp
+    isNativeApp,
+    setTimerBackGuard
 };
 
-export { init, destroy, isNativeApp };
+export { init, destroy, isNativeApp, setTimerBackGuard };

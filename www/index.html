@@ -30,7 +30,7 @@
 <meta name="midtrans-snap-config" data-client-key="YOUR_CLIENT_KEY" data-environment="sandbox" content="Midtrans Snap runtime configuration"/>
 <!-- [AI-GENERATED][ES6 MODULE][V258] Supabase, modal bootstrap, and lazy PDF services use the module runtime. -->
 <!-- [AI-GENERATED][ES6 MODULE][V255] Runtime globals are initialized before the application module graph. -->
-<script type="module" src="./assets/js/runtime-entry.js?v=20261030-v325"></script>
+<script type="module" src="./assets/js/runtime-entry.js?v=20261030-v326"></script>
 <title>Timer Proofer</title>
 <style>
         :root {
@@ -405,6 +405,10 @@ outline-offset: 2px;
 .welcome-slider-container {
     width: 100%;
     overflow: hidden;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior-x: contain;
     position: relative;
     background: #FFF9F0;
     border-radius: 16px;
@@ -2001,7 +2005,7 @@ body.logged-out .bottom-bar {
 
         .article-dot.active {background: var(--accent, #E67E22); width: 15px; border-radius: 10px;}
 
-        #article-modal {display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; align-items: flex-end; justify-content: center; background: transparent;}
+        #article-modal {display: none; position: fixed !important; inset: 0 !important; width: 100vw !important; max-width: none !important; height: 100vh !important; height: 100dvh !important; z-index: 20000 !important; align-items: stretch; justify-content: center; background: rgba(0,0,0,.55); overflow: hidden; margin: 0 !important; padding: 0 !important; box-sizing: border-box;}
 
         /* ANIMASI SAAT MODAL ARTIKEL AKTIF */
         #article-modal.active {display: flex;}
@@ -2009,10 +2013,10 @@ body.logged-out .bottom-bar {
         #article-modal.active .article-modal-content {transform: translateY(0); /* Meluncur penuh mengisi layar */}
 
         /* OVERLAY BACKGROUND DI BELAKANG MODAL */
-        .article-modal-overlay {position: fixed; top: 0;left: 0;width: 100%;height: 100%;background: rgba(0, 0, 0, 0.5);backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);z-index: 2000;/* Keadaan Default: Sembunyikan total dan matikan klik */display: none !important; pointer-events: none;}
+        .article-modal-overlay {position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; background: rgba(0, 0, 0, 0.5);backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);z-index: 20000;/* Keadaan Default: Sembunyikan total dan matikan klik */display: none !important; pointer-events: none;}
 
         /* KOTAK KONTEN HALAMAN ARTIKEL */
-        .article-modal-content {background: var(--cream, #FDF5E6); width: 100%; max-width: 480px; margin: 0; height: 100%; /* <--- Sudah diperbaiki menjadi height */ border-radius: 0; /* Menghilangkan radius agar penuh ke atas */ overflow-y: auto; -webkit-overflow-scrolling: touch; padding: calc(20px + env(safe-area-inset-top)) 20px 20px 20px; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); transform: translateY(100%); transition: transform 0.3s ease-out;}
+        .article-modal-content {background: var(--cream, #FDF5E6); position: relative; width: 100vw; max-width: none; margin: 0; height: 100vh; height: 100dvh; min-height: 100dvh; border-radius: 0; /* Menghilangkan radius agar penuh ke atas */ overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); transform: translateY(100%); transition: transform 0.3s ease-out;}
 
         /* ANIMASI SAAT MODAL AKTIF */
         .article-modal-overlay.active {
