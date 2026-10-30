@@ -7,7 +7,9 @@ class OnboardingManager {
 
         this.screen = document.getElementById('onboarding-screen');
         this.track = document.getElementById('ob-slider-track');
+        this.sliderWrapper = this.screen?.querySelector('.ob-slider-wrapper') || document.querySelector('.ob-slider-wrapper');
         this.dots = document.querySelectorAll('.ob-dot');
+        this.swipePointerState = null;
         this.btnNext = document.getElementById('ob-btn-next');
         this.btnSkip = document.getElementById('ob-btn-skip');
 
@@ -37,10 +39,92 @@ class OnboardingManager {
 
         this.dots.forEach(dot => {
             dot.addEventListener('click', (e) => {
-                const idx = parseInt(e.target.dataset.index);
-                this.goToSlide(idx);
+                const idx = Number.parseInt(e.target.dataset.index, 10);
+                if (Number.isInteger(idx)) this.goToSlide(idx);
             });
         });
+
+        this.bindSwipeEvents();
+    }
+
+    /**
+     * [AI-GENERATED][MOBILE-UX][V324]
+     * Enable horizontal swipe navigation on the pre-login onboarding slider.
+     * touch-action: pan-y keeps native vertical gesture handling while allowing
+     * Pointer Events to recognize horizontal movement without blocking taps.
+     */
+    bindSwipeEvents() {
+        const wrapper = this.sliderWrapper;
+        if (!wrapper || wrapper.dataset.tpSwipeBound === 'v324') return;
+        wrapper.dataset.tpSwipeBound = 'v324';
+
+        const begin = (event) => {
+            if (event.isPrimary === false || (event.button !== undefined && event.button !== 0)) return;
+            if (event.target?.closest?.('button, a, input, select, textarea, [data-no-swipe]')) return;
+            this.swipePointerState = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                startY: event.clientY,
+                startedAt: Date.now()
+            };
+            try {
+                if (event.pointerId !== undefined && wrapper.setPointerCapture) {
+                    wrapper.setPointerCapture(event.pointerId);
+                }
+            } catch (_) {
+                // Pointer capture is an enhancement; swipe still works without it.
+            }
+        };
+
+        const finish = (event) => {
+            const state = this.swipePointerState;
+            if (!state) return;
+            if (state.pointerId !== undefined && event.pointerId !== undefined
+                && state.pointerId !== event.pointerId) return;
+
+            this.swipePointerState = null;
+            const deltaX = event.clientX - state.startX;
+            const deltaY = event.clientY - state.startY;
+            const elapsed = Math.max(1, Date.now() - state.startedAt);
+            const horizontalDistance = Math.abs(deltaX);
+            const horizontalDominant = horizontalDistance > Math.abs(deltaY) * 1.15;
+            const fastEnough = horizontalDistance / elapsed >= 0.25;
+
+            if (!horizontalDominant || (horizontalDistance < 44 && !fastEnough)) return;
+            if (deltaX < 0) this.nextSlide();
+            else this.previousSlide();
+        };
+
+        const cancel = () => { this.swipePointerState = null; };
+
+        if ('PointerEvent' in window) {
+            wrapper.addEventListener('pointerdown', begin, { passive: true });
+            wrapper.addEventListener('pointerup', finish, { passive: true });
+            wrapper.addEventListener('pointercancel', cancel, { passive: true });
+            wrapper.addEventListener('lostpointercapture', cancel, { passive: true });
+        } else {
+            // Legacy WebView fallback. Only bind when Pointer Events are absent,
+            // so a single physical gesture can never advance two slides.
+            let touchStart = null;
+            wrapper.addEventListener('touchstart', (event) => {
+                const touch = event.changedTouches?.[0];
+                if (!touch) return;
+                touchStart = { x: touch.clientX, y: touch.clientY, at: Date.now() };
+            }, { passive: true });
+            wrapper.addEventListener('touchend', (event) => {
+                if (!touchStart) return;
+                const touch = event.changedTouches?.[0];
+                const start = touchStart;
+                touchStart = null;
+                if (!touch) return;
+                const deltaX = touch.clientX - start.x;
+                const deltaY = touch.clientY - start.y;
+                if (Math.abs(deltaX) < 44 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) return;
+                if (deltaX < 0) this.nextSlide();
+                else this.previousSlide();
+            }, { passive: true });
+            wrapper.addEventListener('touchcancel', () => { touchStart = null; }, { passive: true });
+        }
     }
 
     show() {
@@ -52,22 +136,25 @@ class OnboardingManager {
     }
 
     goToSlide(index) {
-        this.currentSlide = index;
+        const nextIndex = Number.isInteger(index)
+            ? Math.min(this.totalSlides - 1, Math.max(0, index))
+            : this.currentSlide;
+        this.currentSlide = nextIndex;
         if (this.track) {
-            this.track.style.transform = `translateX(-${index * 33.333}%)`;
+            this.track.style.transform = `translateX(-${this.currentSlide * 33.333}%)`;
         }
 
         // Update indikator titik
         this.dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
+            dot.classList.toggle('active', i === this.currentSlide);
         });
 
         // Ubah teks tombol di slide terakhir
         if (this.currentSlide === this.totalSlides - 1) {
-            this.btnNext.innerText = 'Masuk / Daftar';
+            if (this.btnNext) this.btnNext.innerText = 'Masuk / Daftar';
             if (this.btnSkip) this.btnSkip.style.visibility = 'hidden';
         } else {
-            this.btnNext.innerText = 'Lanjutkan';
+            if (this.btnNext) this.btnNext.innerText = 'Lanjutkan';
             if (this.btnSkip) this.btnSkip.style.visibility = 'visible';
         }
     }
@@ -78,6 +165,10 @@ class OnboardingManager {
         } else {
             this.finish();
         }
+    }
+
+    previousSlide() {
+        if (this.currentSlide > 0) this.goToSlide(this.currentSlide - 1);
     }
 
     finish() {
@@ -331,7 +422,7 @@ class AppOnboardingManager {
             this.sliderTrack.style.transform = `translateX(-${index * 33.333}%)`;
         }
         this.dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
+            dot.classList.toggle('active', i === this.currentSlide);
         });
     }
 

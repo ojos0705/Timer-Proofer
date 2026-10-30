@@ -15,7 +15,7 @@ test('authentication defaults to login with password sign-in controls visible', 
 });
 
 test('app-core imports the extracted mode owner through an explicit ESM binding', () => {
-    assert.match(source, /import \{ switchAuthTab, validateRegistrationConsent \} from '\.\/features-auth-ui\.js\?v=20261030-v323'/);
+    assert.match(source, /import \{ switchAuthTab, validateRegistrationConsent \} from '\.\/features-auth-ui\.js\?v=20261030-v324'/);
     assert.doesNotMatch(source, /function switchAuthTab\(mode\)/);
     assert.match(feature, /window\.switchAuthTab = switchAuthTab/);
     assert.match(feature, /bindOnce\(document\.getElementById\('tab-register'\)/);
@@ -31,5 +31,5 @@ test('auth submit requires explicit terms consent before calling signup', () => 
     const registerFlow = source.slice(registerStart, signUpCall);
     assert.match(registerFlow, /validateRegistrationConsent\(/);
     assert.match(registerFlow, /if \(!consentAccepted\) return/);
-    assert.match(source, /import \{ switchAuthTab, validateRegistrationConsent \} from '\.\/features-auth-ui\.js\?v=20261030-v323'/);
+    assert.match(source, /import \{ switchAuthTab, validateRegistrationConsent \} from '\.\/features-auth-ui\.js\?v=20261030-v324'/);
 });

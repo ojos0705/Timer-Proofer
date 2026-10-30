@@ -30,7 +30,7 @@
 <meta name="midtrans-snap-config" data-client-key="YOUR_CLIENT_KEY" data-environment="sandbox" content="Midtrans Snap runtime configuration"/>
 <!-- [AI-GENERATED][ES6 MODULE][V258] Supabase, modal bootstrap, and lazy PDF services use the module runtime. -->
 <!-- [AI-GENERATED][ES6 MODULE][V255] Runtime globals are initialized before the application module graph. -->
-<script type="module" src="./assets/js/runtime-entry.js?v=20261030-v323"></script>
+<script type="module" src="./assets/js/runtime-entry.js?v=20261030-v324"></script>
 <title>Timer Proofer</title>
 <style>
         :root {
@@ -164,6 +164,7 @@ outline-offset: 2px;
     height: 100dvh !important;
     z-index: 999999 !important; /* Memaksa onboarding ada di paling depan */
     background: #FFFDF9 !important;
+    overscroll-behavior: contain;
     display: none;
 }
 
@@ -206,7 +207,14 @@ outline-offset: 2px;
     flex: 1;
     display: flex;
     align-items: center;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior-x: contain;
+    cursor: grab;
 }
+.ob-slider-wrapper:active { cursor: grabbing; }
+.ob-slider-track { will-change: transform; }
 
 .ob-slider-track {
     display: flex;
@@ -1538,6 +1546,11 @@ outline-offset: 2px;
 }
         /* Baris data angka (Suhu & Kelembaban bersebelahan) */
         .shrunk-stats-row {display: flex;flex-direction: row;align-items: center; /* Menyejajarkan posisi vertikal tengah antara teks besar & kecil */gap: 10px; /* Jarak horizontal antara shrunk-main dan shrunk-sub */}
+        /* [AI-GENERATED][MOBILE-UX][V324] Preserve a reliable tap target after the header collapses. */
+        #location-section.shrunk .shrunk-stats-row,
+        #location-section.shrunk #shrunk-main,
+        #location-section.shrunk #shrunk-sub {pointer-events: auto !important; touch-action: manipulation; position: relative; z-index: 2;}
+        #location-section.shrunk .shrunk-stats-row {min-height: 40px;}
 
         /* Data Utama (Kiri - Ukuran Besar) */
         #shrunk-main {font-size: 2rem;font-weight: 900;cursor: pointer;user-select: none;transition: opacity 0.15s ease, transform 0.1s ease;letter-spacing: -1px;line-height: 1; /* Mencegah space kosong vertikal berlebih */}

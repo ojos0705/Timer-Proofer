@@ -1,0 +1,40 @@
+TIMER PROOFER — QA RELEASE V324
+Date: 2026-10-30
+
+Release metadata
+- Product version: V125 (unchanged)
+- Release token: 20261030-v324
+- Service Worker cache: Timer-Proofing-v1.1.226
+
+Automated tests
+- Command: npm test
+- Test files: 90
+- Tests: 433
+- Passed: 433
+- Failed: 0
+- Skipped: 0
+
+Focused V324 checks
+- Mini stat click binding is delegated at document level and registered outside DOMContentLoaded.
+- Old direct miniMain/miniSub DOMContentLoaded listeners are removed.
+- Shrunk main/sub target CSS retains pointer events and touch manipulation.
+- Onboarding uses Pointer Events with touch fallback.
+- Onboarding slider CSS uses touch-action: pan-y and overscroll containment.
+- Slide index is clamped and visual track/dots use normalized currentSlide.
+
+Static release audit
+- JavaScript files checked: 247
+- HTML files checked: 2
+- HTML IDs scanned: 300
+- Missing relative imports: 0
+- Duplicate HTML IDs: 0
+- Inline event handlers: 0
+- Scroll-lock overrides: 0
+- Service Worker precache entries verified: 74
+- Local modules in runtime entry graph: 67
+- Duplicate named function declarations within same module: 0
+- Similar function names across different ES modules: 14 (informational; module scopes are isolated)
+
+Limitations
+- No physical Android/iOS device or mobile browser E2E test was performed in this environment.
+- Manual Preview validation is still required for real touch events and visual positioning.
