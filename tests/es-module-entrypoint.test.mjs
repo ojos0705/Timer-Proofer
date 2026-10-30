@@ -155,13 +155,13 @@ test('index has no executable inline JavaScript and uses a module entrypoint', (
         return type !== 'importmap' && !/\bsrc\s*=/i.test(attributes) && body.trim() !== '';
     });
     assert.deepEqual(executableInline.map(([, attributes]) => attributes), []);
-    assert.match(html, /<script\s+type="module"\s+src="\.\/assets\/js\/runtime-entry\.js\?v=20261030-v321"\s*>/i);
+    assert.match(html, /<script\s+type="module"\s+src="\.\/assets\/js\/runtime-entry\.js\?v=20261030-v322"\s*>/i);
     assert.doesNotMatch(html, /<script\s+src=\"\.\/assets\/js\/modal-bootstrap\.js/i);
     assert.doesNotMatch(html, /<script\s+src=\"https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js/i);
     assert.match(html, /\"@supabase\/supabase-js\"\s*:/);
     assert.doesNotMatch(html, /cdnjs\.cloudflare\.com/);
     assert.doesNotMatch(html, /"(?:html2canvas|jspdf)"\s*:/);
-    assert.match(runtimeEntry, /await\s+import\('\.\/modal-bootstrap\.js\?v=20261030-v321'\)[\s\S]*initializeModalBootstrap\(\)[\s\S]*void\s+initializeSupabaseSdkBridge\(\)[\s\S]*await\s+initializeRuntimeBootstrap\(\)[\s\S]*await\s+import\('\.\/boot\.js\?v=20261030-v321'\)/);
+    assert.match(runtimeEntry, /await\s+import\('\.\/modal-bootstrap\.js\?v=20261030-v322'\)[\s\S]*initializeModalBootstrap\(\)[\s\S]*void\s+initializeSupabaseSdkBridge\(\)[\s\S]*await\s+initializeRuntimeBootstrap\(\)[\s\S]*await\s+import\('\.\/boot\.js\?v=20261030-v322'\)/);
     assert.match(runtimeEntry, /__TP_MODAL_BOOTSTRAP_ERROR__/);
     assert.match(runtimeEntry, /catch\s*\(error\)[\s\S]*startup utama tetap dilanjutkan/);
     assert.match(modalBootstrap, /export\s+function\s+initializeModalBootstrap\(\)/);

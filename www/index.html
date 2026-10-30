@@ -30,7 +30,7 @@
 <meta name="midtrans-snap-config" data-client-key="YOUR_CLIENT_KEY" data-environment="sandbox" content="Midtrans Snap runtime configuration"/>
 <!-- [AI-GENERATED][ES6 MODULE][V258] Supabase, modal bootstrap, and lazy PDF services use the module runtime. -->
 <!-- [AI-GENERATED][ES6 MODULE][V255] Runtime globals are initialized before the application module graph. -->
-<script type="module" src="./assets/js/runtime-entry.js?v=20261030-v321"></script>
+<script type="module" src="./assets/js/runtime-entry.js?v=20261030-v322"></script>
 <title>Timer Proofer</title>
 <style>
         :root {
@@ -938,6 +938,8 @@ outline-offset: 2px;
     }
 
     /* Mengelompokkan pengaturan lebar agar identik */
+    #app-container { min-height: 0; min-width: 0; overflow-y: hidden; }
+
     .container, 
     .auth-container {
         width: 100%;
@@ -2987,9 +2989,9 @@ body.logged-out .bottom-bar {
 }
 
         /* Wadah untuk konten yang bisa scroll */
-        .scrollable-content {flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden; padding: 15px; padding-bottom: 100px; -webkit-overflow-scrolling: touch; background-color: transparent; color: var(--chocolate); box-sizing: border-box;}
-        #loc-line1 { font-weight: bold; color: var(--accent); }
-        #loc-line2 { font-size: 0.8rem; color: var(--accent); opacity: 0.8; }
+        .scrollable-content {flex: 1 1 0%; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden; padding: 15px; padding-bottom: 100px; background-color: transparent; color: var(--chocolate); box-sizing: border-box;}
+        #loc-line1 { font-weight: bold; color: #4E342E !important; }
+        #loc-line2 { font-size: 0.8rem; color: #6D4C41 !important; opacity: 0.9; }
         /* Mengubah arah susunan dari menyamping (row) menjadi atas-bawah (column) */
         #refresh-indicator { text-align: center; padding: 10px; font-size: 0.8rem; color: var(--accent); display: none; }
 

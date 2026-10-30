@@ -1,9 +1,9 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v321'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v322'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
 import { init as initializeAppLifecycle } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
-import { formatHasilAI } from './ai-formatters.js';
+import { formatHasilAI, formatTipsHasilAI } from './ai-formatters.js';
 import { StorageService } from './storage-service.js';
 import { removeStorageKeys } from './profile-cleanup.js'; // [AI-GENERATED][ROBUSTNESS][V227]
 import { RecipeStorageService } from './recipe-storage-service.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v321'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v322'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -5489,18 +5489,31 @@ async function eksekusiHapusResepMaster(resepId) {
 
 // Fungsi Penutup Aman (Diletakkan DI LUAR document.addEventListener('DOMContentLoaded'))
 function tutupHalamanResepSecaraAman() {
-    window.DEBUG && console.log("Menutup halaman resep secara aman.");
-    
-    // GANTI 'recipe-page' MENJADI 'recipe' Sesuai ID HTML Utama
-    const resepPage = document.getElementById('recipe'); 
-    
+    window.DEBUG && console.log("Menutup atau kembali dari halaman resep secara aman.");
+
+    const resepPage = document.getElementById('recipe');
+    const masterView = document.getElementById('recipe-master-view');
+    const detailView = document.getElementById('recipe-detail-view');
+    const detailIsVisible = Boolean(
+        detailView && detailView.style.display !== 'none' &&
+        window.getComputedStyle(detailView).display !== 'none'
+    );
+
+    // Tombol close di editor kembali ke daftar resep terlebih dahulu.
+    // Modal #recipe hanya ditutup ketika pengguna sudah berada di master view.
+    if (detailIsVisible) {
+        if (currentEditingRecipeId && !confirm("Keluar dari editor? Perubahan yang belum disimpan mungkin akan hilang.")) {
+            return;
+        }
+        bukaMasterViewResep();
+        if (masterView) masterView.style.display = 'flex';
+        if (detailView) detailView.style.display = 'none';
+        return;
+    }
+
     if (resepPage) {
-        // Sembunyikan elemen modal/tab resep
         resepPage.style.display = 'none';
         resepPage.classList.remove('active');
-        
-        // Kembalikan interaksi scroll layar utama proofer/HP
-        // [AI-GENERATED][REFACTOR][V199] Scroll state is centralized in modal-bootstrap.js.
         syncModalBodyScrollLock();
         document.body.style.pointerEvents = 'auto';
     } else {
@@ -7704,7 +7717,7 @@ window.initTipsAIAssistant = function() {
                     </div>
                     
                     <div id="ai-body-content" style="max-height: 320px; overflow-y: auto; overflow-x: hidden; padding-right: 8px; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 10px; scrollbar-width: thin; scroll-behavior: smooth;">
-                        ${formatHasilAI(data.result)}
+                        ${formatTipsHasilAI(data.result)}
                     </div>
                 </div>
             `;
@@ -8050,7 +8063,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261030-v321');
+        metadataUrl.searchParams.set('_release', '20261030-v322');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);
@@ -9818,7 +9831,12 @@ window.eksekusiCetakPremium = function() {
     if (namaResep === "") namaResep = "RESEP PRODUKSI"; 
 
     const safeFileName = namaResep.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
-    const finalDocTitle = safeFileName + " - " + (document.getElementById('profile-bakery')?.value || "Nama Bakery");
+    const bakeryName = document.getElementById('profile-bakery')?.value || "Nama Bakery";
+    const finalDocTitle = `${safeFileName} - ${bakeryName}`.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
+    const namaResepHtml = escapeHtmlMarkup(namaResep);
+    const bakeryNameHtml = escapeHtmlMarkup(bakeryName);
+    const pembuatName = document.getElementById('profile-nama-user')?.value || document.getElementById('profile-user')?.value || document.getElementById('nama-pembuat')?.value || "Pengguna";
+    const pembuatNameHtml = escapeHtmlMarkup(pembuatName);
 
     // 2. Ambil Insight AI
     const elPM = document.getElementById('text-analysis-pm');
@@ -9857,7 +9875,7 @@ window.eksekusiCetakPremium = function() {
 
     let stepsHTML = "";
     if (stepsArray.length > 0) {
-        stepsArray.forEach(step => { stepsHTML += `<li style="margin-bottom: 4px; font-size: 7.5pt; line-height: 1.3; text-align: justify;">${step}</li>`; });
+        stepsArray.forEach(step => { stepsHTML += `<li style="margin-bottom: 4px; font-size: 7.5pt; line-height: 1.3; text-align: justify;">${escapeHtmlMarkup(step)}</li>`; });
     } else {
         stepsHTML = '<li style="font-size: 7.5pt;">Belum ada instruksi langkah produksi.</li>';
     }
@@ -9878,7 +9896,7 @@ window.eksekusiCetakPremium = function() {
                 const namaKategori = ths.length > 0 ? ths[0].innerText.trim() : tds[0].innerText.trim();
                 rowsHTML += `<tr style="background-color: #f8fafc;">
                     <td colspan="6" style="padding: 3px 6px; font-weight: 800; color: #d35400; font-size: 7pt; border: 1px solid #cbd5e1; text-transform: uppercase;">
-                        ${namaKategori}
+                        ${escapeHtmlMarkup(namaKategori)}
                     </td>
                 </tr>`;
             } else if (tds.length >= 2) {
@@ -9898,12 +9916,12 @@ window.eksekusiCetakPremium = function() {
                 totalBeratAdonan += angkaBeratPakai;
 
                 rowsHTML += `<tr>
-                    <td style="padding: 2.5px 4px; padding-left: 8px; font-size: 6.5pt;">${namaBahan}</td>
-                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${takaran}</td>
-                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${isiPack}</td>
-                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt;">${hargaBeli}</td>
-                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt; font-weight: 600;">${beratPakai}</td>
-                    <td style="text-align: right; font-weight: bold; color: #4E342E; padding: 2.5px 4px; font-size: 6.5pt;">${strBiaya}</td>
+                    <td style="padding: 2.5px 4px; padding-left: 8px; font-size: 6.5pt;">${escapeHtmlMarkup(namaBahan)}</td>
+                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${escapeHtmlMarkup(takaran)}</td>
+                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${escapeHtmlMarkup(isiPack)}</td>
+                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt;">${escapeHtmlMarkup(hargaBeli)}</td>
+                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt; font-weight: 600;">${escapeHtmlMarkup(beratPakai)}</td>
+                    <td style="text-align: right; font-weight: bold; color: #4E342E; padding: 2.5px 4px; font-size: 6.5pt;">${escapeHtmlMarkup(strBiaya)}</td>
                 </tr>`;
             }
         });
@@ -9932,9 +9950,12 @@ window.eksekusiCetakPremium = function() {
 
     // 7. Bangun Template HTML PDF
     const tempContainer = document.createElement('div');
-    tempContainer.style.position = 'fixed';
+    // Keep the source inside the viewport. html2pdf deep-clones this element;
+    // off-screen coordinates (especially top:-9999px) are copied to the clone
+    // and can make html2canvas capture a blank page.
+    tempContainer.style.position = 'relative';
     tempContainer.style.left = '0';
-    tempContainer.style.top = '-9999px';
+    tempContainer.style.top = '0';
     tempContainer.style.width = '794px'; 
     tempContainer.style.backgroundColor = '#ffffff';
     tempContainer.style.padding = '30px 35px'; 
@@ -9966,7 +9987,7 @@ window.eksekusiCetakPremium = function() {
         <div class="header-container">
             <div>
                 <div class="brand-tag">Lembar Kerja Produksi Resmi</div>
-                <h1>${namaResep}</h1>
+                <h1>${namaResepHtml}</h1>
             </div>
             <div style="text-align: right; font-size: 7.5pt; color: #64748b; margin-bottom: 2px;">
                 <strong>Dicetak:</strong> ${tanggalCetak}
@@ -9974,19 +9995,19 @@ window.eksekusiCetakPremium = function() {
         </div>
         
         <div class="meta-box">
-            <div><strong>Pembuat:</strong> <span>${document.getElementById('profile-nama-user')?.value || document.getElementById('profile-user')?.value || document.getElementById('nama-pembuat')?.value || "Pengguna"}</span></div>
-            <div><strong>Unit Usaha:</strong> <span>${document.getElementById('profile-bakery')?.value || document.getElementById('nama-bakery')?.value || document.getElementById('nama-unit-usaha')?.value || "Unit Usaha"}</span></div>
+            <div><strong>Pembuat:</strong> <span>${pembuatNameHtml}</span></div>
+            <div><strong>Unit Usaha:</strong> <span>${bakeryNameHtml}</span></div>
             <div><strong>Status:</strong> Valid (PWA Dashboard)</div>
         </div>
 
         <div class="param-card-container">
             <div class="param-item" style="flex: 1.618;">
                 <span class="param-label">Tepung Utama (gr)</span>
-                <span class="param-value">${baseFlourVal} g</span>
+                <span class="param-value">${escapeHtmlMarkup(baseFlourVal)} g</span>
             </div>
             <div class="param-item" style="flex: 1;">
                 <span class="param-label">Total Porsi</span>
-                <span class="param-value">${recipeYieldVal} pcs</span>
+                <span class="param-value">${escapeHtmlMarkup(recipeYieldVal)} pcs</span>
             </div>
             <div class="param-item" style="flex: 1.5; background: #f0fdf4; border-color: #27ae60;">
                 <span class="param-label" style="color: #27ae60;">Harga Jual / Pcs</span>
@@ -10064,9 +10085,9 @@ window.eksekusiCetakPremium = function() {
                     </div>
 
                     <div style="font-size: 7.5pt; display: flex; flex-direction: column; gap: 8px; line-height: 1.4; text-align: justify; width: 100%;">
-                        <div><strong style="color: #0f172a; font-size: 8pt;">📊 Margin:</strong><br>${insightPM}</div>
-                        <div><strong style="color: #0f172a; font-size: 8pt;">💰 Food Cost:</strong><br>${insightFC}</div>
-                        <div><strong style="color: #0f172a; font-size: 8pt;">🛡️ Standar:</strong><br>${insightUB}</div>
+                        <div><strong style="color: #0f172a; font-size: 8pt;">📊 Margin:</strong><br>${escapeHtmlMarkup(insightPM)}</div>
+                        <div><strong style="color: #0f172a; font-size: 8pt;">💰 Food Cost:</strong><br>${escapeHtmlMarkup(insightFC)}</div>
+                        <div><strong style="color: #0f172a; font-size: 8pt;">🛡️ Standar:</strong><br>${escapeHtmlMarkup(insightUB)}</div>
                     </div>
                 </div>
             </div>
@@ -10081,12 +10102,12 @@ window.eksekusiCetakPremium = function() {
         <div class="footer">Dokumen Manajemen Operasional • Dicetak via Sistem PWA Mobile Kelas Premium</div>
     `;
 
-    document.body.appendChild(tempContainer);
-
+    // Keep the print element detached until the progress overlay is ready.
     // 8. Render Canvas (Pie Chart)
     const canvasEl = tempContainer.querySelector('#pdf-pie-canvas');
     if (canvasEl) {
         const ctx = canvasEl.getContext('2d');
+        if (ctx) {
         const centerX = 150, centerY = 150, radius = 135; 
         
         let startAngle = -0.5 * Math.PI; 
@@ -10116,29 +10137,49 @@ window.eksekusiCetakPremium = function() {
                 startAngle += sliceAngle;
             }
         });
+        }
     }
 
     // 9. Eksekusi PDF Download
-    setTimeout(() => {
-        // [AI-GENERATED][ES6 MODULE][V258] Load canvas/PDF dependencies only after an explicit export action.
-        void (async () => {
-            try {
-                const { pdf } = await PdfRenderService.renderElementToPdf(tempContainer, {
-                    scale: 2.5,
-                    useCORS: true,
-                    backgroundColor: '#ffffff',
-                    windowWidth: 794
-                }, { orientation: 'p', unit: 'mm', format: 'a4' });
-                // [AI-GENERATED][ROBUSTNESS][V258] The local PDF worker handles canvas rendering and pagination.
-                pdf.save(`${finalDocTitle}.pdf`);
-            } catch (err) {
-                console.error("Gagal merender PDF: ", err);
-                alert("Terjadi kesalahan saat memproses file PDF.");
-            } finally {
-                if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
+    if (window.__TP_PREMIUM_PDF_EXPORTING__ === true) return;
+    window.__TP_PREMIUM_PDF_EXPORTING__ = true;
+
+    const exportOverlay = document.createElement('div');
+    exportOverlay.setAttribute('role', 'status');
+    exportOverlay.setAttribute('aria-live', 'polite');
+    exportOverlay.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:rgba(253,245,230,.97);color:#4E342E;font:700 14px/1.5 system-ui,sans-serif;text-align:center;';
+    exportOverlay.innerHTML = '<div style="max-width:280px;padding:20px;border:1px solid #F2D2A9;border-radius:16px;background:#fff;box-shadow:0 8px 28px rgba(78,52,46,.12);"><div style="font-size:28px;margin-bottom:8px;">📄</div><div>Sedang menyiapkan laporan PDF...</div><div style="font-size:12px;font-weight:500;color:#8D6E63;margin-top:5px;">Mohon jangan tutup halaman ini.</div></div>';
+    document.body.appendChild(exportOverlay);
+    document.body.appendChild(tempContainer);
+
+    void (async () => {
+        try {
+            // Let the browser calculate layout before html2pdf clones the document.
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const exportHeight = Math.max(tempContainer.scrollHeight, tempContainer.offsetHeight, 1123);
+            const { pdf } = await PdfRenderService.renderElementToPdf(tempContainer, {
+                scale: 2.5,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                windowWidth: 794,
+                windowHeight: exportHeight,
+                scrollX: 0,
+                scrollY: 0,
+                logging: false
+            }, { orientation: 'p', unit: 'mm', format: 'a4' });
+            if (!pdf || typeof pdf.save !== 'function') {
+                throw new Error('Dokumen PDF tidak berhasil dibuat.');
             }
-        })();
-    }, 300);
+            pdf.save(`${finalDocTitle || 'Laporan_Resep'}.pdf`);
+        } catch (err) {
+            console.error("Gagal merender PDF: ", err);
+            alert(`Laporan PDF belum dapat dibuat: ${err?.message || 'Kesalahan renderer'}`);
+        } finally {
+            tempContainer.remove();
+            exportOverlay.remove();
+            window.__TP_PREMIUM_PDF_EXPORTING__ = false;
+        }
+    })();
 };
 
 window.jalankanAnalisisAIAgent = function(hppPcs, hargaJual, beratPcs) {
@@ -10448,20 +10489,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     // the old direct listener was redundant and could trigger a connection twice.
 
     const scrollArea = document.querySelector('.scrollable-content');
+    const appContainer = document.getElementById('app-container');
     const headerSection = document.getElementById('location-section');
 
-    if (scrollArea && headerSection) {
-        // Auto-shrink saat konten di-scroll ke bawah
-        scrollArea.addEventListener('scroll', () => {
-            if (scrollArea.scrollTop > 30) {
-                if (!headerSection.classList.contains('shrunk')) {
-                    headerSection.classList.add('shrunk');
-                    if (typeof updateMiniHeader === 'function') updateMiniHeader();
-                }
-            } else {
-                headerSection.classList.remove('shrunk');
+    if (scrollArea && headerSection && headerSection.dataset.shrinkScrollBound !== 'true') {
+        headerSection.dataset.shrinkScrollBound = 'true';
+        const syncLocationHeaderShrink = () => {
+            const scrollTop = Math.max(
+                Number(scrollArea.scrollTop) || 0,
+                Number(appContainer?.scrollTop) || 0,
+                Number(document.scrollingElement?.scrollTop) || 0,
+                Number(window.scrollY) || 0
+            );
+            const shouldShrink = scrollTop > 30;
+            const wasShrunk = headerSection.classList.contains('shrunk');
+            if (shouldShrink !== wasShrunk) {
+                headerSection.classList.toggle('shrunk', shouldShrink);
+                if (shouldShrink && typeof updateMiniHeader === 'function') updateMiniHeader();
             }
-        });
+        };
+
+        // Timer content normally scrolls inside .scrollable-content, but some
+        // mobile/WebView layouts route the gesture to the page or app container.
+        scrollArea.addEventListener('scroll', syncLocationHeaderShrink, { passive: true });
+        appContainer?.addEventListener('scroll', syncLocationHeaderShrink, { passive: true });
+        window.addEventListener('scroll', syncLocationHeaderShrink, { passive: true });
+        document.addEventListener('scroll', syncLocationHeaderShrink, { capture: true, passive: true });
+        syncLocationHeaderShrink();
 
         // Gesture sentuh langsung pada location-section
         let locTouchStartY = 0;
