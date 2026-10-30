@@ -30,7 +30,7 @@
 <meta name="midtrans-snap-config" data-client-key="YOUR_CLIENT_KEY" data-environment="sandbox" content="Midtrans Snap runtime configuration"/>
 <!-- [AI-GENERATED][ES6 MODULE][V258] Supabase, modal bootstrap, and lazy PDF services use the module runtime. -->
 <!-- [AI-GENERATED][ES6 MODULE][V255] Runtime globals are initialized before the application module graph. -->
-<script type="module" src="./assets/js/runtime-entry.js?v=20261027-v317"></script>
+<script type="module" src="./assets/js/runtime-entry.js?v=20261030-v320"></script>
 <title>Timer Proofer</title>
 <style>
         :root {
@@ -64,7 +64,7 @@ NEUTRAL COLORS
 --text-muted: #64748b;     /* Alias untuk teks pudar */
     
 --gray-600: #475569;
---text-dark: #334155;      /* Teks gelap utama */
+--text-dark: #4E342E;      /* Teks utama mengikuti warna cokelat brand/adonan */
 
 /* ==========================
        STATUS COLORS
@@ -1254,7 +1254,7 @@ outline-offset: 2px;
   /* Sections & Quests */
   .gamification-section-title { font-size: 0.85rem; font-weight: 800; color: #4E342E; margin: 18px 0 10px 0; text-align: left; border-bottom: 1px dashed rgba(230, 126, 34, 0.3); padding-bottom: 6px; }
   .daily-quests-container { display: flex; flex-direction: column; gap: 8px; }
-  .quest-item { display: flex; justify-content: space-between; align-items: center; background: #FFFDF9; border: 1px solid rgba(243, 156, 18, 0.2); padding: 10px 12px; border-radius: 10px; font-size: 0.8rem; color: #2C3E50; }
+  .quest-item { display: flex; justify-content: space-between; align-items: center; background: #FFFDF9; border: 1px solid rgba(243, 156, 18, 0.2); padding: 10px 12px; border-radius: 10px; font-size: 0.8rem; color: var(--chocolate, #4E342E); }
   .quest-item.completed { opacity: 0.6; background: #EAFAF1; border-color: #A9DFBF; text-decoration: line-through; }
   .quest-reward { font-weight: 800; color: #E67E22; font-size: 0.75rem; }
   
@@ -3688,7 +3688,7 @@ body {
 <strong>Insight:</strong> Memindai suhu ruang dan produk aktif untuk analisis fermentasi...
             </div>
 <!-- Rekomendasi Tindakan -->
-<div id="ai-recommendation" style="font-size: 0.82rem; color: #2C3E50; line-height: 1.5; background: rgba(255, 255, 255, 0.7); padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(243, 156, 18, 0.2);">
+<div id="ai-recommendation" style="font-size: 0.82rem; color: #4E342E; line-height: 1.5; background: rgba(255, 255, 255, 0.7); padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(243, 156, 18, 0.2);">
 <strong>Rekomendasi AI:</strong> <br/>⏳ Menyiapkan parameter telemetri sesuai adonan Anda.
             </div>
 <!-- Tombol Sinkronisasi -->
@@ -4602,7 +4602,7 @@ body {
 <div class="recipe-detail-header-actions" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
 <button data-action="buatResepBaruForm" style="background: #fff; color: #E67E22; border: 1px solid #F2D2A9; padding: 7px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;" title="Reset Form Resep Baru" type="button">+ Resep Baru</button>
 <button data-action="simpanResepKeDatabase" style="background: #27ae60; color: white; border: none; padding: 7px 14px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer;" type="button">💾 Simpan</button>
-<button id="btn-recipe-close-top" aria-label="Tutup detail resep" title="Tutup detail resep" type="button">×</button>
+<button id="btn-recipe-close-top" data-action="tutupHalamanResepSecaraAman" aria-label="Tutup detail resep" title="Tutup detail resep" type="button">×</button>
 </div>
 </div>
 <!-- Area Scroll Konten Utama dengan Padding Bottom 90px agar tidak tertutup tombol fixed -->

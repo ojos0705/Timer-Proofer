@@ -8,9 +8,9 @@ const sw = readFileSync(new URL('../www/sw.js', import.meta.url), 'utf8');
 
 test('recipe detail has a visible, accessible top-right close control wired to the existing close handler', () => {
   assert.match(html, /<div id="recipe-detail-view"[^>]*>/);
-  assert.match(html, /<button id="btn-recipe-close-top"[^>]*aria-label="Tutup detail resep"[^>]*>×<\/button>/);
-  assert.match(core, /getElementById\('btn-recipe-close-top'\)/);
-  assert.match(core, /btnRecipeCloseTop\.addEventListener\('click', tutupHalamanResepSecaraAman\)/);
+  assert.match(html, /<button id="btn-recipe-close-top"[^>]*data-action="tutupHalamanResepSecaraAman"[^>]*aria-label="Tutup detail resep"[^>]*>×<\/button>/);
+  assert.match(core, /window\.tutupHalamanResepSecaraAman = tutupHalamanResepSecaraAman/);
+  assert.doesNotMatch(core, /btnRecipeCloseTop\.addEventListener/);
 });
 
 test('recipe detail header adapts to narrow viewports and safe areas without changing existing selectors', () => {
@@ -26,6 +26,6 @@ test('recipe overlay paints above the top navigation so its header and close con
 });
 
 test('V312 refreshes the runtime module URL and Service Worker cache', () => {
-  assert.match(html, /runtime-entry\.js\?v=20261027-v317/);
-  assert.match(sw, /Timer-Proofing-v1\.1\.221/);
+  assert.match(html, /runtime-entry\.js\?v=20261030-v320/);
+  assert.match(sw, /Timer-Proofing-v1\.1\.222/);
 });

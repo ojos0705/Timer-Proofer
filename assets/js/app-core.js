@@ -1,5 +1,5 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261027-v317'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v320'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
 import { init as initializeAppLifecycle } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261027-v317'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v320'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -4454,6 +4454,7 @@ function kembaliKeMasterView() {
 
 function bukaDetailResepBaru() {
     markRecipeEditorContextChanged();
+    resetRecipeAiAnalysisState();
     currentEditingRecipeId = null;
     // [AI-GENERATED][ROBUSTNESS][V138] A new recipe starts with an empty photo
     // session so photos from the previously edited recipe can never be attached
@@ -4477,6 +4478,7 @@ function bukaDetailResepBaru() {
 
 function bukaDetailResepEksisting(resep) {
     markRecipeEditorContextChanged();
+    resetRecipeAiAnalysisState();
     currentEditingRecipeId = resep.id;
     terapkanResepKeKalkulator(resep);
     void restoreRecipePhotosForRecipe(resep);
@@ -6654,7 +6656,29 @@ function tampilkanHasilAnalisisAI(data) {
 // Kalau gagal/timeout/offline, fallback ke ringkasan lokal berbasis rule
 // yang sama supaya fitur tetap jalan di app native tanpa koneksi.
 // =================================================================================
+// [AI-GENERATED][BUG FIX][V320] Every recipe change invalidates an in-flight AI result.
+// The request itself may finish at the provider, but an older response must never
+// overwrite the editor after the user has started/opened another recipe.
+let recipeAiAnalysisRequestEpoch = 0;
+
+function resetRecipeAiAnalysisState() {
+    recipeAiAnalysisRequestEpoch += 1;
+
+    const resultContainer = document.getElementById('ai-live-result');
+    if (resultContainer) {
+        resultContainer.replaceChildren();
+        resultContainer.style.display = 'none';
+    }
+
+    const button = document.getElementById('btn-ai-live-analysis');
+    if (button) {
+        button.textContent = '🤖 Analisis AI Mendalam (Live)';
+        button.disabled = false;
+    }
+}
+
 async function mintaAnalisisAISungguhan() {
+    const requestEpoch = recipeAiAnalysisRequestEpoch;
     const btn = document.getElementById('btn-ai-live-analysis');
     const resultContainer = document.getElementById('ai-live-result');
     const prevText = btn ? btn.innerText : '🤖 Analisis AI Mendalam (Live)';
@@ -6704,6 +6728,7 @@ Gunakan struktur ini:
 ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul dengan titik dua (contoh: "Potensi Masalah:"), gunakan simbol (-) HANYA untuk list, dan angka (1.) HANYA untuk urutan langkah.`;
 
         const data = await window.AIService.requestAIAnalysis(aiPrompt);
+        if (requestEpoch !== recipeAiAnalysisRequestEpoch) return;
 
         resultContainer.innerHTML = `
             <div style="font-weight:900; color:#6c3483; margin-bottom:10px; font-size:0.9rem; text-align:center; background:#f5eef8; padding:8px; border-radius:6px; letter-spacing:0.5px;">
@@ -6713,6 +6738,7 @@ ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul deng
         `;
 
     } catch (error) {
+        if (requestEpoch !== recipeAiAnalysisRequestEpoch) return;
         console.error('[AI Analysis] Permintaan analisis mendalam gagal:', { name: error?.name || 'Error', message: error?.message || String(error), status: error?.status ?? null, code: error?.code ?? null, url: error?.url || undefined });
         const safeFallback = `Analisis AI online sedang tidak tersedia (${escapeHtmlMarkup(error?.message || 'gangguan layanan')}).\n\nRingkasan lokal: periksa kembali komposisi bahan, berat per porsi, suhu adonan, dan tanda visual proofing. Untuk keputusan fermentasi, gunakan kondisi adonan aktual; jangan menganggap estimasi waktu sebagai kepastian.`;
         resultContainer.innerHTML = `
@@ -6722,7 +6748,7 @@ ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul deng
                 <small>Detail teknis tercatat di Console. Silakan coba lagi beberapa saat.</small>
             </div>`;
     } finally {
-        if (btn) {
+        if (requestEpoch === recipeAiAnalysisRequestEpoch && btn) {
             btn.innerText = prevText;
             btn.disabled = false;
         }
@@ -7710,15 +7736,12 @@ if (document.readyState === 'loading') {
 // 2. FUNGSI UTAMA: UPDATE TEMA & WAKTU DINAMIS
 // ==========================================
 function updateDynamicTheme(weatherId, mainWeather) {
-    const root = document.documentElement;
-    const body = document.body;
     const now = new Date();
     const hours = now.getHours();
     
     // =========================================================================
     // WAJIB: DEKLARASIKAN SEMUA VARIABEL TEMA DI AWAL AGAR TIDAK REFERENCEERROR
     // =========================================================================
-    let bgGradient = "linear-gradient(135deg, #FDF5E6, #F2D2A9)"; 
     let accentColor = "#E67E22";
     let textWeatherColor = "#4E342E"; 
     let cardBg = "rgba(0, 0, 0, 0.04)";
@@ -7772,33 +7795,27 @@ function updateDynamicTheme(weatherId, mainWeather) {
 
     // 3. PENGONDISIAN WARNA GLOBAL (Aplikasi / Body)
     if (weatherId >= 200 && weatherId < 600) { 
-        bgGradient = "linear-gradient(135deg, #2c3e50, #34495e)";
         accentColor = "#3498db";
         textWeatherColor = "#ecf0f1"; 
         cardBg = "rgba(255, 255, 255, 0.12)";
     } else if (weatherId >= 801 && weatherId <= 804) { 
-        bgGradient = "linear-gradient(135deg, #e6d5c3, #bda58f)";
         accentColor = "#d35400";
         textWeatherColor = "#3e2723"; 
         cardBg = "rgba(0, 0, 0, 0.05)";
     } else if (["malam", "tengah malam", "dini hari"].includes(timeOfDay)) {
-        bgGradient = "linear-gradient(135deg, #242A4A, #171B30)";
         accentColor = "#f1c40f";
         textWeatherColor = "#E0E0E0";
         cardBg = "rgba(255, 255, 255, 0.08)";
     } else if (timeOfDay === "senja" || timeOfDay === "petang") {
-        bgGradient = "linear-gradient(135deg, #FF7F50, #6F1E51)";
         accentColor = "#ffffff";
         textWeatherColor = "#C0C0C0";
         cardBg = "rgba(255, 255, 255, 0.15)";
     }
 
-    // Terapkan tema global ke CSS Root & Body
-    body.style.background = bgGradient;
-    root.style.setProperty('--accent', accentColor);
-    root.style.setProperty('--text-weather', textWeatherColor);
-
     // 4. PENGONDISIAN WARNA KHUSUS CONTAINER HEADER
+    // Jangan mengubah --accent pada :root atau background body: warna brand
+    // cokelat/adonan harus konsisten di seluruh aplikasi, apa pun kondisi cuaca.
+
     if (timeOfDay === "dini hari") {
         if (condition === "hujan") { containerBg = "linear-gradient(135deg, #0F172A 0%, #020617 100%)"; textColor = "#94A3B8"; cardBg = "rgba(255,255,255,0.05)"; }
         else { containerBg = "linear-gradient(135deg, #182238 0%, #0B111E 100%)"; textColor = "#CBD5E1"; cardBg = "rgba(255,255,255,0.06)"; }
@@ -7854,9 +7871,12 @@ function updateDynamicTheme(weatherId, mainWeather) {
     // Terapkan warna kontainer lokasi header jika ada
     const locationSectionHeader = document.getElementById('location-section');
     if (locationSectionHeader) {
+        // Scope dynamic weather colors to the weather/location header only.
         locationSectionHeader.style.setProperty('--bg-container', containerBg);
         locationSectionHeader.style.setProperty('--text-container', textColor);
         locationSectionHeader.style.setProperty('--card-bg', cardBg);
+        locationSectionHeader.style.setProperty('--accent', accentColor);
+        locationSectionHeader.style.setProperty('--text-weather', textWeatherColor);
         locationSectionHeader.style.color = textColor;
     }
 
@@ -8030,7 +8050,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261027-v317');
+        metadataUrl.searchParams.set('_release', '20261030-v320');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);
@@ -8491,6 +8511,7 @@ window.buatResepBaruForm = function() {
     // [AI-GENERATED][ROBUSTNESS][V279] Only invalidate pending saves after the
     // user confirms the editor transition; cancelling must leave the current form valid.
     markRecipeEditorContextChanged();
+    resetRecipeAiAnalysisState();
     // [AI-GENERATED][REFACTOR] Reset the active recipe identity first so later saves cannot overwrite the old recipe.
     currentEditingRecipeId = null;
 
@@ -10629,10 +10650,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    const btnRecipeCloseTop = document.getElementById('btn-recipe-close-top');
-    if (btnRecipeCloseTop && typeof tutupHalamanResepSecaraAman === 'function') {
-        btnRecipeCloseTop.addEventListener('click', tutupHalamanResepSecaraAman);
-    }
+    // #btn-recipe-close-top is handled through the canonical data-action delegation.
 
     const btnCetak = document.getElementById('btn-cetak-pdf'); // Sesuaikan ID tombol Anda
     if (btnCetak) {
