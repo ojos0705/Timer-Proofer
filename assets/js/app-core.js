@@ -1,5 +1,5 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v322'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v323'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
 import { init as initializeAppLifecycle } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v322'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v323'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -8063,7 +8063,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261030-v322');
+        metadataUrl.searchParams.set('_release', '20261030-v323');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);
@@ -10141,7 +10141,7 @@ window.eksekusiCetakPremium = function() {
     }
 
     // 9. Eksekusi PDF Download
-    if (window.__TP_PREMIUM_PDF_EXPORTING__ === true) return;
+    if (window.__TP_PREMIUM_PDF_EXPORTING__ === true) return false;
     window.__TP_PREMIUM_PDF_EXPORTING__ = true;
 
     const exportOverlay = document.createElement('div');
@@ -10152,7 +10152,7 @@ window.eksekusiCetakPremium = function() {
     document.body.appendChild(exportOverlay);
     document.body.appendChild(tempContainer);
 
-    void (async () => {
+    return (async () => {
         try {
             // Let the browser calculate layout before html2pdf clones the document.
             await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -10171,15 +10171,107 @@ window.eksekusiCetakPremium = function() {
                 throw new Error('Dokumen PDF tidak berhasil dibuat.');
             }
             pdf.save(`${finalDocTitle || 'Laporan_Resep'}.pdf`);
+            return true;
         } catch (err) {
             console.error("Gagal merender PDF: ", err);
             alert(`Laporan PDF belum dapat dibuat: ${err?.message || 'Kesalahan renderer'}`);
+            return false;
         } finally {
             tempContainer.remove();
             exportOverlay.remove();
             window.__TP_PREMIUM_PDF_EXPORTING__ = false;
         }
     })();
+};
+
+/**
+ * [AI-GENERATED][FEATURE][V323]
+ * Print a saved recipe with the same Premium PDF template used by the editor.
+ * Temporarily hydrates the hidden recipe editor, awaits the PDF render, then
+ * restores the user's in-progress editor state without persisting the snapshot.
+ */
+window.cetakResepTersimpanPremium = async function(resep) {
+    if (!resep || typeof resep !== 'object') {
+        console.warn('[RecipePrint] Data resep tersimpan tidak valid.');
+        return false;
+    }
+    if (window.__TP_PREMIUM_PDF_EXPORTING__ === true) {
+        if (typeof showToast === 'function') showToast('Laporan lain sedang dibuat. Coba kembali setelah selesai.');
+        return false;
+    }
+
+    const fieldIds = ['recipe-save-name', 'base-flour', 'recipe-yield', 'input-harga-jual'];
+    const fieldSnapshot = Object.fromEntries(fieldIds.map((id) => {
+        const element = document.getElementById(id);
+        return [id, element ? element.value : null];
+    }));
+    const cloneArray = (value) => {
+        try { return JSON.parse(JSON.stringify(Array.isArray(value) ? value : [])); }
+        catch { return []; }
+    };
+    const previousIngredients = cloneArray(bakeryIngredients);
+    const previousSteps = cloneArray(activeRecipeSteps);
+    const previousCategoryState = { ...(window.statusKategoriResep || {}) };
+    const previousFoodCost = window.currentFoodCostPersen;
+
+    const setField = (id, value) => {
+        const element = document.getElementById(id);
+        if (element && value != null) element.value = String(value);
+    };
+    const waitForLayout = () => new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
+    });
+
+    try {
+        const ingredients = cloneArray(resep.bahanBaku || resep.ingredients || resep.bahan || resep.komposisi);
+        const steps = cloneArray(resep.langkahProduksi || resep.productionSteps);
+
+        setField('recipe-save-name', resep.nama || resep.name || 'RESEP PRODUKSI');
+        setField('base-flour', resep.tepungUtama ?? resep.flourWeight ?? 1000);
+        setField('recipe-yield', resep.targetYield ?? 1);
+        setField('input-harga-jual', resep.hargaJual ?? resep.salePrice ?? 0);
+
+        bakeryIngredients = ingredients;
+        window.bakeryIngredients = ingredients;
+        activeRecipeSteps = steps;
+        window.activeRecipeSteps = steps;
+
+        const allCategories = [
+            'Bahan Kering', 'Bahan Basah', 'Bahan Pengembang',
+            'Bahan Tambahan', 'Bahan Toping', 'Kemasan'
+        ];
+        window.statusKategoriResep = { ...previousCategoryState };
+        allCategories.forEach((category) => { window.statusKategoriResep[category] = true; });
+
+        if (typeof renderRecipeTableBakuTotal === 'function') renderRecipeTableBakuTotal();
+        if (typeof renderLangkahProduksi === 'function') renderLangkahProduksi();
+        if (typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal();
+        await waitForLayout();
+
+        const result = await window.eksekusiCetakPremium();
+        if (result !== true) return false;
+        return true;
+    } catch (error) {
+        console.error('[RecipePrint] Gagal mencetak resep tersimpan:', error);
+        if (typeof showToast === 'function') showToast('Laporan resep gagal disiapkan. Silakan coba lagi.');
+        return false;
+    } finally {
+        fieldIds.forEach((id) => {
+            const element = document.getElementById(id);
+            if (element && fieldSnapshot[id] !== null) element.value = fieldSnapshot[id];
+        });
+
+        bakeryIngredients = previousIngredients;
+        window.bakeryIngredients = previousIngredients;
+        activeRecipeSteps = previousSteps;
+        window.activeRecipeSteps = previousSteps;
+        window.statusKategoriResep = previousCategoryState;
+
+        if (typeof renderRecipeTableBakuTotal === 'function') renderRecipeTableBakuTotal();
+        if (typeof renderLangkahProduksi === 'function') renderLangkahProduksi();
+        if (typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal();
+        if (previousFoodCost !== undefined) window.currentFoodCostPersen = previousFoodCost;
+    }
 };
 
 window.jalankanAnalisisAIAgent = function(hppPcs, hargaJual, beratPcs) {
@@ -10393,6 +10485,147 @@ function stopShrunkClockUpdater() {
 }
 
 /**
+ * [AI-GENERATED][ROBUSTNESS][V323]
+ * Bind the compact location header independently from the long application
+ * DOMContentLoaded initializer. app-core can be evaluated after DCL when the
+ * ES-module graph is delayed, so the old nested-only binding could be missed.
+ * Observe the real scroll target (including nested scrollers), plus wheel and
+ * touch gestures as a WebView fallback.
+ */
+function initLocationHeaderShrinkBehavior() {
+    const header = document.getElementById('location-section');
+    const appContainer = document.getElementById('app-container');
+    const initialScrollArea = appContainer?.querySelector(':scope > .scrollable-content')
+        || appContainer?.querySelector('.scrollable-content');
+    if (!header || !appContainer || !initialScrollArea) return false;
+    if (header.dataset.tpLocationShrinkBound === 'v323') return true;
+
+    header.dataset.tpLocationShrinkBound = 'v323';
+
+    // Resolve the main page scroller on every interaction. This also survives
+    // a future render replacing the .scrollable-content node.
+    const getMainScrollArea = () => appContainer.querySelector(':scope > .scrollable-content')
+        || appContainer.querySelector('.scrollable-content')
+        || initialScrollArea;
+
+    const isMainContentTarget = (target) => {
+        if (!(target instanceof Element)) return false;
+        const area = getMainScrollArea();
+        return target === appContainer || target === area || Boolean(area?.contains(target));
+    };
+
+    const getScrollTop = (eventTarget = null) => {
+        const area = getMainScrollArea();
+        const values = [
+            Number(area?.scrollTop) || 0,
+            Number(appContainer.scrollTop) || 0,
+            Number(document.scrollingElement?.scrollTop) || 0,
+            Number(document.documentElement?.scrollTop) || 0,
+            Number(document.body?.scrollTop) || 0,
+            Number(window.scrollY) || 0
+        ];
+
+        // Some WebViews dispatch scroll from an inner scrollable descendant.
+        // Inspect its ancestors up to the app root, not unrelated modal panes.
+        let node = eventTarget instanceof Element ? eventTarget : null;
+        while (node && appContainer.contains(node)) {
+            if (node.scrollHeight > node.clientHeight + 1) {
+                const overflowY = window.getComputedStyle(node).overflowY;
+                if (node === area || /auto|scroll|overlay/.test(overflowY)) {
+                    values.push(Number(node.scrollTop) || 0);
+                }
+            }
+            if (node === appContainer) break;
+            node = node.parentElement;
+        }
+        return Math.max(...values);
+    };
+
+    const setShrunk = (shouldShrink) => {
+        const wasShrunk = header.classList.contains('shrunk');
+        if (wasShrunk === shouldShrink) return;
+        header.classList.toggle('shrunk', shouldShrink);
+        if (shouldShrink && typeof updateMiniHeader === 'function') updateMiniHeader();
+    };
+
+    const syncFromScroll = (eventTarget = null) => {
+        setShrunk(getScrollTop(eventTarget) > 24);
+    };
+
+    let framePending = false;
+    let pendingTarget = null;
+    const onScroll = (event) => {
+        const target = event?.target;
+        const isViewportScrollTarget = target === document || target === document.documentElement || target === document.body;
+        if (!isViewportScrollTarget && !isMainContentTarget(target)) return;
+        pendingTarget = target instanceof Element ? target : null;
+        if (framePending) return;
+        framePending = true;
+        requestAnimationFrame(() => {
+            framePending = false;
+            syncFromScroll(pendingTarget);
+            pendingTarget = null;
+        });
+    };
+
+    // Capture catches non-bubbling scroll from current and future descendants.
+    document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    initialScrollArea.addEventListener('scroll', onScroll, { passive: true });
+    appContainer.addEventListener('scroll', onScroll, { passive: true });
+
+    // Wheel fallback: shrink immediately on a downward gesture even in WebViews
+    // that delay or omit the expected scroll event; expand after returning top.
+    const onWheel = (event) => {
+        if (!isMainContentTarget(event.target)) return;
+        if (event.deltaY > 6) setShrunk(true);
+        else if (event.deltaY < -6) {
+            requestAnimationFrame(() => syncFromScroll(event.target));
+        }
+    };
+    document.addEventListener('wheel', onWheel, { capture: true, passive: true });
+
+    let lastTouchY = null;
+    const onTouchStart = (event) => {
+        if (!isMainContentTarget(event.target)) {
+            lastTouchY = null;
+            return;
+        }
+        lastTouchY = event.touches?.[0]?.clientY ?? null;
+    };
+    const onTouchMove = (event) => {
+        if (!isMainContentTarget(event.target)) return;
+        const currentY = event.touches?.[0]?.clientY;
+        if (!Number.isFinite(currentY) || !Number.isFinite(lastTouchY)) return;
+        const fingerDelta = currentY - lastTouchY;
+        if (fingerDelta < -12) setShrunk(true);
+        else if (fingerDelta > 12) {
+            requestAnimationFrame(() => syncFromScroll(event.target));
+        }
+        lastTouchY = currentY;
+    };
+    const onTouchEnd = () => { lastTouchY = null; };
+    document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
+    document.addEventListener('touchmove', onTouchMove, { capture: true, passive: true });
+    document.addEventListener('touchend', onTouchEnd, { capture: true, passive: true });
+    document.addEventListener('touchcancel', onTouchEnd, { capture: true, passive: true });
+
+    window.addEventListener('pageshow', () => syncFromScroll(), { passive: true });
+    window.addEventListener('resize', () => syncFromScroll(), { passive: true });
+    syncFromScroll();
+
+    window.__TP_LOCATION_SHRINK_READY__ = true;
+    return true;
+}
+
+// Bind whether this module is evaluated before or after DOMContentLoaded.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLocationHeaderShrinkBehavior, { once: true });
+} else {
+    initLocationHeaderShrinkBehavior();
+}
+
+/**
  * =========================================================================
  * INISIALISASI UTAMA APLIKASI (SINGLE DOMCONTENTLOADED EVENT)
  * Semua pengikatan elemen UI, Event Listener, dan restore data digabung di sini
@@ -10488,64 +10721,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // [AI-GENERATED][REFACTOR] BLE buttons use data-action/event-delegation;
     // the old direct listener was redundant and could trigger a connection twice.
 
-    const scrollArea = document.querySelector('.scrollable-content');
-    const appContainer = document.getElementById('app-container');
-    const headerSection = document.getElementById('location-section');
-
-    if (scrollArea && headerSection && headerSection.dataset.shrinkScrollBound !== 'true') {
-        headerSection.dataset.shrinkScrollBound = 'true';
-        const syncLocationHeaderShrink = () => {
-            const scrollTop = Math.max(
-                Number(scrollArea.scrollTop) || 0,
-                Number(appContainer?.scrollTop) || 0,
-                Number(document.scrollingElement?.scrollTop) || 0,
-                Number(window.scrollY) || 0
-            );
-            const shouldShrink = scrollTop > 30;
-            const wasShrunk = headerSection.classList.contains('shrunk');
-            if (shouldShrink !== wasShrunk) {
-                headerSection.classList.toggle('shrunk', shouldShrink);
-                if (shouldShrink && typeof updateMiniHeader === 'function') updateMiniHeader();
-            }
-        };
-
-        // Timer content normally scrolls inside .scrollable-content, but some
-        // mobile/WebView layouts route the gesture to the page or app container.
-        scrollArea.addEventListener('scroll', syncLocationHeaderShrink, { passive: true });
-        appContainer?.addEventListener('scroll', syncLocationHeaderShrink, { passive: true });
-        window.addEventListener('scroll', syncLocationHeaderShrink, { passive: true });
-        document.addEventListener('scroll', syncLocationHeaderShrink, { capture: true, passive: true });
-        syncLocationHeaderShrink();
-
-        // Gesture sentuh langsung pada location-section
-        let locTouchStartY = 0;
-        let locTouchMoved = false;
-
-        headerSection.addEventListener('touchstart', (e) => {
-            if (!e.touches || !e.touches[0]) return;
-            locTouchStartY = e.touches[0].clientY;
-            locTouchMoved = false;
-        }, { passive: true });
-
-        headerSection.addEventListener('touchmove', (e) => {
-            if (!e.touches || !e.touches[0]) return;
-            const deltaY = e.touches[0].clientY - locTouchStartY;
-            if (Math.abs(deltaY) < 20) return;
-            locTouchMoved = true;
-
-            if (deltaY < -30 && !headerSection.classList.contains('shrunk')) {
-                headerSection.classList.add('shrunk');
-                if (typeof updateMiniHeader === 'function') updateMiniHeader();
-            }
-            if (deltaY > 30 && headerSection.classList.contains('shrunk')) {
-                headerSection.classList.remove('shrunk');
-            }
-        }, { passive: true });
-
-        headerSection.addEventListener('touchend', () => {
-            locTouchMoved = false;
-        });
-    }
+    // [AI-GENERATED][ROBUSTNESS][V323] The independent initializer also runs after delayed module evaluation.
+    initLocationHeaderShrinkBehavior();
 
     // Mutation Observer Cuaca Mini Header
     const headerSectionAlt = document.getElementById('header-id');
@@ -11197,11 +11374,27 @@ window.tampilkanDaftarResepTersimpan = async function() {
                 }
             });
 
-            card.querySelector('.recipe-print-btn').addEventListener('click', () => {
-                const printWindow = window.open('', '_blank');
-                if (!printWindow) return;
-                printWindow.document.write(`<!DOCTYPE html><html><head><title>Cetak Resep</title><style>body{font-family:Arial,sans-serif;padding:30px;color:#2c3e50;}h2{color:#4e342e;border-bottom:2px solid #e7e7e7;padding-bottom:10px;}.box{background:#fdfbf7;border:1px solid #e2e8f0;border-radius:8px;padding:15px;}.box p{margin:8px 0;font-size:14px;}</style></head><body><h2>🍩 ${namaResepHtml}</h2><div class="box"><p><strong>Tepung Utama:</strong> ${tepungUtamaHtml} gram</p><p><strong>Target Porsi:</strong> ${targetYieldHtml} pcs</p><p><strong>Waktu Disimpan:</strong> ${waktuSimpanHtml}</p></div><script>window.onload=function(){window.print();window.close();};<\/script></body></html>`);
-                printWindow.document.close();
+            card.querySelector('.recipe-print-btn').addEventListener('click', async (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const dropdown = card.querySelector('.recipe-dropdown-menu');
+                const menuWrapper = card.querySelector('.recipe-menu-wrapper');
+                if (dropdown) dropdown.style.display = 'none';
+                menuWrapper?.classList.remove('active');
+
+                const printButton = event.currentTarget;
+                const originalLabel = printButton.textContent;
+                printButton.disabled = true;
+                printButton.textContent = 'Menyiapkan PDF...';
+                try {
+                    const completed = await window.cetakResepTersimpanPremium(resep);
+                    if (completed && typeof showToast === 'function') {
+                        showToast(`Laporan premium resep "${namaResep}" berhasil dibuat.`);
+                    }
+                } finally {
+                    printButton.disabled = false;
+                    printButton.textContent = originalLabel;
+                }
             });
 
             card.querySelector('.recipe-delete-btn').addEventListener('click', async () => {

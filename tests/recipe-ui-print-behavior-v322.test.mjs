@@ -1,4 +1,4 @@
-/** [AI-GENERATED][QA][V322] Recipe navigation, location header and print regressions. */
+/** [AI-GENERATED][QA][V323] Recipe location scroll and saved Premium print regressions. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -22,13 +22,16 @@ test('recipe detail close returns to recipe master view before closing the recip
     assert.ok(closeHandler.indexOf('bukaMasterViewResep()') < closeHandler.indexOf("resepPage.style.display = 'none'"));
 });
 
-test('location header shrink observes nested, app-container and document scrolling', () => {
+test('location shrink initializer binds even when app-core loads after DOMContentLoaded', () => {
     assert.match(html, /\.scrollable-content\s*\{[^}]*min-height:\s*0;[^}]*overflow-y:\s*auto/);
-    const scrollBlock = extractBetween(appCore, "const scrollArea = document.querySelector('.scrollable-content');", '// Mutation Observer Cuaca Mini Header');
-    assert.match(scrollBlock, /appContainer\?\.addEventListener\('scroll'/);
-    assert.match(scrollBlock, /window\.addEventListener\('scroll'/);
-    assert.match(scrollBlock, /document\.addEventListener\('scroll',[\s\S]*capture:\s*true/);
-    assert.match(scrollBlock, /scrollTop > 30/);
+    const shrinkBlock = extractBetween(appCore, 'function initLocationHeaderShrinkBehavior()', '/**\n * =========================================================================\n * INISIALISASI UTAMA APLIKASI');
+    assert.ok(shrinkBlock.includes("appContainer?.querySelector(':scope > .scrollable-content')"));
+    assert.match(shrinkBlock, /header\.dataset\.tpLocationShrinkBound === 'v323'/);
+    assert.match(shrinkBlock, /document\.addEventListener\('scroll',[\s\S]*capture:\s*true/);
+    assert.match(shrinkBlock, /document\.addEventListener\('wheel', onWheel, \{ capture: true, passive: true \}\)/);
+    assert.match(shrinkBlock, /document\.addEventListener\('touchmove', onTouchMove, \{ capture: true, passive: true \}\)/);
+    assert.match(shrinkBlock, /setShrunk\(getScrollTop\(eventTarget\) > 24\)/);
+    assert.match(appCore, /if \(document\.readyState === 'loading'\)[\s\S]*DOMContentLoaded', initLocationHeaderShrinkBehavior[\s\S]*else \{\s*initLocationHeaderShrinkBehavior\(\)/);
 });
 
 test('location identity text uses stable chocolate and dough colors, not weather accent', () => {
@@ -38,7 +41,7 @@ test('location identity text uses stable chocolate and dough colors, not weather
     assert.doesNotMatch(html, /#loc-line2\s*\{[^}]*color:\s*var\(--accent\)/);
 });
 
-test('premium print is rendered in viewport, reports progress and waits for layout before capture', () => {
+test('premium print is awaitable, renders in viewport and waits for layout before capture', () => {
     const printHandler = extractBetween(appCore, 'window.eksekusiCetakPremium = function()', 'window.jalankanAnalisisAIAgent = function');
     assert.doesNotMatch(printHandler, /top\s*=\s*['"]-9999px['"]/);
     assert.match(printHandler, /tempContainer\.style\.position = 'relative'/);
@@ -46,14 +49,15 @@ test('premium print is rendered in viewport, reports progress and waits for layo
     assert.match(printHandler, /requestAnimationFrame\(\(\) => requestAnimationFrame\(resolve\)\)/);
     assert.match(printHandler, /windowHeight:\s*exportHeight/);
     assert.match(printHandler, /pdf\.save\(/);
+    assert.match(printHandler, /return \(async \(\) =>/);
     assert.match(printHandler, /finally[\s\S]*tempContainer\.remove\(\)[\s\S]*exportOverlay\.remove\(\)/);
     assert.match(printHandler, /escapeHtmlMarkup\(namaBahan\)/);
     assert.match(printHandler, /escapeHtmlMarkup\(step\)/);
 });
 
-test('technical cache token is V322 while product-facing version remains V125', () => {
+test('technical cache token is V323 while product-facing version remains V125', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261030-v322');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.224');
-    assert.match(html, /runtime-entry\.js\?v=20261030-v322/);
+    assert.equal(version.releaseToken, '20261030-v323');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.225');
+    assert.match(html, /runtime-entry\.js\?v=20261030-v323/);
 });

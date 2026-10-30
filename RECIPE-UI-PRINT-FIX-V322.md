@@ -7,7 +7,7 @@
 3. **Location header shrink**: the shrink observer now checks the nested scroll area, app container, document scroll and window scroll, and updates the `shrunk` class when scrolling.
 4. **Location colors**: `loc-line1` and `loc-line2` use stable chocolate/brown brand colors instead of inheriting the weather accent.
 5. **Premium PDF**: the report template is no longer positioned at `top:-9999px`. It is attached within the viewport for capture, uses a progress overlay, waits for layout frames, sets a capture height, validates the PDF result, escapes inserted values, and cleans up temporary DOM/overlay state.
-6. **PWA cache**: technical release token moved to `20261030-v322`; Service Worker cache moved to `Timer-Proofing-v1.1.224`. User-facing product version remains **V125**.
+6. **PWA cache**: technical release token moved to `20261030-v323`; Service Worker cache moved to `Timer-Proofing-v1.1.225`. User-facing product version remains **V125**.
 
 ## Scope protection
 

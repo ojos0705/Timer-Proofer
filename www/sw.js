@@ -48,8 +48,8 @@
 // [AI-GENERATED][PWA][V270] Remove the unused ProofingService global; proofing is now ESM-only internally.
 // [AI-GENERATED][PWA][V279] Invalidate caches after owner/editor-bound recipe save transactions.
 // [AI-GENERATED][PWA][V300] Invalidate the cache after restoring the complete web asset tree.
-const CACHE_NAME = 'Timer-Proofing-v1.1.224';
-// [AI-GENERATED][PWA][V322] Clear the previous cache after recipe, location, formatter and PDF fixes.
+const CACHE_NAME = 'Timer-Proofing-v1.1.225';
+// [AI-GENERATED][PWA][V323] Clear previous cache after location shrink and saved-recipe premium print fixes.
 
 const ASSETS = [
   './',
