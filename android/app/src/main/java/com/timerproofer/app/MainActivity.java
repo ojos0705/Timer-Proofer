@@ -1,12 +1,9 @@
 package com.timerproofer.app;
 
-import android.app.PictureInPictureParams;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Rational;
 import android.webkit.WebView;
 
 import androidx.activity.OnBackPressedCallback;
@@ -49,17 +46,6 @@ public class MainActivity extends BridgeActivity {
         });
     }
 
-    /** Legacy Back dispatch on Android 8–12L; Android 13+ uses the dispatcher callback. */
-    @Override
-    @SuppressWarnings("deprecation")
-    public void onBackPressed() {
-        if (TimerPipPlugin.isProofingTimerActive()) {
-            handleActiveTimerBack();
-            return;
-        }
-        super.onBackPressed();
-    }
-
     private void handleActiveTimerBack() {
         Log.i(TAG, "Android Back saat proofing aktif: meminta system PiP.");
         if (!enterTimerPictureInPicture()) {
@@ -67,32 +53,22 @@ public class MainActivity extends BridgeActivity {
             // navigating the WebView or presenting a browser-style prompt.
             Log.w(TAG, "PiP tidak tersedia/ditolak; memindahkan task ke background.");
             moveTaskToBack(true);
+            return;
         }
+        // Launch Home after the Activity is pinned. This skips a previously-open
+        // PWA/Chrome task behind the APK, so one Back leaves the user on Home with
+        // exactly one native PiP window floating above it.
+        getWindow().getDecorView().postDelayed(() -> {
+            if (!isInPictureInPictureMode()) return;
+            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+            homeIntent.addCategory(Intent.CATEGORY_HOME);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(homeIntent);
+        }, 180);
     }
 
     private boolean enterTimerPictureInPicture() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return false;
-        }
-        if (isInPictureInPictureMode()) {
-            return true;
-        }
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
-            return false;
-        }
-
-        try {
-            PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder()
-                .setAspectRatio(new Rational(16, 9));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                builder.setAutoEnterEnabled(true);
-                builder.setSeamlessResizeEnabled(true);
-            }
-            return enterPictureInPictureMode(builder.build());
-        } catch (RuntimeException error) {
-            Log.e(TAG, "Gagal masuk system PiP dari tombol Back.", error);
-            return false;
-        }
+        return TimerPipPlugin.requestSystemPictureInPicture(this);
     }
 
     /** Enter PiP automatically when Android Home/app-switch sends Activity away. */

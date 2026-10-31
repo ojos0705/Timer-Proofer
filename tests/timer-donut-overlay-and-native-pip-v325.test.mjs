@@ -73,7 +73,7 @@ test('Capacitor native bridge registers TimerPip and Android activity supports P
     assert.match(manifest, /android:supportsPictureInPicture="true"/);
     assert.match(manifest, /android:resizeableActivity="true"/);
     assert.match(pipPlugin, /@CapacitorPlugin\(name = "TimerPip"\)/);
-    assert.match(pipPlugin, /enterPictureInPictureMode\(params\)/);
+    assert.match(pipPlugin, /activity\.enterPictureInPictureMode\(builder\.build\(\)\)/);
     assert.match(pipPlugin, /getState\(PluginCall call\)/);
 });
 

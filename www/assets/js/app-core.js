@@ -1,5 +1,5 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v328'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
 import { init as initializeAppLifecycle, setTimerBackGuard } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261031-v328'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -3227,14 +3227,61 @@ window.toggleAIAnalysisBox = function() {
     }
 };
 
+// [AI-GENERATED][AI TELEMETRY CONTRACT][V329] Resolve product identity from the
+// canonical product pill data attribute, never from emoji/visible label text.
+const TELEMETRY_PRODUCT_PROFILES = Object.freeze({
+    donat: {
+        label: 'Donat',
+        profile: 'Adonan donat umumnya diperkaya gula/lemak. Perhatikan kemampuan menahan gas, volume, permukaan, dan risiko overproof sebelum penggorengan.'
+    },
+    roti: {
+        label: 'Roti',
+        profile: 'Adonan roti perlu dinilai dari pengembangan volume, elastisitas/gluten, kekuatan bentuk, dan kesiapan proof akhir sebelum pemanggangan.'
+    },
+    bakpao: {
+        label: 'Bakpao',
+        profile: 'Adonan bakpao perlu menjaga permukaan tetap lembap, struktur lembut, volume cukup, dan tidak overproof agar tidak keriput atau kempis setelah dikukus.'
+    },
+    pizza: {
+        label: 'Pizza',
+        profile: 'Adonan pizza perlu dinilai dari relaksasi gluten, kemampuan diregangkan, pembentukan gas, dan kematangan fermentasi bola adonan.'
+    },
+    salt_bread: {
+        label: 'Salt Bread',
+        profile: 'Salt bread memiliki bentuk gulungan/lembaran berisi mentega; perhatikan kekuatan struktur, proof yang cukup tanpa berlebihan, dan risiko mentega bocor.'
+    }
+});
+
+function resolveTelemetryProduct() {
+    const active = document.querySelector('#product-pills-container .product-pill.active[data-product]');
+    const rawKey = String(active?.dataset?.product || active?.dataset?.arg || 'donat')
+        .trim().toLowerCase().replace(/[\s-]+/g, '_');
+    const aliases = { donut: 'donat', saltbread: 'salt_bread', saltbread_: 'salt_bread' };
+    const key = aliases[rawKey] || rawKey;
+    const profile = TELEMETRY_PRODUCT_PROFILES[key] || {
+        label: 'Produk bakery',
+        profile: 'Identitas produk tidak lengkap; jangan mengasumsikan formulasi atau proses khusus.'
+    };
+    return { key, ...profile };
+}
+
+function normalizeTelemetryOutput(text) {
+    return String(text || '')
+        .replace(/\r\n?/g, '\n')
+        .replace(/\s+(?=(?:📊|🥯|🌡️|⚠️|🛠️|⏱️|👀)\s)/gu, '\n')
+        .replace(/^\s*#{1,6}\s*/gm, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+}
+
 // Pastikan deklarasi ini berada di luar fungsi lain dan dimuat lebih awal
 window.muatUlangAnalisisAI = async function() {
     const insightEl = document.getElementById('ai-insight');
     const recommendationEl = document.getElementById('ai-recommendation');
     const btn = document.getElementById('ai-refresh-btn') || document.getElementById('btn-ai-trigger');
     const badge = document.getElementById('ai-status-badge');
-    const activeProductBtn = document.querySelector('.product-btn.active, [data-product].active, .pill-btn.active, .btn-product.active');
-    const jenisProduk = activeProductBtn ? activeProductBtn.innerText.trim() : 'Adonan bakery';
+    const produkAktif = resolveTelemetryProduct();
+    const jenisProduk = produkAktif.label;
 
     // Ambil hanya nilai sensor yang benar-benar tersedia; jangan mengarang angka default.
     const readMetric = (selectors, pattern) => {
@@ -3319,20 +3366,31 @@ window.muatUlangAnalisisAI = async function() {
                 'Buat rekomendasi proofing/fermentasi yang dinamis dan spesifik berdasarkan data aktual berikut.',
                 `Suhu ruang terukur: ${suhuAktual}°C.`,
                 `Kelembapan relatif terukur: ${kelembapanAktual}%.`,
-                `Jenis produk yang dipilih: ${jenisProduk}.`,
+                `Jenis produk: ${jenisProduk} (kode ${produkAktif.key}).`,
+                `Karakteristik produk yang wajib diperhatikan: ${produkAktif.profile}`,
                 `Informasi timer yang terlihat (bila ada): ${timerText || 'tidak tersedia'}.`,
-                'Jelaskan rentang estimasi waktu, tanda visual/tekstur untuk menentukan akhir proofing, risiko underproof/overproof, dan kapan pengguna perlu memeriksa ulang adonan.',
-                'Jangan mengarang data bahan, suhu inti, jenis ragi, atau durasi awal yang tidak diberikan. Jangan menyajikan satu angka waktu sebagai jaminan; sebutkan bahwa kondisi adonan dan resep tetap menentukan.'
+                'FORMAT WAJIB DAN URUTAN TETAP — gunakan tepat tujuh judul berikut, masing-masing pada baris baru:',
+                '📊 Kondisi Data Aktual — sebutkan suhu dan kelembapan yang diterima.',
+                '🥯 Evaluasi Produk — jelaskan dampak khusus terhadap ' + jenisProduk + '.',
+                '🌡️ Pengaruh Suhu dan Kelembapan — jelaskan pengaruh gabungannya terhadap aktivitas ragi.',
+                '⚠️ Risiko Proofing — bedakan risiko underproof dan overproof.',
+                '🛠️ Tindakan Praktis — berikan 2–3 tindakan yang dapat dilakukan.',
+                '⏱️ Rentang Estimasi — berikan rentang, bukan angka tunggal; sebutkan asumsi dan keterbatasan.',
+                '👀 Tanda Siap — berikan tanda visual/tekstur untuk memutuskan akhir proofing.',
+                'Jangan menambah judul lain, jangan mengubah urutan judul, jangan memakai markdown (#, *, **, atau tabel).',
+                'Jangan mengarang bahan, suhu inti, ragi, formulasi, atau waktu awal yang tidak dikirim. Kelembapan ruang bukan penentu durasi secara linear; kondisi adonan dan resep tetap menentukan.'
             ].join('\n'),
             suhuRuang: suhuAktual,
             temperature: suhuAktual,
             kelembapan: kelembapanAktual,
             humidity: kelembapanAktual,
             jenisProduk,
-            waktuProofing: timerText || 'Belum tersedia'
+            productKey: produkAktif.key,
+            waktuProofing: timerText || 'Belum tersedia',
+            outputContract: 'telemetry-v1'
         };
         const data = await requestAITelemetry(payloadData);
-        const hasilAI = data?.result || data?.analisis || data?.insight || data?.text || '';
+        const hasilAI = normalizeTelemetryOutput(data?.result || data?.analisis || data?.insight || data?.text || '');
         if (!String(hasilAI).trim()) throw new Error('Server AI tidak mengembalikan rekomendasi.');
 
         const jenisProdukHtml = escapeHtmlMarkup(jenisProduk);
@@ -4473,6 +4531,9 @@ function clearRecipeSearch() {
 
 // 1. FUNGSI NAVIGASI ANTAR LAYAR (MASTER VS DETAIL)
 function bukaMasterViewResep() {
+    // [AI-GENERATED][AI STATE ISOLATION][V329] A result belongs to one open recipe
+    // editor only; leaving detail clears it before another recipe can be opened.
+    resetRecipeAiAnalysisState();
     // [AI-GENERATED][ROBUSTNESS][V279] Leaving the detail editor invalidates queued save context.
     markRecipeEditorContextChanged();
     const elMaster = document.getElementById('recipe-master-view');
@@ -6826,6 +6887,7 @@ function resetRecipeAiAnalysisState() {
     const resultContainer = document.getElementById('ai-live-result');
     if (resultContainer) {
         resultContainer.replaceChildren();
+        resultContainer.dataset.recipeOwner = '';
         resultContainer.style.display = 'none';
     }
 
@@ -6838,6 +6900,12 @@ function resetRecipeAiAnalysisState() {
 
 async function mintaAnalisisAISungguhan() {
     const requestEpoch = recipeAiAnalysisRequestEpoch;
+    const requestRecipeId = currentEditingRecipeId == null ? null : String(currentEditingRecipeId);
+    const requestRecipeName = document.getElementById('recipe-save-name')?.value?.trim() || '';
+    const isRequestOwnerCurrent = () =>
+        requestEpoch === recipeAiAnalysisRequestEpoch &&
+        (currentEditingRecipeId == null ? null : String(currentEditingRecipeId)) === requestRecipeId &&
+        (document.getElementById('recipe-save-name')?.value?.trim() || '') === requestRecipeName;
     const btn = document.getElementById('btn-ai-live-analysis');
     const resultContainer = document.getElementById('ai-live-result');
     const prevText = btn ? btn.innerText : '🤖 Analisis AI Mendalam (Live)';
@@ -6887,8 +6955,9 @@ Gunakan struktur ini:
 ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul dengan titik dua (contoh: "Potensi Masalah:"), gunakan simbol (-) HANYA untuk list, dan angka (1.) HANYA untuk urutan langkah.`;
 
         const data = await window.AIService.requestAIAnalysis(aiPrompt);
-        if (requestEpoch !== recipeAiAnalysisRequestEpoch) return;
+        if (!isRequestOwnerCurrent()) return;
 
+        resultContainer.dataset.recipeOwner = requestRecipeId || `new:${requestRecipeName}`;
         resultContainer.innerHTML = `
             <div style="font-weight:900; color:#6c3483; margin-bottom:10px; font-size:0.9rem; text-align:center; background:#f5eef8; padding:8px; border-radius:6px; letter-spacing:0.5px;">
                 <i class="fas fa-robot"></i> LAPORAN ANALISIS AI
@@ -6897,7 +6966,7 @@ ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul deng
         `;
 
     } catch (error) {
-        if (requestEpoch !== recipeAiAnalysisRequestEpoch) return;
+        if (!isRequestOwnerCurrent()) return;
         console.error('[AI Analysis] Permintaan analisis mendalam gagal:', { name: error?.name || 'Error', message: error?.message || String(error), status: error?.status ?? null, code: error?.code ?? null, url: error?.url || undefined });
         const safeFallback = `Analisis AI online sedang tidak tersedia (${escapeHtmlMarkup(error?.message || 'gangguan layanan')}).\n\nRingkasan lokal: periksa kembali komposisi bahan, berat per porsi, suhu adonan, dan tanda visual proofing. Untuk keputusan fermentasi, gunakan kondisi adonan aktual; jangan menganggap estimasi waktu sebagai kepastian.`;
         resultContainer.innerHTML = `
@@ -6907,7 +6976,7 @@ ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul deng
                 <small>Detail teknis tercatat di Console. Silakan coba lagi beberapa saat.</small>
             </div>`;
     } finally {
-        if (requestEpoch === recipeAiAnalysisRequestEpoch && btn) {
+        if (isRequestOwnerCurrent() && btn) {
             btn.innerText = prevText;
             btn.disabled = false;
         }
@@ -7868,7 +7937,7 @@ window.initTipsAIAssistant = function() {
 
         // Simpan teks tombol asli jika diperlukan untuk reset state
         const prevText = btn.innerText;
-        btn.innerText = "⏳ AI Menganalisis...";
+        btn.innerText = "⏳ Menganalisis…";
         btn.disabled = true;
 
         // Tampilkan loading interaktif
@@ -8240,7 +8309,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261031-v328');
+        metadataUrl.searchParams.set('_release', '20261031-v329');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);

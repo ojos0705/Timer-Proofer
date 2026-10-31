@@ -17,8 +17,33 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 public class TimerPipPlugin extends Plugin {
 
     private static volatile boolean proofingTimerActive = false;
+    private static volatile boolean pipRequestInProgress = false;
 
     static boolean isProofingTimerActive() { return proofingTimerActive; }
+
+    /** One native entry point shared by Back, the Capacitor bridge and user-leave handling. */
+    static synchronized boolean requestSystemPictureInPicture(Activity activity) {
+        if (activity == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return false;
+        if (activity.isInPictureInPictureMode()) return true;
+        if (pipRequestInProgress) return false;
+        if (!activity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) return false;
+
+        pipRequestInProgress = true;
+        try {
+            PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder()
+                .setAspectRatio(new Rational(16, 9));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                builder.setAutoEnterEnabled(true);
+                builder.setSeamlessResizeEnabled(true);
+            }
+            return activity.enterPictureInPictureMode(builder.build());
+        } catch (RuntimeException error) {
+            android.util.Log.e("TimerPipPlugin", "Permintaan system PiP gagal", error);
+            return false;
+        } finally {
+            pipRequestInProgress = false;
+        }
+    }
 
     static void prepareAutoEnter(Activity activity, boolean active) {
         if (activity == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
@@ -37,13 +62,9 @@ public class TimerPipPlugin extends Plugin {
 
     static void enterFromUserLeaveHint(Activity activity) {
         if (!proofingTimerActive || activity == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
+        if (activity.isInPictureInPictureMode()) return;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) return; // Auto-enter params handle Android 12+.
-        try {
-            activity.enterPictureInPictureMode(new PictureInPictureParams.Builder()
-                .setAspectRatio(new Rational(16, 9)).build());
-        } catch (Exception error) {
-            android.util.Log.w("TimerPipPlugin", "PiP dari user-leave hint gagal", error);
-        }
+        requestSystemPictureInPicture(activity);
     }
 
     @PluginMethod
@@ -66,35 +87,16 @@ public class TimerPipPlugin extends Plugin {
         }
 
         activity.runOnUiThread(() -> {
-            try {
-                if (activity.isInPictureInPictureMode()) {
-                    JSObject result = new JSObject();
-                    result.put("entered", true);
-                    result.put("alreadyInPictureInPicture", true);
-                    call.resolve(result);
-                    return;
-                }
-
-                PictureInPictureParams.Builder paramsBuilder = new PictureInPictureParams.Builder()
-                    .setAspectRatio(new Rational(16, 9));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    paramsBuilder.setAutoEnterEnabled(true);
-                    paramsBuilder.setSeamlessResizeEnabled(true);
-                }
-                PictureInPictureParams params = paramsBuilder.build();
-                boolean entered = activity.enterPictureInPictureMode(params);
-                if (!entered) {
-                    call.reject("Android menolak permintaan Picture-in-Picture. Periksa izin PiP aplikasi pada pengaturan perangkat.", "PIP_ENTRY_FAILED");
-                    return;
-                }
-
-                JSObject result = new JSObject();
-                result.put("entered", true);
-                result.put("alreadyInPictureInPicture", false);
-                call.resolve(result);
-            } catch (Exception error) {
-                call.reject("Gagal mengaktifkan Picture-in-Picture: " + error.getMessage(), "PIP_ENTRY_FAILED", error);
+            boolean alreadyInPip = activity.isInPictureInPictureMode();
+            boolean entered = alreadyInPip || requestSystemPictureInPicture(activity);
+            if (!entered) {
+                call.reject("Android menolak permintaan Picture-in-Picture. Periksa izin PiP aplikasi pada pengaturan perangkat.", "PIP_ENTRY_FAILED");
+                return;
             }
+            JSObject result = new JSObject();
+            result.put("entered", true);
+            result.put("alreadyInPictureInPicture", alreadyInPip);
+            call.resolve(result);
         });
     }
 

@@ -42,8 +42,8 @@ test('recipe AI reset hides and empties the old report and restores the live-ana
 test('late AI responses from an earlier recipe cannot repopulate the newly reset editor', () => {
   const ai = functionBody(core, 'async function mintaAnalisisAISungguhan()', '// ------------------------------------------------------------\n// STATISTIK');
   assert.match(ai, /const requestEpoch = recipeAiAnalysisRequestEpoch/);
-  assert.match(ai, /if \(requestEpoch !== recipeAiAnalysisRequestEpoch\) return/);
-  assert.match(ai, /requestEpoch === recipeAiAnalysisRequestEpoch && btn/);
+  assert.match(ai, /if \(!isRequestOwnerCurrent\(\)\) return/);
+  assert.match(ai, /isRequestOwnerCurrent\(\) && btn/);
 });
 
 test('weather-driven accent is scoped to location header and no longer recolors global bakery UI', () => {
@@ -57,8 +57,8 @@ test('weather-driven accent is scoped to location header and no longer recolors 
 
 test('technical cache boundary advances while visible product version remains V125 while visible product version remains V125', () => {
   assert.equal(version.version, 'V125');
-  assert.equal(version.releaseToken, '20261031-v328');
-  assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.230');
-  assert.match(html, /runtime-entry\.js\?v=20261031-v328/);
-  assert.match(sw, /const CACHE_NAME = 'Timer-Proofing-v1\.1\.230'/);
+  assert.equal(version.releaseToken, '20261031-v329');
+  assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.231');
+  assert.match(html, /runtime-entry\.js\?v=20261031-v329/);
+  assert.match(sw, /const CACHE_NAME = 'Timer-Proofing-v1\.1\.231'/);
 });

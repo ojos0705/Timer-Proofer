@@ -1,4 +1,4 @@
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v328'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { NativeCapacitorService } from './native-capacitor-service.js';
 import { toggleModal } from './modal.js';
 import { postJson } from './api-client-service.js';
@@ -149,18 +149,20 @@ import { filterDaftarBahasa } from './language-list-service.js'; // [AI-GENERATE
                 return;
             }
 
-            // D. Online: Google Translate
+            // D. Online: Google Translate. Keep the picker visible while the SDK and
+            // its language <select> finish rendering so users can retry without reopening it.
             bahasaLabel("Memuat terjemahan…");
-            tutupModalBahasa();
             if (O) O.reset();                                 // Google harus menerjemahkan dari teks asli (Indonesia)
-            var gtLoadStartedAt = Date.now();
-            try { await loadGoogleTranslateWidget({ timeoutMs: 10000 }); }
-            catch (loadError) { console.warn('[LanguageEngine] Google Translate belum siap:', loadError); }
-            var combo = await gtWaitCombo(Math.max(0, 10000 - (Date.now() - gtLoadStartedAt)));
+            var combo = null;
+            try {
+                await loadGoogleTranslateWidget({ timeoutMs: 15000 });
+                combo = await gtWaitCombo(1000);
+            } catch (loadError) {
+                console.warn('[LanguageEngine] Google Translate belum siap:', loadError);
+            }
             if (!combo) {
-                bahasaTunda(kodeBahasa, namaBahasa);
                 await pulihkan();
-                alert("Mesin penerjemah gagal dimuat. Periksa koneksi internet lalu coba lagi.");
+                alert("Mesin penerjemah gagal dimuat. Periksa koneksi internet lalu pilih bahasa sekali lagi. Pilihan belum disimpan.");
                 return;
             }
             var kodeGoogle = gtResolveCode(combo, kodeBahasa);
@@ -177,6 +179,7 @@ import { filterDaftarBahasa } from './language-list-service.js'; // [AI-GENERATE
             gtSetCookie(kodeGoogle);                          // cookie agar bertahan saat reload
             combo.value = kodeGoogle;                         // terapkan langsung tanpa reload
             combo.dispatchEvent(new Event('change'));
+            tutupModalBahasa();
 
         } catch (error) {
             console.error("Gagal mengubah bahasa:", error);

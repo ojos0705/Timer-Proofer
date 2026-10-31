@@ -27,6 +27,35 @@ function makeError(message, code) {
     return error;
 }
 
+function getReadySelect(documentRef = getDocument()) {
+    const combo = documentRef?.querySelector?.('select.goog-te-combo');
+    return combo && combo.options?.length > 1 ? combo : null;
+}
+
+/** Wait for Google's asynchronously-rendered language selector, not merely the script callback. */
+function waitForGoogleTranslateSelect(documentRef, timeoutMs = 10_000) {
+    return new Promise((resolve, reject) => {
+        const startedAt = Date.now();
+        const poll = () => {
+            const combo = getReadySelect(documentRef);
+            if (combo) {
+                patchGoogleTranslateSelect(documentRef);
+                resolve(combo);
+                return;
+            }
+            if (Date.now() - startedAt >= timeoutMs) {
+                reject(makeError(
+                    'Widget Google Translate sudah dipanggil tetapi daftar bahasa belum tersedia.',
+                    'GOOGLE_TRANSLATE_SELECT_TIMEOUT'
+                ));
+                return;
+            }
+            globalThis.setTimeout(poll, 150);
+        };
+        poll();
+    });
+}
+
 function removeElement(element) {
     try {
         if (typeof element?.remove === 'function') element.remove();
@@ -119,12 +148,33 @@ export function googleTranslateElementInit() {
     const documentRef = attempt?.documentRef || getDocument();
     const windowRef = attempt?.windowRef || getWindow();
     try {
-        const result = initializeWidget(documentRef, windowRef);
-        if (attempt) settleAttempt(attempt);
-        return result;
+        // A previous SDK load may have called back before its <select> was ready.
+        if (!getReadySelect(documentRef) && initializedDocument === documentRef) {
+            initializedDocument = null;
+        }
+        initializeWidget(documentRef, windowRef);
+        if (attempt) {
+            attempt.callbackInvoked = true;
+            void waitForGoogleTranslateSelect(documentRef, attempt.timeoutMs)
+                .then(() => settleAttempt(attempt))
+                .catch((error) => {
+                    initializedDocument = null;
+                    settleAttempt(attempt, error);
+                });
+        } else if (!getReadySelect(documentRef)) {
+            // Keep the adapter retryable when the vendor callback is invoked outside
+            // a user-initiated load (for example, during a stale startup restore).
+            void waitForGoogleTranslateSelect(documentRef, 10_000).catch((error) => {
+                initializedDocument = null;
+                windowRef.__TP_GOOGLE_TRANSLATE_ERROR__ = error;
+                console.warn('[GoogleTranslateRuntime] Daftar bahasa belum siap:', error);
+            });
+        }
+        return true;
     } catch (error) {
         if (attempt) settleAttempt(attempt, error);
         else {
+            initializedDocument = null;
             windowRef.__TP_GOOGLE_TRANSLATE_ERROR__ = error;
             console.warn('[GoogleTranslateRuntime] Widget gagal diinisialisasi:', error);
         }
@@ -134,35 +184,43 @@ export function googleTranslateElementInit() {
 
 /** Load Google Translate on demand, deduplicating concurrent callers and allowing retries. */
 export function loadGoogleTranslateWidget({
-    timeoutMs = 10_000,
+    timeoutMs = 15_000,
     documentRef = getDocument(),
     windowRef = getWindow()
 } = {}) {
     if (!documentRef?.head || !documentRef?.createElement || !windowRef) {
         return Promise.reject(makeError('Lingkungan browser untuk Google Translate belum tersedia.', 'GOOGLE_TRANSLATE_ENVIRONMENT_MISSING'));
     }
-    // A successful or in-flight request owns the result; return its exact promise to concurrent callers.
+
+    // Concurrent callers must share the in-flight promise even if the <select>
+    // appears while the first caller is still completing its readiness handshake.
     if (loadPromise) return loadPromise;
-    if (initializedDocument === documentRef || documentRef.querySelector?.('select.goog-te-combo')) {
-        if (initializedDocument !== documentRef) {
-            patchGoogleTranslateSelect(documentRef);
-            initializedDocument = documentRef;
-        }
+    const readyCombo = getReadySelect(documentRef);
+    if (readyCombo) {
+        patchGoogleTranslateSelect(documentRef);
+        initializedDocument = documentRef;
         return Promise.resolve(true);
     }
 
-    // When an earlier script already installed the vendor API, initialize the widget without another request.
-    if (typeof windowRef.google?.translate?.TranslateElement === 'function') {
-        const previousAttempt = activeAttempt;
-        try {
-            activeAttempt = null;
+    // Do not memoize a script callback as success until the widget's real language
+    // selector exists and contains language options. A failed render must be retryable.
+    const safeTimeout = Math.max(1_000, Number(timeoutMs) || 15_000);
+    const installApi = typeof windowRef.google?.translate?.TranslateElement === 'function';
+
+    if (installApi) {
+        initializedDocument = null;
+        const promise = (async () => {
             initializeWidget(documentRef, windowRef);
-            loadPromise = Promise.resolve(true);
-            return loadPromise;
-        } catch (error) {
-            activeAttempt = previousAttempt;
-            return Promise.reject(error);
-        }
+            await waitForGoogleTranslateSelect(documentRef, safeTimeout);
+            return true;
+        })();
+        loadPromise = promise;
+        promise.catch((error) => {
+            initializedDocument = null;
+            if (loadPromise === promise) loadPromise = null;
+            windowRef.__TP_GOOGLE_TRANSLATE_ERROR__ = error;
+        });
+        return promise;
     }
 
     const staleScript = documentRef.getElementById?.(GOOGLE_TRANSLATE_SCRIPT_ID);
@@ -183,6 +241,8 @@ export function loadGoogleTranslateWidget({
         windowRef,
         script,
         settled: false,
+        callbackInvoked: false,
+        timeoutMs: safeTimeout,
         timeoutId: null,
         onLoad: null,
         onError: null
@@ -190,7 +250,7 @@ export function loadGoogleTranslateWidget({
     activeAttempt = attempt;
     loadPromise = promise;
 
-    // Install the callback before appendChild; the third-party script calls this global during evaluation.
+    // Install Google's required named callback before adding the vendor script.
     windowRef.googleTranslateElementInit = googleTranslateElementInit;
     script.id = GOOGLE_TRANSLATE_SCRIPT_ID;
     script.async = true;
@@ -199,9 +259,8 @@ export function loadGoogleTranslateWidget({
     script.dataset.tpRuntime = 'google-translate';
 
     attempt.onLoad = () => {
-        // The `cb` callback normally fires before load. Give vendor execution one microtask to settle first.
         Promise.resolve().then(() => {
-            if (!attempt.settled) {
+            if (!attempt.settled && !attempt.callbackInvoked) {
                 settleAttempt(attempt, makeError(
                     'Skrip Google Translate dimuat tetapi callback inisialisasi tidak terpanggil.',
                     'GOOGLE_TRANSLATE_CALLBACK_MISSING'
@@ -218,7 +277,7 @@ export function loadGoogleTranslateWidget({
     attempt.timeoutId = globalThis.setTimeout(() => settleAttempt(attempt, makeError(
         'Waktu pemuatan Google Translate habis. Periksa koneksi lalu coba kembali.',
         'GOOGLE_TRANSLATE_TIMEOUT'
-    )), Math.max(1, Number(timeoutMs) || 10_000));
+    )), safeTimeout);
 
     try {
         documentRef.head.appendChild(script);
@@ -226,8 +285,8 @@ export function loadGoogleTranslateWidget({
         settleAttempt(attempt, error);
     }
 
-    // Success remains memoized to prevent reinserting the SDK. Failure resets the promise for retry.
     promise.catch(() => {
+        initializedDocument = null;
         if (loadPromise === promise) loadPromise = null;
     });
     return promise;

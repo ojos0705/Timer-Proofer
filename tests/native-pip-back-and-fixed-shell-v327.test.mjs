@@ -36,11 +36,11 @@ test('document and body are viewport-locked; app-container cannot become the pag
 
 test('Android native Back enters system PiP before WebView exit when timer is active', () => {
     assert.match(mainActivity, /getOnBackPressedDispatcher\(\)\.addCallback\(this/);
-    assert.match(mainActivity, /public void onBackPressed\(\)/);
+    assert.doesNotMatch(mainActivity, /public void onBackPressed\(\)/);
     assert.match(mainActivity, /TimerPipPlugin\.isProofingTimerActive\(\)/);
-    assert.match(mainActivity, /enterTimerPictureInPicture\(\)/);
-    assert.match(mainActivity, /enterPictureInPictureMode\(builder\.build\(\)\)/);
-    assert.match(mainActivity, /moveTaskToBack\(true\)/);
+    assert.match(mainActivity, /TimerPipPlugin\.requestSystemPictureInPicture\(this\)/);
+    assert.match(mainActivity, /Intent\(Intent\.ACTION_MAIN\)/);
+    assert.match(mainActivity, /Intent\.CATEGORY_HOME/);
     assert.match(mainActivity, /getOnBackPressedDispatcher\(\)\.onBackPressed\(\)/);
 });
 
@@ -49,11 +49,11 @@ test('native PiP state remains synced with JS timer state and PiP exit restores 
     assert.match(pipPlugin, /proofingTimerActive = active/);
     assert.match(mainActivity, /onPictureInPictureModeChanged\(boolean isInPictureInPictureMode, Configuration newConfig\)/);
     assert.match(mainActivity, /timerproofer:pipchange/);
-    assert.match(html, /runtime-entry\.js\?v=20261031-v328/);
+    assert.match(html, /runtime-entry\.js\?v=20261031-v329/);
 });
 
 test('technical cache token is advanced while visible application version remains V125', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261031-v328');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.230');
+    assert.equal(version.releaseToken, '20261031-v329');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.231');
 });

@@ -61,7 +61,7 @@ test('onboarding slider allows horizontal swipe without blocking native vertical
 
 test('technical cache advances to V327 while visible app version remains V125', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261031-v328');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.230');
-    assert.match(html, /runtime-entry\.js\?v=20261031-v328/);
+    assert.equal(version.releaseToken, '20261031-v329');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.231');
+    assert.match(html, /runtime-entry\.js\?v=20261031-v329/);
 });

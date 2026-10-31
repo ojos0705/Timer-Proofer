@@ -3,7 +3,7 @@ TIMER PROOFER — RELEASE SUMMARY V328
 Product version shown to users: V125
 Technical release: V328
 Service Worker cache: Timer-Proofing-v1.1.230
-Release token: 20261031-v328
+Release token: 20261031-v329
 
 CHANGES
 1. Settings alarm preview now has a separate playback lifecycle.

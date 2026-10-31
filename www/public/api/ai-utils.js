@@ -10,7 +10,7 @@
 // The complete provider/fallback loop must remain below the frontend 30s timeout.
 const AI_UPSTREAM_TIMEOUT_MS = 11_000;
 const AI_TOTAL_REQUEST_TIMEOUT_MS = 26_000;
-const AI_BACKEND_REVISION = "V321";
+const AI_BACKEND_REVISION = "V329";
 // Keep telemetry latency/state behavior unchanged. Recipe analysis and tips are
 // on-demand, longer-form requests: retry transient 5xx once with short jitter.
 // `attempts` includes the first request, so 2 means one additional retry.

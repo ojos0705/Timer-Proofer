@@ -24,7 +24,7 @@ test('in-repository consumers import the scroll-lock API instead of reading the 
     ];
     for (const name of consumers) {
         const source = read(name);
-        assert.match(source, /import\s+\{[^}]*syncModalBodyScrollLock[^}]*\}\s+from\s+[\"']\.\/modal-bootstrap\.js\?v=20261031-v328[\"']/ , name);
+        assert.match(source, /import\s+\{[^}]*syncModalBodyScrollLock[^}]*\}\s+from\s+[\"']\.\/modal-bootstrap\.js\?v=20261031-v329[\"']/ , name);
         assert.doesNotMatch(source, /window\.__TPModalCore/, `${name} should not read mutable modal core global`);
     }
 });
@@ -36,7 +36,7 @@ test('module manifest records modal bootstrap as the canonical modal-core owner'
 
 test('all modal-core consumers share the exact same cache-busted module URL', () => {
     const entry = read('runtime-entry.js');
-    const releaseUrl = './modal-bootstrap.js?v=20261031-v328';
+    const releaseUrl = './modal-bootstrap.js?v=20261031-v329';
     assert.ok(entry.includes(releaseUrl), 'runtime bootstrap must use the release-token URL');
     for (const name of [
         'app-core.js',

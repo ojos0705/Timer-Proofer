@@ -2,7 +2,7 @@
  * [AI-GENERATED][RECONSTRUCTION][V263] ES-module API for the independent modal bootstrap.
  * The critical click listener lives in modal-bootstrap.js so app-core/module failures cannot disable it.
  */
-import { getModalCore, syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v328'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { getModalCore, syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 
 // [AI-GENERATED][RECONSTRUCTION][V20] Canonical recipe-photo preview.
 // Reuses the existing #modal-preview-foto contract and preserves the fit-to-screen
