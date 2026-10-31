@@ -1,0 +1,39 @@
+TIMER PROOFER V322 — QA TEST LOG
+================================
+Product-facing version: V125
+Technical release token: 20261030-v323
+Service Worker cache: Timer-Proofing-v1.1.225
+
+FOCUSED TESTS
+-------------
+18 passed, 0 failed.
+Coverage: AI Tips formatter and HTML escaping; PDF rendering service; recipe close navigation; location shrink observer; location brand colors; technical cache metadata.
+
+REGRESSION TESTS
+----------------
+410 passed, 0 failed, 0 skipped.
+87 test files executed.
+Excluded: tests/ai-utils.test.mjs because it requires the external @google/genai SDK dependency; dependency installation did not complete in this environment.
+
+STATIC RELEASE AUDIT
+--------------------
+Service Worker precache entries: 74
+ESM modules in entrypoint graph: 67
+JavaScript files checked: 245
+HTML files checked: 2
+HTML IDs checked: 300
+Missing imports: 0
+Duplicate HTML IDs: 0
+Inline handlers: 0
+Scroll-lock overrides: 0
+Duplicate function declarations within a module: 0
+Release version: V125
+
+SYNTAX
+------
+node --check assets/js/app-core.js: PASS
+node --check assets/js/ai-formatters.js: PASS
+
+NOT TESTED LIVE
+---------------
+No live browser, installed PWA, Android/iOS Capacitor, or live premium PDF capture was performed in this environment.

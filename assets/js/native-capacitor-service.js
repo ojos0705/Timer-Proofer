@@ -23,7 +23,8 @@ const NATIVE_PLUGIN_NAMES = Object.freeze([
     'Geolocation',
     'Network',
     'Haptics',
-    'BluetoothLe'
+    'BluetoothLe',
+    'TimerPip'
 ]);
 
 function getCapacitor() {
@@ -87,7 +88,8 @@ function getCapabilities() {
         filesystem: canUse('Filesystem'),
         localNotifications: canUse('LocalNotifications'),
         preferences: canUse('Preferences'),
-        share: canUse('Share')
+        share: canUse('Share'),
+        pictureInPicture: canUse('TimerPip')
     });
 }
 

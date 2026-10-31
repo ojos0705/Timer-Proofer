@@ -1,9 +1,9 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261027-v317'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
-import { init as initializeAppLifecycle } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
+import { init as initializeAppLifecycle, setTimerBackGuard } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
-import { formatHasilAI } from './ai-formatters.js';
+import { formatHasilAI, formatTipsHasilAI } from './ai-formatters.js';
 import { StorageService } from './storage-service.js';
 import { removeStorageKeys } from './profile-cleanup.js'; // [AI-GENERATED][ROBUSTNESS][V227]
 import { RecipeStorageService } from './recipe-storage-service.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261027-v317'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -2507,6 +2507,17 @@ function persistProofingState() {
     });
 }
 
+// [AI-GENERATED][NATIVE PIP][V326] Mirror timer-active state to the Android plugin.
+// Android 12+ uses this to prepare automatic PiP when the Activity is sent to background.
+function syncNativePictureInPictureTimerState(active) {
+    if (!NativeCapacitorService.isNativePlatform()) return;
+    const plugin = NativeCapacitorService.getPlugin('TimerPip');
+    if (typeof plugin?.setTimerActive !== 'function') return;
+    void Promise.resolve(plugin.setTimerActive({ active: Boolean(active) })).catch((error) => {
+        console.warn('[Proofing][PiP] Gagal menyinkronkan status timer ke Android:', error);
+    });
+}
+
 function clearProofingState() {
     // [AI-GENERATED][ROBUSTNESS][V75] Reset is also a state mutation. Invalidate
     // any restore read that may still be awaiting StorageService/Preferences.
@@ -2547,6 +2558,8 @@ function clearProofingState() {
     void ProofingNotificationService.cancel();
 
     isTimerRunning = false;
+    setTimerBackGuard(false);
+    syncNativePictureInPictureTimerState(false);
     ProofingCompletionService.reset();
 }
 
@@ -2739,11 +2752,13 @@ function triggerMainProofing() {
 // FUNGSI UNTUK TOMBOL CUSTOM TIME (SET) - MEMUNGKINKAN USER MENGATUR WAKTU PROOFING SECARA MANUAL
 function setCustomTime() {
     const customInput = document.getElementById('custom-time');
-    const customVal = parseInt(customInput.value);
+    if (!customInput) return false;
+    const customVal = Number.parseInt(customInput.value, 10);
 
-    if (isNaN(customVal) || customVal <= 0) {
-        alert("Mohon masukkan durasi yang valid.");
-        return;
+    if (!Number.isInteger(customVal) || customVal < 1 || customVal > 120) {
+        alert("Mohon masukkan durasi yang valid (1 - 120 menit).");
+        customInput.focus?.();
+        return false;
     }
 
     totalDurationMinutes = customVal;
@@ -2793,6 +2808,7 @@ function setCustomTime() {
     if (aiTipsEl) {
         aiTipsEl.innerText = `Waktu diatur manual ke ${customVal} menit.`;
     }
+    return true;
 }
 
 /** Alias & fungsi pendukung yang sebelumnya dipanggil via typeof guard */
@@ -3211,14 +3227,61 @@ window.toggleAIAnalysisBox = function() {
     }
 };
 
+// [AI-GENERATED][AI TELEMETRY CONTRACT][V329] Resolve product identity from the
+// canonical product pill data attribute, never from emoji/visible label text.
+const TELEMETRY_PRODUCT_PROFILES = Object.freeze({
+    donat: {
+        label: 'Donat',
+        profile: 'Adonan donat umumnya diperkaya gula/lemak. Perhatikan kemampuan menahan gas, volume, permukaan, dan risiko overproof sebelum penggorengan.'
+    },
+    roti: {
+        label: 'Roti',
+        profile: 'Adonan roti perlu dinilai dari pengembangan volume, elastisitas/gluten, kekuatan bentuk, dan kesiapan proof akhir sebelum pemanggangan.'
+    },
+    bakpao: {
+        label: 'Bakpao',
+        profile: 'Adonan bakpao perlu menjaga permukaan tetap lembap, struktur lembut, volume cukup, dan tidak overproof agar tidak keriput atau kempis setelah dikukus.'
+    },
+    pizza: {
+        label: 'Pizza',
+        profile: 'Adonan pizza perlu dinilai dari relaksasi gluten, kemampuan diregangkan, pembentukan gas, dan kematangan fermentasi bola adonan.'
+    },
+    salt_bread: {
+        label: 'Salt Bread',
+        profile: 'Salt bread memiliki bentuk gulungan/lembaran berisi mentega; perhatikan kekuatan struktur, proof yang cukup tanpa berlebihan, dan risiko mentega bocor.'
+    }
+});
+
+function resolveTelemetryProduct() {
+    const active = document.querySelector('#product-pills-container .product-pill.active[data-product]');
+    const rawKey = String(active?.dataset?.product || active?.dataset?.arg || 'donat')
+        .trim().toLowerCase().replace(/[\s-]+/g, '_');
+    const aliases = { donut: 'donat', saltbread: 'salt_bread', saltbread_: 'salt_bread' };
+    const key = aliases[rawKey] || rawKey;
+    const profile = TELEMETRY_PRODUCT_PROFILES[key] || {
+        label: 'Produk bakery',
+        profile: 'Identitas produk tidak lengkap; jangan mengasumsikan formulasi atau proses khusus.'
+    };
+    return { key, ...profile };
+}
+
+function normalizeTelemetryOutput(text) {
+    return String(text || '')
+        .replace(/\r\n?/g, '\n')
+        .replace(/\s+(?=(?:📊|🥯|🌡️|⚠️|🛠️|⏱️|👀)\s)/gu, '\n')
+        .replace(/^\s*#{1,6}\s*/gm, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+}
+
 // Pastikan deklarasi ini berada di luar fungsi lain dan dimuat lebih awal
 window.muatUlangAnalisisAI = async function() {
     const insightEl = document.getElementById('ai-insight');
     const recommendationEl = document.getElementById('ai-recommendation');
     const btn = document.getElementById('ai-refresh-btn') || document.getElementById('btn-ai-trigger');
     const badge = document.getElementById('ai-status-badge');
-    const activeProductBtn = document.querySelector('.product-btn.active, [data-product].active, .pill-btn.active, .btn-product.active');
-    const jenisProduk = activeProductBtn ? activeProductBtn.innerText.trim() : 'Adonan bakery';
+    const produkAktif = resolveTelemetryProduct();
+    const jenisProduk = produkAktif.label;
 
     // Ambil hanya nilai sensor yang benar-benar tersedia; jangan mengarang angka default.
     const readMetric = (selectors, pattern) => {
@@ -3303,20 +3366,31 @@ window.muatUlangAnalisisAI = async function() {
                 'Buat rekomendasi proofing/fermentasi yang dinamis dan spesifik berdasarkan data aktual berikut.',
                 `Suhu ruang terukur: ${suhuAktual}°C.`,
                 `Kelembapan relatif terukur: ${kelembapanAktual}%.`,
-                `Jenis produk yang dipilih: ${jenisProduk}.`,
+                `Jenis produk: ${jenisProduk} (kode ${produkAktif.key}).`,
+                `Karakteristik produk yang wajib diperhatikan: ${produkAktif.profile}`,
                 `Informasi timer yang terlihat (bila ada): ${timerText || 'tidak tersedia'}.`,
-                'Jelaskan rentang estimasi waktu, tanda visual/tekstur untuk menentukan akhir proofing, risiko underproof/overproof, dan kapan pengguna perlu memeriksa ulang adonan.',
-                'Jangan mengarang data bahan, suhu inti, jenis ragi, atau durasi awal yang tidak diberikan. Jangan menyajikan satu angka waktu sebagai jaminan; sebutkan bahwa kondisi adonan dan resep tetap menentukan.'
+                'FORMAT WAJIB DAN URUTAN TETAP — gunakan tepat tujuh judul berikut, masing-masing pada baris baru:',
+                '📊 Kondisi Data Aktual — sebutkan suhu dan kelembapan yang diterima.',
+                '🥯 Evaluasi Produk — jelaskan dampak khusus terhadap ' + jenisProduk + '.',
+                '🌡️ Pengaruh Suhu dan Kelembapan — jelaskan pengaruh gabungannya terhadap aktivitas ragi.',
+                '⚠️ Risiko Proofing — bedakan risiko underproof dan overproof.',
+                '🛠️ Tindakan Praktis — berikan 2–3 tindakan yang dapat dilakukan.',
+                '⏱️ Rentang Estimasi — berikan rentang, bukan angka tunggal; sebutkan asumsi dan keterbatasan.',
+                '👀 Tanda Siap — berikan tanda visual/tekstur untuk memutuskan akhir proofing.',
+                'Jangan menambah judul lain, jangan mengubah urutan judul, jangan memakai markdown (#, *, **, atau tabel).',
+                'Jangan mengarang bahan, suhu inti, ragi, formulasi, atau waktu awal yang tidak dikirim. Kelembapan ruang bukan penentu durasi secara linear; kondisi adonan dan resep tetap menentukan.'
             ].join('\n'),
             suhuRuang: suhuAktual,
             temperature: suhuAktual,
             kelembapan: kelembapanAktual,
             humidity: kelembapanAktual,
             jenisProduk,
-            waktuProofing: timerText || 'Belum tersedia'
+            productKey: produkAktif.key,
+            waktuProofing: timerText || 'Belum tersedia',
+            outputContract: 'telemetry-v1'
         };
         const data = await requestAITelemetry(payloadData);
-        const hasilAI = data?.result || data?.analisis || data?.insight || data?.text || '';
+        const hasilAI = normalizeTelemetryOutput(data?.result || data?.analisis || data?.insight || data?.text || '');
         if (!String(hasilAI).trim()) throw new Error('Server AI tidak mengembalikan rekomendasi.');
 
         const jenisProdukHtml = escapeHtmlMarkup(jenisProduk);
@@ -3701,6 +3775,8 @@ function startProofing(isRestoring = false, restoredTargetEndTime = null) {
     // [AI-GENERATED][REFACTOR] Scheduling, drift correction, and interval ownership
     // are delegated to the canonical proofing timer controller.
     isTimerRunning = true;
+    setTimerBackGuard(true);
+    syncNativePictureInPictureTimerState(true);
     // [AI-GENERATED][ROBUSTNESS][V226] start() immediately executes its first
     // callback. If a renderer throws there, the controller stops its interval
     // and rethrows before the assignment returns; without this guard, the app's
@@ -3759,6 +3835,8 @@ function startProofing(isRestoring = false, restoredTargetEndTime = null) {
         }
         timerInterval = null;
         isTimerRunning = false;
+        setTimerBackGuard(false);
+        syncNativePictureInPictureTimerState(false);
         try { setControlsDisabled(false); } catch (error) {
             console.warn('[Proofing] Gagal mengaktifkan ulang kontrol setelah startup error:', error);
         }
@@ -3785,6 +3863,8 @@ function startProofing(isRestoring = false, restoredTargetEndTime = null) {
     if (timerInterval === null || timerInterval === undefined) {
         // Controller rejects invalid durations; restore path remains state-safe.
         isTimerRunning = false;
+        setTimerBackGuard(false);
+        syncNativePictureInPictureTimerState(false);
         clearProofingState();
         return;
     }
@@ -4087,7 +4167,7 @@ const proofingStages = {
 
 // 1. Data Langkah Pembuatan per Produk
 const resepProduk = {
-  donat: [
+  donut: [
     "Campur tepung, ragi, gula, dan susu bubuk hingga rata.",
     "Tambahkan telur dan air es bertahap sambil diuleni hingga setengah kalis.",
     "Masukkan mentega dan garam, uleni hingga kalis elastis (windowpane test).",
@@ -4167,24 +4247,43 @@ if (productPillsContainer) {
   });
 }
 
-// 3. Event Listener khusus Tombol Toggle Cara Pembuatan
+// 3. Toggle Cara Pembuatan sebagai overlay di atas timer-circle.
+// Pengukuran dilakukan sebelum mengubah posisi ke absolute agar timer tidak terdorong.
 const toggleBtn = document.getElementById("toggle-cara-pembuatan");
 const contentBody = document.getElementById("cara-pembuatan-content");
+const caraPembuatanWrapper = document.getElementById("cara-pembuatan-container");
 
-if (toggleBtn && contentBody) {
+if (toggleBtn && contentBody && caraPembuatanWrapper && !toggleBtn.dataset.tpOverlayBound) {
+  toggleBtn.dataset.tpOverlayBound = 'v325';
   toggleBtn.addEventListener("click", function () {
-    // Toggle class hidden
-    contentBody.classList.toggle("hidden");
-    
-    // Toggle class active untuk rotasi ikon panah
-    toggleBtn.classList.toggle("active");
+    const willOpen = contentBody.classList.contains('hidden');
+    if (willOpen) {
+      const positioningParent = caraPembuatanWrapper.parentElement;
+      if (positioningParent) {
+        const parentRect = positioningParent.getBoundingClientRect();
+        const wrapperRect = caraPembuatanWrapper.getBoundingClientRect();
+        const top = wrapperRect.top - parentRect.top + positioningParent.scrollTop;
+        caraPembuatanWrapper.style.setProperty('--cara-overlay-top', `${Math.max(0, top)}px`);
+      }
+      contentBody.classList.remove('hidden');
+      caraPembuatanWrapper.classList.add('overlay-open');
+    } else {
+      contentBody.classList.add('hidden');
+      caraPembuatanWrapper.classList.remove('overlay-open');
+      caraPembuatanWrapper.style.removeProperty('--cara-overlay-top');
+    }
+    toggleBtn.classList.toggle("active", willOpen);
+    toggleBtn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
   });
 }
 
-// Set resep awal saat aplikasi dimuat pertama kali
-document.addEventListener("DOMContentLoaded", () => {
-  updateCaraPembuatanContent("donat");
-});
+// Set resep awal bekerja baik sebelum maupun sesudah DOMContentLoaded.
+const initializeDefaultRecipeInstructions = () => updateCaraPembuatanContent("donat");
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", initializeDefaultRecipeInstructions, { once: true });
+} else {
+  initializeDefaultRecipeInstructions();
+}
 
 // 2. Fungsi Eksekusi Saat User Mengganti Jenis Produk
 // 1. Deklarasikan variabel status global di bagian paling atas skrip
@@ -4432,6 +4531,9 @@ function clearRecipeSearch() {
 
 // 1. FUNGSI NAVIGASI ANTAR LAYAR (MASTER VS DETAIL)
 function bukaMasterViewResep() {
+    // [AI-GENERATED][AI STATE ISOLATION][V329] A result belongs to one open recipe
+    // editor only; leaving detail clears it before another recipe can be opened.
+    resetRecipeAiAnalysisState();
     // [AI-GENERATED][ROBUSTNESS][V279] Leaving the detail editor invalidates queued save context.
     markRecipeEditorContextChanged();
     const elMaster = document.getElementById('recipe-master-view');
@@ -4454,6 +4556,7 @@ function kembaliKeMasterView() {
 
 function bukaDetailResepBaru() {
     markRecipeEditorContextChanged();
+    resetRecipeAiAnalysisState();
     currentEditingRecipeId = null;
     // [AI-GENERATED][ROBUSTNESS][V138] A new recipe starts with an empty photo
     // session so photos from the previously edited recipe can never be attached
@@ -4477,6 +4580,7 @@ function bukaDetailResepBaru() {
 
 function bukaDetailResepEksisting(resep) {
     markRecipeEditorContextChanged();
+    resetRecipeAiAnalysisState();
     currentEditingRecipeId = resep.id;
     terapkanResepKeKalkulator(resep);
     void restoreRecipePhotosForRecipe(resep);
@@ -5487,18 +5591,31 @@ async function eksekusiHapusResepMaster(resepId) {
 
 // Fungsi Penutup Aman (Diletakkan DI LUAR document.addEventListener('DOMContentLoaded'))
 function tutupHalamanResepSecaraAman() {
-    window.DEBUG && console.log("Menutup halaman resep secara aman.");
-    
-    // GANTI 'recipe-page' MENJADI 'recipe' Sesuai ID HTML Utama
-    const resepPage = document.getElementById('recipe'); 
-    
+    window.DEBUG && console.log("Menutup atau kembali dari halaman resep secara aman.");
+
+    const resepPage = document.getElementById('recipe');
+    const masterView = document.getElementById('recipe-master-view');
+    const detailView = document.getElementById('recipe-detail-view');
+    const detailIsVisible = Boolean(
+        detailView && detailView.style.display !== 'none' &&
+        window.getComputedStyle(detailView).display !== 'none'
+    );
+
+    // Tombol close di editor kembali ke daftar resep terlebih dahulu.
+    // Modal #recipe hanya ditutup ketika pengguna sudah berada di master view.
+    if (detailIsVisible) {
+        if (currentEditingRecipeId && !confirm("Keluar dari editor? Perubahan yang belum disimpan mungkin akan hilang.")) {
+            return;
+        }
+        bukaMasterViewResep();
+        if (masterView) masterView.style.display = 'flex';
+        if (detailView) detailView.style.display = 'none';
+        return;
+    }
+
     if (resepPage) {
-        // Sembunyikan elemen modal/tab resep
         resepPage.style.display = 'none';
         resepPage.classList.remove('active');
-        
-        // Kembalikan interaksi scroll layar utama proofer/HP
-        // [AI-GENERATED][REFACTOR][V199] Scroll state is centralized in modal-bootstrap.js.
         syncModalBodyScrollLock();
         document.body.style.pointerEvents = 'auto';
     } else {
@@ -5633,171 +5750,276 @@ async function tanganiPerubahanResepRealtime(payload) {
 // ==========================================
 // 4. FUNGSI PIP (Picture-in-Picture) UNTUK TIMER
 // ==========================================
-async function aktifkanModePIP() {
-    // 1. Validasi dukungan API Document Picture-in-Picture pada Browser
-    if (!('documentPictureInPicture' in window)) {
-        const container = document.getElementById('app-container');
-        const pipBtn = document.getElementById('pip-trigger-btn');
-        
-        if (container) {
-            // Aktifkan/nonaktifkan mode mini
-            container.classList.toggle('mini-mode');
-            
-            // Ubah tampilan tombol sebagai indikator
-            if (container.classList.contains('mini-mode')) {
-                pipBtn.innerHTML = "❌ Tutup Mini";
-                pipBtn.style.background = "#c0392b"; // Ubah merah saat aktif
-                if (typeof NotifSystem !== 'undefined') {
-                    NotifSystem.tambah('sistem', 'Mode Mini Aktif', 'Tampilan disederhanakan ke mode widget.', '📱');
-                }
-            } else {
-                pipBtn.innerHTML = "📺 PIP Mode";
-                pipBtn.style.background = "var(--accent)"; // Kembali oranye
-            }
-        }
-        return; // Hentikan eksekusi kode Desktop di bawah ini
-    }
+// [AI-GENERATED][PWA VIDEO PIP][V326] Chrome Android does not implement the
+// Document Picture-in-Picture API. A canvas-backed muted video provides the
+// standards-based HTMLVideoElement PiP path on browsers that support it.
+let webVideoPipState = null;
 
-    // Jika PIP sudah terbuka, fokuskan kembali jendelanya
-    if (pipWindowInstance) {
-        pipWindowInstance.focus();
-        return;
-    }
+function canUseVideoPictureInPicture() {
+    // Capacitor Android must use the Activity's system PiP only. Never create
+    // a second WebView video-PiP surface inside the native Activity.
+    if (NativeCapacitorService.isNativePlatform()) return false;
+    return typeof HTMLVideoElement !== 'undefined'
+        && typeof HTMLVideoElement.prototype.requestPictureInPicture === 'function'
+        && document.pictureInPictureEnabled === true;
+}
+
+function drawWebVideoPipFrame(context, canvas) {
+    const width = canvas.width;
+    const height = canvas.height;
+    const countdown = document.getElementById('countdown')?.textContent?.trim() || '00:00';
+    const status = document.getElementById('ai-tips')?.textContent?.trim()
+        || (isTimerRunning ? 'Proofing sedang berjalan' : 'Timer Proofer');
+    const mainCountdown = document.getElementById('countdown');
+    const timerColor = mainCountdown ? getComputedStyle(mainCountdown).color : '#4E342E';
+    const isRunning = Boolean(isTimerRunning);
+
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = '#FDF5E6';
+    context.fillRect(0, 0, width, height);
+    context.fillStyle = '#E67E22';
+    context.font = '700 28px Segoe UI, sans-serif';
+    context.textAlign = 'center';
+    context.fillText('TIMER PROOFER', width / 2, 55);
+
+    context.fillStyle = timerColor;
+    context.font = '700 106px ui-monospace, SFMono-Regular, Consolas, monospace';
+    context.fillText(countdown, width / 2, 190);
+
+    context.fillStyle = '#6D4C41';
+    context.font = '600 25px Segoe UI, sans-serif';
+    context.fillText(isRunning ? 'PROOFING BERJALAN' : 'TIMER DIJEDA', width / 2, 242);
+
+    context.fillStyle = 'rgba(78,52,46,.18)';
+    context.fillRect(55, 282, width - 110, 12);
+    const initial = Math.max(1, Number(globalInitialSeconds) || 1);
+    const remaining = Math.max(0, Number(globalTotalSeconds) || 0);
+    const ratio = Math.max(0, Math.min(1, remaining / initial));
+    context.fillStyle = '#E67E22';
+    context.fillRect(55, 282, (width - 110) * ratio, 12);
+
+    context.fillStyle = '#6D4C41';
+    context.font = '18px Segoe UI, sans-serif';
+    const statusText = status.replace(/\s+/g, ' ').slice(0, 62);
+    context.fillText(statusText || 'Memantau proofing adonan', width / 2, 335);
+}
+
+function updatePipTriggerButton(isActive, mode = 'mini') {
+    const button = document.getElementById('pip-trigger-btn');
+    if (!button) return;
+    button.textContent = isActive ? (mode === 'video' ? '❌ Tutup PIP' : '❌ Tutup Mini') : '📺 PIP Mode';
+    button.style.background = isActive ? '#c0392b' : 'var(--accent)';
+}
+
+async function enterWebVideoPictureInPicture() {
+    if (!canUseVideoPictureInPicture()) return false;
+    if (document.pictureInPictureElement) return document.pictureInPictureElement === webVideoPipState?.video;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 360;
+    const context = canvas.getContext('2d');
+    if (!context || typeof canvas.captureStream !== 'function') return false;
+
+    drawWebVideoPipFrame(context, canvas);
+    const stream = canvas.captureStream(2);
+    const video = document.createElement('video');
+    video.muted = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.disablePictureInPicture = false;
+    video.setAttribute('aria-hidden', 'true');
+    video.tabIndex = -1;
+    Object.assign(video.style, {
+        position: 'fixed', left: '0', bottom: '0', width: '2px', height: '2px',
+        opacity: '0.01', pointerEvents: 'none', zIndex: '-1'
+    });
+    video.srcObject = stream;
+    document.body.appendChild(video);
+
+    let frameTimer = null;
+    const cleanup = () => {
+        if (frameTimer !== null) clearInterval(frameTimer);
+        frameTimer = null;
+        try { video.pause(); } catch (_) {}
+        try { stream.getTracks().forEach((track) => track.stop()); } catch (_) {}
+        video.srcObject = null;
+        video.remove();
+        if (webVideoPipState?.video === video) webVideoPipState = null;
+        document.body?.classList.remove('web-video-pip-active');
+        updatePipTriggerButton(false);
+    };
 
     try {
-        // 2. Buka jendela PIP melayang dengan aspek rasio mini kotak
-        pipWindowInstance = await window.documentPictureInPicture.requestWindow({
-            width: 280,
-            height: 180,
-        });
-
-        // 3. Salin CSS Stylesheet dari aplikasi utama agar font dan layout rapi
-        [...document.styleSheets].forEach((styleSheet) => {
-            try {
-                const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
-                const style = document.createElement('style');
-                style.textContent = cssRules;
-                pipWindowInstance.document.head.appendChild(style);
-            } catch (e) {
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = styleSheet.href;
-                pipWindowInstance.document.head.appendChild(link);
-            }
-        });
-
-        // 4. Suntikkan struktur HTML khusus ke dalam jendela pop-out PIP
-        pipWindowInstance.document.body.innerHTML = `
-            <div class="pip-container" style="
-                padding: 12px; 
-                text-align: center; 
-                background: #FDF5E6; 
-                height: 100vh; 
-                box-sizing: border-box;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                user-select: none;
-            ">
-                <div style="font-size: 10px; font-weight: bold; color: #E67E22; margin-bottom: 2px; letter-spacing: 0.5px;">PROOFER TIMER</div>
-                <div id="pip-countdown" style="font-size: 32px; font-weight: bold; color: #4E342E; font-family: monospace; line-height: 1.1;">00:00</div>
-                <div id="pip-status" style="font-size: 9px; margin-top: 4px; color: #5d4037; max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 4px;">Memantau ragi adonan...</div>
-                
-                <div style="margin-top: 10px; display: flex; gap: 8px;">
-                    <button id="pip-btn-control" style="background: #4E342E; color: white; border: none; padding: 6px 14px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: bold; transition: background 0.2s;">START</button>
-                    <button id="pip-btn-close" style="background: #bdc3c7; color: #4E342E; border: none; padding: 6px 14px; border-radius: 12px; font-size: 10px; cursor: pointer; font-weight: bold;">Tutup</button>
-                </div>
-            </div>
-        `;
-
-        // 5. Ambil referensi elemen dari dalam dokumen PiP yang baru disuntikkan
-        const pipBtnControl = pipWindowInstance.document.getElementById('pip-btn-control');
-        const pipBtnClose = pipWindowInstance.document.getElementById('pip-btn-close');
-        const pipCountdown = pipWindowInstance.document.getElementById('pip-countdown');
-        const pipStatus = pipWindowInstance.document.getElementById('pip-status');
-
-        // 6. Sinkronisasi Data Real-Time secara dua arah dari DOM Aplikasi Utama
-        const updatePipDisplay = () => {
-            const mainCountdownText = document.getElementById('countdown')?.innerText || "00:00";
-            const mainStatusText = document.getElementById('ai-tips')?.innerText || "Memantau ragi adonan...";
-
-            if (pipCountdown) {
-                pipCountdown.innerText = mainCountdownText;
-                // Selaraskan warna countdown dari warna aslinya di aplikasi utama
-                const mainCountdownEl = document.getElementById('countdown');
-                if (mainCountdownEl) {
-                    const mainColor = window.getComputedStyle(mainCountdownEl).color;
-                    pipCountdown.style.color = mainColor;
-                }
-            }
-            if (pipStatus) {
-                pipStatus.innerText = mainStatusText;
-            }
-            
-            // Atur status tombol secara reaktif berdasarkan variabel global isTimerRunning
-            if (pipBtnControl && typeof isTimerRunning !== 'undefined') {
-                if (isTimerRunning) {
-                    pipBtnControl.innerText = "RESET";
-                    pipBtnControl.style.background = "#d32f2f"; 
-                } else {
-                    pipBtnControl.innerText = "START";
-                    pipBtnControl.style.background = "#4E342E";  
-                }
-            }
-        };
-
-        // Jalankan sinkronisasi DOM instan & berkala (200ms) selama jendela terbuka
-        updatePipDisplay();
-        pipIntervalInstance = setInterval(updatePipDisplay, 200);
-
-        // 7. Event Listener: Tombol START/RESET di dalam PiP
-        if (pipBtnControl) {
-            pipBtnControl.addEventListener('click', () => {
-                if (typeof isTimerRunning !== 'undefined' && isTimerRunning) {
-                    // Simulasikan klik pada elemen countdown utama untuk memicu reset/stop
-                    const countdownEl = document.getElementById('countdown');
-                    if (countdownEl) {
-                        countdownEl.click();
-                    } else {
-                        // Fallback jika elemen tidak ditemukan, panggil tombol utama
-                        document.getElementById('main-start-btn')?.click();
-                    }
-                } else {
-                    // Jika timer mati, jalankan fungsi start proofing bawaan aplikasi Anda
-                    const mainStartBtn = document.getElementById('main-start-btn');
-                    if (mainStartBtn) {
-                        mainStartBtn.click();
-                    } else if (typeof startProofing === 'function') {
-                        startProofing();
-                    }
-                }
-            });
-        }
-
-        // 8. Event Listener: Tombol Tutup di dalam PiP
-        if (pipBtnClose) {
-            pipBtnClose.addEventListener('click', () => {
-                pipWindowInstance.close();
-            });
-        }
-
-        // 9. Pembersihan memori interval saat jendela PiP ditutup oleh user
-        pipWindowInstance.addEventListener('pagehide', () => {
-            clearInterval(pipIntervalInstance);
-            pipWindowInstance = null;
-            pipIntervalInstance = null;
-            if (typeof NotifSystem !== 'undefined') {
-                NotifSystem.tambah('sistem', 'Mode PIP Nonaktif', 'Kembali memantau adonan di halaman utama.', '📱');
-            }
-        });
-
+        await video.play();
+        // Request directly after play while the button's transient user activation
+        // is still available. The same call is attempted on PWA Back and falls
+        // back to the in-app mini widget if the browser rejects the activation.
+        const pipWindow = await video.requestPictureInPicture();
+        webVideoPipState = { video, stream, canvas, cleanup, pipWindow };
+        document.body.classList.add('web-video-pip-active');
+        updatePipTriggerButton(true, 'video');
+        frameTimer = setInterval(() => drawWebVideoPipFrame(context, canvas), 500);
+        webVideoPipState.frameTimer = frameTimer;
+        video.addEventListener('leavepictureinpicture', cleanup, { once: true });
+        return true;
     } catch (error) {
-        console.error("Gagal membuka Document PIP:", error);
-        if (typeof NotifSystem !== 'undefined') {
-            NotifSystem.tambah('sistem', 'Gagal Membuka PIP', 'Harus dipicu oleh aksi sentuhan/klik langsung oleh user.', '❌');
+        console.warn('[Proofing][PiP] Video PiP browser tidak tersedia pada konteks ini:', error);
+        cleanup();
+        return false;
+    }
+}
+
+function activateInAppMiniTimer() {
+    const container = document.getElementById('app-container');
+    const pipButton = document.getElementById('pip-trigger-btn');
+    if (!container) return false;
+
+    const enabled = !container.classList.contains('mini-mode');
+    container.classList.toggle('mini-mode', enabled);
+    if (pipButton) updatePipTriggerButton(enabled, 'mini');
+    if (enabled && typeof NotifSystem !== 'undefined') {
+        NotifSystem.tambah('sistem', 'Mode Mini Aktif', 'Timer tetap terlihat dalam widget mini di halaman aplikasi.', '📱');
+    }
+    return true;
+}
+
+async function aktifkanModePIP(options = {}) {
+    const fromBack = options?.fromBack === true;
+
+    // [AI-GENERATED][NATIVE PIP SINGLE SURFACE][V328]
+    // Capacitor Android owns exactly one PiP surface: the MainActivity itself.
+    // Do not let the browser video/document PiP paths create a second window.
+    if (NativeCapacitorService.isNativePlatform()) {
+        if (document.pictureInPictureElement && typeof document.exitPictureInPicture === 'function') {
+            try { await document.exitPictureInPicture(); } catch (error) {
+                console.warn('[Proofing][PiP] Gagal membersihkan video-PiP web sebelum native PiP:', error);
+            }
+        }
+        if (webVideoPipState?.cleanup) {
+            try { webVideoPipState.cleanup(); } catch (_) {}
+        }
+        if (pipWindowInstance) {
+            try { pipWindowInstance.close(); } catch (_) {}
+            pipWindowInstance = null;
+            if (pipIntervalInstance !== null) clearInterval(pipIntervalInstance);
+            pipIntervalInstance = null;
+        }
+
+        const nativePipPlugin = NativeCapacitorService.getPlugin('TimerPip');
+        if (typeof nativePipPlugin?.enterPictureInPicture !== 'function') return false;
+        document.body?.classList.add('native-pip');
+        try {
+            const result = await nativePipPlugin.enterPictureInPicture();
+            if (result?.entered === true) return true;
+        } catch (error) {
+            console.warn('[Proofing][PiP] Gagal mengaktifkan PiP native:', error);
+        }
+        document.body?.classList.remove('native-pip');
+        return false;
+    }
+
+    // If the user taps the PiP control while the in-app fallback is already
+    // compacted, treat the action as a close toggle before opening another mode.
+    const appContainer = document.getElementById('app-container');
+    if (!fromBack && !NativeCapacitorService.isNativePlatform()
+        && appContainer?.classList.contains('mini-mode')) {
+        return activateInAppMiniTimer();
+    }
+
+    // An explicit toolbar/button tap toggles an already-open browser PiP window
+    // closed. A Back action never closes an existing PiP window.
+    if (!fromBack && webVideoPipState?.video && document.pictureInPictureElement === webVideoPipState.video
+        && typeof document.exitPictureInPicture === 'function') {
+        try {
+            await document.exitPictureInPicture();
+            return true;
+        } catch (error) {
+            console.warn('[Proofing][PiP] Gagal menutup video PiP:', error);
         }
     }
+    if (document.pictureInPictureElement && fromBack) return true;
+
+    // Desktop Chromium may open an arbitrary HTML Document PiP window.
+    if ('documentPictureInPicture' in window) {
+        if (pipWindowInstance) {
+            if (fromBack) {
+                pipWindowInstance.focus();
+                return true;
+            }
+            try { pipWindowInstance.close(); } catch (_) {}
+            pipWindowInstance = null;
+            if (pipIntervalInstance !== null) clearInterval(pipIntervalInstance);
+            pipIntervalInstance = null;
+            updatePipTriggerButton(false);
+            return true;
+        }
+        try {
+            pipWindowInstance = await window.documentPictureInPicture.requestWindow({ width: 280, height: 180 });
+            [...document.styleSheets].forEach((styleSheet) => {
+                try {
+                    const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
+                    const style = document.createElement('style');
+                    style.textContent = cssRules;
+                    pipWindowInstance.document.head.appendChild(style);
+                } catch (_) {
+                    if (!styleSheet.href) return;
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = styleSheet.href;
+                    pipWindowInstance.document.head.appendChild(link);
+                }
+            });
+            pipWindowInstance.document.body.innerHTML = `
+                <div style="padding:12px;text-align:center;background:#FDF5E6;height:100vh;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:center;user-select:none;">
+                    <div style="font-size:10px;font-weight:bold;color:#E67E22;margin-bottom:2px;letter-spacing:.5px;">PROOFER TIMER</div>
+                    <div id="pip-countdown" style="font-size:32px;font-weight:bold;color:#4E342E;font-family:monospace;line-height:1.1;">00:00</div>
+                    <div id="pip-status" style="font-size:9px;margin-top:4px;color:#5d4037;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px;">Memantau ragi adonan...</div>
+                </div>`;
+            const pipCountdown = pipWindowInstance.document.getElementById('pip-countdown');
+            const pipStatus = pipWindowInstance.document.getElementById('pip-status');
+            const update = () => {
+                if (!pipCountdown || !pipStatus) return;
+                pipCountdown.textContent = document.getElementById('countdown')?.textContent || '00:00';
+                pipStatus.textContent = isTimerRunning ? 'PROOFING BERJALAN' : 'TIMER DIJEDA';
+            };
+            update();
+            pipIntervalInstance = setInterval(update, 500);
+            updatePipTriggerButton(true, 'video');
+            pipWindowInstance.addEventListener('pagehide', () => {
+                clearInterval(pipIntervalInstance);
+                pipWindowInstance = null;
+                pipIntervalInstance = null;
+                updatePipTriggerButton(false);
+            }, { once: true });
+            return true;
+        } catch (error) {
+            console.warn('[Proofing][PiP] Document PiP gagal:', error);
+        }
+    }
+
+    // Chrome Android supports video PiP, not Document PiP. The canvas stream
+    // mirrors the countdown as a native floating video window.
+    if (canUseVideoPictureInPicture()) {
+        const entered = await enterWebVideoPictureInPicture();
+        if (entered) return true;
+    }
+
+    // Browser/PWA fallback when system PiP is unavailable or denied. This is an
+    // in-app compact widget, not an OS-level always-on-top window.
+    if (fromBack) {
+        const container = document.getElementById('app-container');
+        if (container && !container.classList.contains('mini-mode')) {
+            container.classList.add('mini-mode');
+            const pipButton = document.getElementById('pip-trigger-btn');
+            if (pipButton) {
+                pipButton.textContent = '❌ Tutup Mini';
+                pipButton.style.background = '#c0392b';
+            }
+        }
+        return Boolean(container);
+    }
+    return activateInAppMiniTimer();
 }
 
 // ==========================================
@@ -6654,7 +6876,36 @@ function tampilkanHasilAnalisisAI(data) {
 // Kalau gagal/timeout/offline, fallback ke ringkasan lokal berbasis rule
 // yang sama supaya fitur tetap jalan di app native tanpa koneksi.
 // =================================================================================
+// [AI-GENERATED][BUG FIX][V320] Every recipe change invalidates an in-flight AI result.
+// The request itself may finish at the provider, but an older response must never
+// overwrite the editor after the user has started/opened another recipe.
+let recipeAiAnalysisRequestEpoch = 0;
+
+function resetRecipeAiAnalysisState() {
+    recipeAiAnalysisRequestEpoch += 1;
+
+    const resultContainer = document.getElementById('ai-live-result');
+    if (resultContainer) {
+        resultContainer.replaceChildren();
+        resultContainer.dataset.recipeOwner = '';
+        resultContainer.style.display = 'none';
+    }
+
+    const button = document.getElementById('btn-ai-live-analysis');
+    if (button) {
+        button.textContent = '🤖 Analisis AI Mendalam (Live)';
+        button.disabled = false;
+    }
+}
+
 async function mintaAnalisisAISungguhan() {
+    const requestEpoch = recipeAiAnalysisRequestEpoch;
+    const requestRecipeId = currentEditingRecipeId == null ? null : String(currentEditingRecipeId);
+    const requestRecipeName = document.getElementById('recipe-save-name')?.value?.trim() || '';
+    const isRequestOwnerCurrent = () =>
+        requestEpoch === recipeAiAnalysisRequestEpoch &&
+        (currentEditingRecipeId == null ? null : String(currentEditingRecipeId)) === requestRecipeId &&
+        (document.getElementById('recipe-save-name')?.value?.trim() || '') === requestRecipeName;
     const btn = document.getElementById('btn-ai-live-analysis');
     const resultContainer = document.getElementById('ai-live-result');
     const prevText = btn ? btn.innerText : '🤖 Analisis AI Mendalam (Live)';
@@ -6704,7 +6955,9 @@ Gunakan struktur ini:
 ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul dengan titik dua (contoh: "Potensi Masalah:"), gunakan simbol (-) HANYA untuk list, dan angka (1.) HANYA untuk urutan langkah.`;
 
         const data = await window.AIService.requestAIAnalysis(aiPrompt);
+        if (!isRequestOwnerCurrent()) return;
 
+        resultContainer.dataset.recipeOwner = requestRecipeId || `new:${requestRecipeName}`;
         resultContainer.innerHTML = `
             <div style="font-weight:900; color:#6c3483; margin-bottom:10px; font-size:0.9rem; text-align:center; background:#f5eef8; padding:8px; border-radius:6px; letter-spacing:0.5px;">
                 <i class="fas fa-robot"></i> LAPORAN ANALISIS AI
@@ -6713,6 +6966,7 @@ ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul deng
         `;
 
     } catch (error) {
+        if (!isRequestOwnerCurrent()) return;
         console.error('[AI Analysis] Permintaan analisis mendalam gagal:', { name: error?.name || 'Error', message: error?.message || String(error), status: error?.status ?? null, code: error?.code ?? null, url: error?.url || undefined });
         const safeFallback = `Analisis AI online sedang tidak tersedia (${escapeHtmlMarkup(error?.message || 'gangguan layanan')}).\n\nRingkasan lokal: periksa kembali komposisi bahan, berat per porsi, suhu adonan, dan tanda visual proofing. Untuk keputusan fermentasi, gunakan kondisi adonan aktual; jangan menganggap estimasi waktu sebagai kepastian.`;
         resultContainer.innerHTML = `
@@ -6722,7 +6976,7 @@ ATURAN FORMAT: Gunakan paragraf naratif untuk penjelasan, gunakan sub-judul deng
                 <small>Detail teknis tercatat di Console. Silakan coba lagi beberapa saat.</small>
             </div>`;
     } finally {
-        if (btn) {
+        if (isRequestOwnerCurrent() && btn) {
             btn.innerText = prevText;
             btn.disabled = false;
         }
@@ -7082,6 +7336,37 @@ function jalankanSwapMini() {
         }, 100);
     }
 }
+
+/**
+ * [AI-GENERATED][ROBUSTNESS][V324]
+ * Bind mini-stat swapping outside DOMContentLoaded. The ES-module graph may
+ * evaluate after DOMContentLoaded, in which case nested direct listeners are
+ * never attached. Delegation also survives header DOM replacement and works
+ * for the synthesized click generated by mobile taps.
+ */
+function initMiniStatsSwapBinding() {
+    if (window.__TP_MINI_STATS_SWAP_BOUND__) return true;
+    if (!document) return false;
+
+    document.addEventListener('click', (event) => {
+        const target = event.target instanceof Element
+            ? event.target.closest('#shrunk-main, #shrunk-sub')
+            : null;
+        if (!target) return;
+
+        const locationHeader = document.getElementById('location-section');
+        if (!locationHeader?.classList.contains('shrunk')) return;
+
+        event.preventDefault();
+        jalankanSwapMini();
+    }, true);
+
+    window.__TP_MINI_STATS_SWAP_BOUND__ = true;
+    return true;
+}
+
+// Bind immediately whether app-core loads before or after DOMContentLoaded.
+initMiniStatsSwapBinding();
 
 // =========================================================
 // FUNGSI REFRESH MANDIRI PER PARAMETER CUACA
@@ -7652,7 +7937,7 @@ window.initTipsAIAssistant = function() {
 
         // Simpan teks tombol asli jika diperlukan untuk reset state
         const prevText = btn.innerText;
-        btn.innerText = "⏳ AI Menganalisis...";
+        btn.innerText = "⏳ Menganalisis…";
         btn.disabled = true;
 
         // Tampilkan loading interaktif
@@ -7678,7 +7963,7 @@ window.initTipsAIAssistant = function() {
                     </div>
                     
                     <div id="ai-body-content" style="max-height: 320px; overflow-y: auto; overflow-x: hidden; padding-right: 8px; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 10px; scrollbar-width: thin; scroll-behavior: smooth;">
-                        ${formatHasilAI(data.result)}
+                        ${formatTipsHasilAI(data.result)}
                     </div>
                 </div>
             `;
@@ -7710,15 +7995,12 @@ if (document.readyState === 'loading') {
 // 2. FUNGSI UTAMA: UPDATE TEMA & WAKTU DINAMIS
 // ==========================================
 function updateDynamicTheme(weatherId, mainWeather) {
-    const root = document.documentElement;
-    const body = document.body;
     const now = new Date();
     const hours = now.getHours();
     
     // =========================================================================
     // WAJIB: DEKLARASIKAN SEMUA VARIABEL TEMA DI AWAL AGAR TIDAK REFERENCEERROR
     // =========================================================================
-    let bgGradient = "linear-gradient(135deg, #FDF5E6, #F2D2A9)"; 
     let accentColor = "#E67E22";
     let textWeatherColor = "#4E342E"; 
     let cardBg = "rgba(0, 0, 0, 0.04)";
@@ -7772,33 +8054,27 @@ function updateDynamicTheme(weatherId, mainWeather) {
 
     // 3. PENGONDISIAN WARNA GLOBAL (Aplikasi / Body)
     if (weatherId >= 200 && weatherId < 600) { 
-        bgGradient = "linear-gradient(135deg, #2c3e50, #34495e)";
         accentColor = "#3498db";
         textWeatherColor = "#ecf0f1"; 
         cardBg = "rgba(255, 255, 255, 0.12)";
     } else if (weatherId >= 801 && weatherId <= 804) { 
-        bgGradient = "linear-gradient(135deg, #e6d5c3, #bda58f)";
         accentColor = "#d35400";
         textWeatherColor = "#3e2723"; 
         cardBg = "rgba(0, 0, 0, 0.05)";
     } else if (["malam", "tengah malam", "dini hari"].includes(timeOfDay)) {
-        bgGradient = "linear-gradient(135deg, #242A4A, #171B30)";
         accentColor = "#f1c40f";
         textWeatherColor = "#E0E0E0";
         cardBg = "rgba(255, 255, 255, 0.08)";
     } else if (timeOfDay === "senja" || timeOfDay === "petang") {
-        bgGradient = "linear-gradient(135deg, #FF7F50, #6F1E51)";
         accentColor = "#ffffff";
         textWeatherColor = "#C0C0C0";
         cardBg = "rgba(255, 255, 255, 0.15)";
     }
 
-    // Terapkan tema global ke CSS Root & Body
-    body.style.background = bgGradient;
-    root.style.setProperty('--accent', accentColor);
-    root.style.setProperty('--text-weather', textWeatherColor);
-
     // 4. PENGONDISIAN WARNA KHUSUS CONTAINER HEADER
+    // Jangan mengubah --accent pada :root atau background body: warna brand
+    // cokelat/adonan harus konsisten di seluruh aplikasi, apa pun kondisi cuaca.
+
     if (timeOfDay === "dini hari") {
         if (condition === "hujan") { containerBg = "linear-gradient(135deg, #0F172A 0%, #020617 100%)"; textColor = "#94A3B8"; cardBg = "rgba(255,255,255,0.05)"; }
         else { containerBg = "linear-gradient(135deg, #182238 0%, #0B111E 100%)"; textColor = "#CBD5E1"; cardBg = "rgba(255,255,255,0.06)"; }
@@ -7854,9 +8130,12 @@ function updateDynamicTheme(weatherId, mainWeather) {
     // Terapkan warna kontainer lokasi header jika ada
     const locationSectionHeader = document.getElementById('location-section');
     if (locationSectionHeader) {
+        // Scope dynamic weather colors to the weather/location header only.
         locationSectionHeader.style.setProperty('--bg-container', containerBg);
         locationSectionHeader.style.setProperty('--text-container', textColor);
         locationSectionHeader.style.setProperty('--card-bg', cardBg);
+        locationSectionHeader.style.setProperty('--accent', accentColor);
+        locationSectionHeader.style.setProperty('--text-weather', textWeatherColor);
         locationSectionHeader.style.color = textColor;
     }
 
@@ -8030,7 +8309,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261027-v317');
+        metadataUrl.searchParams.set('_release', '20261031-v329');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);
@@ -8072,8 +8351,18 @@ function bukaArtikelLengkap(id) {
     // Keep its intentional formatting; never replace this with user/API-supplied content.
     if (bodyElement && typeof artikel.content === 'string') bodyElement.innerHTML = artikel.content;
 
-    // Tampilkan overlay modal via class .active (CSS menangani display)
-    if (overlay) overlay.classList.add('active');
+    // [AI-GENERATED][ARTICLE FULLSCREEN][V326] The body is transformed and width-capped
+    // for the app shell. Portal this existing node to <html> while open so fixed
+    // positioning covers the whole viewport instead of being clipped to the shell.
+    if (overlay) {
+        if (!overlay.__tpPortalPlaceholder && overlay.parentNode !== document.documentElement) {
+            const placeholder = document.createComment('article-modal-origin');
+            overlay.parentNode?.insertBefore(placeholder, overlay);
+            overlay.__tpPortalPlaceholder = placeholder;
+        }
+        if (overlay.parentNode !== document.documentElement) document.documentElement.appendChild(overlay);
+        overlay.classList.add('active');
+    }
 }
 
 // FUNGSI UNTUK MENUTUP KEMBALI HALAMAN ARTIKEL
@@ -8086,6 +8375,14 @@ function tutupArtikelSecaraAman() {
     if (articleModal) {
         articleModal.classList.remove('active');
         articleModal.style.removeProperty('display');
+        const placeholder = articleModal.__tpPortalPlaceholder;
+        if (placeholder?.parentNode) {
+            placeholder.parentNode.insertBefore(articleModal, placeholder.nextSibling);
+            placeholder.remove();
+        } else if (articleModal.parentNode === document.documentElement && document.body) {
+            document.body.appendChild(articleModal);
+        }
+        delete articleModal.__tpPortalPlaceholder;
     }
     if (modalOverlay && modalOverlay !== articleModal) {
         modalOverlay.classList.remove('active');
@@ -8491,6 +8788,7 @@ window.buatResepBaruForm = function() {
     // [AI-GENERATED][ROBUSTNESS][V279] Only invalidate pending saves after the
     // user confirms the editor transition; cancelling must leave the current form valid.
     markRecipeEditorContextChanged();
+    resetRecipeAiAnalysisState();
     // [AI-GENERATED][REFACTOR] Reset the active recipe identity first so later saves cannot overwrite the old recipe.
     currentEditingRecipeId = null;
 
@@ -8926,23 +9224,31 @@ window.suntikPresetBahanCepat = function(nama, kategori, rasio, harga, pack) {
 let pipWindowInstance = null;
 let pipIntervalInstance = null;
 
-// Inisialisasi Event Listener pemicu PIP aman setelah DOM selesai dimuat
-document.addEventListener('DOMContentLoaded', () => {
+// [AI-GENERATED][PWA PIP BINDING][V326] ES-module evaluation may occur after
+// DOMContentLoaded. Bind immediately when the DOM already exists.
+function bindPipAndRecipeShortcutButtons() {
     const pipTrigger = document.getElementById('pip-trigger-btn');
-    if (pipTrigger) {
-        pipTrigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            aktifkanModePIP();
+    if (pipTrigger && pipTrigger.dataset.tpPipBound !== 'v326') {
+        pipTrigger.dataset.tpPipBound = 'v326';
+        pipTrigger.addEventListener('click', (event) => {
+            event.preventDefault();
+            void aktifkanModePIP({ fromBack: false });
         });
     }
     const btnResep = document.getElementById('btn-buka-resep');
-    if (btnResep) {
+    if (btnResep && btnResep.dataset.tpRecipeShortcutBound !== 'v326') {
+        btnResep.dataset.tpRecipeShortcutBound = 'v326';
         btnResep.addEventListener('click', () => {
             if (typeof openRecipesFromProfile === 'function') openRecipesFromProfile();
             else if (typeof window.tampilkanDaftarResepTersimpan === 'function') window.tampilkanDaftarResepTersimpan();
         });
     }
-});
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindPipAndRecipeShortcutButtons, { once: true });
+} else {
+    bindPipAndRecipeShortcutButtons();
+}
 // =========================================================
 
 //=======================================
@@ -9700,6 +10006,8 @@ async function runBackgroundLifecycleTasks({
 // Timer persistence/restore remains in app-core; listener ownership lives in AppLifecycleService.
 initializeAppLifecycle({
     onForeground: (source) => {
+        // Expand the normal timer UI when Android restores the Activity from PiP.
+        document.body?.classList.remove('native-pip');
         if (document.readyState === 'loading') return;
         // [AI-GENERATED][ROBUSTNESS][V60] Always reconcile persisted timer state
         // on foreground. The V57 idempotency guard prevents duplicate restore
@@ -9712,6 +10020,36 @@ initializeAppLifecycle({
             window.DEBUG && console.log(`[AppLifecycle] Foreground (${source}): reconcile timer.`);
             return checkAndRestoreTimer();
         }
+    },
+    onBackButton: async (source = 'native-back') => {
+        const timerIsActive = Boolean(isTimerRunning && proofingTimerController.isRunning());
+        if (!timerIsActive) return false;
+
+        if (NativeCapacitorService.isNativePlatform()) {
+            const pipPlugin = NativeCapacitorService.getPlugin('TimerPip');
+            if (typeof pipPlugin?.enterPictureInPicture === 'function') {
+                document.body?.classList.add('native-pip');
+                try {
+                    const result = await pipPlugin.enterPictureInPicture();
+                    if (result?.entered === true) return true;
+                } catch (error) {
+                    console.warn('[Proofing][PiP] Android gagal masuk Picture-in-Picture:', error);
+                }
+                document.body?.classList.remove('native-pip');
+            }
+            // Do not allow the WebView to navigate away and show a browser
+            // beforeunload prompt. If system PiP is rejected, minimize the Activity.
+            const appPlugin = NativeCapacitorService.getPlugin('App');
+            try { await appPlugin?.minimizeApp?.(); } catch (error) {
+                console.warn('[Proofing][PiP] Gagal meminimalkan aplikasi:', error);
+            }
+            return true;
+        }
+
+        // PWA/browser Back is trapped by a history sentinel while the timer runs.
+        // Try system video PiP; use the legacy in-app mini widget if activation is denied.
+        const entered = await aktifkanModePIP({ fromBack: true, source });
+        return entered === true;
     },
     onBackground: async () => {
         // [AI-GENERATED][ROBUSTNESS][V235] Failures while stopping the clock or
@@ -9729,21 +10067,21 @@ initializeAppLifecycle({
 // lifecycle signal before a page is frozen, discarded, or moved into the back/forward
 // cache. Persist the absolute timer deadline synchronously through ProofingService's
 // LocalStorage write-through path; do not await native Preferences from this event.
+// [AI-GENERATED][NATIVE UX][V325] Android reports PiP enter/exit separately
+// from appState: the Activity can remain resumed when the PiP window expands.
+window.addEventListener('timerproofer:pipchange', (event) => {
+    const isInPictureInPictureMode = event?.detail?.isInPictureInPictureMode === true;
+    document.body?.classList.toggle('native-pip', isInPictureInPictureMode);
+});
+
 window.addEventListener('pagehide', () => {
     if (typeof isTimerRunning !== 'undefined' && isTimerRunning && typeof persistProofingState === 'function') {
         persistProofingState();
     }
 });
 
-window.addEventListener('beforeunload', (event) => {
-    if (isTimerRunning) { // variabel global proofer Anda
-        // [AI-GENERATED][ROBUSTNESS][V137] Keep the latest deadline durable before
-        // showing the browser's native leave-page confirmation.
-        if (typeof persistProofingState === 'function') persistProofingState();
-        event.preventDefault();
-        event.returnValue = 'Proses proofing sedang berjalan. Apakah Anda yakin ingin keluar?';
-    }
-});
+// [AI-GENERATED][PWA BACK UX][V326] No beforeunload confirmation: the absolute timer
+// deadline is persisted through pagehide/visibility lifecycle and restored on return.
 
 
 // Panggil fungsi restore bawaan kamu saat halaman selesai dimuat ulang (refresh)
@@ -9797,7 +10135,12 @@ window.eksekusiCetakPremium = function() {
     if (namaResep === "") namaResep = "RESEP PRODUKSI"; 
 
     const safeFileName = namaResep.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
-    const finalDocTitle = safeFileName + " - " + (document.getElementById('profile-bakery')?.value || "Nama Bakery");
+    const bakeryName = document.getElementById('profile-bakery')?.value || "Nama Bakery";
+    const finalDocTitle = `${safeFileName} - ${bakeryName}`.replace(/[<>:"/\\|?*\x00-\x1F]/g, "").trim();
+    const namaResepHtml = escapeHtmlMarkup(namaResep);
+    const bakeryNameHtml = escapeHtmlMarkup(bakeryName);
+    const pembuatName = document.getElementById('profile-nama-user')?.value || document.getElementById('profile-user')?.value || document.getElementById('nama-pembuat')?.value || "Pengguna";
+    const pembuatNameHtml = escapeHtmlMarkup(pembuatName);
 
     // 2. Ambil Insight AI
     const elPM = document.getElementById('text-analysis-pm');
@@ -9836,7 +10179,7 @@ window.eksekusiCetakPremium = function() {
 
     let stepsHTML = "";
     if (stepsArray.length > 0) {
-        stepsArray.forEach(step => { stepsHTML += `<li style="margin-bottom: 4px; font-size: 7.5pt; line-height: 1.3; text-align: justify;">${step}</li>`; });
+        stepsArray.forEach(step => { stepsHTML += `<li style="margin-bottom: 4px; font-size: 7.5pt; line-height: 1.3; text-align: justify;">${escapeHtmlMarkup(step)}</li>`; });
     } else {
         stepsHTML = '<li style="font-size: 7.5pt;">Belum ada instruksi langkah produksi.</li>';
     }
@@ -9857,7 +10200,7 @@ window.eksekusiCetakPremium = function() {
                 const namaKategori = ths.length > 0 ? ths[0].innerText.trim() : tds[0].innerText.trim();
                 rowsHTML += `<tr style="background-color: #f8fafc;">
                     <td colspan="6" style="padding: 3px 6px; font-weight: 800; color: #d35400; font-size: 7pt; border: 1px solid #cbd5e1; text-transform: uppercase;">
-                        ${namaKategori}
+                        ${escapeHtmlMarkup(namaKategori)}
                     </td>
                 </tr>`;
             } else if (tds.length >= 2) {
@@ -9877,12 +10220,12 @@ window.eksekusiCetakPremium = function() {
                 totalBeratAdonan += angkaBeratPakai;
 
                 rowsHTML += `<tr>
-                    <td style="padding: 2.5px 4px; padding-left: 8px; font-size: 6.5pt;">${namaBahan}</td>
-                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${takaran}</td>
-                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${isiPack}</td>
-                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt;">${hargaBeli}</td>
-                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt; font-weight: 600;">${beratPakai}</td>
-                    <td style="text-align: right; font-weight: bold; color: #4E342E; padding: 2.5px 4px; font-size: 6.5pt;">${strBiaya}</td>
+                    <td style="padding: 2.5px 4px; padding-left: 8px; font-size: 6.5pt;">${escapeHtmlMarkup(namaBahan)}</td>
+                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${escapeHtmlMarkup(takaran)}</td>
+                    <td style="text-align: center; padding: 2.5px 4px; font-size: 6.5pt;">${escapeHtmlMarkup(isiPack)}</td>
+                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt;">${escapeHtmlMarkup(hargaBeli)}</td>
+                    <td style="text-align: right; padding: 2.5px 4px; font-size: 6.5pt; font-weight: 600;">${escapeHtmlMarkup(beratPakai)}</td>
+                    <td style="text-align: right; font-weight: bold; color: #4E342E; padding: 2.5px 4px; font-size: 6.5pt;">${escapeHtmlMarkup(strBiaya)}</td>
                 </tr>`;
             }
         });
@@ -9911,9 +10254,12 @@ window.eksekusiCetakPremium = function() {
 
     // 7. Bangun Template HTML PDF
     const tempContainer = document.createElement('div');
-    tempContainer.style.position = 'fixed';
+    // Keep the source inside the viewport. html2pdf deep-clones this element;
+    // off-screen coordinates (especially top:-9999px) are copied to the clone
+    // and can make html2canvas capture a blank page.
+    tempContainer.style.position = 'relative';
     tempContainer.style.left = '0';
-    tempContainer.style.top = '-9999px';
+    tempContainer.style.top = '0';
     tempContainer.style.width = '794px'; 
     tempContainer.style.backgroundColor = '#ffffff';
     tempContainer.style.padding = '30px 35px'; 
@@ -9945,7 +10291,7 @@ window.eksekusiCetakPremium = function() {
         <div class="header-container">
             <div>
                 <div class="brand-tag">Lembar Kerja Produksi Resmi</div>
-                <h1>${namaResep}</h1>
+                <h1>${namaResepHtml}</h1>
             </div>
             <div style="text-align: right; font-size: 7.5pt; color: #64748b; margin-bottom: 2px;">
                 <strong>Dicetak:</strong> ${tanggalCetak}
@@ -9953,19 +10299,19 @@ window.eksekusiCetakPremium = function() {
         </div>
         
         <div class="meta-box">
-            <div><strong>Pembuat:</strong> <span>${document.getElementById('profile-nama-user')?.value || document.getElementById('profile-user')?.value || document.getElementById('nama-pembuat')?.value || "Pengguna"}</span></div>
-            <div><strong>Unit Usaha:</strong> <span>${document.getElementById('profile-bakery')?.value || document.getElementById('nama-bakery')?.value || document.getElementById('nama-unit-usaha')?.value || "Unit Usaha"}</span></div>
+            <div><strong>Pembuat:</strong> <span>${pembuatNameHtml}</span></div>
+            <div><strong>Unit Usaha:</strong> <span>${bakeryNameHtml}</span></div>
             <div><strong>Status:</strong> Valid (PWA Dashboard)</div>
         </div>
 
         <div class="param-card-container">
             <div class="param-item" style="flex: 1.618;">
                 <span class="param-label">Tepung Utama (gr)</span>
-                <span class="param-value">${baseFlourVal} g</span>
+                <span class="param-value">${escapeHtmlMarkup(baseFlourVal)} g</span>
             </div>
             <div class="param-item" style="flex: 1;">
                 <span class="param-label">Total Porsi</span>
-                <span class="param-value">${recipeYieldVal} pcs</span>
+                <span class="param-value">${escapeHtmlMarkup(recipeYieldVal)} pcs</span>
             </div>
             <div class="param-item" style="flex: 1.5; background: #f0fdf4; border-color: #27ae60;">
                 <span class="param-label" style="color: #27ae60;">Harga Jual / Pcs</span>
@@ -10043,9 +10389,9 @@ window.eksekusiCetakPremium = function() {
                     </div>
 
                     <div style="font-size: 7.5pt; display: flex; flex-direction: column; gap: 8px; line-height: 1.4; text-align: justify; width: 100%;">
-                        <div><strong style="color: #0f172a; font-size: 8pt;">📊 Margin:</strong><br>${insightPM}</div>
-                        <div><strong style="color: #0f172a; font-size: 8pt;">💰 Food Cost:</strong><br>${insightFC}</div>
-                        <div><strong style="color: #0f172a; font-size: 8pt;">🛡️ Standar:</strong><br>${insightUB}</div>
+                        <div><strong style="color: #0f172a; font-size: 8pt;">📊 Margin:</strong><br>${escapeHtmlMarkup(insightPM)}</div>
+                        <div><strong style="color: #0f172a; font-size: 8pt;">💰 Food Cost:</strong><br>${escapeHtmlMarkup(insightFC)}</div>
+                        <div><strong style="color: #0f172a; font-size: 8pt;">🛡️ Standar:</strong><br>${escapeHtmlMarkup(insightUB)}</div>
                     </div>
                 </div>
             </div>
@@ -10060,12 +10406,12 @@ window.eksekusiCetakPremium = function() {
         <div class="footer">Dokumen Manajemen Operasional • Dicetak via Sistem PWA Mobile Kelas Premium</div>
     `;
 
-    document.body.appendChild(tempContainer);
-
+    // Keep the print element detached until the progress overlay is ready.
     // 8. Render Canvas (Pie Chart)
     const canvasEl = tempContainer.querySelector('#pdf-pie-canvas');
     if (canvasEl) {
         const ctx = canvasEl.getContext('2d');
+        if (ctx) {
         const centerX = 150, centerY = 150, radius = 135; 
         
         let startAngle = -0.5 * Math.PI; 
@@ -10095,29 +10441,141 @@ window.eksekusiCetakPremium = function() {
                 startAngle += sliceAngle;
             }
         });
+        }
     }
 
     // 9. Eksekusi PDF Download
-    setTimeout(() => {
-        // [AI-GENERATED][ES6 MODULE][V258] Load canvas/PDF dependencies only after an explicit export action.
-        void (async () => {
-            try {
-                const { pdf } = await PdfRenderService.renderElementToPdf(tempContainer, {
-                    scale: 2.5,
-                    useCORS: true,
-                    backgroundColor: '#ffffff',
-                    windowWidth: 794
-                }, { orientation: 'p', unit: 'mm', format: 'a4' });
-                // [AI-GENERATED][ROBUSTNESS][V258] The local PDF worker handles canvas rendering and pagination.
-                pdf.save(`${finalDocTitle}.pdf`);
-            } catch (err) {
-                console.error("Gagal merender PDF: ", err);
-                alert("Terjadi kesalahan saat memproses file PDF.");
-            } finally {
-                if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
+    if (window.__TP_PREMIUM_PDF_EXPORTING__ === true) return false;
+    window.__TP_PREMIUM_PDF_EXPORTING__ = true;
+
+    const exportOverlay = document.createElement('div');
+    exportOverlay.setAttribute('role', 'status');
+    exportOverlay.setAttribute('aria-live', 'polite');
+    exportOverlay.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:rgba(253,245,230,.97);color:#4E342E;font:700 14px/1.5 system-ui,sans-serif;text-align:center;';
+    exportOverlay.innerHTML = '<div style="max-width:280px;padding:20px;border:1px solid #F2D2A9;border-radius:16px;background:#fff;box-shadow:0 8px 28px rgba(78,52,46,.12);"><div style="font-size:28px;margin-bottom:8px;">📄</div><div>Sedang menyiapkan laporan PDF...</div><div style="font-size:12px;font-weight:500;color:#8D6E63;margin-top:5px;">Mohon jangan tutup halaman ini.</div></div>';
+    document.body.appendChild(exportOverlay);
+    document.body.appendChild(tempContainer);
+
+    return (async () => {
+        try {
+            // Let the browser calculate layout before html2pdf clones the document.
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const exportHeight = Math.max(tempContainer.scrollHeight, tempContainer.offsetHeight, 1123);
+            const { pdf } = await PdfRenderService.renderElementToPdf(tempContainer, {
+                scale: 2.5,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                windowWidth: 794,
+                windowHeight: exportHeight,
+                scrollX: 0,
+                scrollY: 0,
+                logging: false
+            }, { orientation: 'p', unit: 'mm', format: 'a4' });
+            if (!pdf || typeof pdf.save !== 'function') {
+                throw new Error('Dokumen PDF tidak berhasil dibuat.');
             }
-        })();
-    }, 300);
+            pdf.save(`${finalDocTitle || 'Laporan_Resep'}.pdf`);
+            return true;
+        } catch (err) {
+            console.error("Gagal merender PDF: ", err);
+            alert(`Laporan PDF belum dapat dibuat: ${err?.message || 'Kesalahan renderer'}`);
+            return false;
+        } finally {
+            tempContainer.remove();
+            exportOverlay.remove();
+            window.__TP_PREMIUM_PDF_EXPORTING__ = false;
+        }
+    })();
+};
+
+/**
+ * [AI-GENERATED][FEATURE][V323]
+ * Print a saved recipe with the same Premium PDF template used by the editor.
+ * Temporarily hydrates the hidden recipe editor, awaits the PDF render, then
+ * restores the user's in-progress editor state without persisting the snapshot.
+ */
+window.cetakResepTersimpanPremium = async function(resep) {
+    if (!resep || typeof resep !== 'object') {
+        console.warn('[RecipePrint] Data resep tersimpan tidak valid.');
+        return false;
+    }
+    if (window.__TP_PREMIUM_PDF_EXPORTING__ === true) {
+        if (typeof showToast === 'function') showToast('Laporan lain sedang dibuat. Coba kembali setelah selesai.');
+        return false;
+    }
+
+    const fieldIds = ['recipe-save-name', 'base-flour', 'recipe-yield', 'input-harga-jual'];
+    const fieldSnapshot = Object.fromEntries(fieldIds.map((id) => {
+        const element = document.getElementById(id);
+        return [id, element ? element.value : null];
+    }));
+    const cloneArray = (value) => {
+        try { return JSON.parse(JSON.stringify(Array.isArray(value) ? value : [])); }
+        catch { return []; }
+    };
+    const previousIngredients = cloneArray(bakeryIngredients);
+    const previousSteps = cloneArray(activeRecipeSteps);
+    const previousCategoryState = { ...(window.statusKategoriResep || {}) };
+    const previousFoodCost = window.currentFoodCostPersen;
+
+    const setField = (id, value) => {
+        const element = document.getElementById(id);
+        if (element && value != null) element.value = String(value);
+    };
+    const waitForLayout = () => new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
+    });
+
+    try {
+        const ingredients = cloneArray(resep.bahanBaku || resep.ingredients || resep.bahan || resep.komposisi);
+        const steps = cloneArray(resep.langkahProduksi || resep.productionSteps);
+
+        setField('recipe-save-name', resep.nama || resep.name || 'RESEP PRODUKSI');
+        setField('base-flour', resep.tepungUtama ?? resep.flourWeight ?? 1000);
+        setField('recipe-yield', resep.targetYield ?? 1);
+        setField('input-harga-jual', resep.hargaJual ?? resep.salePrice ?? 0);
+
+        bakeryIngredients = ingredients;
+        window.bakeryIngredients = ingredients;
+        activeRecipeSteps = steps;
+        window.activeRecipeSteps = steps;
+
+        const allCategories = [
+            'Bahan Kering', 'Bahan Basah', 'Bahan Pengembang',
+            'Bahan Tambahan', 'Bahan Toping', 'Kemasan'
+        ];
+        window.statusKategoriResep = { ...previousCategoryState };
+        allCategories.forEach((category) => { window.statusKategoriResep[category] = true; });
+
+        if (typeof renderRecipeTableBakuTotal === 'function') renderRecipeTableBakuTotal();
+        if (typeof renderLangkahProduksi === 'function') renderLangkahProduksi();
+        if (typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal();
+        await waitForLayout();
+
+        const result = await window.eksekusiCetakPremium();
+        if (result !== true) return false;
+        return true;
+    } catch (error) {
+        console.error('[RecipePrint] Gagal mencetak resep tersimpan:', error);
+        if (typeof showToast === 'function') showToast('Laporan resep gagal disiapkan. Silakan coba lagi.');
+        return false;
+    } finally {
+        fieldIds.forEach((id) => {
+            const element = document.getElementById(id);
+            if (element && fieldSnapshot[id] !== null) element.value = fieldSnapshot[id];
+        });
+
+        bakeryIngredients = previousIngredients;
+        window.bakeryIngredients = previousIngredients;
+        activeRecipeSteps = previousSteps;
+        window.activeRecipeSteps = previousSteps;
+        window.statusKategoriResep = previousCategoryState;
+
+        if (typeof renderRecipeTableBakuTotal === 'function') renderRecipeTableBakuTotal();
+        if (typeof renderLangkahProduksi === 'function') renderLangkahProduksi();
+        if (typeof hitungHPPBakeryTotal === 'function') hitungHPPBakeryTotal();
+        if (previousFoodCost !== undefined) window.currentFoodCostPersen = previousFoodCost;
+    }
 };
 
 window.jalankanAnalisisAIAgent = function(hppPcs, hargaJual, beratPcs) {
@@ -10331,6 +10789,207 @@ function stopShrunkClockUpdater() {
 }
 
 /**
+ * [AI-GENERATED][ROBUSTNESS][V323]
+ * Bind the compact location header independently from the long application
+ * DOMContentLoaded initializer. app-core can be evaluated after DCL when the
+ * ES-module graph is delayed, so the old nested-only binding could be missed.
+ * Observe the real scroll target (including nested scrollers), plus wheel and
+ * touch gestures as a WebView fallback.
+ */
+function initLocationHeaderShrinkBehavior() {
+    const header = document.getElementById('location-section');
+    const appContainer = document.getElementById('app-container');
+    const initialScrollArea = appContainer?.querySelector(':scope > .scrollable-content')
+        || appContainer?.querySelector('.scrollable-content');
+    if (!header || !appContainer || !initialScrollArea) return false;
+    if (header.dataset.tpLocationShrinkBound === 'v324') return true;
+
+    header.dataset.tpLocationShrinkBound = 'v324';
+
+    // Resolve the main page scroller on every interaction. This also survives
+    // a future render replacing the .scrollable-content node.
+    const getMainScrollArea = () => appContainer.querySelector(':scope > .scrollable-content')
+        || appContainer.querySelector('.scrollable-content')
+        || initialScrollArea;
+
+    const isMainContentTarget = (target) => {
+        if (!(target instanceof Element)) return false;
+        const area = getMainScrollArea();
+        return target === appContainer || target === area || Boolean(area?.contains(target));
+    };
+
+    const getScrollTop = (eventTarget = null) => {
+        const area = getMainScrollArea();
+        const values = [
+            Number(area?.scrollTop) || 0,
+            Number(appContainer.scrollTop) || 0,
+            Number(document.scrollingElement?.scrollTop) || 0,
+            Number(document.documentElement?.scrollTop) || 0,
+            Number(document.body?.scrollTop) || 0,
+            Number(window.scrollY) || 0
+        ];
+
+        // Some WebViews dispatch scroll from an inner scrollable descendant.
+        // Inspect its ancestors up to the app root, not unrelated modal panes.
+        let node = eventTarget instanceof Element ? eventTarget : null;
+        while (node && appContainer.contains(node)) {
+            if (node.scrollHeight > node.clientHeight + 1) {
+                const overflowY = window.getComputedStyle(node).overflowY;
+                if (node === area || /auto|scroll|overlay/.test(overflowY)) {
+                    values.push(Number(node.scrollTop) || 0);
+                }
+            }
+            if (node === appContainer) break;
+            node = node.parentElement;
+        }
+        return Math.max(...values);
+    };
+
+    const setShrunk = (shouldShrink) => {
+        const wasShrunk = header.classList.contains('shrunk');
+        if (wasShrunk === shouldShrink) return;
+        header.classList.toggle('shrunk', shouldShrink);
+        if (shouldShrink && typeof updateMiniHeader === 'function') updateMiniHeader();
+    };
+
+    const syncFromScroll = (eventTarget = null) => {
+        setShrunk(getScrollTop(eventTarget) > 24);
+    };
+
+    let framePending = false;
+    let pendingTarget = null;
+    const onScroll = (event) => {
+        const target = event?.target;
+        const isViewportScrollTarget = target === document || target === document.documentElement || target === document.body;
+        if (!isViewportScrollTarget && !isMainContentTarget(target)) return;
+        pendingTarget = target instanceof Element ? target : null;
+        if (framePending) return;
+        framePending = true;
+        requestAnimationFrame(() => {
+            framePending = false;
+            syncFromScroll(pendingTarget);
+            pendingTarget = null;
+        });
+    };
+
+    // Capture catches non-bubbling scroll from current and future descendants.
+    document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    initialScrollArea.addEventListener('scroll', onScroll, { passive: true });
+    appContainer.addEventListener('scroll', onScroll, { passive: true });
+
+    // Wheel fallback: shrink immediately on a downward gesture even in WebViews
+    // that delay or omit the expected scroll event; expand after returning top.
+    const onWheel = (event) => {
+        if (!isMainContentTarget(event.target)) return;
+        if (event.deltaY > 6) setShrunk(true);
+        else if (event.deltaY < -6) {
+            requestAnimationFrame(() => syncFromScroll(event.target));
+        }
+    };
+    document.addEventListener('wheel', onWheel, { capture: true, passive: true });
+
+    let lastTouchY = null;
+    const onTouchStart = (event) => {
+        if (!isMainContentTarget(event.target)) {
+            lastTouchY = null;
+            return;
+        }
+        lastTouchY = event.touches?.[0]?.clientY ?? null;
+    };
+    const onTouchMove = (event) => {
+        if (!isMainContentTarget(event.target)) return;
+        const currentY = event.touches?.[0]?.clientY;
+        if (!Number.isFinite(currentY) || !Number.isFinite(lastTouchY)) return;
+        const fingerDelta = currentY - lastTouchY;
+        if (fingerDelta < -12) setShrunk(true);
+        else if (fingerDelta > 12) {
+            requestAnimationFrame(() => syncFromScroll(event.target));
+        }
+        lastTouchY = currentY;
+    };
+    const onTouchEnd = () => { lastTouchY = null; };
+    document.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
+    document.addEventListener('touchmove', onTouchMove, { capture: true, passive: true });
+    document.addEventListener('touchend', onTouchEnd, { capture: true, passive: true });
+    document.addEventListener('touchcancel', onTouchEnd, { capture: true, passive: true });
+
+    window.addEventListener('pageshow', () => syncFromScroll(), { passive: true });
+    window.addEventListener('resize', () => syncFromScroll(), { passive: true });
+    syncFromScroll();
+
+    window.__TP_LOCATION_SHRINK_READY__ = true;
+    return true;
+}
+
+// Bind whether this module is evaluated before or after DOMContentLoaded.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLocationHeaderShrinkBehavior, { once: true });
+} else {
+    initLocationHeaderShrinkBehavior();
+}
+
+
+// [AI-GENERATED][REGRESSION FIX][V325] Bind essential timer controls even when
+// app-core is evaluated after DOMContentLoaded by the asynchronous ES-module boot chain.
+let proofingControlsInitialized = false;
+function initProofingControlBindings() {
+    if (proofingControlsInitialized) return true;
+    const startButton = document.getElementById('main-start-btn');
+    const setButton = document.getElementById('set-btn');
+    const customInput = document.getElementById('custom-time');
+    const modeButtons = document.querySelectorAll('.mode-btn[id^="btn-mode-"]');
+
+    modeButtons.forEach((button) => {
+        if (button.dataset.tpProofingModeBound === 'v325') return;
+        button.dataset.tpProofingModeBound = 'v325';
+        bindReplaceableClick(button, () => {
+            const mode = button.id.replace('btn-mode-', '');
+            if (typeof setMode === 'function') setMode(mode);
+        });
+    });
+
+    if (setButton && setButton.dataset.tpCustomTimeBound !== 'v325') {
+        setButton.dataset.tpCustomTimeBound = 'v325';
+        bindReplaceableClick(setButton, () => {
+            if (typeof setCustomTime === 'function') setCustomTime();
+        });
+    }
+
+    if (customInput && customInput.dataset.tpCustomTimeEnterBound !== 'v325') {
+        customInput.dataset.tpCustomTimeEnterBound = 'v325';
+        customInput.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            if (typeof setCustomTime === 'function') setCustomTime();
+        });
+    }
+
+    if (startButton && startButton.dataset.tpProofingStartBound !== 'v325') {
+        startButton.dataset.tpProofingStartBound = 'v325';
+        bindReplaceableClick(startButton, () => {
+            // Do not await notification permission here: the countdown must start
+            // synchronously from the user's gesture. Notification service requests
+            // permission independently while scheduling the native alarm.
+            if (typeof triggerMainProofing === 'function') {
+                triggerMainProofing();
+            } else {
+                console.warn('[Proofing] triggerMainProofing belum tersedia.');
+            }
+        });
+    }
+
+    proofingControlsInitialized = Boolean(startButton || setButton || customInput || modeButtons.length);
+    return proofingControlsInitialized;
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProofingControlBindings, { once: true });
+} else {
+    initProofingControlBindings();
+}
+
+/**
  * =========================================================================
  * INISIALISASI UTAMA APLIKASI (SINGLE DOMCONTENTLOADED EVENT)
  * Semua pengikatan elemen UI, Event Listener, dan restore data digabung di sini
@@ -10426,51 +11085,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // [AI-GENERATED][REFACTOR] BLE buttons use data-action/event-delegation;
     // the old direct listener was redundant and could trigger a connection twice.
 
-    const scrollArea = document.querySelector('.scrollable-content');
-    const headerSection = document.getElementById('location-section');
-
-    if (scrollArea && headerSection) {
-        // Auto-shrink saat konten di-scroll ke bawah
-        scrollArea.addEventListener('scroll', () => {
-            if (scrollArea.scrollTop > 30) {
-                if (!headerSection.classList.contains('shrunk')) {
-                    headerSection.classList.add('shrunk');
-                    if (typeof updateMiniHeader === 'function') updateMiniHeader();
-                }
-            } else {
-                headerSection.classList.remove('shrunk');
-            }
-        });
-
-        // Gesture sentuh langsung pada location-section
-        let locTouchStartY = 0;
-        let locTouchMoved = false;
-
-        headerSection.addEventListener('touchstart', (e) => {
-            if (!e.touches || !e.touches[0]) return;
-            locTouchStartY = e.touches[0].clientY;
-            locTouchMoved = false;
-        }, { passive: true });
-
-        headerSection.addEventListener('touchmove', (e) => {
-            if (!e.touches || !e.touches[0]) return;
-            const deltaY = e.touches[0].clientY - locTouchStartY;
-            if (Math.abs(deltaY) < 20) return;
-            locTouchMoved = true;
-
-            if (deltaY < -30 && !headerSection.classList.contains('shrunk')) {
-                headerSection.classList.add('shrunk');
-                if (typeof updateMiniHeader === 'function') updateMiniHeader();
-            }
-            if (deltaY > 30 && headerSection.classList.contains('shrunk')) {
-                headerSection.classList.remove('shrunk');
-            }
-        }, { passive: true });
-
-        headerSection.addEventListener('touchend', () => {
-            locTouchMoved = false;
-        });
-    }
+    // [AI-GENERATED][ROBUSTNESS][V324] The independent initializer also runs after delayed module evaluation.
+    initLocationHeaderShrinkBehavior();
 
     // Mutation Observer Cuaca Mini Header
     const headerSectionAlt = document.getElementById('header-id');
@@ -10504,12 +11120,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    const miniMain = document.getElementById('shrunk-main');
-    const miniSub = document.getElementById('shrunk-sub');
-    if (miniMain && miniSub && typeof jalankanSwapMini === 'function') {
-        miniMain.addEventListener('click', jalankanSwapMini);
-        miniSub.addEventListener('click', jalankanSwapMini);
-    }
+    // Mini stats swap is delegated independently by initMiniStatsSwapBinding().
 
     const overlayArtikel = document.querySelector('.article-modal-overlay');
     if (overlayArtikel) {
@@ -10521,61 +11132,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // -----------------------------------------------------------------
-    // 5. TIMER CONTROLS & MODE PROSES
-    // -----------------------------------------------------------------
-    const tombolMode = document.querySelectorAll('.mode-btn[id^="btn-mode-"]');
-    tombolMode.forEach(button => {
-        button.addEventListener('click', () => {
-            const modeDipilih = button.id.replace('btn-mode-', '');
-            if (typeof setMode === 'function') {
-                setMode(modeDipilih);
-            } else {
-                console.warn("Fungsi setMode() asli belum dideklarasikan di dalam skrip.");
-            }
-        });
-    });
-
-    const btnSetCustomTime = document.getElementById('set-btn');
-    const inputCustomTime = document.getElementById('custom-time');
-    if (btnSetCustomTime && inputCustomTime) {
-        btnSetCustomTime.addEventListener('click', () => {
-            const waktuMenit = parseInt(inputCustomTime.value, 10);
-            if (!isNaN(waktuMenit) && waktuMenit > 0) {
-                window.DEBUG && console.log(`Menetapkan waktu proofer kustom secara aman: ${waktuMenit} menit.`);
-                if (typeof setCustomTime === 'function') {
-                    setCustomTime();
-                } else if (typeof updateTimerDisplay === 'function') {
-                    updateTimerDisplay(waktuMenit * 60);
-                }
-            } else {
-                alert("Mohon masukkan durasi menit yang valid (1 - 120 menit).");
-            }
-        });
-    }
-
-    const btnStartProofing = document.getElementById('main-start-btn');
-    if (btnStartProofing) {
-        btnStartProofing.addEventListener('click', async () => {
-            window.DEBUG && console.log("Tombol Start Proofing dipicu secara aman.");
-            let diizinkan = false;
-            if (typeof requestNotificationPermission === 'function') {
-                diizinkan = await requestNotificationPermission();
-            }
-            if (!diizinkan) {
-                console.warn("Melanjutkan tanpa notifikasi karena izin ditolak OS/User.");
-            }
-            if (typeof triggerMainProofing === 'function') {
-                triggerMainProofing();
-            } else {
-                console.warn("Fungsi triggerMainProofing() utama belum terdeteksi.");
-                if (typeof isProofingActive !== 'undefined') {
-                    isProofingActive = true;
-                    if (typeof startCountdownEngine === 'function') startCountdownEngine();
-                }
-            }
-        });
-    }
+    // Timer controls are initialized independently above so late ES-module
+    // evaluation cannot miss DOMContentLoaded or block START on notification permission.
 
     // -----------------------------------------------------------------
     // 7. REAL-TIME KALKULATOR RESEP & DATABASE BINDING
@@ -10629,10 +11187,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    const btnRecipeCloseTop = document.getElementById('btn-recipe-close-top');
-    if (btnRecipeCloseTop && typeof tutupHalamanResepSecaraAman === 'function') {
-        btnRecipeCloseTop.addEventListener('click', tutupHalamanResepSecaraAman);
-    }
+    // #btn-recipe-close-top is handled through the canonical data-action delegation.
 
     const btnCetak = document.getElementById('btn-cetak-pdf'); // Sesuaikan ID tombol Anda
     if (btnCetak) {
@@ -11125,11 +11680,27 @@ window.tampilkanDaftarResepTersimpan = async function() {
                 }
             });
 
-            card.querySelector('.recipe-print-btn').addEventListener('click', () => {
-                const printWindow = window.open('', '_blank');
-                if (!printWindow) return;
-                printWindow.document.write(`<!DOCTYPE html><html><head><title>Cetak Resep</title><style>body{font-family:Arial,sans-serif;padding:30px;color:#2c3e50;}h2{color:#4e342e;border-bottom:2px solid #e7e7e7;padding-bottom:10px;}.box{background:#fdfbf7;border:1px solid #e2e8f0;border-radius:8px;padding:15px;}.box p{margin:8px 0;font-size:14px;}</style></head><body><h2>🍩 ${namaResepHtml}</h2><div class="box"><p><strong>Tepung Utama:</strong> ${tepungUtamaHtml} gram</p><p><strong>Target Porsi:</strong> ${targetYieldHtml} pcs</p><p><strong>Waktu Disimpan:</strong> ${waktuSimpanHtml}</p></div><script>window.onload=function(){window.print();window.close();};<\/script></body></html>`);
-                printWindow.document.close();
+            card.querySelector('.recipe-print-btn').addEventListener('click', async (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const dropdown = card.querySelector('.recipe-dropdown-menu');
+                const menuWrapper = card.querySelector('.recipe-menu-wrapper');
+                if (dropdown) dropdown.style.display = 'none';
+                menuWrapper?.classList.remove('active');
+
+                const printButton = event.currentTarget;
+                const originalLabel = printButton.textContent;
+                printButton.disabled = true;
+                printButton.textContent = 'Menyiapkan PDF...';
+                try {
+                    const completed = await window.cetakResepTersimpanPremium(resep);
+                    if (completed && typeof showToast === 'function') {
+                        showToast(`Laporan premium resep "${namaResep}" berhasil dibuat.`);
+                    }
+                } finally {
+                    printButton.disabled = false;
+                    printButton.textContent = originalLabel;
+                }
             });
 
             card.querySelector('.recipe-delete-btn').addEventListener('click', async () => {

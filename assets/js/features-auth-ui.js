@@ -1,5 +1,5 @@
 import { AuthService } from './auth-service.js';
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261027-v317';
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v327';
 
 /** Fail closed when the required registration consent control is absent or unchecked. */
 export function validateRegistrationConsent({ documentRef = globalThis.document, onMissing } = {}) {

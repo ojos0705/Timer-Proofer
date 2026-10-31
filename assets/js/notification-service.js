@@ -1,4 +1,4 @@
-import { registerNotificationModalHooks, syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261027-v317'; // [AI-GENERATED][ES6 MODULE IDENTITY][V272]
+import { registerNotificationModalHooks, syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE IDENTITY][V272]
 /**
  * Timer Proofer notification service.
  * [AI-GENERATED][RECONSTRUCTION] Canonical owner for notification state, rendering,

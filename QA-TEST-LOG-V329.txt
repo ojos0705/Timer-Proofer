@@ -1,0 +1,40 @@
+QA RELEASE LOG — V329
+Date: 2026-10-31
+
+AUTOMATED REGRESSION
+Command: node --test tests/*.test.mjs
+Result: 468 passed, 0 failed, 0 skipped.
+
+STATIC RELEASE VERIFICATION
+Command: node scripts/verify-release.mjs
+Result: PASS
+- Precache paths: 74 verified
+- Local module graph: 67 modules
+- JavaScript files checked: 253
+- HTML files checked: 2
+- HTML IDs checked: 300
+- Missing relative imports: 0
+- Duplicate HTML IDs: 0
+- Inline event handlers: 0
+- Scroll-lock overrides: 0
+- Product-facing version: V125
+
+FUNCTION AUDIT
+Command: node scripts/audit-function-names.mjs
+Result: PASS
+- Duplicate function declarations within the same module: 0
+- Repeated function names across separate modules: 14 informational findings; names are module-scoped and are not duplicate declarations.
+
+SYNCHRONIZATION
+Command: node scripts/sync-web-assets.mjs
+Result: PASS
+- assets/ -> www/assets/
+- api/ -> www/public/api/
+- 74 precache entries validated
+
+NOT RUN
+- Android Studio Gradle build and physical-device system PiP test.
+- Live Google Translate widget and Abkhaz translation test.
+- Live Gemini endpoint request in production.
+
+The 468 automated tests and static checks are source-level verification; they do not replace online/provider or physical-device testing.

@@ -191,3 +191,49 @@ test('language engine delegates TranslateElement and script loading to the ESM a
     assert.match(sw, /'\.\/assets\/js\/google-translate-runtime\.js'/);
     assert.equal(typeof googleTranslateElementInit, 'function');
 });
+
+test('SDK success waits until its asynchronously rendered language selector is ready', async () => {
+    reset();
+    const harness = makeHarness();
+    let initCount = 0;
+    harness.windowRef.google = { translate: { TranslateElement: class {
+        constructor() {
+            initCount += 1;
+            setTimeout(() => {
+                if (!harness.selects.length) {
+                    harness.selects.push({ id: '', name: '', options: [{ value: '' }, { value: 'ab' }, { value: 'fr' }], dispatchEvent() {} });
+                }
+            }, 50);
+        }
+    } } };
+
+    const startedAt = Date.now();
+    assert.equal(await loadGoogleTranslateWidget({
+        documentRef: harness.documentRef,
+        windowRef: harness.windowRef,
+        timeoutMs: 1_200
+    }), true);
+    assert.ok(Date.now() - startedAt >= 40, 'loader must wait for the generated language selector');
+    assert.equal(harness.selects[0].id, 'google-translate-language');
+    assert.equal(harness.selects[0].name, 'googtrans');
+    assert.equal(initCount, 1);
+});
+
+test('SDK initialization without a language selector fails retryably and reinitializes on the next attempt', async () => {
+    reset();
+    const harness = makeHarness();
+    let initCount = 0;
+    harness.windowRef.google = { translate: { TranslateElement: class {
+        constructor() {
+            initCount += 1;
+            if (initCount === 2) {
+                harness.selects.push({ id: '', name: '', options: [{ value: '' }, { value: 'ab' }], dispatchEvent() {} });
+            }
+        }
+    } } };
+    const options = { documentRef: harness.documentRef, windowRef: harness.windowRef, timeoutMs: 1_000 };
+
+    await assert.rejects(loadGoogleTranslateWidget(options), { code: 'GOOGLE_TRANSLATE_SELECT_TIMEOUT' });
+    assert.equal(await loadGoogleTranslateWidget(options), true);
+    assert.equal(initCount, 2);
+});

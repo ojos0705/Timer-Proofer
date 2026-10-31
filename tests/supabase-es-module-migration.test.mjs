@@ -17,7 +17,7 @@ test('Supabase SDK is mapped as an ESM dependency and no longer loaded through a
 });
 
 test('runtime attempts the SDK bridge before importing boot and isolates an SDK load failure', () => {
-    assert.match(entry, /void initializeSupabaseSdkBridge\(\)[\s\S]*\.catch\(\(error\) => \{[\s\S]*__TP_SUPABASE_SDK_STATUS__ = 'unavailable'[\s\S]*await initializeRuntimeBootstrap\(\)[\s\S]*await import\('\.\/boot\.js\?v=20261027-v317'\)/);
+    assert.match(entry, /void initializeSupabaseSdkBridge\(\)[\s\S]*\.catch\(\(error\) => \{[\s\S]*__TP_SUPABASE_SDK_STATUS__ = 'unavailable'[\s\S]*await initializeRuntimeBootstrap\(\)[\s\S]*await import\('\.\/boot\.js\?v=20261031-v329'\)/);
     assert.doesNotMatch(entry, /await initializeSupabaseSdkBridge\(\)/, 'SDK network latency must not block the main app boot');
 });
 

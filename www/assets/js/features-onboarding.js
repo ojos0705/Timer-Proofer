@@ -1,13 +1,47 @@
 // [AI-GENERATED][REFACTOR] ES6 feature module: onboarding and guided tour.
 // Keeps the existing DOM contract and exposes only the legacy compatibility bridge needed by the app.
+// [AI-GENERATED][ONBOARDING PREVIEW][V326] A query flag lets an existing
+// authenticated user preview both onboarding screens without deleting the
+// Supabase session or permanently changing the seen flags.
+const ONBOARDING_PREVIEW_OPTIONS = (() => {
+    let enabled = false;
+    let reset = false;
+    try {
+        const params = new URLSearchParams(window.location.search);
+        enabled = params.get('tp-onboarding-preview') === '1';
+        reset = enabled && params.get('reset') === '1';
+    } catch (_) {
+        return { enabled: false };
+    }
+    if (reset) {
+        // Reset only QA preview markers. Never clear the Supabase session or
+        // the real first-visit flags stored in localStorage. Storage may be
+        // unavailable in a restricted browser; the preview must still run.
+        try { sessionStorage.removeItem('tp_onboarding_preview_done'); } catch (_) {}
+        try { sessionStorage.removeItem('tp_welcome_preview_done'); } catch (_) {}
+    }
+    return { enabled };
+})();
+function onboardingPreviewRequested() {
+    return ONBOARDING_PREVIEW_OPTIONS.enabled;
+}
+function isPreviewScreenActive(sessionKey) {
+    if (!onboardingPreviewRequested()) return false;
+    try { return sessionStorage.getItem(sessionKey) !== '1'; }
+    catch (_) { return true; }
+}
+
 class OnboardingManager {
     constructor() {
         this.currentSlide = 0;
         this.totalSlides = 3;
+        this.previewSessionKey = 'tp_onboarding_preview_done';
 
         this.screen = document.getElementById('onboarding-screen');
         this.track = document.getElementById('ob-slider-track');
+        this.sliderWrapper = this.screen?.querySelector('.ob-slider-wrapper') || document.querySelector('.ob-slider-wrapper');
         this.dots = document.querySelectorAll('.ob-dot');
+        this.swipePointerState = null;
         this.btnNext = document.getElementById('ob-btn-next');
         this.btnSkip = document.getElementById('ob-btn-skip');
 
@@ -17,13 +51,17 @@ class OnboardingManager {
     init() {
         // Cek apakah pengguna sudah pernah melihat onboarding
         const hasSeenOnboarding = localStorage.getItem('tp_onboarding_seen');
-        if (!hasSeenOnboarding) {
+        if (this.isPreviewActive() || !hasSeenOnboarding) {
             this.show();
         } else {
             this.hide();
         }
 
         this.bindEvents();
+    }
+
+    isPreviewActive() {
+        return isPreviewScreenActive(this.previewSessionKey);
     }
 
     bindEvents() {
@@ -37,10 +75,92 @@ class OnboardingManager {
 
         this.dots.forEach(dot => {
             dot.addEventListener('click', (e) => {
-                const idx = parseInt(e.target.dataset.index);
-                this.goToSlide(idx);
+                const idx = Number.parseInt(e.target.dataset.index, 10);
+                if (Number.isInteger(idx)) this.goToSlide(idx);
             });
         });
+
+        this.bindSwipeEvents();
+    }
+
+    /**
+     * [AI-GENERATED][MOBILE-UX][V324]
+     * Enable horizontal swipe navigation on the pre-login onboarding slider.
+     * touch-action: pan-y keeps native vertical gesture handling while allowing
+     * Pointer Events to recognize horizontal movement without blocking taps.
+     */
+    bindSwipeEvents() {
+        const wrapper = this.sliderWrapper;
+        if (!wrapper || wrapper.dataset.tpSwipeBound === 'v324') return;
+        wrapper.dataset.tpSwipeBound = 'v324';
+
+        const begin = (event) => {
+            if (event.isPrimary === false || (event.button !== undefined && event.button !== 0)) return;
+            if (event.target?.closest?.('button, a, input, select, textarea, [data-no-swipe]')) return;
+            this.swipePointerState = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                startY: event.clientY,
+                startedAt: Date.now()
+            };
+            try {
+                if (event.pointerId !== undefined && wrapper.setPointerCapture) {
+                    wrapper.setPointerCapture(event.pointerId);
+                }
+            } catch (_) {
+                // Pointer capture is an enhancement; swipe still works without it.
+            }
+        };
+
+        const finish = (event) => {
+            const state = this.swipePointerState;
+            if (!state) return;
+            if (state.pointerId !== undefined && event.pointerId !== undefined
+                && state.pointerId !== event.pointerId) return;
+
+            this.swipePointerState = null;
+            const deltaX = event.clientX - state.startX;
+            const deltaY = event.clientY - state.startY;
+            const elapsed = Math.max(1, Date.now() - state.startedAt);
+            const horizontalDistance = Math.abs(deltaX);
+            const horizontalDominant = horizontalDistance > Math.abs(deltaY) * 1.15;
+            const fastEnough = horizontalDistance / elapsed >= 0.25;
+
+            if (!horizontalDominant || (horizontalDistance < 44 && !fastEnough)) return;
+            if (deltaX < 0) this.nextSlide();
+            else this.previousSlide();
+        };
+
+        const cancel = () => { this.swipePointerState = null; };
+
+        if ('PointerEvent' in window) {
+            wrapper.addEventListener('pointerdown', begin, { passive: true });
+            wrapper.addEventListener('pointerup', finish, { passive: true });
+            wrapper.addEventListener('pointercancel', cancel, { passive: true });
+            wrapper.addEventListener('lostpointercapture', cancel, { passive: true });
+        } else {
+            // Legacy WebView fallback. Only bind when Pointer Events are absent,
+            // so a single physical gesture can never advance two slides.
+            let touchStart = null;
+            wrapper.addEventListener('touchstart', (event) => {
+                const touch = event.changedTouches?.[0];
+                if (!touch) return;
+                touchStart = { x: touch.clientX, y: touch.clientY, at: Date.now() };
+            }, { passive: true });
+            wrapper.addEventListener('touchend', (event) => {
+                if (!touchStart) return;
+                const touch = event.changedTouches?.[0];
+                const start = touchStart;
+                touchStart = null;
+                if (!touch) return;
+                const deltaX = touch.clientX - start.x;
+                const deltaY = touch.clientY - start.y;
+                if (Math.abs(deltaX) < 44 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) return;
+                if (deltaX < 0) this.nextSlide();
+                else this.previousSlide();
+            }, { passive: true });
+            wrapper.addEventListener('touchcancel', () => { touchStart = null; }, { passive: true });
+        }
     }
 
     show() {
@@ -52,22 +172,25 @@ class OnboardingManager {
     }
 
     goToSlide(index) {
-        this.currentSlide = index;
+        const nextIndex = Number.isInteger(index)
+            ? Math.min(this.totalSlides - 1, Math.max(0, index))
+            : this.currentSlide;
+        this.currentSlide = nextIndex;
         if (this.track) {
-            this.track.style.transform = `translateX(-${index * 33.333}%)`;
+            this.track.style.transform = `translateX(-${this.currentSlide * 33.333}%)`;
         }
 
         // Update indikator titik
         this.dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
+            dot.classList.toggle('active', i === this.currentSlide);
         });
 
         // Ubah teks tombol di slide terakhir
         if (this.currentSlide === this.totalSlides - 1) {
-            this.btnNext.innerText = 'Masuk / Daftar';
+            if (this.btnNext) this.btnNext.innerText = 'Masuk / Daftar';
             if (this.btnSkip) this.btnSkip.style.visibility = 'hidden';
         } else {
-            this.btnNext.innerText = 'Lanjutkan';
+            if (this.btnNext) this.btnNext.innerText = 'Lanjutkan';
             if (this.btnSkip) this.btnSkip.style.visibility = 'visible';
         }
     }
@@ -80,8 +203,16 @@ class OnboardingManager {
         }
     }
 
+    previousSlide() {
+        if (this.currentSlide > 0) this.goToSlide(this.currentSlide - 1);
+    }
+
     finish() {
-        localStorage.setItem('tp_onboarding_seen', 'true');
+        if (this.isPreviewActive()) {
+            try { sessionStorage.setItem(this.previewSessionKey, '1'); } catch (_) {}
+        } else {
+            localStorage.setItem('tp_onboarding_seen', 'true');
+        }
         this.hide();
         // Catatan: form login (#auth-wrapper) tidak perlu dimunculkan manual di sini —
         // CSS "body.logged-out .auth-container" sudah otomatis menampilkannya
@@ -137,6 +268,7 @@ class AppOnboardingManager {
 
         this.currentSlide = 0;
         this.currentTourStep = 0;
+        this.previewSessionKey = 'tp_welcome_preview_done';
         // [AI-GENERATED][ROBUSTNESS][V111] Own the delayed tour render so a stale
         // callback cannot mutate the UI after the tour advances or closes.
         this.tourRenderTimer = null;
@@ -177,6 +309,7 @@ class AppOnboardingManager {
                 this.goToSlide(idx);
             });
         });
+        this.bindWelcomeSwipeEvents();
 
         // Welcome Buttons
         if (this.btnStartTour) {
@@ -213,6 +346,49 @@ class AppOnboardingManager {
         this.watchLoginState();
     }
 
+    bindWelcomeSwipeEvents() {
+        const surface = this.welcomeModal?.querySelector('.welcome-slider-container');
+        if (!surface || surface.dataset.tpSwipeBound === 'v326') return;
+        surface.dataset.tpSwipeBound = 'v326';
+        let start = null;
+        const onStart = (event) => {
+            if (event.isPrimary === false || (event.button !== undefined && event.button !== 0)) return;
+            start = { x: event.clientX, y: event.clientY, at: Date.now(), id: event.pointerId };
+        };
+        const onEnd = (event) => {
+            if (!start || (start.id !== undefined && event.pointerId !== undefined && start.id !== event.pointerId)) return;
+            const dx = event.clientX - start.x;
+            const dy = event.clientY - start.y;
+            const elapsed = Math.max(1, Date.now() - start.at);
+            start = null;
+            if (Math.abs(dx) < 44 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
+            if (Math.abs(dx) / elapsed < 0.18 && Math.abs(dx) < 60) return;
+            if (dx < 0) this.goToSlide(Math.min(2, this.currentSlide + 1));
+            else this.goToSlide(Math.max(0, this.currentSlide - 1));
+        };
+        const onCancel = () => { start = null; };
+        if ('PointerEvent' in window) {
+            surface.addEventListener('pointerdown', onStart, { passive: true });
+            surface.addEventListener('pointerup', onEnd, { passive: true });
+            surface.addEventListener('pointercancel', onCancel, { passive: true });
+        } else {
+            surface.addEventListener('touchstart', (event) => {
+                const touch = event.changedTouches?.[0];
+                if (touch) start = { x: touch.clientX, y: touch.clientY, at: Date.now() };
+            }, { passive: true });
+            surface.addEventListener('touchend', (event) => {
+                const touch = event.changedTouches?.[0];
+                if (!touch || !start) return;
+                onEnd({ clientX: touch.clientX, clientY: touch.clientY });
+            }, { passive: true });
+            surface.addEventListener('touchcancel', onCancel, { passive: true });
+        }
+    }
+
+    isPreviewActive() {
+        return isPreviewScreenActive(this.previewSessionKey);
+    }
+
     /** --- LOGIKA WELCOME SCREEN --- */
     checkFirstVisit() {
         // [AI-GENERATED][ROBUSTNESS][V112] Re-check auth state at execution time,
@@ -221,7 +397,7 @@ class AppOnboardingManager {
         if (!document.body.classList.contains('logged-in')) return;
 
         const hasSeenWelcome = localStorage.getItem('tp_welcome_seen');
-        if (!hasSeenWelcome) {
+        if (this.isPreviewActive() || !hasSeenWelcome) {
             this.showWelcome();
         }
     }
@@ -322,6 +498,10 @@ class AppOnboardingManager {
     }
 
     setSeenStatus() {
+        if (this.isPreviewActive()) {
+            try { sessionStorage.setItem(this.previewSessionKey, '1'); } catch (_) {}
+            return;
+        }
         localStorage.setItem('tp_welcome_seen', 'true');
     }
 
@@ -331,7 +511,7 @@ class AppOnboardingManager {
             this.sliderTrack.style.transform = `translateX(-${index * 33.333}%)`;
         }
         this.dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
+            dot.classList.toggle('active', i === this.currentSlide);
         });
     }
 

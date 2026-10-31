@@ -1,0 +1,45 @@
+TIMER PROOFER — RELEASE V326
+Product-facing version: V125
+Technical release token: 20261030-v326
+Service Worker cache: Timer-Proofing-v1.1.228
+Date: 2026-10-30
+
+CHANGES
+1. PWA/browser Picture-in-Picture:
+   - Retains desktop Document Picture-in-Picture where supported.
+   - Adds a canvas-backed muted-video PiP path for browsers that support
+     HTMLVideoElement.requestPictureInPicture(), including Chrome Android.
+   - Keeps the in-app mini widget as a fallback where system PiP is unavailable
+     or a browser rejects the PiP request.
+   - PiP button toggles the active PiP/mini surface closed.
+2. Back handling while countdown runs:
+   - Removes beforeunload confirmation that caused the browser prompt
+     “Leave this page/site?”.
+   - Persists the absolute timer state on pagehide.
+   - Adds a browser history guard while the countdown is active.
+   - Native Capacitor Back enters native PiP or minimizes the Activity on failure.
+   - Android PiP params are prepared for automatic entry on supported OS versions.
+3. Article detail:
+   - Existing article modal is portaled to documentElement while active.
+   - Full viewport sizing, topmost z-index, internal vertical scrolling, and safe areas.
+4. Onboarding and Welcome:
+   - Adds a repeatable QA preview query flag.
+   - Preview reset clears only preview sessionStorage keys, not Supabase session,
+     localStorage auth data, or actual first-visit completion flags.
+   - Welcome slider supports pointer/touch horizontal swipe.
+
+QA
+- node scripts/sync-web-assets.mjs: passed
+- node scripts/verify-release.mjs: passed
+- node scripts/audit-function-names.mjs: passed; no duplicate function declaration
+  within a module; cross-module same-name helpers are informational.
+- node --test tests/*.test.mjs: 448 passed, 0 failed.
+- Release audit: 249 JavaScript files, 2 HTML files, 300 IDs; 0 missing imports,
+  0 duplicate HTML IDs, 0 inline handlers, 0 scroll-lock overrides.
+
+NOT TESTED ON PHYSICAL DEVICE
+- Android Gradle build and device-level native PiP were not run in this environment.
+- Browser/device-level PWA video PiP and gesture tests remain to be performed on
+  Chrome Android / target device.
+- Chrome/browser support and user-activation rules apply to video PiP. Where
+  the browser rejects OS PiP, the app falls back to its in-app mini widget.

@@ -1,0 +1,11 @@
+Timer Proofer technical release V322
+Product version remains V125.
+
+- Improved AI Tips text layout with a dedicated formatter; AI Analysis formatter is unchanged.
+- Recipe detail close returns to recipe-master-view.
+- Timer page location header shrink observes nested and document scrolling.
+- loc-line1 and loc-line2 use stable brand colors.
+- Premium PDF template is rendered in the viewport with layout wait, capture sizing, progress overlay, error handling and cleanup.
+- Service Worker cache: Timer-Proofing-v1.1.225.
+
+See RECIPE-UI-PRINT-FIX-V322.md and QA-TEST-LOG-V322.txt for details.
