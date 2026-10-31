@@ -133,7 +133,7 @@ test('Service Worker rejects partial precache and preserves the previous active 
     assert.equal(harness.fetchCalls.length, 2, 'install should stop after the first required asset failure');
     assert.equal(harness.putCalls.length, 1, 'only the first successfully fetched asset should have been stored');
     assert.equal(harness.skipWaitingCalls, 0, 'a partial worker must not skip waiting');
-    assert.deepEqual(harness.cacheDeletes, ['Timer-Proofing-v1.1.229']);
+    assert.deepEqual(harness.cacheDeletes, ['Timer-Proofing-v1.1.230']);
 });
 
 

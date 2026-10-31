@@ -1,5 +1,5 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v327'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v328'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
 import { init as initializeAppLifecycle, setTimerBackGuard } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261030-v327'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261031-v328'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -5695,6 +5695,9 @@ async function tanganiPerubahanResepRealtime(payload) {
 let webVideoPipState = null;
 
 function canUseVideoPictureInPicture() {
+    // Capacitor Android must use the Activity's system PiP only. Never create
+    // a second WebView video-PiP surface inside the native Activity.
+    if (NativeCapacitorService.isNativePlatform()) return false;
     return typeof HTMLVideoElement !== 'undefined'
         && typeof HTMLVideoElement.prototype.requestPictureInPicture === 'function'
         && document.pictureInPictureEnabled === true;
@@ -5823,6 +5826,38 @@ function activateInAppMiniTimer() {
 async function aktifkanModePIP(options = {}) {
     const fromBack = options?.fromBack === true;
 
+    // [AI-GENERATED][NATIVE PIP SINGLE SURFACE][V328]
+    // Capacitor Android owns exactly one PiP surface: the MainActivity itself.
+    // Do not let the browser video/document PiP paths create a second window.
+    if (NativeCapacitorService.isNativePlatform()) {
+        if (document.pictureInPictureElement && typeof document.exitPictureInPicture === 'function') {
+            try { await document.exitPictureInPicture(); } catch (error) {
+                console.warn('[Proofing][PiP] Gagal membersihkan video-PiP web sebelum native PiP:', error);
+            }
+        }
+        if (webVideoPipState?.cleanup) {
+            try { webVideoPipState.cleanup(); } catch (_) {}
+        }
+        if (pipWindowInstance) {
+            try { pipWindowInstance.close(); } catch (_) {}
+            pipWindowInstance = null;
+            if (pipIntervalInstance !== null) clearInterval(pipIntervalInstance);
+            pipIntervalInstance = null;
+        }
+
+        const nativePipPlugin = NativeCapacitorService.getPlugin('TimerPip');
+        if (typeof nativePipPlugin?.enterPictureInPicture !== 'function') return false;
+        document.body?.classList.add('native-pip');
+        try {
+            const result = await nativePipPlugin.enterPictureInPicture();
+            if (result?.entered === true) return true;
+        } catch (error) {
+            console.warn('[Proofing][PiP] Gagal mengaktifkan PiP native:', error);
+        }
+        document.body?.classList.remove('native-pip');
+        return false;
+    }
+
     // If the user taps the PiP control while the in-app fallback is already
     // compacted, treat the action as a close toggle before opening another mode.
     const appContainer = document.getElementById('app-container');
@@ -5843,22 +5878,6 @@ async function aktifkanModePIP(options = {}) {
         }
     }
     if (document.pictureInPictureElement && fromBack) return true;
-
-    // Native Android uses the platform Activity PiP window.
-    if (NativeCapacitorService.isNativePlatform()) {
-        const nativePipPlugin = NativeCapacitorService.getPlugin('TimerPip');
-        if (typeof nativePipPlugin?.enterPictureInPicture === 'function') {
-            document.body?.classList.add('native-pip');
-            try {
-                const result = await nativePipPlugin.enterPictureInPicture();
-                if (result?.entered === true) return true;
-            } catch (error) {
-                console.warn('[Proofing][PiP] Gagal mengaktifkan PiP native:', error);
-            }
-            document.body?.classList.remove('native-pip');
-        }
-        return false;
-    }
 
     // Desktop Chromium may open an arbitrary HTML Document PiP window.
     if ('documentPictureInPicture' in window) {
@@ -8221,7 +8240,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261030-v327');
+        metadataUrl.searchParams.set('_release', '20261031-v328');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);

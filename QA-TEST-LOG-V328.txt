@@ -1,0 +1,46 @@
+TIMER PROOFER — QA TEST LOG V328
+Date: 2026-10-31
+Product version: V125
+Technical release: V328
+
+AUTOMATED TESTS
+- Command: npm test
+- Result: PASS
+- Total tests: 461
+- Passed: 461
+- Failed: 0
+- Skipped: 0
+
+RELEASE AUDIT
+- Web asset/API synchronization: PASS
+- Required entrypoint files: 8 available
+- Precache paths checked: 74; no missing local assets
+- Entrypoint module graph: 67 local modules
+- JavaScript files inspected: 252
+- HTML files inspected: 2
+- HTML IDs inspected: 300
+- Missing imports: 0
+- Duplicate HTML IDs: 0
+- Inline handlers: 0
+- Scroll-lock overrides: 0
+- Duplicate function declarations within a module: 0
+- Product version: V125
+- Service Worker cache: Timer-Proofing-v1.1.230
+- Release token: 20261031-v328
+
+TARGETED V328 TESTS
+- Settings save calls stopPreview before modal close: PASS
+- Disabling sound checkbox stops preview: PASS
+- Settings audition uses isolated preview API: PASS
+- Delayed audio.play rejection cannot restart audio after stop: PASS
+- Native Capacitor cannot open browser video PiP: PASS
+- Native PiP path executes before browser PiP paths: PASS
+- Native path closes any stale browser PiP surfaces: PASS
+
+NOT RUN / DEVICE VALIDATION REQUIRED
+- Live Android system PiP on a physical phone: NOT RUN
+- Android Gradle APK build using user's Windows SDK: NOT RUN
+- Physical device alarm-audio preview: NOT RUN
+- PWA PiP on the user's browser: NOT RUN in this environment
+
+The 461 passing tests are automated source/regression tests. They do not certify physical Android PiP behavior or live audio playback on a device.
