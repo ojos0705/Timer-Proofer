@@ -2,8 +2,8 @@ TIMER PROOFER — V335 RELEASE SUMMARY
 Date: 2026-11-01
 Product-facing version: V125
 Technical build: es6-modular-v335
-Service Worker cache: Timer-Proofing-v1.1.237
-Release token: 20261101-v335
+Service Worker cache: Timer-Proofing-v1.1.238
+Release token: 20261101-v336
 
 CHANGES
 - PWA and Android launcher/adaptive/splash assets aligned to the Timer Proofer donut brand.

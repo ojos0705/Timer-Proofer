@@ -57,7 +57,7 @@ test('premium print is awaitable, renders in viewport and waits for layout befor
 
 test('technical cache token is V327 while product-facing version remains V125', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261101-v335');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.237');
-    assert.match(html, /runtime-entry\.js\?v=20261101-v335/);
+    assert.equal(version.releaseToken, '20261101-v336');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.238');
+    assert.match(html, /runtime-entry\.js\?v=20261101-v336/);
 });

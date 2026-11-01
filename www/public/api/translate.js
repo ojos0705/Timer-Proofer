@@ -308,13 +308,27 @@ async function translateOneText(text, targetLanguage) {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
   res.setHeader('Access-Control-Max-Age', '86400');
   res.setHeader('Vary', 'Origin');
-  res.setHeader('Allow', 'POST, OPTIONS');
+  res.setHeader('Allow', 'GET, POST, OPTIONS');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
+  // Safe GET health response for browser/manual endpoint checks. Translation
+  // itself remains authenticated and POST-only; this response never calls the
+  // provider or discloses account/session details.
+  if (req.method === 'GET') {
+    return json(res, 200, {
+      endpoint: 'reachable',
+      service: 'Timer Proofer Translation API',
+      provider: 'MyMemory',
+      translationMethod: 'POST',
+      authenticationRequired: true,
+      accepts: ['GET', 'POST', 'OPTIONS'],
+      note: 'GET hanya memeriksa endpoint. Terjemahan memerlukan POST JSON dengan sesi login yang valid.'
+    });
+  }
   if (req.method !== 'POST') {
     return json(res, 405, { error: 'Metode tidak diizinkan.', code: 'METHOD_NOT_ALLOWED' });
   }

@@ -70,7 +70,7 @@ test('V334 language picker explains free-provider limits and deployment/network 
 
 test('V334 advances only technical metadata while product version stays V125', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261101-v335');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.237');
-    assert.match(html, /runtime-entry\.js\?v=20261101-v335/);
+    assert.equal(version.releaseToken, '20261101-v336');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.238');
+    assert.match(html, /runtime-entry\.js\?v=20261101-v336/);
 });

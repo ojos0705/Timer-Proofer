@@ -5,7 +5,7 @@
  */
 import { NativeCapacitorService } from './native-capacitor-service.js';
 import { toggleModal } from './modal.js';
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261101-v335'; // [AI-GENERATED][ES6 MODULE IDENTITY][V332]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261101-v336'; // [AI-GENERATED][ES6 MODULE IDENTITY][V332]
 import { postJson } from './api-client-service.js';
 import { isMidtransConfigured, loadMidtransSnap } from './midtrans-runtime.js';
 import { OfflineI18n } from './offline-i18n.js';

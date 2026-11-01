@@ -74,7 +74,7 @@ test('V332 App Tour highlights recipe and tips tabs above the overlay using the 
 
 test('V332 leaves product-facing version unchanged and advances only technical cache/release tokens', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261101-v335');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.237');
-    assert.match(html, /runtime-entry\.js\?v=20261101-v335/);
+    assert.equal(version.releaseToken, '20261101-v336');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.238');
+    assert.match(html, /runtime-entry\.js\?v=20261101-v336/);
 });
