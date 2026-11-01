@@ -55,10 +55,10 @@ test('weather-driven accent is scoped to location header and no longer recolors 
   assert.match(html, /id="ai-recommendation"[^>]*color:\s*#4E342E/);
 });
 
-test('technical cache boundary advances while visible product version remains V125 while visible product version remains V125', () => {
+test('technical cache boundary advances while visible product version remains V125', () => {
   assert.equal(version.version, 'V125');
-  assert.equal(version.releaseToken, '20261031-v329');
-  assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.231');
-  assert.match(html, /runtime-entry\.js\?v=20261031-v329/);
-  assert.match(sw, /const CACHE_NAME = 'Timer-Proofing-v1\.1\.231'/);
+  assert.equal(version.releaseToken, '20261101-v335');
+  assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.237');
+  assert.match(html, /runtime-entry\.js\?v=20261101-v335/);
+  assert.match(sw, /const CACHE_NAME = 'Timer-Proofing-v1\.1\.237'/);
 });

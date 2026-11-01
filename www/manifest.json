@@ -10,15 +10,21 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "logo-donat.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "assets/icons/timer-proofer-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "logo-donat.svg",
+      "src": "assets/icons/timer-proofer-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/timer-proofer-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ]

@@ -48,7 +48,7 @@
 // [AI-GENERATED][PWA][V270] Remove the unused ProofingService global; proofing is now ESM-only internally.
 // [AI-GENERATED][PWA][V279] Invalidate caches after owner/editor-bound recipe save transactions.
 // [AI-GENERATED][PWA][V300] Invalidate the cache after restoring the complete web asset tree.
-const CACHE_NAME = 'Timer-Proofing-v1.1.231';
+const CACHE_NAME = 'Timer-Proofing-v1.1.237';
 // [AI-GENERATED][PWA][V328] Cache isolated alarm preview lifecycle and single-surface native Activity PiP.
 
 const ASSETS = [
@@ -56,6 +56,10 @@ const ASSETS = [
   './index.html',
   './manifest.json',
   './logo-donat.svg',
+  './assets/icons/timer-proofer-192.png',
+  './assets/icons/timer-proofer-512.png',
+  './assets/icons/timer-proofer-maskable-512.png',
+  './assets/icons/timer-proofer-apple-touch-180.png',
   './assets/js/boot.js',
   './assets/js/runtime-entry.js', // [AI-GENERATED][PWA][V264]
   './assets/js/runtime-bootstrap.js', // [AI-GENERATED][PWA][V255]
@@ -63,7 +67,9 @@ const ASSETS = [
   './assets/js/pdf-render-service.js', // [AI-GENERATED][PWA][V258]
   './assets/js/pdf-export-service.js', // [AI-GENERATED][PWA][V258]
   './assets/js/midtrans-runtime.js', // [AI-GENERATED][PWA][V259]
-  './assets/js/google-translate-runtime.js', // [AI-GENERATED][PWA][V260]
+  './assets/js/cloud-translation-service.js', // [AI-GENERATED][PWA][V332]
+  './assets/js/translation-utils.js', // [AI-GENERATED][PWA][V332]
+  './assets/js/online-i18n.js', // [AI-GENERATED][PWA][V332]
   './vendor/capacitor-plugins.js',
   './assets/js/modal-bootstrap.js', // [AI-GENERATED][PWA][V263] Canonical modal-core ESM exports.
   './assets/js/tipsData.js',

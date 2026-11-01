@@ -148,16 +148,37 @@ if (version) {
         if (!moduleManifestSource.includes('midtrans-runtime.js')) {
             failures.push('midtrans-runtime.js belum terdaftar pada module-manifest.js.');
         }
-        // [AI-GENERATED][QA][V260] Google Translate's callback-driven SDK stays behind an ES-module adapter.
-        const googleTranslatePath = path.join(root, 'assets/js/google-translate-runtime.js');
-        const googleTranslateRuntime = fs.existsSync(googleTranslatePath) ? fs.readFileSync(googleTranslatePath, 'utf8') : '';
-        if (!fs.existsSync(googleTranslatePath)) failures.push('Adapter ES6 Module google-translate-runtime.js tidak ditemukan.');
-        if (!/from\s+[\"']\.\/google-translate-runtime\.js[\"']/.test(languageEngine) || !/await\s+loadGoogleTranslateWidget\(/.test(languageEngine)) {
-            failures.push('language-engine.js harus memuat Google Translate melalui adapter ES6 Module.');
+        // [AI-GENERATED][QA][V334] Online localization uses the authenticated free MyMemory proxy.
+        const cloudTranslationPath = path.join(root, 'assets/js/cloud-translation-service.js');
+        const onlineI18nPath = path.join(root, 'assets/js/online-i18n.js');
+        const translateApiPath = path.join(root, 'api/translate.js');
+        const languagesApiPath = path.join(root, 'api/translate-languages.js');
+        const languageCodesPath = path.join(root, 'api/translation-language-codes.js');
+        const cloudTranslationSource = fs.existsSync(cloudTranslationPath) ? fs.readFileSync(cloudTranslationPath, 'utf8') : '';
+        const onlineI18nSource = fs.existsSync(onlineI18nPath) ? fs.readFileSync(onlineI18nPath, 'utf8') : '';
+        const translateApiSource = fs.existsSync(translateApiPath) ? fs.readFileSync(translateApiPath, 'utf8') : '';
+        const languageCodesSource = fs.existsSync(languageCodesPath) ? fs.readFileSync(languageCodesPath, 'utf8') : '';
+        if (!cloudTranslationSource || !onlineI18nSource || !translateApiSource || !fs.existsSync(languagesApiPath) || !languageCodesSource) {
+            failures.push('Adapter MyMemory, OnlineI18n, dan endpoint katalog kandidat lokal harus tersedia.');
         }
-        if (/function\s+gtLoadScript\s*\(/.test(languageEngine)) failures.push('Loader skrip Google Translate lama belum dipindahkan dari language-engine.js.');
-        if (!moduleManifestSource.includes('google-translate-runtime.js')) failures.push('google-translate-runtime.js belum terdaftar pada module-manifest.js.');
-        if (!googleTranslateRuntime.includes('googleTranslateElementInit')) failures.push('Bridge callback Google Translate tidak ditemukan pada adapter.');
+        if (!/from\s+[\"']\.\/online-i18n\.js[\"']/.test(languageEngine) || !/OnlineI18n\.apply\(/.test(languageEngine)) {
+            failures.push('language-engine.js harus menerapkan terjemahan online melalui OnlineI18n.');
+        }
+        if (/google-translate-runtime\.js|loadGoogleTranslateWidget|googtrans/.test(languageEngine)) {
+            failures.push('Google Website Translator yang sudah dihentikan masih dipakai oleh language-engine.js.');
+        }
+        if (!moduleManifestSource.includes('cloud-translation-service.js') || !moduleManifestSource.includes('online-i18n.js')) {
+            failures.push('Adapter terjemahan online belum terdaftar pada module-manifest.js.');
+        }
+        if (!moduleManifestSource.includes("retiredFromRuntime: ['google-translate-runtime.js'")) {
+            failures.push('Google Translate legacy adapter harus dikeluarkan dari runtime aktif.');
+        }
+        if (!/api\.mymemory\.translated\.net\/get/.test(translateApiSource) || /GOOGLE_CLOUD_TRANSLATE_API_KEY/.test(translateApiSource + cloudTranslationSource)) {
+            failures.push('Backend harus memakai endpoint MyMemory gratis dan tidak boleh bergantung pada kredensial Cloud Translation.');
+        }
+        if (!/MYMEMORY_CONTACT_EMAIL/.test(translateApiSource) || !/requireSupabaseUser/.test(translateApiSource) || !/Authorization/.test(cloudTranslationSource)) {
+            failures.push('Proxy MyMemory harus mendukung email kontak opsional dan tetap memverifikasi sesi Supabase.');
+        }
         // [AI-GENERATED][QA][V261] OfflineI18n must be a canonical ES6 Module export.
         const offlineI18nPath = path.join(root, 'assets/js/offline-i18n.js');
         const offlineI18nSource = fs.existsSync(offlineI18nPath) ? fs.readFileSync(offlineI18nPath, 'utf8') : '';
@@ -745,8 +766,11 @@ else if (version) {
     if (!sw.includes("'./assets/js/midtrans-runtime.js'")) {
         failures.push('Adapter Midtrans ES6 Module tidak ada di precache Service Worker.');
     }
-    if (!sw.includes("'./assets/js/google-translate-runtime.js'")) {
-        failures.push('Adapter Google Translate ES6 Module tidak ada di precache Service Worker.');
+    if (!sw.includes("'./assets/js/cloud-translation-service.js'") || !sw.includes("'./assets/js/online-i18n.js'")) {
+        failures.push('MyMemory adapter dan OnlineI18n harus tersedia di precache Service Worker.');
+    }
+    if (sw.includes("'./assets/js/google-translate-runtime.js'")) {
+        failures.push('Google Website Translator yang sudah dihentikan harus dikeluarkan dari precache aktif.');
     }
     if (!sw.includes("'./assets/js/language-list-service.js'")) {
         failures.push('Language list ES6 Module tidak ada di precache Service Worker.');

@@ -1,0 +1,33 @@
+TIMER PROOFER — TECHNICAL RELEASE V334
+
+Product version: V125
+Technical build: es6-modular-v334
+Release token: 20261101-v334
+Service Worker cache: Timer-Proofing-v1.1.236
+
+Changes
+- Keep Welcome Screen unchanged.
+- Make the Login/Register panel edge-to-edge on narrow mobile WebViews to remove unused top/bottom strips. Safe-area spacing is applied inside the panel; its own vertical scroll handles short viewports/keyboard resizing.
+- Retain a constrained, centered auth panel on wider screens.
+- Replace the Cloud Translation/Billing dependency with the free MyMemory provider through the authenticated Vercel route /api/translate.
+- The provider requires no Google API key, no Google Cloud Billing, and no payment card.
+- Default anonymous allowance follows MyMemory's documented 5,000 characters/day. Optional MYMEMORY_CONTACT_EMAIL can raise the documented limit to 50,000 characters/day.
+- Keep language candidates local; do not make an extra language-catalog network request. Provider support is validated at actual translation time.
+- Keep user-authored recipe/profile content excluded from auto translation.
+- Align browser batch size with the backend/provider byte and character limits; split long UTF-8 text safely and preserve whitespace.
+- Clarify unsupported-pair, quota, login, route, WebView-network, provider-network, and timeout failures.
+- Map additional MyMemory provider language-selection errors to unsupported-pair responses.
+
+Validation
+- npm test: 497 passed, 0 failed.
+- Static release verifier: 76 Service Worker precache assets; 69 local modules in boot graph; 270 JS files inspected; 2 HTML files; 300 HTML IDs; 0 missing imports; 0 duplicate IDs; 0 inline event handlers; 0 scroll-lock overrides outside owner.
+- Duplicate named function declarations in the same module: 0.
+- ZIP integrity and clean extraction checked after packaging.
+
+Not claimed as verified
+- No live MyMemory API request was possible from the build environment; provider tests mock the external HTTP boundary.
+- No Vercel Preview/Production deployment was performed.
+- No Gradle build or physical Android/iOS test was performed for V334.
+- Online translation requires deployment of the V334 API route; optional MYMEMORY_CONTACT_EMAIL is not required for the anonymous quota.
+
+Welcome Screen, AI modules, timer/PiP, and recipe persistence logic were not intentionally changed in V334.

@@ -24,13 +24,14 @@
 }
 </script>
 <link href="logo-donat.svg" rel="icon" type="image/svg+xml"/>
-<link href="logo-donat.svg" rel="apple-touch-icon"/>
+<link href="assets/icons/timer-proofer-192.png" rel="icon" type="image/png" sizes="192x192"/>
+<link href="assets/icons/timer-proofer-apple-touch-180.png" rel="apple-touch-icon"/>
 <script async="" src="https://www.googletagmanager.com/gtag.js?id=G-QNGDTC4HVF"></script>
 <!-- [AI-GENERATED][ES6 MODULE][V259] Midtrans Snap is loaded on checkout by midtrans-runtime.js. Keep the key public-only; never put the server key here. -->
 <meta name="midtrans-snap-config" data-client-key="YOUR_CLIENT_KEY" data-environment="sandbox" content="Midtrans Snap runtime configuration"/>
 <!-- [AI-GENERATED][ES6 MODULE][V258] Supabase, modal bootstrap, and lazy PDF services use the module runtime. -->
 <!-- [AI-GENERATED][ES6 MODULE][V255] Runtime globals are initialized before the application module graph. -->
-<script type="module" src="./assets/js/runtime-entry.js?v=20261031-v329"></script>
+<script type="module" src="./assets/js/runtime-entry.js?v=20261101-v335"></script>
 <title>Timer Proofer</title>
 <style>
         :root {
@@ -167,6 +168,7 @@ outline-offset: 2px;
     width: 100vw !important;
     height: 100vh !important;
     height: 100dvh !important;
+    box-sizing: border-box;
     z-index: 999999 !important; /* Memaksa onboarding ada di paling depan */
     background: #FFFDF9 !important;
     overscroll-behavior: contain;
@@ -181,18 +183,22 @@ outline-offset: 2px;
     width: 100%;
     max-width: 440px;
     height: 100%;
+    min-height: 100%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 24px 20px 36px 20px;
+    padding: max(12px, env(safe-area-inset-top, 0px)) 20px calc(16px + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
 }
 
 /* Header */
 .ob-header {
     display: flex;
+    flex: 0 0 40px;
     justify-content: flex-end;
     height: 40px;
+    min-height: 40px;
 }
 
 .ob-skip-btn {
@@ -208,10 +214,12 @@ outline-offset: 2px;
 /* Slider Track */
 .ob-slider-wrapper {
     width: 100%;
+    min-width: 0;
+    min-height: 0;
     overflow: hidden;
-    flex: 1;
+    flex: 1 1 0;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     touch-action: pan-y;
     -webkit-user-select: none;
     user-select: none;
@@ -221,41 +229,56 @@ outline-offset: 2px;
 .ob-slider-wrapper:active { cursor: grabbing; }
 .ob-slider-track { will-change: transform; }
 
+/* Track stays exactly one viewport wide; individual slides overflow as flex
+   pages. Pixel positioning in OnboardingManager prevents a partial next card. */
 .ob-slider-track {
     display: flex;
-    width: 300%;
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
     transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .ob-slide {
-    width: 33.333%;
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 0;
     padding: 0 12px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 2dvh, 18px);
     text-align: center;
 }
 
 .ob-illustration {
-    width: 180px;
-    height: 180px;
+    width: clamp(104px, 24vmin, 180px);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    flex: 0 0 auto;
     background: #FFF5E6;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 32px;
+    margin-bottom: clamp(0px, 1.4dvh, 12px);
     border: 4px solid #F2D2A9;
     box-shadow: 0 12px 28px rgba(230, 126, 34, 0.15);
 }
 
 .ob-emoji {
-    font-size: 5rem;
+    font-size: clamp(3rem, 11vmin, 5rem);
 }
 
 .ob-title {
-    font-size: 1.45rem;
+    font-size: clamp(1.12rem, 4.8vw, 1.45rem);
     font-weight: 900;
     color: #4E342E;
     margin: 0 0 12px 0;
@@ -268,6 +291,7 @@ outline-offset: 2px;
     margin: 0;
     line-height: 1.5;
     max-width: 310px;
+    overflow-wrap: anywhere;
 }
 
 /* Footer & Navigation */
@@ -275,8 +299,10 @@ outline-offset: 2px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    flex: 0 0 auto;
+    gap: clamp(10px, 2dvh, 20px);
     width: 100%;
+    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
 }
 
 .ob-dots {
@@ -555,13 +581,26 @@ outline-offset: 2px;
 
 /* Tooltip Card */
 .tour-tooltip-card {
+    /* [AI-GENERATED][ANDROID UX][V330] Fit the tooltip within the visible
+       viewport and keep its scroll gesture independent from the page. */
+    --tour-safe-area-top: env(safe-area-inset-top, 0px);
+    --tour-safe-area-bottom: env(safe-area-inset-bottom, 0px);
     position: fixed;
     z-index: 99999; /* Selalu di atas .bottom-bar (9999) & tour-overlay */
-    width: calc(100% - 40px);
+    width: min(360px, calc(100vw - 24px));
     max-width: 360px;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - var(--tour-safe-area-top) - var(--tour-safe-area-bottom) - 24px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    scrollbar-width: thin;
     background: #FFFFFF;
     border-radius: 18px;
     padding: 18px;
+    padding-bottom: calc(18px + var(--tour-safe-area-bottom));
     box-shadow: 0 15px 35px rgba(0,0,0,0.3);
     border: 1px solid var(--dough, #F2D2A9);
     opacity: 0;
@@ -606,6 +645,12 @@ outline-offset: 2px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    background: #FFFFFF;
+    padding-top: 8px;
 }
 
 .tour-btn-link {
@@ -1954,6 +1999,23 @@ outline-offset: 2px;
     justify-content: space-around;
     align-items: center;
     box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+/* [AI-GENERATED][APP TOUR][V332] Raise the navbar's own stacking context
+   when one of its child tabs is spotlighted. A child z-index cannot escape
+   its parent's lower stacking context, which caused tour steps 4-5 to dim. */
+.bottom-bar.tour-highlight-layer {
+    /* Lift only the parent stacking context. The target keeps the exact same
+       .tour-highlighted-element spotlight styling as App Tour steps 1–3. */
+    z-index: 99996 !important;
+    isolation: isolate;
+    pointer-events: none;
+}
+.bottom-bar.tour-highlight-layer .bottom-item {
+    pointer-events: none;
+}
+.bottom-bar.tour-highlight-layer .bottom-item:not(.tour-highlighted-element) {
+    opacity: 0.34;
+    filter: saturate(0.45);
 }
 /* PERBAIKAN: .bottom-bar berada di luar #app-container/.container secara struktur HTML,
    jadi aturan "body.logged-out .container{display:none}" tidak ikut menyembunyikannya.
@@ -3575,6 +3637,150 @@ body.native-pip .timer-content-wrapper .time-info { font-size: clamp(0.48rem, 2.
     .ai-assistant-card #ai-tips-btn { flex: 1 1 100%; width: 100%; }
 }
 
+
+/* [AI-GENERATED][MOBILE-UX][V333] Fit onboarding and authentication to the live WebView viewport. */
+#onboarding-screen .ob-container {
+    height: 100%;
+    min-height: 0;
+    padding-top: max(12px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+}
+#onboarding-screen .ob-slider-wrapper,
+#onboarding-screen .ob-slider-track,
+#onboarding-screen .ob-slide {
+    min-height: 0;
+}
+#onboarding-screen .ob-slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+    max-width: 100%;
+}
+#onboarding-screen .ob-footer { padding-bottom: 0; }
+@media (max-height: 680px) {
+    #onboarding-screen .ob-container {
+        padding-top: max(8px, env(safe-area-inset-top, 0px));
+        padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+    }
+    #onboarding-screen .ob-illustration { width: clamp(88px, 20vmin, 132px); }
+    #onboarding-screen .ob-title { font-size: clamp(1rem, 4vw, 1.25rem); }
+    #onboarding-screen .ob-desc { font-size: 0.82rem; line-height: 1.38; }
+    #onboarding-screen .ob-primary-btn { padding: 12px; }
+}
+
+/* [AI-GENERATED][MOBILE-UX][V334]
+   Keep the login/register panel edge-to-edge on narrow mobile WebViews so
+   there is no unused cream strip above or below the form. Safe areas are
+   applied inside the panel exactly once; the panel owns overflow when the
+   keyboard or a short viewport reduces available height. */
+body.logged-out {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0;
+}
+body.logged-out #auth-wrapper {
+    flex: 1 1 auto;
+    width: min(100%, 420px);
+    height: auto;
+    min-height: 0 !important;
+    max-height: 100%;
+    margin: 0 auto;
+    padding: clamp(10px, 1.8dvh, 16px) clamp(14px, 3.6vw, 22px);
+    justify-content: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+}
+body.logged-out #auth-wrapper::-webkit-scrollbar { display: none; }
+body.logged-out #auth-wrapper .inputs-wrapper { min-height: 0; }
+body.logged-out #auth-wrapper .auth-header { margin-bottom: clamp(7px, 1.2dvh, 11px); }
+body.logged-out #auth-wrapper .tab-switch { margin-bottom: clamp(8px, 1.3dvh, 12px); }
+body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); margin-bottom: clamp(8px, 1.2dvh, 11px); }
+@media (max-width: 600px) {
+    body.logged-out { align-items: stretch; justify-content: stretch; }
+    body.logged-out #auth-wrapper {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        max-height: 100%;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding-top: calc(env(safe-area-inset-top, 0px) + clamp(8px, 1.2dvh, 12px));
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(8px, 1.2dvh, 12px));
+        justify-content: center;
+    }
+}
+@media (max-height: 680px) {
+    body.logged-out #auth-wrapper { padding-left: 16px; padding-right: 16px; }
+    body.logged-out #auth-wrapper .auth-header { margin-bottom: 6px; }
+    body.logged-out #auth-wrapper .tab-switch { margin-bottom: 7px; }
+    body.logged-out #auth-wrapper .divider { margin: 7px 0; }
+    body.logged-out #auth-wrapper .form-group { margin-bottom: 7px; }
+    body.logged-out #auth-wrapper .form-group input { padding-top: 8px; padding-bottom: 8px; }
+}
+
+
+/* [AI-GENERATED][SHARE-UI][V335] Platform-neutral share presentation; only the OS chooser remains native. */
+#share-app-modal .share-app-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    padding: clamp(18px, 4vw, 28px) clamp(18px, 5vw, 28px) calc(24px + env(safe-area-inset-bottom, 0px));
+}
+#share-app-modal .share-app-brand {
+    display: grid;
+    place-items: center;
+    width: 112px;
+    height: 112px;
+    border-radius: 28px;
+    background: #FDF5E6;
+    box-shadow: 0 8px 24px rgba(78, 52, 46, .10);
+}
+#share-app-modal .share-app-brand img { width: 92px; height: 92px; object-fit: contain; }
+#share-app-modal .share-app-title {
+    margin: 4px 0 0;
+    color: var(--chocolate, #4E342E);
+    font-size: clamp(1.1rem, 4.6vw, 1.35rem);
+    line-height: 1.28;
+}
+#share-app-modal .share-app-description,
+#share-app-modal .share-app-footnote {
+    max-width: 430px;
+    margin: 0;
+    color: rgba(78, 52, 46, .72);
+    font-size: .86rem;
+    line-height: 1.5;
+}
+#share-app-modal .share-app-link-card {
+    width: 100%;
+    max-width: 460px;
+    box-sizing: border-box;
+    padding: 14px;
+    border: 1px solid rgba(78, 52, 46, .12);
+    border-radius: 14px;
+    background: #fff;
+    text-align: left;
+}
+#share-app-modal .share-app-link-label { color: #8A756B; font-size: .72rem; font-weight: 800; margin-bottom: 5px; }
+#share-app-modal .share-app-link-value { color: #3E2723; font-size: .82rem; overflow-wrap: anywhere; }
+#share-app-modal .share-app-actions { width: 100%; max-width: 460px; display: grid; gap: 10px; }
+#share-app-modal .share-app-primary,
+#share-app-modal .share-app-secondary {
+    width: 100%; min-height: 48px; border-radius: 12px; padding: 12px 16px;
+    font-size: .88rem; font-weight: 800; cursor: pointer; box-sizing: border-box;
+}
+#share-app-modal .share-app-primary { background: var(--accent, #E67E22); color: #fff; border: 0; box-shadow: 0 4px 12px rgba(230, 126, 34, .2); }
+#share-app-modal .share-app-secondary { background: #fff; color: var(--chocolate, #4E342E); border: 1px solid rgba(78, 52, 46, .18); }
+#share-app-modal .share-app-footnote { font-size: .72rem; }
+
 </style>
 </head>
 <body class="auth-pending"> <!-- [AI-GENERATED][AUTH-BOOT][V313] Resolve persisted session before exposing login/register UI. -->
@@ -3635,14 +3841,14 @@ body.native-pip .timer-content-wrapper .time-info { font-size: clamp(0.48rem, 2.
 <input id="agree-tos-checkbox" name="agree-tos" data-onchange="validateSubmitButton()" style="width: 16px; height: 16px; margin-top: 2px; cursor: pointer; accent-color: #3e2723;" type="checkbox"/>
 <label for="agree-tos-checkbox" style="font-size: 0.8rem; color: #3e2723; cursor: pointer; user-select: none; line-height: 1.3;">
                         Saya telah membaca dan menyetujui 
-                        <a data-action="openTosModal" href="#" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Syarat &amp; Ketentuan Layanan</a> 
+                        <a data-action="toggleModal" data-arg="tos-modal" href="#" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Syarat &amp; Ketentuan Layanan</a> 
                         serta Kebijakan Privasi.
                     </label>
 </div>
 </div>
 </div>
 <!-- Tombol Submit Utama -->
-<button class="btn-submit" id="btn-submit-main" type="submit">MASUK</button>
+<button class="btn-submit" id="btn-submit-main" type="submit" disabled aria-disabled="true">MASUK</button>
 </form>
 <!-- Link Kembali ke Login (Khusus Mode Lupa Password) -->
 <div id="back-to-login-wrapper" style="text-align: center; margin-top: 14px; display: none;">
@@ -4325,7 +4531,7 @@ body.native-pip .timer-content-wrapper .time-info { font-size: clamp(0.48rem, 2.
 </div>
 <span style="color: #C8B6A6; font-size: 14px;">›</span>
 </div>
-<div data-action="openTosModal" data-onmouseout="this.style.background='transparent'" data-onmouseover="this.style.background='#fdf8f4'" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;">
+<div data-action="toggleModal" data-arg="tos-modal" data-onmouseout="this.style.background='transparent'" data-onmouseover="this.style.background='#fdf8f4'" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;">
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">📜</span>
 <div>
@@ -4628,6 +4834,30 @@ body.native-pip .timer-content-wrapper .time-info { font-size: clamp(0.48rem, 2.
 </div>
 <!--TAMBAHAN-->
 <!-- MODAL PENCADANGAN / BACKUP -->
+<!-- [AI-GENERATED][SHARE-UI][V335] Shared branded share panel for PWA and Capacitor. -->
+<div class="page-modal" id="share-app-modal" inert="" aria-hidden="true">
+  <div class="article-modal-header share-app-header" style="padding: 15px 20px 10px 20px;">
+    <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">📤 Bagikan ke Teman</h3>
+    <button class="article-modal-close" data-action="toggleModal" data-arg="share-app-modal" id="btn-close-share-app" aria-label="Tutup">×</button>
+  </div>
+  <div class="modal-scroll-content share-app-content">
+    <div class="share-app-brand" aria-hidden="true">
+      <img src="logo-donat.svg" alt="" width="88" height="88" />
+    </div>
+    <h2 class="share-app-title">Ajak teman menggunakan Timer Proofer</h2>
+    <p class="share-app-description">Bagikan aplikasi untuk membantu teman memantau proofing adonan dan menghitung HPP resep bakery.</p>
+    <div class="share-app-link-card">
+      <div class="share-app-link-label">Tautan aplikasi</div>
+      <div class="share-app-link-value" id="share-app-url">https://timer-proofer.vercel.app/</div>
+    </div>
+    <div class="share-app-actions">
+      <button class="share-app-primary" id="btn-share-app-native" data-action="shareAppNow" type="button">📲 Bagikan melalui aplikasi</button>
+      <button class="share-app-secondary" id="btn-copy-app-link" data-action="copyAppShareLink" type="button">🔗 Salin tautan</button>
+    </div>
+    <p class="share-app-footnote">Tautan publik dapat dibuka melalui browser dan dipasang sebagai PWA.</p>
+  </div>
+</div>
+
 <div class="page-modal" id="backup-modal" inert="">
 <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
 <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">

@@ -79,7 +79,7 @@ export function initializeModalBootstrap() {
         lastAction: null,
         errors: 0,
         returnToSettings: false,
-        settingsChildIds: new Set(['modal-koneksi-sensor', 'modal-preferensi', 'whatsapp-language-modal', 'help-modal', 'about-modal', 'tos-modal', 'backup-modal', 'rate-modal', 'feedback-modal'])
+        settingsChildIds: new Set(['modal-koneksi-sensor', 'modal-preferensi', 'whatsapp-language-modal', 'help-modal', 'about-modal', 'tos-modal', 'share-app-modal', 'backup-modal', 'rate-modal', 'feedback-modal'])
     };
 
     function setClosed(modal) {

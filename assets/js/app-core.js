@@ -1,5 +1,5 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261101-v335'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
 import { init as initializeAppLifecycle, setTimerBackGuard } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent } from './features-auth-ui.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent, syncRegistrationSubmitState } from './features-auth-ui.js?v=20261101-v335'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -1161,15 +1161,7 @@ async function hapusAkunPermanen() {
 
 
 window.validateSubmitButton = function() {
-    const checkbox = document.getElementById('agree-tos-checkbox');
-    const submitBtn = document.getElementById('btn-submit-main');
-    if (submitBtn) {
-        if (window.currentAuthMode === 'register') {
-            submitBtn.disabled = checkbox ? !checkbox.checked : true;
-        } else {
-            submitBtn.disabled = false;
-        }
-    }
+    return syncRegistrationSubmitState({ documentRef: document, mode: window.currentAuthMode || 'login' });
 };
 
 window.handleAuthSubmit = async function(event) {
@@ -8206,32 +8198,35 @@ function updateDynamicTheme(weatherId, mainWeather) {
  * [AI-GENERATED][BUGFIX][V311] Bagikan aplikasi lintas web, PWA, dan Capacitor.
  * Tidak mengubah kontrak DOM/data-action yang sudah dipakai menu Pengaturan.
  */
-async function bagikanAplikasi() {
+function getAppShareData() {
     const isHttpLocation = /^https?:$/.test(window.location.protocol);
-    // URL capacitor://localhost bukan URL yang dapat dibuka teman; gunakan URL web publik.
-    const appUrl = isHttpLocation
-        ? new URL('./', window.location.href).href
-        : 'https://timer-proofer.vercel.app/';
-    const shareData = {
+    const appUrl = isHttpLocation ? new URL('./', window.location.href).href : 'https://timer-proofer.vercel.app/';
+    return {
         title: 'Timer Proofer & Kalkulator HPP',
         text: 'Yuk coba Timer Proofer & Kalkulator HPP untuk membantu memantau waktu proofing adonan dan menghitung biaya resep.',
         url: appUrl
     };
-    const textToCopy = `${shareData.text} ${shareData.url}`;
+}
 
-    const showShareMessage = (message) => {
-        if (typeof window.showToast === 'function') {
-            window.showToast(message);
-        } else if (typeof window.showNotification === 'function') {
-            window.showNotification(message);
-        } else {
-            window.alert(message);
-        }
-    };
+function showAppShareMessage(message) {
+    if (typeof window.showToast === 'function') window.showToast(message);
+    else if (typeof window.showNotification === 'function') window.showNotification(message);
+    else window.alert(message);
+}
 
-    // Native Capacitor: gunakan plugin Share, bukan mengandalkan user-agent atau navigator.share.
+/** [AI-GENERATED][SHARE-UI][V335] Open the same branded panel in PWA and Capacitor. */
+function bagikanAplikasi() {
+    const data = getAppShareData();
+    const urlLabel = document.getElementById('share-app-url');
+    if (urlLabel) urlLabel.textContent = data.url;
+    return toggleModal('share-app-modal');
+}
+
+/** Called only after a deliberate tap on the shared in-app dialog. */
+async function shareAppNow() {
+    const shareData = getAppShareData();
     try {
-        if (NativeCapacitorService?.isNativePlatform?.()) {
+        if (NativeCapacitorService.isNativePlatform()) {
             const nativeShare = NativeCapacitorService.getPlugin('Share');
             if (typeof nativeShare?.share === 'function') {
                 await nativeShare.share({
@@ -8243,45 +8238,51 @@ async function bagikanAplikasi() {
                 return true;
             }
         }
-    } catch (error) {
-        // Membatalkan dialog native adalah perilaku normal, jangan munculkan fallback yang mengganggu.
-        if (error?.name === 'AbortError' || /cancel|canceled|cancelled|dismiss/i.test(String(error?.message || ''))) {
-            return false;
-        }
-        console.warn('[BagikanAplikasi] Share native gagal; mencoba fallback web:', error);
-    }
-
-    // Web Share API tersedia di browser modern, termasuk desktop yang mendukungnya.
-    if (typeof navigator.share === 'function') {
-        try {
+        if (typeof navigator.share === 'function') {
             await navigator.share(shareData);
             return true;
-        } catch (error) {
-            if (error?.name === 'AbortError') return false;
-            console.warn('[BagikanAplikasi] Web Share API gagal; mencoba salin tautan:', error);
         }
+        return await copyAppShareLink();
+    } catch (error) {
+        if (error?.name === 'AbortError' || /cancel|canceled|cancelled|dismiss/i.test(String(error?.message || ''))) return false;
+        console.warn('[BagikanAplikasi] Share sheet gagal:', error);
+        showAppShareMessage('Menu berbagi tidak dapat dibuka. Anda masih dapat menyalin tautan aplikasi.');
+        return false;
     }
+}
 
-    // Clipboard API memerlukan secure context dan dapat ditolak oleh izin browser.
+async function copyAppShareLink() {
+    const { url } = getAppShareData();
     try {
         if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-            await navigator.clipboard.writeText(textToCopy);
-            showShareMessage('Tautan aplikasi berhasil disalin. Tempelkan ke WhatsApp atau media sosial untuk membagikannya.');
+            await navigator.clipboard.writeText(url);
+            showAppShareMessage('Tautan Timer Proofer berhasil disalin.');
             return true;
         }
     } catch (error) {
-        console.warn('[BagikanAplikasi] Clipboard tidak tersedia:', error);
+        console.warn('[BagikanAplikasi] Clipboard API tidak tersedia:', error);
     }
 
-    // Fallback akhir: prompt tetap menyediakan teks yang bisa disalin secara manual.
     try {
-        const copiedText = window.prompt('Salin teks dan tautan aplikasi berikut:', textToCopy);
-        return copiedText !== null;
+        const temporaryInput = document.createElement('textarea');
+        temporaryInput.value = url;
+        temporaryInput.setAttribute('readonly', '');
+        temporaryInput.style.position = 'fixed';
+        temporaryInput.style.opacity = '0';
+        document.body.appendChild(temporaryInput);
+        temporaryInput.select();
+        const copied = document.execCommand?.('copy') === true;
+        temporaryInput.remove();
+        if (copied) {
+            showAppShareMessage('Tautan Timer Proofer berhasil disalin.');
+            return true;
+        }
     } catch (error) {
-        console.error('[BagikanAplikasi] Semua metode berbagi gagal:', error);
-        showShareMessage('Fitur berbagi tidak tersedia di perangkat ini. Silakan buka menu Pengaturan dan salin tautan aplikasi secara manual.');
-        return false;
+        console.warn('[BagikanAplikasi] Fallback salin gagal:', error);
     }
+
+    window.prompt('Salin tautan aplikasi Timer Proofer:', url);
+    return false;
 }
 
 /**
@@ -8309,7 +8310,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261031-v329');
+        metadataUrl.searchParams.set('_release', '20261101-v335');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);
@@ -8758,7 +8759,7 @@ window.setLanguage = function(lang) {
     // Potong kode bahasa (misal 'id-ID' jadi 'id', 'zh-CN' jadi 'zh')
     const cleanLang = String(lang || 'id').split('-')[0].toLowerCase();
     // Kamus lokal hanya ada untuk sebagian bahasa. Bahasa lain dibiarkan tetap
-    // teks asli (Indonesia) agar Google Translate menerjemahkan dari sumber yang benar.
+    // teks asli (Indonesia) agar adapter terjemahan online memulai dari sumber yang benar.
     const dictLang = i18n[cleanLang] ? cleanLang : 'id';
 
     // CATATAN: sengaja TIDAK menulis localStorage 'app_lang' di sini.
@@ -8988,6 +8989,8 @@ window.renderInventoryCards = function() {
 //==============================================
 
 window.bagikanAplikasi = bagikanAplikasi;
+window.shareAppNow = shareAppNow;
+window.copyAppShareLink = copyAppShareLink;
 
 // Data Default Profil (Fallback jika storage kosong)
 // Daftarkan ke objek window agar aman dipanggil dari inline onclick
@@ -10022,6 +10025,11 @@ initializeAppLifecycle({
         }
     },
     onBackButton: async (source = 'native-back') => {
+        // [AI-GENERATED][ANDROID UX][V330] Resolve the active App Tour before
+        // timer PiP/minimize behavior. Otherwise Android Back can minimize the
+        // Activity while the tour card is still blocking the onboarding flow.
+        if (window.appOnboarding?.handleBackButton?.() === true) return true;
+
         const timerIsActive = Boolean(isTimerRunning && proofingTimerController.isRunning());
         if (!timerIsActive) return false;
 

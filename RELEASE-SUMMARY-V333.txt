@@ -1,0 +1,23 @@
+TIMER PROOFER — V333 RELEASE SUMMARY
+Date: 2026-11-01
+Base: user-supplied V332 source archive
+Product-facing version: V125 (unchanged)
+Technical release: 20261101-v333
+Service Worker cache: Timer-Proofing-v1.1.235
+
+CHANGES
+- Rebuild pre-login onboarding slider with one exact viewport-width slide, pixel-measured offset, viewport resize alignment and short-screen responsive content.
+- Remove the artificial login/register full-viewport minimum and 240px form spacer; constrain the auth card to the safe viewport and allow internal scrolling when needed.
+- Normalize API client error codes for HTTP 404/missing routes, invalid JSON responses, and fetch/CORS/network failures.
+- Translate these codes into actionable messages in the language picker; explicitly distinguish missing Cloud Translation credentials from deployment/network issues.
+- Keep existing IDs, classes, auth action contracts, offline packs, recipe user-data exclusions, and provider credentials unchanged.
+
+VALIDATION
+- npm test: 493 passed, 0 failed, 0 skipped.
+- Release verifier: 76 valid precache assets; 69 local modules in boot graph; no missing imports, duplicate HTML IDs, inline handlers, or unauthorized scroll-lock overrides.
+- Function audit: no duplicate function declarations within a module.
+- Clean extraction and ZIP integrity: PASS (see QA-TEST-LOG-V333.txt).
+
+NOT VERIFIED
+- Live Google Cloud Translation: requires Vercel key, enabled Cloud Translation API and Billing.
+- Vercel deployment, Gradle build, and physical device testing for V333.

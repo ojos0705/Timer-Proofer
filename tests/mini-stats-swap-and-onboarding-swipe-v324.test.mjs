@@ -47,7 +47,7 @@ test('pre-login onboarding slider supports horizontal Pointer Events and legacy 
     assert.match(manager, /deltaX < 0\) this\.nextSlide\(\)/);
     assert.match(manager, /else this\.previousSlide\(\)/);
     assert.match(manager, /this\.currentSlide = nextIndex/);
-    assert.match(manager, /translateX\(-\$\{this\.currentSlide \* 33\.333\}\%\)/);
+    assert.match(manager, /translate3d\(-\$\{offset\}px, 0, 0\)/);
 });
 
 test('onboarding slider allows horizontal swipe without blocking native vertical panning', () => {
@@ -61,7 +61,7 @@ test('onboarding slider allows horizontal swipe without blocking native vertical
 
 test('technical cache advances to V327 while visible app version remains V125', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261031-v329');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.231');
-    assert.match(html, /runtime-entry\.js\?v=20261031-v329/);
+    assert.equal(version.releaseToken, '20261101-v335');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.237');
+    assert.match(html, /runtime-entry\.js\?v=20261101-v335/);
 });

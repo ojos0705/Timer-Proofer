@@ -1,7 +1,7 @@
 {
   "version": "V125",
-  "build": "release-managed-by-version-json",
-  "serviceWorker": "Timer-Proofing-v1.1.231",
-  "releaseDate": "2026-10-31",
-  "releaseToken": "20261031-v329"
+  "build": "es6-modular-v335",
+  "serviceWorker": "Timer-Proofing-v1.1.237",
+  "releaseDate": "2026-11-01",
+  "releaseToken": "20261101-v335"
 }

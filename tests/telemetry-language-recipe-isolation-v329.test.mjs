@@ -35,15 +35,31 @@ test('AI Telemetry has a fixed seven-section contract while preserving product-s
     assert.match(read('api/ai-utils.js'), /AI_BACKEND_REVISION\s*=\s*["']V329["']/);
 });
 
-test('Google Translate language flow waits for a real combo and does not mark an online failure as pending', () => {
+test('online language selection uses authenticated MyMemory and does not falsely persist failed choices', () => {
     const engine = read('assets/js/language-engine.js');
+    const online = read('assets/js/online-i18n.js');
+    const cloud = read('assets/js/cloud-translation-service.js');
+    const renderer = read('assets/js/lang-renderer.js');
+    const api = read('api/translate.js');
     const list = read('assets/js/lang-data.js');
     assert.match(list, /\{\s*code:\s*'ab',\s*name:\s*'Abkhaz'/);
-    assert.match(engine, /await loadGoogleTranslateWidget\(\{\s*timeoutMs:\s*15000\s*\}\)/);
-    const onlineBlock = engine.slice(engine.indexOf('// D. Online: Google Translate'), engine.indexOf('} catch (error)', engine.indexOf('// D. Online: Google Translate')));
-    assert.doesNotMatch(onlineBlock, /bahasaTunda\(/);
-    assert.match(onlineBlock, /tutupModalBahasa\(\)/);
-    assert.match(onlineBlock, /if \(!combo\)[\s\S]*Pilihan belum disimpan/);
+    assert.match(engine, /getSupportedTranslationLanguages\(\)/);
+    assert.match(engine, /resolveSupportedTranslationLanguageCode/);
+    assert.match(engine, /await OnlineI18n\.apply\(resolvedCode/);
+    assert.match(engine, /bahasaSimpan\(code, name, resolvedCode, 'online'\)/);
+    assert.match(engine, /catch \(error\)[\s\S]*pulihkanBahasaSebelumnya/);
+    assert.match(online, /MutationObserver/);
+    assert.match(online, /nodeValue = value/);
+    assert.doesNotMatch(online, /innerHTML\s*=/);
+    assert.match(online, /recipe-ingredients-body/);
+    assert.match(cloud, /Authorization: `Bearer \${session\.access_token}`/);
+    assert.match(renderer, /resolveSupportedTranslationLanguageCode/);
+    assert.match(renderer, /Coba online/);
+    assert.match(cloud, /catalogType: 'candidate'/);
+    assert.match(api, /requireSupabaseUser/);
+    assert.match(api, /api\.mymemory\.translated\.net\/get/);
+    assert.match(api, /MYMEMORY_CONTACT_EMAIL/);
+    assert.doesNotMatch(engine, /google-translate-runtime|loadGoogleTranslateWidget|googtrans/);
 });
 
 test('AI recipe analysis is cleared on master navigation and stale recipe responses are rejected', () => {

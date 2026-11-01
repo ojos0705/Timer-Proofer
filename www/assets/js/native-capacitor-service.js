@@ -8,7 +8,8 @@ import {
     Filesystem,
     LocalNotifications,
     Preferences,
-    Share
+    Share,
+    CapacitorHttp
 } from '../../vendor/capacitor-plugins.js';
 
 const STATIC_PLUGINS = Object.freeze({
@@ -16,7 +17,8 @@ const STATIC_PLUGINS = Object.freeze({
     Filesystem,
     LocalNotifications,
     Preferences,
-    Share
+    Share,
+    CapacitorHttp
 });
 
 const NATIVE_PLUGIN_NAMES = Object.freeze([
@@ -89,6 +91,7 @@ function getCapabilities() {
         localNotifications: canUse('LocalNotifications'),
         preferences: canUse('Preferences'),
         share: canUse('Share'),
+        http: canUse('CapacitorHttp'),
         pictureInPicture: canUse('TimerPip')
     });
 }
@@ -103,6 +106,7 @@ const NativeCapacitorService = Object.freeze({
     LocalNotifications,
     Preferences,
     Share,
+    CapacitorHttp,
     DocumentsDirectory: 'DOCUMENTS'
 });
 

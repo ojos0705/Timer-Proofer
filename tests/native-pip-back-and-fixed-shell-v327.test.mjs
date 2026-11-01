@@ -49,11 +49,11 @@ test('native PiP state remains synced with JS timer state and PiP exit restores 
     assert.match(pipPlugin, /proofingTimerActive = active/);
     assert.match(mainActivity, /onPictureInPictureModeChanged\(boolean isInPictureInPictureMode, Configuration newConfig\)/);
     assert.match(mainActivity, /timerproofer:pipchange/);
-    assert.match(html, /runtime-entry\.js\?v=20261031-v329/);
+    assert.match(html, /runtime-entry\.js\?v=20261101-v335/);
 });
 
 test('technical cache token is advanced while visible application version remains V125', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261031-v329');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.231');
+    assert.equal(version.releaseToken, '20261101-v335');
+    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.237');
 });

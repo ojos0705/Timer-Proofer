@@ -1,236 +1,318 @@
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261031-v329'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+/**
+ * [AI-GENERATED][I18N][V332]
+ * Language selection is owned by the MyMemory / OfflineI18n adapters.
+ * Google Website Translator is deliberately no longer part of the runtime.
+ */
 import { NativeCapacitorService } from './native-capacitor-service.js';
 import { toggleModal } from './modal.js';
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261101-v335'; // [AI-GENERATED][ES6 MODULE IDENTITY][V332]
 import { postJson } from './api-client-service.js';
 import { isMidtransConfigured, loadMidtransSnap } from './midtrans-runtime.js';
-import { googleTranslateElementInit, loadGoogleTranslateWidget } from './google-translate-runtime.js';
-import { OfflineI18n } from './offline-i18n.js'; // [AI-GENERATED][ES6 MODULE][V261]
-import { filterDaftarBahasa } from './language-list-service.js'; // [AI-GENERATED][ES6 MODULE][V262]
-    // 2. Kontrol Modal WhatsApp
-    // [AI-GENERATED][ROBUSTNESS][V120] Own the delayed language-modal hide so
-    // a rapid reopen cannot be undone by an older close callback.
-    let bahasaModalCloseTimer = null;
+import { OfflineI18n } from './offline-i18n.js';
+import { OnlineI18n } from './online-i18n.js';
+import {
+    getSupportedTranslationLanguages,
+    resolveSupportedTranslationLanguageCode
+} from './cloud-translation-service.js';
+import { filterDaftarBahasa } from './language-list-service.js';
 
-    window.bukaModalBahasa = function() {
-        const modal = document.getElementById('whatsapp-language-modal');
-        if (modal) {
-            clearTimeout(bahasaModalCloseTimer);
-            bahasaModalCloseTimer = null;
-            // [AI-GENERATED][NAV FIX][V308] Use canonical modal navigation.
-            toggleModal('whatsapp-language-modal');
-        }
-    };
+// [AI-GENERATED][ROBUSTNESS][V120] Own the delayed language-modal hide so
+// a rapid reopen cannot be undone by an older close callback.
+let bahasaModalCloseTimer = null;
+let bahasaSibuk = false;
 
-    window.tutupModalBahasa = function() {
+window.bukaModalBahasa = function() {
+    const modal = document.getElementById('whatsapp-language-modal');
+    if (modal) {
         clearTimeout(bahasaModalCloseTimer);
         bahasaModalCloseTimer = null;
-        const modal = document.getElementById('whatsapp-language-modal');
-        if (modal?.classList.contains('active')) toggleModal('whatsapp-language-modal');
-    };
-
-    // [AI-GENERATED][ES6 MODULE][V260] The vendor-script callback and retry logic live in google-translate-runtime.js.
-    function gtGetCombo() { return document.querySelector('select.goog-te-combo'); }
-
-    function gtWaitCombo(timeoutMs) {
-        return new Promise(function(resolve) {
-            var t0 = Date.now();
-            (function poll() {
-                var c = gtGetCombo();
-                if (c && c.options.length > 1) return resolve(c);
-                if (Date.now() - t0 > timeoutMs) return resolve(null);
-                setTimeout(poll, 200);
-            })();
-        });
+        toggleModal('whatsapp-language-modal');
     }
+};
 
-    // Cocokkan kode bahasa dengan daftar yang benar-benar didukung widget Google (mis. 'fr-CA' -> 'fr')
-    function gtResolveCode(combo, code) {
-        var vals = Array.prototype.map.call(combo.options, function(o) { return o.value; });
-        if (vals.indexOf(code) > -1) return code;
-        var base = String(code).split('-')[0];
-        if (vals.indexOf(base) > -1) return base;
-        return null;
+window.tutupModalBahasa = function() {
+    clearTimeout(bahasaModalCloseTimer);
+    bahasaModalCloseTimer = null;
+    const modal = document.getElementById('whatsapp-language-modal');
+    if (modal?.classList.contains('active')) {
+        toggleModal('whatsapp-language-modal');
+        // Keep the canonical scroll-lock owner synchronized after the modal begins closing.
+        syncModalBodyScrollLock();
     }
+};
 
-    function gtSetCookie(code) {
-        var v = 'googtrans=/id/' + code + '; path=/';
-        document.cookie = v;
-        // atribut domain tidak valid untuk 'localhost' (XAMPP) / IP, jadi hanya untuk host bertitik
-        if (location.hostname.indexOf('.') > -1 && !/^\d+\.\d+\.\d+\.\d+$/.test(location.hostname)) {
-            document.cookie = v + '; domain=' + location.hostname;
+function bahasaSimpan(kode, nama, resolved, mode) {
+    localStorage.removeItem('user_lang_pending');
+    localStorage.setItem('app_lang', kode);
+    localStorage.setItem('user_lang_preference', kode);
+    localStorage.setItem('user_lang_resolved', resolved || kode);
+    localStorage.setItem('user_lang_name', nama);
+    localStorage.setItem('user_lang_mode', mode); // 'source' | 'offline' | 'cloud'
+    try {
+        const preferences = NativeCapacitorService.getPlugin('Preferences');
+        if (NativeCapacitorService.isNativePlatform() && preferences?.set) {
+            void preferences.set({ key: 'app_lang', value: kode });
         }
+    } catch (_) {}
+}
+
+function bahasaLabel(teks) {
+    const element = document.getElementById('label-bahasa-aktif');
+    if (element) element.innerText = teks;
+}
+
+function bahasaTunda(kode, nama) {
+    localStorage.setItem('user_lang_pending', JSON.stringify({ code: kode, name: nama }));
+}
+
+function getTranslationErrorCode(error) {
+    return error?.details?.code || error?.code || error?.cause?.code || '';
+}
+
+function getTranslationErrorMessage(error, languageName) {
+    const code = getTranslationErrorCode(error);
+    if (code === 'TRANSLATION_NOT_CONFIGURED' || code === 'TRANSLATION_PROVIDER_NOT_READY') {
+        return 'Layanan terjemahan gratis belum tersedia pada deployment server. Pastikan endpoint /api/translate dari rilis terbaru sudah ter-deploy di Vercel.';
     }
-
-    function gtClearCookie() {
-        var exp = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-        document.cookie = exp;
-        document.cookie = exp + '; domain=' + location.hostname;
-        document.cookie = exp + '; domain=.' + location.hostname;
+    if (code === 'TRANSLATION_AUTH_REQUIRED' || code === 'TRANSLATION_AUTH_INVALID') {
+        return 'Sesi login perlu diperbarui. Silakan login ulang, lalu pilih bahasa kembali.';
     }
+    if (code === 'TRANSLATION_UNSUPPORTED_LANGUAGE') {
+        return `Penyedia gratis MyMemory belum mendukung pasangan Bahasa Indonesia ke "${languageName}". Bahasa sebelumnya tetap aktif; coba bahasa lain.`;
+    }
+    if (code === 'TRANSLATION_QUOTA_EXCEEDED' || code === 'TRANSLATION_RATE_LIMITED') {
+        return 'Kuota gratis MyMemory tercapai (5.000 karakter/hari tanpa email kontak). Cache terjemahan yang sudah tersimpan tetap dapat dipakai. Anda dapat menambahkan MYMEMORY_CONTACT_EMAIL di Vercel dengan email kontak valid untuk batas hingga 50.000 karakter/hari, atau coba lagi setelah kuota harian pulih.';
+    }
+    if (code === 'API_ROUTE_NOT_FOUND') {
+        return 'Endpoint penerjemah tidak ditemukan pada deployment Vercel. Pastikan folder api/ sudah ikut ter-deploy dan gunakan deployment terbaru.';
+    }
+    if (code === 'API_INVALID_RESPONSE') {
+        return 'Server penerjemah mengembalikan respons yang tidak dikenali. Periksa deployment API dan outputDirectory Vercel.';
+    }
+    if (code === 'API_NETWORK_ERROR') {
+        return 'WebView tidak dapat menghubungi endpoint Vercel. Periksa internet HP, domain Production, dan CORS; server penerjemah belum menerima permintaan.';
+    }
+    if (code === 'TRANSLATION_NETWORK_ERROR' || code === 'TRANSLATION_UPSTREAM_ERROR') {
+        return 'Vercel berhasil menerima permintaan, tetapi tidak dapat memperoleh jawaban dari MyMemory. Periksa koneksi keluar server atau coba lagi nanti.';
+    }
+    if (code === 'TRANSLATION_CATALOG_UNAVAILABLE') {
+        return 'Daftar kandidat bahasa tidak tersedia. Bahasa sebelumnya tetap dipertahankan.';
+    }
+    if (code === 'TRANSLATION_TIMEOUT' || code === 'TIMEOUT') {
+        return 'Layanan terjemahan membutuhkan waktu terlalu lama. Periksa koneksi lalu coba lagi.';
+    }
+    if (code === 'OFFLINE' || navigator.onLine === false) {
+        return 'Perangkat sedang offline. Bahasa online akan diterapkan setelah koneksi tersedia.';
+    }
+    if (Number(error?.status) === 404) {
+        return 'Endpoint terjemahan tidak ditemukan (HTTP 404). Deploy ulang backend API Vercel dari source terbaru.';
+    }
+    if (!code && Number(error?.status || 0) === 0) {
+        return 'Koneksi ke server penerjemah gagal sebelum menerima respons. Periksa internet, CORS, dan alamat API.';
+    }
+    return 'Terjemahan online gagal. Periksa status API terjemahan dan deployment Vercel; bahasa sebelumnya tetap dipertahankan.';
+}
 
-    function adaCookieGoogle() { return /(^|;\s*)googtrans=/.test(document.cookie); }
+async function pulihkanBahasaSebelumnya(previousLanguage, previousName, previousMode, previousLabel) {
+    try {
+        await OnlineI18n.reset();
+        OfflineI18n.reset();
+        if (typeof window.setLanguage === 'function') window.setLanguage('id');
 
-    // 4. Penyimpanan pilihan bahasa -------------------------------------------------------------------
-    function bahasaSimpan(kode, nama, resolved, mode) {
+        if (!previousLanguage || previousLanguage === 'id') {
+            document.documentElement.lang = 'id';
+            bahasaLabel(previousLabel || 'Bahasa Indonesia (Aktif)');
+            return;
+        }
+
+        const mode = previousMode === 'google' ? 'cloud' : previousMode;
+        if (OfflineI18n.hasPack(previousLanguage)) {
+            const restored = await OfflineI18n.apply(previousLanguage);
+            if (restored) {
+                document.documentElement.lang = previousLanguage;
+                bahasaLabel((previousName || previousLanguage) + ' (Aktif)');
+                return;
+            }
+        }
+
+        if ((mode === 'online' || mode === 'cloud' || !mode) && navigator.onLine !== false) {
+            await OnlineI18n.apply(previousLanguage);
+            document.documentElement.lang = previousLanguage;
+            bahasaLabel((previousName || previousLanguage) + ' (Aktif)');
+            return;
+        }
+
+        bahasaTunda(previousLanguage, previousName || previousLanguage);
+        bahasaLabel((previousName || previousLanguage) + ' (Menunggu koneksi)');
+    } catch (restoreError) {
+        console.warn('[LanguageEngine] Pemulihan bahasa sebelumnya tertunda:', restoreError?.code || restoreError?.message || restoreError);
+        bahasaLabel(previousLabel || 'Bahasa Indonesia');
+    }
+}
+
+/**
+ * Priority: Indonesian source -> installed offline pack -> cloud translation.
+ * A language preference is persisted only after its translation was applied.
+ */
+async function pilihBahasaGlobal(kodeBahasa, namaBahasa) {
+    if (bahasaSibuk) return false;
+    bahasaSibuk = true;
+
+    const code = String(kodeBahasa || '').trim().replace(/_/g, '-');
+    const name = String(namaBahasa || code || 'Bahasa');
+    const labelElement = document.getElementById('label-bahasa-aktif');
+    const previousLabel = labelElement?.innerText || '';
+    const previousLanguage = localStorage.getItem('user_lang_preference') || 'id';
+    const previousName = localStorage.getItem('user_lang_name') || 'Bahasa Indonesia';
+    const previousMode = localStorage.getItem('user_lang_mode') || 'source';
+
+    try {
+        if (!/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(code)) {
+            const error = new Error('Kode bahasa tidak valid.');
+            error.code = 'TRANSLATION_INVALID_LANGUAGE';
+            throw error;
+        }
+
+        // A. Restore Indonesian source without leaving an old provider cookie behind.
+        if (code.toLowerCase().split('-')[0] === 'id') {
+            await OnlineI18n.reset();
+            OfflineI18n.reset();
+            if (typeof window.setLanguage === 'function') window.setLanguage('id');
+            document.documentElement.lang = 'id';
+            bahasaSimpan('id', name, 'id', 'source');
+            bahasaLabel(name + ' (Aktif)');
+            window.tutupModalBahasa();
+            return true;
+        }
+
+        // B. A bundled/cached offline pack remains the first choice when present.
+        if (OfflineI18n.hasPack(code)) {
+            bahasaLabel('Memuat bahasa offline…');
+            await OnlineI18n.reset();
+            OfflineI18n.reset();
+            if (typeof window.setLanguage === 'function') window.setLanguage('id');
+            const offlineApplied = await OfflineI18n.apply(code);
+            if (offlineApplied) {
+                document.documentElement.lang = code;
+                bahasaSimpan(code, name, OfflineI18n.current(), 'offline');
+                bahasaLabel(name + ' (Aktif · Offline)');
+                window.tutupModalBahasa();
+                return true;
+            }
+            if (navigator.onLine === false || OfflineI18n.lastError() === 'network') {
+                bahasaTunda(code, name);
+                bahasaLabel(previousLabel || 'Bahasa sebelumnya tetap aktif');
+                alert('Paket bahasa belum tersedia di perangkat. Sambungkan internet untuk mengunduhnya, lalu pilihan akan dicoba kembali.');
+                return false;
+            }
+            // A broken/invalid offline pack may fall through to the online provider.
+        }
+
+        // C. Do not close the picker or overwrite the current language while offline.
+        if (navigator.onLine === false) {
+            bahasaTunda(code, name);
+            alert('Bahasa ini memerlukan koneksi internet. Pilihan disimpan sementara dan akan dicoba saat perangkat online.');
+            return false;
+        }
+
+        // D. Resolve against local language candidates. MyMemory validates the
+        // actual Indonesian-to-target pair when each segment is sent.
+        bahasaLabel('Memeriksa dukungan bahasa online…');
+        const catalog = await getSupportedTranslationLanguages();
+        const resolvedCode = resolveSupportedTranslationLanguageCode(code, catalog.languages);
+        if (!resolvedCode) {
+            await pulihkanBahasaSebelumnya(previousLanguage, previousName, previousMode, previousLabel);
+            alert(`Bahasa "${name}" belum tersedia pada layanan terjemahan online yang aktif. Pilih bahasa lain.`);
+            return false;
+        }
+
+        bahasaLabel('Menyiapkan terjemahan…');
+        await OnlineI18n.reset();
+        OfflineI18n.reset();
+        if (typeof window.setLanguage === 'function') window.setLanguage('id');
+        document.documentElement.lang = 'id';
+
+        const result = await OnlineI18n.apply(resolvedCode, {
+            onProgress: ({ completed, total, requests }) => {
+                const suffix = total ? ` ${completed}/${total}` : '';
+                bahasaLabel(`Menerjemahkan…${suffix}${requests ? ` · ${requests} permintaan` : ''}`);
+            }
+        });
+        if (result.applied === 0 && result.total > 0) {
+            const error = new Error('Tidak ada teks aplikasi yang berhasil diterjemahkan.');
+            error.code = 'TRANSLATION_EMPTY_RESULT';
+            throw error;
+        }
+
+        document.documentElement.lang = code;
+        bahasaSimpan(code, name, resolvedCode, 'online');
+        bahasaLabel(name + ' (Aktif · Online)');
+        window.tutupModalBahasa();
+        return true;
+    } catch (error) {
+        console.error('[LanguageEngine] Gagal mengubah bahasa:', {
+            code: getTranslationErrorCode(error) || 'UNCLASSIFIED_TRANSLATION_ERROR',
+            status: Number(error?.status || 0),
+            url: String(error?.url || '').slice(0, 240)
+        });
+        await pulihkanBahasaSebelumnya(previousLanguage, previousName, previousMode, previousLabel);
+        alert(getTranslationErrorMessage(error, name));
+        return false;
+    } finally {
+        bahasaSibuk = false;
+    }
+}
+
+// Restore a saved preference after DOM and the local pack loader are ready.
+window.addEventListener('load', async () => {
+    const savedLanguage = localStorage.getItem('user_lang_preference');
+    if (!savedLanguage || savedLanguage === 'id') return;
+    const savedName = localStorage.getItem('user_lang_name') || savedLanguage;
+    const savedMode = localStorage.getItem('user_lang_mode') || 'online';
+    bahasaLabel(savedName + ' (Memuat…)');
+
+    try {
+        if (OfflineI18n.hasPack(savedLanguage)) {
+            const offlineReady = await OfflineI18n.whenReady();
+            if (offlineReady || await OfflineI18n.apply(savedLanguage)) {
+                document.documentElement.lang = savedLanguage;
+                bahasaLabel(savedName + ' (Aktif · Offline)');
+                return;
+            }
+        }
+
+        if (navigator.onLine === false) {
+            bahasaTunda(savedLanguage, savedName);
+            bahasaLabel(savedName + ' (Menunggu koneksi)');
+            return;
+        }
+
+        // Migrate existing online-language preferences to the MyMemory free route.
+        const resolvedCode = localStorage.getItem('user_lang_resolved') || savedLanguage;
+        await OnlineI18n.apply(resolvedCode);
+        document.documentElement.lang = savedLanguage;
+        localStorage.setItem('user_lang_mode', 'online');
+        bahasaLabel(savedName + ' (Aktif · Online)');
+    } catch (error) {
+        console.warn('[LanguageEngine] Pemulihan bahasa tersimpan gagal:', getTranslationErrorCode(error) || error?.message || error);
+        bahasaTunda(savedLanguage, savedName);
+        bahasaLabel(savedName + ' (Menunggu koneksi)');
+    }
+});
+
+// Retry only the pending user choice after the browser reports a real online transition.
+window.addEventListener('online', () => {
+    const raw = localStorage.getItem('user_lang_pending');
+    if (!raw || bahasaSibuk) return;
+    try {
+        const pending = JSON.parse(raw);
+        if (pending?.code) void pilihBahasaGlobal(pending.code, pending.name || pending.code);
+    } catch (_) {
         localStorage.removeItem('user_lang_pending');
-        localStorage.setItem('app_lang', kode);
-        localStorage.setItem('user_lang_preference', kode);
-        localStorage.setItem('user_lang_resolved', resolved || kode);
-        localStorage.setItem('user_lang_name', nama);
-        localStorage.setItem('user_lang_mode', mode);          // 'source' | 'offline' | 'google'
-        try {
-            var P = NativeCapacitorService.getPlugin('Preferences');
-            if (NativeCapacitorService.isNativePlatform() && P?.set) P.set({ key: 'app_lang', value: kode });
-        } catch (e) {}
     }
-    function bahasaLabel(teks) { var el = document.getElementById('label-bahasa-aktif'); if (el) el.innerText = teks; }
-    function bahasaTunda(kode, nama) { localStorage.setItem('user_lang_pending', JSON.stringify({ code: kode, name: nama })); }
+});
 
-    // 5. Pemilihan bahasa ---------------------------------------------------------------------------------
-    // Urutan: (A) Indonesia -> (B) paket OFFLINE (instan, tanpa internet) -> (C) tanpa internet: ingat pilihan,
-    // terapkan otomatis saat online -> (D) online: Google Translate.
-    var bahasaSibuk = false;
-
-    async function pilihBahasaGlobal(kodeBahasa, namaBahasa) {
-        if (bahasaSibuk) return;                              // cegah klik ganda saat proses berjalan
-        bahasaSibuk = true;
-        var O = OfflineI18n;
-        var labelEl = document.getElementById('label-bahasa-aktif');
-        var labelLama = labelEl ? labelEl.innerText : '';
-        var bahasaSebelumnya = localStorage.getItem('user_lang_preference');
-
-        // Bila jalur gagal setelah tampilan dikembalikan ke Indonesia, pulihkan bahasa offline sebelumnya
-        async function pulihkan() {
-            bahasaLabel(labelLama);
-            if (O && bahasaSebelumnya && bahasaSebelumnya !== 'id' && O.hasPack(bahasaSebelumnya)) { await O.apply(bahasaSebelumnya); }
-        }
-
-        try {
-            // A. Bahasa sumber (Indonesia)
-            if (kodeBahasa === 'id') {
-                var adaGoogleId = adaCookieGoogle();
-                gtClearCookie();
-                bahasaSimpan('id', namaBahasa, 'id', 'source');
-                if (O) O.reset();
-                if (typeof window.setLanguage === 'function') window.setLanguage('id');
-                bahasaLabel(namaBahasa + " (Aktif)");
-                tutupModalBahasa();
-                if (adaGoogleId) setTimeout(function() { window.location.reload(); }, 200);
-                return;
-            }
-
-            var punyaPaket = !!(O && O.hasPack(kodeBahasa));
-
-            // B. Paket bahasa lokal: instan & berfungsi OFFLINE
-            if (punyaPaket) {
-                bahasaLabel("Memuat bahasa…");
-                tutupModalBahasa();
-                var berhasil = await O.apply(kodeBahasa);
-                if (berhasil) {
-                    var adaGoogle = adaCookieGoogle();
-                    gtClearCookie();                          // cegah terjemahan ganda oleh Google
-                    bahasaSimpan(kodeBahasa, namaBahasa, O.current(), 'offline');
-                    if (typeof window.setLanguage === 'function') window.setLanguage(kodeBahasa);
-                    bahasaLabel(namaBahasa + " (Aktif)");
-                    // sisa terjemahan Google di DOM hanya bisa dibersihkan lewat reload
-                    if (adaGoogle) setTimeout(function() { window.location.reload(); }, 200);
-                    return;
-                }
-                bahasaLabel(labelLama);                       // paket gagal dimuat -> coba jalur berikutnya
-            }
-
-            // C. Tidak ada paket yang bisa dipakai DAN tidak ada internet
-            if (!navigator.onLine || (punyaPaket && O && O.lastError() === 'network')) {
-                bahasaTunda(kodeBahasa, namaBahasa);          // diterapkan otomatis saat online lagi
-                tutupModalBahasa();
-                alert(punyaPaket
-                    ? "Paket bahasa ini belum diunduh ke perangkat. Sambungkan internet sekali; pilihan Anda akan diterapkan otomatis."
-                    : "Bahasa ini belum tersedia offline. Pilihan Anda akan diterapkan otomatis saat perangkat online.");
-                return;
-            }
-
-            // D. Online: Google Translate. Keep the picker visible while the SDK and
-            // its language <select> finish rendering so users can retry without reopening it.
-            bahasaLabel("Memuat terjemahan…");
-            if (O) O.reset();                                 // Google harus menerjemahkan dari teks asli (Indonesia)
-            var combo = null;
-            try {
-                await loadGoogleTranslateWidget({ timeoutMs: 15000 });
-                combo = await gtWaitCombo(1000);
-            } catch (loadError) {
-                console.warn('[LanguageEngine] Google Translate belum siap:', loadError);
-            }
-            if (!combo) {
-                await pulihkan();
-                alert("Mesin penerjemah gagal dimuat. Periksa koneksi internet lalu pilih bahasa sekali lagi. Pilihan belum disimpan.");
-                return;
-            }
-            var kodeGoogle = gtResolveCode(combo, kodeBahasa);
-            if (!kodeGoogle) {
-                await pulihkan();
-                alert('Bahasa "' + namaBahasa + '" belum didukung oleh mesin penerjemah otomatis. Silakan pilih bahasa lain.');
-                return;
-            }
-
-            // Simpan pilihan HANYA setelah bahasa terbukti didukung
-            bahasaSimpan(kodeBahasa, namaBahasa, kodeGoogle, 'google');
-            if (typeof window.setLanguage === 'function') window.setLanguage(kodeBahasa);
-            bahasaLabel(namaBahasa + " (Aktif)");
-            gtSetCookie(kodeGoogle);                          // cookie agar bertahan saat reload
-            combo.value = kodeGoogle;                         // terapkan langsung tanpa reload
-            combo.dispatchEvent(new Event('change'));
-            tutupModalBahasa();
-
-        } catch (error) {
-            console.error("Gagal mengubah bahasa:", error);
-            try { await pulihkan(); } catch (e) {}
-            alert("Gagal memuat mesin penerjemah. Pastikan perangkat terhubung ke internet.");
-        } finally {
-            bahasaSibuk = false;
-        }
-    }
-
-    // [AI-GENERATED][ES6 MODULE][V262] Internal listeners call the lexical module binding.
-    // The global assignment below remains a compatibility bridge for legacy callers.
-
-    // 6. Auto-restore bahasa saat aplikasi dibuka ulang -------------------------------------------------
-    window.addEventListener('load', function() {
-        var savedLang = localStorage.getItem('user_lang_preference');
-        if (!savedLang || savedLang === 'id') return;
-        var savedName = localStorage.getItem('user_lang_name');
-        var resolved  = localStorage.getItem('user_lang_resolved') || savedLang;
-        var O = OfflineI18n;
-
-        var labelAktif = document.getElementById('label-bahasa-aktif');
-        if (labelAktif && savedName) labelAktif.innerText = savedName + " (Aktif)";
-
-        // Mesin offline menerapkan bahasa tersimpan sendiri saat startup; di sini hanya menentukan cadangannya
-        var siapOffline = (O && O.hasPack(savedLang)) ? O.whenReady() : Promise.resolve(false);
-        siapOffline.then(function(ok) {
-            if (ok) { gtClearCookie(); return; }
-            if (navigator.onLine) {
-                // element.js membaca cookie googtrans saat init lalu menerjemahkan otomatis
-                if (!adaCookieGoogle()) gtSetCookie(resolved);
-                void loadGoogleTranslateWidget().catch(function(error) {
-                    console.warn('[LanguageEngine] Pemulihan Google Translate tertunda:', error);
-                });
-            } else {
-                bahasaTunda(savedLang, savedName || savedLang);   // offline & belum ada paket -> tunda sampai online
-            }
-        });
-    });
-
-    // 7. Pilihan yang tertunda karena offline -> terapkan saat internet kembali -----------------------------
-    window.addEventListener('online', function() {
-        var raw = localStorage.getItem('user_lang_pending');
-        if (!raw) return;
-        try {
-            var p = JSON.parse(raw);
-            if (p && p.code) pilihBahasaGlobal(p.code, p.name || p.code);
-        } catch (e) { localStorage.removeItem('user_lang_pending'); }
-    });
-
-    // [AI-GENERATED][ES6 MODULE][V262] Search behavior is owned by language-list-service.js.
+// [AI-GENERATED][ES6 MODULE][V332] Search behavior remains owned by language-list-service.js.
 
 // ==========================================================
 // FUNGSI PAYMENT GATEWAY
@@ -307,9 +389,8 @@ async function mulaiTransaksiMidtrans() {
     }
 }
 
-window.googleTranslateElementInit = googleTranslateElementInit;
 window.filterDaftarBahasa = filterDaftarBahasa; // [AI-GENERATED][COMPATIBILITY][V262]
 window.pilihBahasaGlobal = pilihBahasaGlobal; // [AI-GENERATED][COMPATIBILITY][V262]
 window.mulaiTransaksiMidtrans = mulaiTransaksiMidtrans;
 
-export { googleTranslateElementInit, filterDaftarBahasa, mulaiTransaksiMidtrans, pilihBahasaGlobal }; // [AI-GENERATED][ES6 MODULE][V262]
+export { filterDaftarBahasa, mulaiTransaksiMidtrans, pilihBahasaGlobal }; // [AI-GENERATED][ES6 MODULE][V332]

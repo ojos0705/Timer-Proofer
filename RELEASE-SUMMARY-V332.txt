@@ -1,0 +1,16 @@
+TIMER PROOFER — RELEASE SUMMARY V332
+Product version: V125 (unchanged)
+Technical release: 20261101-v332
+Service Worker cache: Timer-Proofing-v1.1.234
+
+1. App Tour steps 4–5 now use the same `.tour-highlighted-element` spotlight style as steps 1–3. The navbar stacking context is raised only while a tab is highlighted, with correct current tab IDs and deterministic cleanup.
+2. Online language selection no longer depends on the unsupported Google Website Translator Widget. It uses an authenticated Cloud Translation Basic v2 server-side proxy, a provider language catalog, bounded batches, local cache, and safe text-node/attribute application.
+3. Dynamic UI translation flush now retries one time only for transient network/timeout/5xx errors and ignores mutations caused by its own applied translations. It does not loop on auth, configuration, quota or rate-limit errors.
+4. Existing offline language packs remain the first fallback where available. Failed online selection does not get persisted as successful, and previous language is restored.
+5. User-authored recipe content (recipe names, ingredient/production records, photos, instructions) remains excluded while static recipe UI labels are translatable.
+
+QA: 487/487 automated tests passed; release verifier and duplicate-function audit passed. 76 precache assets valid; 69 modules in boot graph; no missing imports, duplicate HTML IDs or inline handlers.
+
+REQUIRES CONFIGURATION: Set Vercel environment variable `GOOGLE_CLOUD_TRANSLATE_API_KEY` for Preview and Production after enabling Google Cloud Translation API and Billing. Do not embed the API key in client assets or Git.
+
+Not claimed as complete: provider live test, Vercel deployment, V332 Gradle build, or physical device test. Those require deployment credentials/provider configuration and device-side validation.

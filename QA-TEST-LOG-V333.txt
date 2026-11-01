@@ -1,0 +1,41 @@
+TIMER PROOFER — V333 QA TEST LOG
+Date: 2026-11-01
+Base: Timer-Proofer-ES6-Modular-V332-ROOT-EXTRACT.zip (user-uploaded)
+
+RELEASE METADATA
+- Product-facing version: V125
+- Release token: 20261101-v333
+- Service Worker cache: Timer-Proofing-v1.1.235
+
+AUTOMATED CHECKS
+- `node scripts/sync-web-assets.mjs`: PASS
+- `node scripts/verify-release.mjs`: PASS
+- `node scripts/audit-function-names.mjs`: PASS
+- `npm test`: 493 passed, 0 failed, 0 skipped
+- JavaScript checked: 267
+- HTML files checked: 2
+- HTML IDs: 300; duplicates: 0
+- Missing relative imports: 0
+- Inline handlers: 0
+- Service Worker precache paths: 76 valid
+- Local modules in entrypoint graph: 69
+- Duplicate function declarations within a module: 0
+
+FEATURE REGRESSION COVERAGE
+- One full-width onboarding slide at a time; measured pixel offset and viewport resize alignment: PASS (static contract test)
+- Existing swipe interactions preserved: PASS
+- Responsive/safe-area onboarding content for shorter viewports: PASS (static contract test)
+- Login/register card content sizing, no 240px blank form spacer, constrained scroll on short viewports: PASS (static contract test)
+- Translation API route/not-JSON/network error diagnostics: PASS (static contract test)
+- Missing Cloud Translation config maps to actionable message: PASS (static contract test)
+- Existing tour, AI, auth, timer, recipe, notification, PiP, PWA, storage and backend tests: PASS
+
+PACKAGE
+- ZIP integrity: PASS
+- Clean extraction: PASS
+- npm test from clean extraction: PASS (493/493)
+
+NOT VERIFIED IN THIS ENVIRONMENT
+- Provider-live Google Cloud Translation, as no API key or Billing project credentials were supplied/configured.
+- Vercel Preview/Production deployment.
+- Gradle Android build, APK installation, and physical Android/iOS touch/keyboard tests for V333.
