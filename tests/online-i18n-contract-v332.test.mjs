@@ -70,7 +70,7 @@ test('cloud client retries only transient network/upstream errors and treats aut
 test('translation APIs allow Authorization in CORS preflight and the app still uses the ESM translation engine', () => {
     assert.match(api, /Access-Control-Allow-Headers[^\n]*Authorization/);
     assert.match(catalogApi, /Access-Control-Allow-Headers[^\n]*Authorization/);
-    assert.match(engine, /modal-bootstrap\.js\?v=20261101-v336/);
+    assert.match(engine, /modal-bootstrap\.js\?v=20261101-v337/);
     assert.match(engine, /syncModalBodyScrollLock/);
     assert.doesNotMatch(engine, /googleTranslateElementInit/);
 });

@@ -1,5 +1,5 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261101-v336'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261101-v337'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
 import { init as initializeAppLifecycle, setTimerBackGuard } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent, syncRegistrationSubmitState } from './features-auth-ui.js?v=20261101-v336'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent, syncRegistrationSubmitState } from './features-auth-ui.js?v=20261101-v337'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -8251,6 +8251,43 @@ async function shareAppNow() {
     }
 }
 
+/**
+ * [AI-GENERATED][SHARE-UI][V337] Share a clean URL payload separately from
+ * the invitation message so Android and browser targets can render the link.
+ */
+async function shareAppLinkOnly() {
+    const { title, url } = getAppShareData();
+    const linkOnlyData = { title, url };
+
+    try {
+        if (NativeCapacitorService.isNativePlatform()) {
+            const nativeShare = NativeCapacitorService.getPlugin('Share');
+            if (typeof nativeShare?.share === 'function') {
+                await nativeShare.share({
+                    title,
+                    url,
+                    dialogTitle: 'Bagikan tautan Timer Proofer'
+                });
+                return true;
+            }
+        }
+
+        if (typeof navigator.share === 'function') {
+            await navigator.share(linkOnlyData);
+            return true;
+        }
+
+        return await copyAppShareLink();
+    } catch (error) {
+        if (error?.name === 'AbortError' || /cancel|canceled|cancelled|dismiss/i.test(String(error?.message || ''))) {
+            return false;
+        }
+        console.warn('[BagikanAplikasi] Share tautan gagal:', error);
+        showAppShareMessage('Tautan tidak dapat dibagikan melalui aplikasi. Anda masih dapat menyalin tautan.');
+        return false;
+    }
+}
+
 async function copyAppShareLink() {
     const { url } = getAppShareData();
     try {
@@ -8310,7 +8347,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261101-v336');
+        metadataUrl.searchParams.set('_release', '20261101-v337');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);
@@ -8990,6 +9027,7 @@ window.renderInventoryCards = function() {
 
 window.bagikanAplikasi = bagikanAplikasi;
 window.shareAppNow = shareAppNow;
+window.shareAppLinkOnly = shareAppLinkOnly;
 window.copyAppShareLink = copyAppShareLink;
 
 // Data Default Profil (Fallback jika storage kosong)

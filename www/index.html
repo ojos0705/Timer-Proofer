@@ -31,7 +31,7 @@
 <meta name="midtrans-snap-config" data-client-key="YOUR_CLIENT_KEY" data-environment="sandbox" content="Midtrans Snap runtime configuration"/>
 <!-- [AI-GENERATED][ES6 MODULE][V258] Supabase, modal bootstrap, and lazy PDF services use the module runtime. -->
 <!-- [AI-GENERATED][ES6 MODULE][V255] Runtime globals are initialized before the application module graph. -->
-<script type="module" src="./assets/js/runtime-entry.js?v=20261101-v336"></script>
+<script type="module" src="./assets/js/runtime-entry.js?v=20261101-v337"></script>
 <title>Timer Proofer</title>
 <style>
         :root {
@@ -3773,12 +3773,14 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 #share-app-modal .share-app-link-value { color: #3E2723; font-size: .82rem; overflow-wrap: anywhere; }
 #share-app-modal .share-app-actions { width: 100%; max-width: 460px; display: grid; gap: 10px; }
 #share-app-modal .share-app-primary,
-#share-app-modal .share-app-secondary {
+#share-app-modal .share-app-secondary,
+#share-app-modal .share-app-tertiary {
     width: 100%; min-height: 48px; border-radius: 12px; padding: 12px 16px;
     font-size: .88rem; font-weight: 800; cursor: pointer; box-sizing: border-box;
 }
 #share-app-modal .share-app-primary { background: var(--accent, #E67E22); color: #fff; border: 0; box-shadow: 0 4px 12px rgba(230, 126, 34, .2); }
 #share-app-modal .share-app-secondary { background: #fff; color: var(--chocolate, #4E342E); border: 1px solid rgba(78, 52, 46, .18); }
+#share-app-modal .share-app-tertiary { background: #FDF5E6; color: var(--chocolate, #4E342E); border: 1px solid rgba(230, 126, 34, .26); }
 #share-app-modal .share-app-footnote { font-size: .72rem; }
 
 </style>
@@ -4852,7 +4854,8 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
     </div>
     <div class="share-app-actions">
       <button class="share-app-primary" id="btn-share-app-native" data-action="shareAppNow" type="button">📲 Bagikan melalui aplikasi</button>
-      <button class="share-app-secondary" id="btn-copy-app-link" data-action="copyAppShareLink" type="button">🔗 Salin tautan</button>
+      <button class="share-app-tertiary" id="btn-share-app-link" data-action="shareAppLinkOnly" type="button">🔗 Bagikan tautan saja</button>
+      <button class="share-app-secondary" id="btn-copy-app-link" data-action="copyAppShareLink" type="button">📋 Salin tautan</button>
     </div>
     <p class="share-app-footnote">Tautan publik dapat dibuka melalui browser dan dipasang sebagai PWA.</p>
   </div>
