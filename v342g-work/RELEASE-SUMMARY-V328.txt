@@ -1,0 +1,21 @@
+TIMER PROOFER — RELEASE SUMMARY V328
+
+Product version shown to users: V125
+Technical release: V328
+Service Worker cache: Timer-Proofing-v1.1.230
+Release token: 20261031-v329
+
+CHANGES
+1. Settings alarm preview now has a separate playback lifecycle.
+2. Save Preferences stops the preview immediately before closing the modal.
+3. Turning off app sound stops the preview immediately.
+4. Preview cancellation uses a generation guard so a delayed rejected play() promise cannot restart a beep.
+5. Real proofing completion alarm playback remains separate and is not stopped by the Save Preferences preview cleanup.
+6. Capacitor Android is restricted to the native Activity PiP surface. Browser video/document PiP routes are not opened in native mode.
+7. PWA/browser PiP behavior remains unchanged.
+
+QA
+461/461 automated tests pass. Static release audit passes with no missing imports, duplicate IDs, inline handlers, or duplicate function declarations within the same module.
+
+DEVICE LIMITATION
+Physical Android PiP and sound preview have not been tested in the user's device. Build and validate the APK locally before merging V328 to the Production branch.

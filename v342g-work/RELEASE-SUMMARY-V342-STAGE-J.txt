@@ -1,0 +1,10 @@
+Timer Proofer & Kalkulator HPP — V342 Stage J
+Product version: V125
+
+Added a read-only Midtrans Sandbox certification runner. It validates Sandbox-only configuration, provider order identity, IDR currency and amount, paid provider status, authenticated app order state, and matching active entitlement. The runner does not create transactions, modify records, or log secrets. Added seven focused tests and production readiness documentation.
+
+Full repository QA: 613 tests passed, 0 failed, 0 skipped. Static checks: 320 JavaScript files; 3 HTML files; 347 HTML IDs with 0 duplicates; 0 missing relative imports; 0 inline event handlers; 0 scroll-lock overrides; 0 duplicate function declarations within one module; 69 local entrypoint modules; 80 Service Worker precache paths.
+
+Live sandbox certification was not run because merchant credentials, a staging deployment, a test-user access token, and a paid sandbox order ID were not provided. The runner was executed without configuration and exited safely before any network request. No live webhook, Supabase migration, deployment, browser/device E2E, or production transaction was performed. This is a certification harness, not a live certification claim.
+
+Partial refunds currently revoke access; policy approval remains a production gate. Product-facing version remains V125.

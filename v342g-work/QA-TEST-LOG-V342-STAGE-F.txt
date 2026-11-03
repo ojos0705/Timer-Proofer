@@ -1,0 +1,24 @@
+V342 Stage F — QA log
+
+Focused tests:
+- tests/finance-admin-v342f.test.mjs: 6 passed, 0 failed
+- api/finance-admin-summary.js: Node syntax check passed
+
+Full release suite:
+- npm test: 572 passed, 0 failed
+- JavaScript syntax checked: 306
+- HTML files checked: 3
+- HTML IDs: 341; duplicate IDs: 0
+- Missing relative imports: 0
+- Inline event handlers: 0
+- Scroll-lock overrides: 0
+- Same-module duplicate function declarations: 0
+- Module graph: 69 local modules
+- Service Worker precache: 80 paths; no missing local assets
+- Product-facing version: V125
+
+Manual checks not performed:
+- Supabase migration application
+- Vercel Preview environment and endpoint test
+- Real Midtrans financial reconciliation
+- Browser/PWA/Android/iOS end-to-end test

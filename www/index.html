@@ -31,7 +31,7 @@
 <meta name="midtrans-snap-config" data-client-key="YOUR_CLIENT_KEY" data-environment="sandbox" content="Midtrans Snap runtime configuration"/>
 <!-- [AI-GENERATED][ES6 MODULE][V258] Supabase, modal bootstrap, and lazy PDF services use the module runtime. -->
 <!-- [AI-GENERATED][ES6 MODULE][V255] Runtime globals are initialized before the application module graph. -->
-<script type="module" src="./assets/js/runtime-entry.js?v=20261101-v337"></script>
+<script type="module" src="./assets/js/runtime-entry.js?v=20261102-v342"></script>
 <title>Timer Proofer</title>
 <style>
         :root {
@@ -1274,6 +1274,42 @@ outline-offset: 2px;
             box-sizing: border-box;
         }
         .page-modal > .modal-bottom-actions { flex: 0 0 auto; }
+
+
+        /* [AI-GENERATED][UI TYPOGRAPHY][V340]
+           Satu skala tipografi untuk seluruh item Pengaturan.
+           Judul : deskripsi mengikuti rasio phi (1 : 1/1.618).
+           Padding dan tinggi area sentuh tidak diubah. */
+        #settings-modal {
+            --settings-type-primary: 1rem;
+            --settings-type-secondary: calc(var(--settings-type-primary) / var(--phi));
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > div:first-child {
+            gap: 12px !important;
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > div:first-child > span:first-child {
+            font-size: 1.1rem !important;
+            line-height: 1 !important;
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > div:first-child > div > div:first-child {
+            font-size: var(--settings-type-primary) !important;
+            font-weight: 600 !important;
+            line-height: 1.2 !important;
+            color: #3e2723 !important;
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > div:first-child > div > div:nth-child(2) {
+            margin-top: 3px !important;
+            font-size: var(--settings-type-secondary) !important;
+            font-weight: 400 !important;
+            line-height: 1.35 !important;
+            color: #888 !important;
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > span:last-child {
+            color: #cbd5e1 !important;
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            line-height: 1 !important;
+        }
 
         .modal-bottom-actions {
     flex-shrink: 0;
@@ -3843,7 +3879,7 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <input id="agree-tos-checkbox" name="agree-tos" data-onchange="validateSubmitButton()" style="width: 16px; height: 16px; margin-top: 2px; cursor: pointer; accent-color: #3e2723;" type="checkbox"/>
 <label for="agree-tos-checkbox" style="font-size: 0.8rem; color: #3e2723; cursor: pointer; user-select: none; line-height: 1.3;">
                         Saya telah membaca dan menyetujui 
-                        <a data-action="toggleModal" data-arg="tos-modal" href="#" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Syarat &amp; Ketentuan Layanan</a> 
+                        <a data-action="openTermsModal" data-arg="tos-modal" href="#" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Syarat &amp; Ketentuan Layanan</a> 
                         serta Kebijakan Privasi.
                     </label>
 </div>
@@ -4343,25 +4379,37 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div class="log-empty">Tidak ada stok bahan tersedia.</div>
 </div>
 </div>
-<!-- PEMBAYARAN -->
+<!-- [AI-GENERATED][MONETIZATION][V342-C] Paket Keanggotaan: harga selalu berasal dari katalog server. -->
+<section class="membership-package-section" aria-labelledby="membership-package-title" style="margin: 18px 0;">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;"><h3 class="profile-section-title" id="membership-package-title" style="margin-bottom:10px;">💎 Paket Keanggotaan</h3><button class="profile-refresh-btn" data-action="loadMembershipPackages" type="button" style="font-size:.76rem;padding:7px 10px;">↻ Muat ulang</button></div>
+<div id="membership-current-status" aria-live="polite" style="background:#fffaf2;border:1px solid rgba(230,126,34,.2);border-radius:14px;padding:14px;margin-bottom:14px;text-align:left;">
+<strong style="display:block;color:#4E342E;">Status Keanggotaan</strong>
+<span id="membership-current-plan" style="display:block;margin-top:5px;color:#718096;font-size:.86rem;">Memuat status akun…</span>
+<span id="membership-expiry" style="display:block;margin-top:4px;color:#718096;font-size:.76rem;"></span>
+</div>
+<div role="group" aria-label="Periode pembayaran" style="display:flex;gap:8px;margin:0 0 12px;">
+<button type="button" aria-pressed="true" style="flex:1;border:1px solid var(--accent,#E67E22);background:#fff3e6;color:#9a4d0b;border-radius:10px;padding:9px;font-weight:800;">Bulanan</button>
+<button type="button" disabled aria-disabled="true" title="Harga tahunan belum ditetapkan" style="flex:1;border:1px solid #e2e8f0;background:#f8fafc;color:#94a3b8;border-radius:10px;padding:9px;font-weight:700;opacity:.8;">Tahunan · Segera</button>
+</div>
+<div id="membership-plan-list" aria-live="polite" aria-busy="true" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;">
+<div class="log-empty" style="grid-column:1/-1;">Memuat pilihan paket…</div>
+</div>
+<p style="font-size:.74rem;line-height:1.5;color:#718096;margin:10px 2px 16px;text-align:left;">Masa aktif dimulai setelah pembayaran terverifikasi. Pembaruan saat ini dilakukan secara manual. Harga yang ditampilkan merupakan total yang ditagihkan.</p>
 <div class="payment-checkout-container" style="background: #ffffff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 420px; margin: 0 auto; text-align: center;">
-<div style="font-size: 2.5rem; margin-bottom: 10px;">🧾</div>
-<h4 style="margin: 0 0 8px 0; color: #4E342E; font-size: 1.1rem; font-weight: 800;">Konfirmasi Pembayaran</h4>
-<p style="font-size: 0.8rem; color: #718096; margin-bottom: 20px;">Selesaikan transaksi Anda secara aman menggunakan berbagai metode pembayaran instan.</p>
-<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 20px; text-align: left; font-size: 0.82rem;">
-<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-<span style="color: #64748b;">Produk / Layanan:</span>
-<span style="font-weight: 700; color: #4E342E;">Langganan / Pesanan Adonan</span>
+<div style="font-size: 2rem; margin-bottom: 8px;">🧾</div>
+<h4 style="margin: 0 0 8px 0; color: #4E342E; font-size: 1.05rem; font-weight: 800;">Ringkasan Pembayaran</h4>
+<p id="membership-checkout-description" style="font-size: 0.8rem; color: #718096; margin-bottom: 16px;">Pilih paket untuk melihat rincian tagihan.</p>
+<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 16px; text-align: left; font-size: 0.82rem;">
+<div style="display: flex; justify-content: space-between; gap:10px; margin-bottom: 6px;"><span style="color: #64748b;">Paket:</span><strong id="pay-plan-name" style="color:#4E342E;text-align:right;">Belum dipilih</strong></div>
+<div style="display: flex; justify-content: space-between; gap:10px; margin-bottom: 6px;"><span style="color: #64748b;">Masa aktif:</span><strong id="pay-plan-period" style="color:#4E342E;text-align:right;">—</strong></div>
+<div style="display: flex; justify-content: space-between; gap:10px; margin-bottom: 6px;"><span style="color: #64748b;">Harga paket:</span><strong id="pay-subtotal-amount" style="color:#4E342E;text-align:right;">—</strong></div>
+<div style="display: flex; justify-content: space-between; gap:10px; margin-bottom: 6px;"><span style="color: #64748b;">Diskon:</span><strong id="pay-discount-amount" style="color:#4E342E;text-align:right;">Rp0</strong></div>
+<div style="display: flex; justify-content: space-between; gap:10px; border-top: 1px dashed #cbd5e1; padding-top: 8px;"><span style="font-weight: 700; color: #4E342E;">Total Tagihan:</span><span id="pay-total-amount" style="font-weight: 800; color: #E67E22;">Pilih paket</span></div>
 </div>
-<div style="display: flex; justify-content: space-between; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
-<span style="font-weight: 700; color: #4E342E;">Total Tagihan:</span>
-<span id="pay-total-amount" style="font-weight: 800; color: #E67E22;">Rp 50.000</span>
+<button class="btn" data-action="mulaiTransaksiMidtrans" disabled style="background: var(--accent, #E67E22); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(230,126,34,0.25); opacity:.55;" type="button">💳 LANJUTKAN PEMBAYARAN</button>
+<p style="font-size:.7rem;color:#94a3b8;margin:12px 0 0;">Pembayaran diproses melalui Midtrans. Aktivasi paket menunggu konfirmasi server.</p>
 </div>
-</div>
-<button class="btn" data-action="mulaiTransaksiMidtrans" style="background: var(--accent, #E67E22); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(230,126,34,0.25);" type="button">
-                    💳 BAYAR SEKARANG
-                </button>
-</div>
+</section>
 </div>
 </div>
 
@@ -4486,8 +4534,8 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">🌡️</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Koneksi Sensor</div>
-<div style="font-size: 0.7rem; color: #888;">Hubungkan termometer BLE &amp; perangkat IoT</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Koneksi Sensor</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Hubungkan termometer BLE &amp; perangkat IoT</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4496,8 +4544,8 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">🎛️</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Preferensi Aplikasi</div>
-<div style="font-size: 0.7rem; color: #888;">Suara, getaran, &amp; mode offline</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Preferensi Aplikasi</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Suara, getaran, &amp; mode offline</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4507,8 +4555,8 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">🌐</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Bahasa Aplikasi / App Language</div>
-<div id="label-bahasa-aktif" style="font-size: 0.7rem; color: #888;">Bahasa Indonesia (Default)</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Bahasa Aplikasi / App Language</div>
+<div id="label-bahasa-aktif" style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Bahasa Indonesia (Default)</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4517,28 +4565,28 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">❓</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Pusat Bantuan &amp; Panduan</div>
-<div style="font-size: 0.7rem; color: #888;">FAQ, cara penggunaan, dan tips proofing</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Pusat Bantuan &amp; Panduan</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">FAQ, cara penggunaan, dan tips proofing</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
 </div>
 <div data-action="handleRestartTourFromSettings" data-onmouseout="this.style.background='transparent'" data-onmouseover="this.style.background='#fdf8f4'" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s;">
-<div style="display: flex; align-items: center; gap: 14px;">
-<span style="font-size: 18px; line-height: 1;">🚀</span>
+<div style="display: flex; align-items: center; gap: 12px;">
+<span>🚀</span>
 <div>
-<div style="font-weight: 700; color: #4E342E; font-size: 14px; line-height: 1.2;">Tour Aplikasi</div>
-<div style="font-size: 12px; color: #8D6E63; margin-top: 3px;">Ulangi panduan interaktif fitur aplikasi</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Tour Aplikasi</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Ulangi panduan interaktif fitur aplikasi</div>
 </div>
 </div>
-<span style="color: #C8B6A6; font-size: 14px;">›</span>
+<span>›</span>
 </div>
-<div data-action="toggleModal" data-arg="tos-modal" data-onmouseout="this.style.background='transparent'" data-onmouseover="this.style.background='#fdf8f4'" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;">
+<div data-action="openTermsModal" data-arg="tos-modal" data-onmouseout="this.style.background='transparent'" data-onmouseover="this.style.background='#fdf8f4'" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;">
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">📜</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Syarat &amp; Ketentuan Layanan</div>
-<div style="font-size: 0.7rem; color: #888;">Aturan penggunaan &amp; kebijakan hukum</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Syarat &amp; Ketentuan Layanan</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Aturan penggunaan &amp; kebijakan hukum</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4548,8 +4596,8 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">💾</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Pencadangan &amp; Pemulihan</div>
-<div style="font-size: 0.7rem; color: #888;">Ekspor atau impor semua resep Anda</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Pencadangan &amp; Pemulihan</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Ekspor atau impor semua resep Anda</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4558,8 +4606,8 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">ℹ️</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Tentang Aplikasi</div>
-<div id="about-menu-version" style="font-size: 0.7rem; color: #888;">Memuat versi...</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Tentang Aplikasi</div>
+<div id="about-menu-version" style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Memuat versi...</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4569,8 +4617,8 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">📤</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Bagikan ke Teman</div>
-<div style="font-size: 0.7rem; color: #888;">Rekomendasikan Timer Proofing</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Bagikan ke Teman</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Rekomendasikan Timer Proofing</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4580,8 +4628,8 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">⭐</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Beri Nilai Kami</div>
-<div style="font-size: 0.7rem; color: #888;">Play Store, App Store, Galaxy Store...</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Beri Nilai Kami</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Play Store, App Store, Galaxy Store...</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4591,8 +4639,8 @@ body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); m
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">💬</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Berikan Saran</div>
-<div style="font-size: 0.7rem; color: #888;">Kritik, masukan, &amp; laporan bug</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Berikan Saran</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Kritik, masukan, &amp; laporan bug</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>

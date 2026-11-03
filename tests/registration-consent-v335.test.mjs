@@ -9,9 +9,9 @@ const feature = read('assets/js/features-auth-ui.js');
 const core = read('assets/js/app-core.js');
 
 test('Terms link targets the existing TOS modal through the canonical modal action', () => {
-  assert.match(html, /<a[^>]*data-action="toggleModal"[^>]*data-arg="tos-modal"[^>]*>Syarat &amp; Ketentuan Layanan<\/a>/);
+  assert.match(html, /<a[^>]*data-action="openTermsModal"[^>]*data-arg="tos-modal"[^>]*>Syarat &amp; Ketentuan Layanan<\/a>/);
   assert.match(html, /id="tos-modal"/);
-  assert.match(html, /data-action="toggleModal" data-arg="tos-modal"/);
+  assert.match(html, /data-action="openTermsModal" data-arg="tos-modal"/);
 });
 
 test('registration submit begins disabled and requires checked consent', () => {

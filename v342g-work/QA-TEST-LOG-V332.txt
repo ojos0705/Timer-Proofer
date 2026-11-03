@@ -1,0 +1,37 @@
+TIMER PROOFER — V332 QA TEST LOG
+Date: 2026-11-01
+Base: user-supplied Timer-Proofer-ES6-Modular-V330-ROOT-EXTRACT.zip
+
+RELEASE METADATA
+- Product-facing version: V125 (unchanged)
+- Technical release token: 20261101-v332
+- Service Worker cache: Timer-Proofing-v1.1.234
+
+AUTOMATED VERIFICATION
+- `node scripts/sync-web-assets.mjs`: PASS
+- `node scripts/verify-release.mjs`: PASS
+- `node scripts/audit-function-names.mjs`: PASS
+- Node test suite: 487 passed, 0 failed, 0 skipped
+- JavaScript files checked: 267
+- HTML files checked: 2
+- HTML IDs: 300
+- Duplicate IDs: 0
+- Missing relative imports: 0
+- Inline event handlers: 0
+- Scroll-lock overrides outside canonical owner: 0
+- Service Worker precache paths: 76 valid, 0 missing
+- Local modules in entrypoint graph: 69
+- Duplicate function declarations in the same module: 0
+
+FEATURE COVERAGE
+- App Tour safe-area / position clamp / vertical scroll and Android Back regression checks: PASS
+- App Tour shared spotlight style for tabs and current tab IDs: PASS
+- Cloud Translation request validation / session verification / CORS preflight / rate limiting / HTTP 403 quota classification: PASS (mocked provider)
+- Cloud Translation batch, code resolution, retry policy, cache contract and private user-content exclusion / safe entity decoding / bounded dynamic-content retry: PASS
+- Existing AI, timer, auth, recipe, notification, PiP, PWA and storage tests: PASS
+
+NOT VERIFIED IN THIS ENVIRONMENT
+- Live Google Cloud Translation call (requires Vercel env var `GOOGLE_CLOUD_TRANSLATE_API_KEY`, enabled API, Billing and valid Supabase session).
+- Live Vercel Preview/Production deployment.
+- Gradle Android build and APK installation for V332.
+- Physical Android/iOS device interactions after V332.

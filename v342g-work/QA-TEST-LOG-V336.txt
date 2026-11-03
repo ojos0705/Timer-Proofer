@@ -1,0 +1,40 @@
+V336 QA TEST LOG
+Date: 2026-11-01
+Baseline: Timer-Proofer-ES6-Modular-V335-ROOT-EXTRACT.zip
+
+Command:
+  npm test
+
+Result:
+  511 tests
+  511 passed
+  0 failed
+  0 skipped
+
+Release verifier:
+  PASS
+  Service Worker precache paths: 80
+  Local modules in entrypoint graph: 69
+  JavaScript files checked: 275
+  HTML files checked: 2
+  HTML IDs: 305
+  Missing imports: 0
+  Duplicate IDs: 0
+  Inline event handlers: 0
+  Duplicate function declarations within same module: 0
+  Scroll-lock owner overrides: 0
+
+Focused V336 regression tests:
+  - Capacitor Share 8.0.2 is explicit dependency with lockfile entry.
+  - Android generated plugin registry and Gradle include SharePlugin.
+  - Existing native share action resolves to Share service; PWA Web Share fallback remains.
+  - GET /api/translate returns safe endpoint health JSON without invoking translation.
+  - Authenticated translation remains POST-only.
+
+Clean extraction verification:
+  - Extracted final ZIP to a new empty directory.
+  - npm test: 511 passed, 0 failed.
+  - ZIP root layout: project files are at archive root (no wrapper folder).
+
+Limitations:
+  The packaging environment could not download npm registry packages, so npm ci / actual plugin artifact installation was not run here. Run npm ci and npm run sync:android on the developer PC before Gradle build. No live Vercel/MyMemory request or physical Android share chooser test was run here.

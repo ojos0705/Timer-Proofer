@@ -1,5 +1,5 @@
 // [AI-GENERATED][REFACTOR] Import explicit feature/core dependencies instead of hidden local utilities.
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261101-v337'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261102-v342'; // [AI-GENERATED][ES6 MODULE IDENTITY][V270]
 import { toggleModal } from './modal.js';
 import { init as initializeAppLifecycle, setTimerBackGuard } from './app-lifecycle-service.js'; // [AI-GENERATED][ES6 MODULE][V269]
 import { bindReplaceableClick } from './core/dom-events.js';
@@ -38,7 +38,7 @@ import { isRecipePhotoRestoreCurrent } from './recipe-photo-restore-guard.js'; /
 import { shouldPersistRecipePhotos } from './recipe-photo-save-policy.js'; // [AI-GENERATED][ES6 MODULE][V280]
 import { isRecipeRealtimeOwnerConsistent } from './recipe-realtime-owner-guard.js'; // [AI-GENERATED][ES6 MODULE][V278]
 import { isRecipeSaveContextCurrent } from './recipe-save-transaction-guard.js'; // [AI-GENERATED][ES6 MODULE][V279]
-import { switchAuthTab, validateRegistrationConsent, syncRegistrationSubmitState } from './features-auth-ui.js?v=20261101-v337'; // [AI-GENERATED][ES6 MODULE][V295]
+import { switchAuthTab, validateRegistrationConsent, syncRegistrationSubmitState } from './features-auth-ui.js?v=20261102-v342'; // [AI-GENERATED][ES6 MODULE][V295]
 
 const proofingTimerController = createProofingTimerController();
 
@@ -8227,6 +8227,19 @@ async function shareAppNow() {
     const shareData = getAppShareData();
     try {
         if (NativeCapacitorService.isNativePlatform()) {
+            const richNativeShare = NativeCapacitorService.isAndroidPlatform()
+                ? NativeCapacitorService.getPlugin('SharePreview')
+                : null;
+            if (typeof richNativeShare?.share === 'function') {
+                await richNativeShare.share({
+                    title: shareData.title,
+                    text: shareData.text,
+                    url: shareData.url,
+                    dialogTitle: 'Bagikan Timer Proofer'
+                });
+                return true;
+            }
+
             const nativeShare = NativeCapacitorService.getPlugin('Share');
             if (typeof nativeShare?.share === 'function') {
                 await nativeShare.share({
@@ -8252,7 +8265,7 @@ async function shareAppNow() {
 }
 
 /**
- * [AI-GENERATED][SHARE-UI][V337] Share a clean URL payload separately from
+ * [AI-GENERATED][SHARE-UI][V338] Share a clean URL payload separately from
  * the invitation message so Android and browser targets can render the link.
  */
 async function shareAppLinkOnly() {
@@ -8261,6 +8274,18 @@ async function shareAppLinkOnly() {
 
     try {
         if (NativeCapacitorService.isNativePlatform()) {
+            const richNativeShare = NativeCapacitorService.isAndroidPlatform()
+                ? NativeCapacitorService.getPlugin('SharePreview')
+                : null;
+            if (typeof richNativeShare?.share === 'function') {
+                await richNativeShare.share({
+                    title,
+                    url,
+                    dialogTitle: 'Bagikan tautan Timer Proofer'
+                });
+                return true;
+            }
+
             const nativeShare = NativeCapacitorService.getPlugin('Share');
             if (typeof nativeShare?.share === 'function') {
                 await nativeShare.share({
@@ -8347,7 +8372,7 @@ function updateVersion() {
     render(fallbackVersion);
     try {
         const metadataUrl = new URL('../../version.json', import.meta.url);
-        metadataUrl.searchParams.set('_release', '20261101-v337');
+        metadataUrl.searchParams.set('_release', '20261102-v342');
         return fetch(metadataUrl.href, { cache: 'no-store' })
             .then(response => {
                 if (!response.ok) throw new Error(`HTTP ${response.status} saat memuat version.json`);

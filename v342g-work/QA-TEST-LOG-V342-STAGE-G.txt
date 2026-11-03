@@ -1,0 +1,24 @@
+V342 Stage G — QA test log
+
+Focused Stage G + Stage F finance tests: 14 passed, 0 failed.
+Full release suite: 580 passed, 0 failed.
+
+Static release checks:
+- JavaScript checked: 311
+- HTML checked: 3
+- HTML IDs: 343
+- Duplicate IDs: 0
+- Missing relative imports: 0
+- Inline event handlers: 0
+- Scroll-lock overrides: 0
+- Duplicate function declarations within same module: 0
+- Local modules in entrypoint graph: 69
+- Service Worker precache paths: 80
+- Product-facing version: V125
+
+Not tested in this local QA:
+- Applying the new migration to a live Supabase project
+- Real Midtrans Sandbox/Production status requests
+- Payout report fee import/reconciliation
+- Vercel Preview deployment
+- Browser/PWA/Android/iOS end-to-end behavior

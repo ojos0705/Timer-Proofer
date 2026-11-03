@@ -5,8 +5,8 @@
  */
 import { NativeCapacitorService } from './native-capacitor-service.js';
 import { toggleModal } from './modal.js';
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261101-v337'; // [AI-GENERATED][ES6 MODULE IDENTITY][V332]
-import { postJson } from './api-client-service.js';
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261102-v342'; // [AI-GENERATED][ES6 MODULE IDENTITY][V332]
+import { getJson, postJson } from './api-client-service.js';
 import { isMidtransConfigured, loadMidtransSnap } from './midtrans-runtime.js';
 import { OfflineI18n } from './offline-i18n.js';
 import { OnlineI18n } from './online-i18n.js';
@@ -315,76 +315,245 @@ window.addEventListener('online', () => {
 // [AI-GENERATED][ES6 MODULE][V332] Search behavior remains owned by language-list-service.js.
 
 // ==========================================================
+// [AI-GENERATED][MONETIZATION][V342-C] KATALOG DAN STATUS KEANGGOTAAN
+// Harga dan ketersediaan paket hanya berasal dari API katalog server.
+// ==========================================================
+let membershipPlans = [];
+let selectedMembershipPlanId = '';
+
+function formatRupiah(amount) {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number(amount) || 0);
+}
+
+function membershipNode(tag, text, className = '') {
+    const node = document.createElement(tag);
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    if (className) node.className = className;
+    return node;
+}
+
+function renderMembershipPlans() {
+    const host = document.getElementById('membership-plan-list');
+    if (!host) return;
+    host.replaceChildren();
+    const freeCard = membershipNode('article', undefined, 'membership-plan-card membership-plan-free');
+    Object.assign(freeCard.style, { border: '1px solid #e2e8f0', borderRadius: '14px', padding: '15px', background: '#f8fafc', textAlign: 'left', minWidth: '0' });
+    const freeTitle = membershipNode('h4', 'Free');
+    Object.assign(freeTitle.style, { margin: '0 0 6px', color: '#4E342E', fontSize: '1rem' });
+    const freePrice = membershipNode('strong', 'Gratis');
+    Object.assign(freePrice.style, { display: 'block', color: '#4E342E', fontSize: '1.15rem', marginBottom: '5px' });
+    const freeDescription = membershipNode('p', 'Paket dasar tanpa biaya, tetap tersedia sebagai pilihan awal akun.');
+    Object.assign(freeDescription.style, { margin: '0', color: '#718096', fontSize: '.76rem', lineHeight: '1.45' });
+    freeCard.append(freeTitle, freePrice, freeDescription);
+    host.append(freeCard);
+    if (!membershipPlans.length) {
+        host.append(membershipNode('p', 'Belum ada paket berbayar yang tersedia. Silakan periksa kembali nanti.', 'log-empty'));
+        return;
+    }
+    membershipPlans.forEach((plan) => {
+        const card = membershipNode('article', undefined, 'membership-plan-card');
+        const selected = plan.id === selectedMembershipPlanId;
+        Object.assign(card.style, {
+            border: selected ? '2px solid var(--accent, #E67E22)' : '1px solid #e2e8f0',
+            borderRadius: '14px', padding: '15px', background: selected ? '#fffaf2' : '#fff',
+            textAlign: 'left', minWidth: '0', boxShadow: selected ? '0 5px 16px rgba(230,126,34,.12)' : 'none'
+        });
+        const title = membershipNode('h4', plan.tier_name || plan.name);
+        Object.assign(title.style, { margin: '0 0 6px', color: '#4E342E', fontSize: '1rem' });
+        const name = membershipNode('p', plan.name);
+        Object.assign(name.style, { margin: '0 0 8px', color: '#718096', fontSize: '.76rem' });
+        const price = membershipNode('strong', formatRupiah(plan.amount));
+        Object.assign(price.style, { display: 'block', color: 'var(--accent, #E67E22)', fontSize: '1.15rem', marginBottom: '5px' });
+        const period = membershipNode('p', `${plan.period_label || `${plan.duration_days} hari`} · ${plan.billing_period === 'annual' ? 'Tahunan' : plan.billing_period === 'monthly' ? 'Bulanan' : 'Paket'}`);
+        Object.assign(period.style, { margin: '0 0 12px', color: '#718096', fontSize: '.75rem' });
+        const choose = membershipNode('button', selected ? '✓ Paket dipilih' : 'Pilih paket');
+        choose.type = 'button';
+        choose.dataset.action = 'pilihPaketKeanggotaan';
+        choose.dataset.arg = plan.id;
+        Object.assign(choose.style, {
+            width: '100%', border: '0', borderRadius: '10px', padding: '10px',
+            background: selected ? '#4E342E' : 'var(--accent, #E67E22)', color: '#fff', fontWeight: '800', cursor: 'pointer'
+        });
+        card.append(title, name, price, period, choose);
+        host.append(card);
+    });
+}
+
+function updateMembershipCheckout() {
+    const plan = membershipPlans.find((item) => item.id === selectedMembershipPlanId);
+    const name = document.getElementById('pay-plan-name');
+    const period = document.getElementById('pay-plan-period');
+    const subtotal = document.getElementById('pay-subtotal-amount');
+    const discount = document.getElementById('pay-discount-amount');
+    const amount = document.getElementById('pay-total-amount');
+    const description = document.getElementById('membership-checkout-description');
+    const button = document.querySelector('.payment-checkout-container button[data-action="mulaiTransaksiMidtrans"]');
+    if (name) name.textContent = plan?.name || 'Belum dipilih';
+    if (period) period.textContent = plan?.period_label || '—';
+    if (subtotal) subtotal.textContent = plan ? formatRupiah(plan.amount) : '—';
+    if (discount) discount.textContent = formatRupiah(0);
+    if (amount) amount.textContent = plan ? formatRupiah(plan.amount) : 'Pilih paket';
+    if (description) description.textContent = plan ? `Anda memilih ${plan.name}. Periksa ringkasan sebelum melanjutkan.` : 'Pilih paket untuk melihat rincian tagihan.';
+    if (button) {
+        button.disabled = !plan;
+        button.style.opacity = plan ? '1' : '.55';
+    }
+}
+
+function pilihPaketKeanggotaan(planId) {
+    const id = String(planId || '').trim();
+    if (!membershipPlans.some((plan) => plan.id === id)) {
+        console.warn('[Monetization] Paket pilihan tidak ditemukan pada katalog aktif.');
+        return false;
+    }
+    selectedMembershipPlanId = id;
+    renderMembershipPlans();
+    updateMembershipCheckout();
+    return true;
+}
+
+async function loadMembershipPackages() {
+    const host = document.getElementById('membership-plan-list');
+    if (host) host.setAttribute('aria-busy', 'true');
+    const status = document.getElementById('membership-current-plan');
+    const expiry = document.getElementById('membership-expiry');
+    try {
+        const catalog = await getJson('/api/monetization-catalog', { timeoutMs: 10000 });
+        membershipPlans = Array.isArray(catalog?.plans)
+            ? catalog.plans.filter((plan) => plan?.active === true && plan?.billing_period !== 'annual' && typeof plan.id === 'string' && Number.isSafeInteger(Number(plan.amount)) && Number(plan.amount) > 0)
+            : [];
+        if (!membershipPlans.some((plan) => plan.id === selectedMembershipPlanId)) selectedMembershipPlanId = membershipPlans[0]?.id || '';
+        renderMembershipPlans();
+        updateMembershipCheckout();
+
+        const supabase = window.supabase;
+        const { data: sessionData } = supabase?.auth?.getSession
+            ? await supabase.auth.getSession()
+            : { data: null };
+        const token = sessionData?.session?.access_token;
+        if (token) {
+            try {
+                const entitlements = await getJson('/api/my-entitlements', {
+                    timeoutMs: 10000, headers: { Authorization: `Bearer ${token}` }
+                });
+                const current = entitlements?.membership;
+                if (status) status.textContent = current?.plan_name || (entitlements?.is_premium ? 'Premium aktif' : 'Free');
+                if (expiry) {
+                    expiry.textContent = current?.status === 'active' && current?.expires_at
+                        ? `Aktif sampai ${new Date(current.expires_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })} · ${Number(current.days_remaining) || 0} hari tersisa`
+                        : 'Anda menggunakan paket Free. Pilih Lite atau Pro untuk membuka akses berbayar.';
+                }
+            } catch (entitlementError) {
+                if (status) status.textContent = 'Status keanggotaan belum dapat diverifikasi.';
+                if (expiry) expiry.textContent = 'Katalog paket tersedia, tetapi status akun belum berhasil dimuat.';
+                console.warn('[Monetization] Status entitlement tidak tersedia:', entitlementError?.message || entitlementError);
+            }
+        } else {
+            if (status) status.textContent = 'Free · Login untuk melihat status keanggotaan akun';
+            if (expiry) expiry.textContent = 'Paket berbayar dapat dipilih setelah Anda masuk ke akun.';
+        }
+        return true;
+    } catch (error) {
+        console.warn('[Monetization] Katalog/status keanggotaan belum dapat dimuat:', error?.message || error);
+        if (host) host.replaceChildren(membershipNode('p', 'Paket belum dapat dimuat. Periksa koneksi lalu muat ulang profil.', 'log-empty'));
+        if (status) status.textContent = 'Status keanggotaan belum dapat diverifikasi.';
+        if (expiry) expiry.textContent = 'Tidak ada status Premium yang diasumsikan saat server tidak tersedia.';
+        membershipPlans = [];
+        selectedMembershipPlanId = '';
+        updateMembershipCheckout();
+        return false;
+    } finally {
+        if (host) host.setAttribute('aria-busy', 'false');
+    }
+}
+
+window.pilihPaketKeanggotaan = pilihPaketKeanggotaan;
+window.loadMembershipPackages = loadMembershipPackages;
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { void loadMembershipPackages(); }, { once: true });
+} else {
+    void loadMembershipPackages();
+}
+
+// ==========================================================
 // FUNGSI PAYMENT GATEWAY
 // ==========================================================
 async function mulaiTransaksiMidtrans() {
+    const btnBayar = document.querySelector('.payment-checkout-container button[data-action="mulaiTransaksiMidtrans"]');
+    const amountLabel = document.getElementById('pay-total-amount');
+    const originalButtonText = btnBayar?.innerText || '💳 BAYAR SEKARANG';
+
     try {
-        // [AI-GENERATED][ES6 MODULE][V259] Fail fast instead of issuing a token request with a placeholder Client Key.
         if (!isMidtransConfigured()) {
             const error = new Error('Client Key Midtrans belum dikonfigurasi pada meta midtrans-snap-config.');
             error.code = 'MIDTRANS_CONFIG_MISSING';
             throw error;
         }
 
-        // 1. Tampilkan indikator loading / ubah teks tombol
-        const btnBayar = document.querySelector('.payment-checkout-container button');
+        // [AI-GENERATED][SECURITY][V341] Require a verified Supabase session;
+        // the browser never supplies a price or transaction identity.
+        const supabase = window.supabase;
+        if (!supabase?.auth?.getSession) {
+            throw new Error('Layanan akun belum siap. Silakan login ulang lalu coba kembali.');
+        }
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !sessionData?.session?.access_token) {
+            throw new Error('Sesi login tidak ditemukan atau telah berakhir. Silakan login kembali.');
+        }
+        const accessToken = sessionData.session.access_token;
+        const headers = { Authorization: `Bearer ${accessToken}` };
+
         if (btnBayar) {
             btnBayar.disabled = true;
-            btnBayar.innerText = "MENYIAPKAN TRANSAKSI...";
+            btnBayar.innerText = 'MEMUAT PAKET PREMIUM...';
         }
 
-        // [AI-GENERATED][REFACTOR][V36] Payment API now follows the shared network policy.
+        const catalog = await getJson('/api/monetization-catalog', { timeoutMs: 10000 });
+        const plan = Array.isArray(catalog?.plans) ? catalog.plans.find((item) => item?.active === true && item?.id === selectedMembershipPlanId) : null;
+        if (!plan?.id || !Number.isSafeInteger(Number(plan.amount))) {
+            throw new Error('Paket pilihan tidak lagi tersedia. Muat ulang daftar paket lalu pilih kembali.');
+        }
+        if (amountLabel) amountLabel.innerText = formatRupiah(plan.amount);
+
+        if (btnBayar) btnBayar.innerText = 'MENYIAPKAN TRANSAKSI...';
         const data = await postJson('/api/create-payment-token', {
-            // [AI-GENERATED][SECURITY][V158] order_id is generated server-side.
-            // Keep the checkout payload minimal; the API retains backward compatibility
-            // with legacy clients that may still send order_id.
-            gross_amount: 50000,
+            plan_id: plan.id,
             customer_details: {
-                first_name: localStorage.getItem('profile_name') || 'Pelanggan',
-                email: localStorage.getItem('profile_email') || 'user@domain.com'
+                first_name: localStorage.getItem('profile_name') || sessionData.session.user?.user_metadata?.full_name || 'Pelanggan',
+                email: sessionData.session.user?.email || undefined
             }
-        }, { timeoutMs: 20000 });
-        if (!data.token) throw new Error("Gagal menghasilkan token pembayaran dari server.");
+        }, { timeoutMs: 20000, headers });
+        if (!data?.token || !data?.order_id) throw new Error('Server tidak mengembalikan sesi pembayaran yang valid.');
 
-        // [AI-GENERATED][ES6 MODULE][V259] Load the legacy Snap SDK lazily behind a retryable module facade.
         const midtransSnap = await loadMidtransSnap();
-
-        // 4. Tutup modal checkout lokal aplikasi terlebih dahulu
-        // [AI-GENERATED][BUG FIX][V21] Use the canonical ES-module modal controller.
-        // The previous bare global lookup could silently skip the close action because
-        // module scope does not inherit window properties as lexical bindings.
-        if (typeof toggleModal === 'function') {
+        if (document.getElementById('payment-modal')?.classList.contains('active')) {
             toggleModal('payment-modal');
         }
 
-        // 5. Panggil Midtrans Snap Popup menggunakan token yang diterima
         midtransSnap.pay(data.token, {
-            onSuccess: function(result) {
-                alert("Pembayaran Berhasil! Terima kasih.");
-                console.log(result);
+            onSuccess: async () => {
+                try {
+                    const result = await getJson(`/api/payment-status?order_id=${encodeURIComponent(data.order_id)}`, { headers, timeoutMs: 10000 });
+                    if (result?.order?.status === 'paid') {
+                        alert('Pembayaran terverifikasi. Status Premium Anda sudah aktif.');
+                    } else {
+                        alert('Pembayaran berhasil di Midtrans dan sedang diverifikasi server. Status Premium akan aktif setelah notifikasi pembayaran terkonfirmasi.');
+                    }
+                } catch (_) {
+                    alert('Pembayaran berhasil di Midtrans. Verifikasi status Premium sedang diproses server; silakan periksa kembali beberapa saat lagi.');
+                }
             },
-            onPending: function(result) {
-                alert("Menunggu pembayaran Anda diselesaikan.");
-                console.log(result);
-            },
-            onError: function(result) {
-                alert("Pembayaran gagal atau dibatalkan.");
-                console.log(result);
-            },
-            onClose: function() {
-                alert('Anda menutup popup pembayaran sebelum menyelesaikan transaksi.');
-            }
+            onPending: () => alert('Pembayaran menunggu penyelesaian. Status akan diperbarui setelah Midtrans mengonfirmasi transaksi.'),
+            onError: () => alert('Midtrans melaporkan pembayaran gagal. Silakan coba kembali.'),
+            onClose: () => console.info('[Monetization] Popup pembayaran ditutup sebelum konfirmasi.')
         });
-
     } catch (error) {
-        console.error("Kesalahan Transaksi:", error.message);
-        alert("Terjadi kesalahan sistem pembayaran: " + error.message);
+        console.error('Kesalahan Transaksi Premium:', error?.code || error?.message || error);
+        alert('Pembayaran Premium belum dapat disiapkan: ' + (error?.message || 'Terjadi kesalahan sistem.'));
     } finally {
-        // Kembalikan tombol seperti semula
-        const btnBayar = document.querySelector('.payment-checkout-container button');
         if (btnBayar) {
             btnBayar.disabled = false;
-            btnBayar.innerText = "💳 BAYAR SEKARANG";
+            btnBayar.innerText = originalButtonText;
         }
     }
 }
@@ -393,4 +562,4 @@ window.filterDaftarBahasa = filterDaftarBahasa; // [AI-GENERATED][COMPATIBILITY]
 window.pilihBahasaGlobal = pilihBahasaGlobal; // [AI-GENERATED][COMPATIBILITY][V262]
 window.mulaiTransaksiMidtrans = mulaiTransaksiMidtrans;
 
-export { filterDaftarBahasa, mulaiTransaksiMidtrans, pilihBahasaGlobal }; // [AI-GENERATED][ES6 MODULE][V332]
+export { filterDaftarBahasa, loadMembershipPackages, mulaiTransaksiMidtrans, pilihBahasaGlobal, pilihPaketKeanggotaan }; // [AI-GENERATED][ES6 MODULE][V332]

@@ -1,0 +1,45 @@
+TIMER PROOFER — V342 STAGE B QA LOG
+Date: 2026-11-02
+Baseline: V341 ROOT-EXTRACT
+Scope: Backend multi-plan catalog and membership summary foundation
+
+AUTOMATED RELEASE CHECKS
+- Release verification: PASS
+- Product version: V125 (unchanged)
+- JavaScript files syntax-checked: 290
+- Entrypoint graph modules: 69
+- Service Worker precache entries validated: 80
+- HTML files checked: 2
+- HTML IDs: 306
+- Missing relative imports: 0
+- Duplicate HTML IDs: 0
+- Inline event handlers: 0
+- Scroll-lock overrides: 0
+- Duplicate function declarations within a module: 0
+- Repeated function names across separate modules: 18 (informational, not duplicate declarations)
+
+TEST SUITE
+- Targeted monetization tests: 22 passed, 0 failed
+- Full automated tests: 545 passed, 0 failed
+
+NEW V342 COVERAGE
+- Multiple active Lite/Pro catalog entries
+- Deterministic catalog display order
+- Duplicate plan ID rejection
+- Invalid billing period, tier ID, and display order rejection
+- Server-side plan selection by plan_id
+- Client amount/gross_amount ignored by checkout
+- Server-selected amount is persisted and sent to Midtrans
+- Membership endpoint returns a normalized Free state
+- Migration snapshots plan metadata and serializes activation per account
+- Legacy V341 order metadata compatibility trigger
+
+NOT RUN / EXTERNAL MANUAL REQUIREMENTS
+- Supabase migration not applied to a live project
+- Vercel environment variables/deployment not changed
+- Midtrans Sandbox transaction not executed
+- Browser/PWA/Android/iOS visual and device testing not performed
+- Paket page still has the V341 single-plan presentation; multi-plan UI is a later stage
+
+RESULT: PASS FOR LOCAL STAGE B SOURCE AND AUTOMATED TESTS.
+This is not a production deployment or production-readiness certification.

@@ -1,0 +1,29 @@
+TIMER PROOFER — V340 RELEASE SUMMARY
+
+Scope
+- Fix Settings typography so the Tour Aplikasi row uses the same Golden Ratio title/description scale as all other 10 Settings rows.
+- Fix Syarat & Ketentuan Layanan navigation from both Register and Settings.
+
+Implementation
+- All 11 Settings rows explicitly use title 1rem / weight 600 / line-height 1.2 and description 0.618rem / weight 400 / line-height 1.35.
+- Register and Settings TOS entry points use the idempotent openTermsModal action.
+- Existing #tos-modal is detached from the scrollable app shell during modal bootstrap without replacing the DOM node or changing its ID/content.
+- Existing Settings row destinations, touch areas, app branding, and unrelated features are retained.
+
+QA
+- Full npm test: 523 passed, 0 failed.
+- Service Worker precache: 80 valid entries.
+- Local boot graph: 69 modules.
+- JavaScript checked: 279.
+- HTML checked: 2; IDs: 306; duplicate IDs: 0.
+- Missing imports: 0; inline event handlers: 0; scroll-lock owner violations: 0.
+- Duplicate function declarations within a module: 0.
+- ZIP integrity and clean extraction are verified separately in the package QA log.
+
+Manual physical-device checks remain required. Build Gradle and installed APK UI testing are not claimed in this environment.
+
+Release metadata
+- Product version: V125 (unchanged)
+- Technical revision: V340
+- Release token: 20261101-v340
+- Service Worker cache: Timer-Proofing-v1.1.242

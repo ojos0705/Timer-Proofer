@@ -26,7 +26,8 @@ const NATIVE_PLUGIN_NAMES = Object.freeze([
     'Network',
     'Haptics',
     'BluetoothLe',
-    'TimerPip'
+    'TimerPip',
+    'SharePreview'
 ]);
 
 function getCapacitor() {
@@ -61,6 +62,15 @@ function registerNativePlugin(name) {
     }
 }
 
+function isAndroidPlatform() {
+    try {
+        return isNativePlatform() && getCapacitor()?.getPlatform?.() === 'android';
+    } catch (error) {
+        console.warn('[NativeCapacitorService] Deteksi platform Android gagal:', error);
+        return false;
+    }
+}
+
 function getPlugin(name) {
     if (STATIC_PLUGINS[name]) return STATIC_PLUGINS[name];
 
@@ -91,6 +101,7 @@ function getCapabilities() {
         localNotifications: canUse('LocalNotifications'),
         preferences: canUse('Preferences'),
         share: canUse('Share'),
+        richSharePreview: isAndroidPlatform() && canUse('SharePreview'),
         http: canUse('CapacitorHttp'),
         pictureInPicture: canUse('TimerPip')
     });
@@ -98,6 +109,7 @@ function getCapabilities() {
 
 const NativeCapacitorService = Object.freeze({
     isNativePlatform,
+    isAndroidPlatform,
     getPlugin,
     canUse,
     getCapabilities,
@@ -114,6 +126,7 @@ const NativeCapacitorService = Object.freeze({
 export {
     NativeCapacitorService,
     isNativePlatform,
+    isAndroidPlatform,
     getPlugin,
     canUse,
     getCapabilities

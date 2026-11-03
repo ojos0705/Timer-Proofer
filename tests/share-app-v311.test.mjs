@@ -13,6 +13,7 @@ test('share action remains connected to the existing settings menu contract', ()
 
 test('share flow supports native Capacitor Share and browser Web Share without user-agent gating', () => {
   assert.match(source, /NativeCapacitorService\.getPlugin\('Share'\)/);
+  assert.match(source, /NativeCapacitorService\.getPlugin\('SharePreview'\)/);
   assert.match(source, /typeof navigator\.share === 'function'/);
   assert.doesNotMatch(source, /navigator\.share\s*&&\s*\/Android\|iPhone\|iPad\|iPod/);
 });

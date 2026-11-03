@@ -1,0 +1,34 @@
+TIMER PROOFER — V339 QA TEST LOG
+Date: 2026-11-01
+
+SOURCE
+- Baseline: V338 root-extract package.
+- Scope: normalize settings menu typography using Golden Ratio tokens.
+- Product-facing version: V125.
+- Technical build: es6-modular-v339.
+- Release token: 20261101-v339.
+- Service Worker cache: Timer-Proofing-v1.1.241.
+
+AUTOMATED CHECKS
+- npm test: PASS — 519 passed, 0 failed, 0 skipped.
+- Settings typography regression: PASS — 11 menu rows covered by the shared rules.
+- Release verifier: PASS.
+- JavaScript files checked: 278.
+- HTML files checked: 2.
+- HTML IDs: 306; duplicate IDs: 0.
+- Missing local imports: 0.
+- Inline event handlers: 0.
+- Scroll-lock overrides outside owner module: 0.
+- Duplicate function declarations within a module: 0.
+- Service Worker precache entries: 80.
+- Local modules in boot graph: 69.
+- ZIP integrity: PASS.
+- Clean extraction + npm test: PASS.
+
+MANUAL VALIDATION STILL REQUIRED
+- Compare all Settings row labels and descriptions on desktop PWA and installed Android APK.
+- Check long translated labels and system font scaling.
+- Confirm tapping each Settings row still opens its original destination.
+
+NOT CLAIMED AS VERIFIED
+- Physical Android/iOS runtime and screenshot-level visual QA were not run in this environment.

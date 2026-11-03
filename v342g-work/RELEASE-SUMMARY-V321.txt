@@ -1,0 +1,11 @@
+Timer Proofer V321
+Technical release token: 20261030-v321
+Visible product version: V125
+
+- Added one short SDK retry with exponential backoff/jitter for transient 5xx on ai-analyze and ai-tips only.
+- Kept ai-telemetry retry policy and frontend state/caching behavior unchanged.
+- Kept Gemini per-call timeout at 11 seconds and total fallback budget at 26 seconds.
+- Updated backend revision header and PWA/module cache boundary.
+- Added .gitattributes to standardize source line endings across Windows/Linux.
+- Automated tests: 419 passed, 0 failed.
+- Live Gemini availability and Vercel deployment are not claimed as tested locally.

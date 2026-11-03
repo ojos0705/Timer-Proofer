@@ -1,0 +1,34 @@
+TIMER PROOFER — QA V321
+Date: 2026-10-30
+Technical release token: 20261030-v321
+Visible version: V125
+
+COMMAND
+npm test
+
+RESULT
+419 tests passed
+0 tests failed
+
+STATIC RELEASE AUDIT
+Precache assets validated: 74
+Local modules in entrypoint graph: 67
+JavaScript files inspected: 244
+HTML files inspected: 2
+HTML IDs inspected: 300
+Missing imports: 0
+Duplicate HTML IDs: 0
+Inline handlers: 0
+Duplicate function declarations within same module: 0
+Visible product version: V125
+
+AI RETRY POLICY
+- ai-analyze: attempts=2 (one retry), transient 408/500/502/503/504 only.
+- ai-tips: attempts=2 (one retry), transient 408/500/502/503/504 only.
+- ai-telemetry: attempts=1, preserving existing behavior.
+- Provider deadline: 11 seconds.
+- Total provider/fallback budget: 26 seconds (< frontend 30-second timeout).
+- Backend revision: V321.
+
+LIMITATIONS
+Automated tests verify retry configuration and local regression behavior. They do not invoke the user's live Gemini API key, verify current upstream capacity, or validate the Vercel Preview deployment.
