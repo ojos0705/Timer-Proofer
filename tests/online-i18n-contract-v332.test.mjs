@@ -7,9 +7,9 @@ const read = (name) => fs.readFileSync(new URL(`../${name}`, import.meta.url), '
 const online = read('assets/js/online-i18n.js');
 const cloud = read('assets/js/cloud-translation-service.js');
 const engine = read('assets/js/language-engine.js');
-const api = read('api/translate.js');
-const catalogApi = read('api/translate-languages.js');
-const languageCodes = read('api/translation-language-codes.js');
+const api = read('serverless/api/translate.js');
+const catalogApi = read('serverless/api/translate-languages.js');
+const languageCodes = read('serverless/api/translation-language-codes.js');
 
 test('online translation skips user-authored recipe records but translates static recipe editor UI', () => {
     const skipIds = online.match(/const SKIP_IDS = new Set\(\[([\s\S]*?)\]\);/)?.[1] || '';

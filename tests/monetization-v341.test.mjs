@@ -6,7 +6,7 @@ import {
   DEFAULT_SUPABASE_ANON_KEY, getActivePlan, getBearerToken, getPublicCatalog, getPlans, getPlanById,
   mapMidtransStatus, parseBody, verifyMidtransSignature, requireSupabaseUser,
   MonetizationError, createOrderId, midtransBaseUrl
-} from '../api/monetization-utils.js';
+} from '../serverless/api/monetization-utils.js';
 
 const validEnv = {
   MONETIZATION_PLANS_JSON: JSON.stringify([
@@ -150,10 +150,10 @@ test('V341 SQL locks down direct client writes and grants activation RPC only to
 });
 
 test('V341 API routes fail closed for unsupported methods and unauthenticated user data', async () => {
-  const { default: createPaymentToken } = await import('../api/create-payment-token.js');
-  const { default: paymentStatus } = await import('../api/payment-status.js');
-  const { default: myEntitlements } = await import('../api/my-entitlements.js');
-  const { default: notification } = await import('../api/midtrans-notification.js');
+  const { default: createPaymentToken } = await import('../serverless/api/create-payment-token.js');
+  const { default: paymentStatus } = await import('../serverless/api/payment-status.js');
+  const { default: myEntitlements } = await import('../serverless/api/my-entitlements.js');
+  const { default: notification } = await import('../serverless/api/midtrans-notification.js');
   const makeResponse = () => ({ headers: {}, statusCode: 200, payload: null,
     setHeader(key, value) { this.headers[key] = value; return this; },
     status(code) { this.statusCode = code; return this; },
@@ -168,7 +168,7 @@ test('V341 API routes fail closed for unsupported methods and unauthenticated us
 });
 
 test('V341 public catalog route returns only the configured active plan', async () => {
-  const { default: catalogHandler } = await import('../api/monetization-catalog.js');
+  const { default: catalogHandler } = await import('../serverless/api/monetization-catalog.js');
   const previous = process.env.MONETIZATION_PLANS_JSON;
   process.env.MONETIZATION_PLANS_JSON = validEnv.MONETIZATION_PLANS_JSON;
   const res = { statusCode: 200, payload: null, setHeader() { return this; }, status(code) { this.statusCode = code; return this; }, json(value) { this.payload = value; return this; }, end() { return this; } };
@@ -222,7 +222,7 @@ test('V342 SQL snapshots plan metadata and serializes entitlement activation per
 });
 
 test('V342 membership endpoint returns a normalized Free state when no active entitlement exists', async () => {
-  const { default: myEntitlements } = await import('../api/my-entitlements.js');
+  const { default: myEntitlements } = await import('../serverless/api/my-entitlements.js');
   const previous = globalThis.fetch;
   const previousEnv = Object.fromEntries(['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY'].map((key) => [key, process.env[key]]));
   process.env.SUPABASE_URL = 'https://example.supabase.co';
@@ -245,7 +245,7 @@ test('V342 membership endpoint returns a normalized Free state when no active en
 });
 
 test('V342 checkout resolves the selected plan server-side and ignores client amount fields', async () => {
-  const { default: createPaymentToken } = await import('../api/create-payment-token.js');
+  const { default: createPaymentToken } = await import('../serverless/api/create-payment-token.js');
   const previousFetch = globalThis.fetch;
   const keys = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'MIDTRANS_SERVER_KEY', 'MIDTRANS_CLIENT_KEY', 'MIDTRANS_IS_PRODUCTION', 'MONETIZATION_PLANS_JSON'];
   const previousEnv = Object.fromEntries(keys.map((key) => [key, process.env[key]]));

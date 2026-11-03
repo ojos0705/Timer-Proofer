@@ -1,0 +1,14 @@
+V342 STAGE K — RELEASE SUMMARY
+
+Purpose: resolve Vercel Hobby's 12 Serverless Functions deployment limit by using a single API router entrypoint.
+
+- Preserves 17 API endpoint names behind their original /api/* URLs.
+- Moves 24 canonical handler/helper modules to serverless/api/.
+- Adds api/index.js as the sole Vercel Serverless Function entrypoint.
+- Adds a Vercel rewrite for existing API URL compatibility.
+- Retains Stage J's test:monetization-sandbox script in package.json.
+- Product-facing version remains V125.
+
+QA: npm test — 617 passed, 0 failed, 0 skipped. Release static checks passed.
+
+The sandbox smoke-test command was verified to execute and safely stop before network access because no MIDTRANS_SERVER_KEY was configured in this build environment. No live Vercel deployment, Supabase migration, Midtrans transaction, or live Sandbox certification was performed.

@@ -1,0 +1,11 @@
+V342 Stage I QA Test Log
+
+Focused integration suite:
+- File: tests/monetization-e2e-v342i.test.mjs
+- Scenarios: checkout server pricing, invalid plan rejection, forged webhook rejection, confirmed settlement activation, pending non-activation, amount/currency mismatch, refund revocation, user-scoped reads, fixed trial RPC, feature quota validation/consumption, RLS/static migration checks, Snap callback non-authority, deny/challenge/expire non-activation, provider order-identity mismatch.
+- Result at authoring: 17 assertions/subtests passed, 0 failed.
+
+Full repository test suite: PASS — 606 tests, 606 passed, 0 failed, 0 skipped.
+Release checks: JavaScript 317; HTML 3; HTML IDs 347; duplicate IDs 0; missing imports 0; inline handlers 0; scroll-lock overrides 0; same-module duplicate function declarations 0; local entrypoint modules 69; Service Worker precache paths 80; product version V125.
+
+External validation not performed: live Midtrans Sandbox, live Supabase SQL/RLS/RPC execution, Vercel deployment, browser/PWA/Capacitor device checkout, production payment or financial close.

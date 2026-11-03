@@ -15,7 +15,7 @@ test('CapacitorHttp is exported from the bundled core and registered by NativeCa
 test('translation client opts into native HTTP while browser requests retain fetch and API CORS stays enabled', () => {
   const apiClient = read('assets/js/api-client-service.js');
   const cloud = read('assets/js/cloud-translation-service.js');
-  const endpoint = read('api/translate.js');
+  const endpoint = read('serverless/api/translate.js');
   assert.match(apiClient, /options\.preferNativeHttp === true && NativeCapacitorService\.isNativePlatform\(\)/);
   assert.match(apiClient, /plugin\.request\(/);
   assert.match(apiClient, /API_NATIVE_NETWORK_ERROR/);

@@ -1,0 +1,6 @@
+Timer Proofer — V342 Stage H
+Midtrans payout fee CSV import, idempotent fee ledger, order/tier attribution, and preliminary tier contribution view.
+Product version remains V125.
+No MDR assumptions. No automatic allocation when Order ID is absent or unmatched.
+CSV only; extract Midtrans 7zip report locally first. Real report header compatibility remains to be validated with a redacted merchant sample.
+See V342-STAGE-H-IMPLEMENTATION.md and ROOT-EXTRACT-INSTRUCTIONS-V342-STAGE-H.md.

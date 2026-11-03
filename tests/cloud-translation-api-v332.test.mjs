@@ -1,8 +1,8 @@
 /** [AI-GENERATED][QA][V334] Authenticated free MyMemory translation proxy. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import translateHandler, { __test as translateTest } from '../api/translate.js';
-import languagesHandler, { __test as languagesTest } from '../api/translate-languages.js';
+import translateHandler, { __test as translateTest } from '../serverless/api/translate.js';
+import languagesHandler, { __test as languagesTest } from '../serverless/api/translate-languages.js';
 
 function makeResponse() {
     return {
@@ -19,6 +19,12 @@ function makeResponse() {
 
 const originalFetch = globalThis.fetch;
 const originalContactEmail = process.env.MYMEMORY_CONTACT_EMAIL;
+const originalFeatureQuotas = process.env.FEATURE_QUOTAS_JSON;
+const originalServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
+process.env.SUPABASE_SERVICE_ROLE_KEY = 'service-role-test';
+process.env.FEATURE_QUOTAS_JSON = JSON.stringify(Object.fromEntries(['free', 'lite', 'pro'].map((tier) => [tier, {
+    ai_analysis: { limit: 5 }, ai_tips: { limit: 5 }, cloud_translation: { limit: 20 }
+}])));
 
 test('translation and candidate language routes allow Capacitor Authorization CORS preflight', async () => {
     const translateResponse = makeResponse();
@@ -72,6 +78,10 @@ test('authenticated translation reaches MyMemory and returns translations in sou
         if (address.includes('/auth/v1/user')) {
             return { ok: true, status: 200, async json() { return { id: 'user-mymemory-v334' }; } };
         }
+        if (address.includes('/rpc/consume_feature_quota')) {
+            return { ok: true, status: 200, async text() { return JSON.stringify({ allowed: true, limit: 20, used: 1, remaining: 19 }); } };
+        }
+        if (address.includes('/rest/v1/ai_usage_events')) return { ok: true, status: 201 };
         assert.ok(address.startsWith('https://api.mymemory.translated.net/get?'));
         return {
             ok: true,
@@ -88,10 +98,13 @@ test('authenticated translation reaches MyMemory and returns translations in sou
         }, res);
         assert.equal(res.statusCode, 200);
         assert.deepEqual(res.body.translations, ['Hello there', 'Hello there']);
-        assert.equal(calls.length, 3);
+        assert.equal(calls.length, 5, 'two provider calls plus one metadata-only usage batch are expected');
         assert.equal(calls[0].options.headers.Authorization, 'Bearer test-user-access-token');
         const providerCalls = calls.filter((call) => call.address.includes('api.mymemory'));
         assert.equal(providerCalls.length, 2);
+        const usageCall = calls.find((call) => call.address.includes('/rest/v1/ai_usage_events'));
+        assert.equal(JSON.parse(usageCall.options.body).length, 2);
+        assert.doesNotMatch(usageCall.options.body, /MyMemory unique text|Hello there/);
         const providerUrl = new URL(providerCalls.find((call) => new URL(call.address).searchParams.get('q') === 'MyMemory unique text A v334').address);
         assert.equal(providerUrl.searchParams.get('langpair'), 'id|en');
         assert.equal(providerUrl.searchParams.get('mt'), '1');
@@ -109,6 +122,7 @@ test('optional contact email enables the documented higher MyMemory free quota w
         const address = String(url);
         seen.push(address);
         if (address.includes('/auth/v1/user')) return { ok: true, status: 200, async json() { return { id: 'user-contact-v334' }; } };
+        if (address.includes('/rpc/consume_feature_quota')) return { ok: true, status: 200, async text() { return JSON.stringify({ allowed: true, limit: 20, used: 1, remaining: 19 }); } };
         return { ok: true, status: 200, async json() { return { responseStatus: 200, responseData: { translatedText: 'Bonjour' } }; } };
     };
     try {
@@ -173,4 +187,8 @@ test.after(() => {
     globalThis.fetch = originalFetch;
     if (originalContactEmail === undefined) delete process.env.MYMEMORY_CONTACT_EMAIL;
     else process.env.MYMEMORY_CONTACT_EMAIL = originalContactEmail;
+    if (originalFeatureQuotas === undefined) delete process.env.FEATURE_QUOTAS_JSON;
+    else process.env.FEATURE_QUOTAS_JSON = originalFeatureQuotas;
+    if (originalServiceRole === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    else process.env.SUPABASE_SERVICE_ROLE_KEY = originalServiceRole;
 });

@@ -17,7 +17,7 @@ import {
   isQuotaError,
   AI_BACKEND_REVISION,
   setupCORSHeaders,
-} from '../api/ai-utils.js';
+} from '../serverless/api/ai-utils.js';
 
 function createResponseHarness() {
   const result = { statusCode: 200, payload: undefined };
@@ -195,7 +195,7 @@ test('AI service recognizes temporary high-demand and availability errors for mo
 
 
 test('AI backend revision is explicit so deployment logs identify the shipped fix', () => {
-  assert.equal(AI_BACKEND_REVISION, 'V329');
+  assert.equal(AI_BACKEND_REVISION, 'V342-E');
 });
 
 test('AI request deadline aborts provider call and rejects even if SDK promise hangs', async () => {
@@ -229,6 +229,6 @@ test('AI endpoint exposes backend revision header for production deployment veri
   const headers = {};
   const res = { setHeader(name, value) { headers[name] = value; } };
   setupCORSHeaders({ method: 'POST' }, res);
-  assert.equal(headers['X-AI-Backend-Revision'], 'V329');
+  assert.equal(headers['X-AI-Backend-Revision'], 'V342-E');
   assert.equal(headers['Access-Control-Expose-Headers'], 'X-AI-Backend-Revision');
 });

@@ -92,5 +92,11 @@
     }
   ],
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "outputDirectory": "www"
+  "outputDirectory": "www",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index?__api_route=:path*"
+    }
+  ]
 }

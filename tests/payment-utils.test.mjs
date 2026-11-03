@@ -1,7 +1,7 @@
 /** [AI-GENERATED][QA][V209] Regressions for payment customer input normalization. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizePaymentCustomerDetails } from '../api/payment-utils.js';
+import { normalizePaymentCustomerDetails } from '../serverless/api/payment-utils.js';
 
 test('normalizes valid customer name and email before forwarding to the gateway', () => {
   assert.deepEqual(

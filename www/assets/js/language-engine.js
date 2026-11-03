@@ -412,6 +412,37 @@ function pilihPaketKeanggotaan(planId) {
     return true;
 }
 
+async function getMembershipAccessToken() {
+    const supabase = window.supabase;
+    const { data: sessionData } = supabase?.auth?.getSession
+        ? await supabase.auth.getSession()
+        : { data: null };
+    return sessionData?.session?.access_token || '';
+}
+
+async function startFreeTrial() {
+    const button = document.getElementById('membership-trial-button');
+    if (button?.disabled) return false;
+    const original = button?.textContent || '🎁 Mulai Free Trial 7 Hari';
+    try {
+        const token = await getMembershipAccessToken();
+        if (!token) throw new Error('Silakan login terlebih dahulu untuk memulai Free Trial.');
+        if (button) { button.disabled = true; button.textContent = 'Memproses Free Trial…'; }
+        const result = await postJson('/api/start-free-trial', {}, {
+            timeoutMs: 15000, headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!result?.success) throw new Error(result?.error || 'Free Trial belum dapat dimulai.');
+        alert('Free Trial Pro aktif selama 7 hari. Tidak ada metode pembayaran dan tidak ada penagihan otomatis. Setelah masa trial berakhir, akun kembali ke Free.');
+        await loadMembershipPackages();
+        return true;
+    } catch (error) {
+        alert(error?.message || 'Free Trial belum dapat dimulai. Silakan coba lagi.');
+        if (button) { button.disabled = true; button.textContent = original; }
+        await loadMembershipPackages();
+        return false;
+    }
+}
+
 async function loadMembershipPackages() {
     const host = document.getElementById('membership-plan-list');
     if (host) host.setAttribute('aria-busy', 'true');
@@ -448,9 +479,50 @@ async function loadMembershipPackages() {
                 if (expiry) expiry.textContent = 'Katalog paket tersedia, tetapi status akun belum berhasil dimuat.';
                 console.warn('[Monetization] Status entitlement tidak tersedia:', entitlementError?.message || entitlementError);
             }
+            try {
+                const access = await getJson('/api/feature-access', {
+                    timeoutMs: 10000, headers: { Authorization: `Bearer ${token}` }
+                });
+                const trialButton = document.getElementById('membership-trial-button');
+                const trialNote = document.getElementById('membership-trial-note');
+                if (trialButton) {
+                    trialButton.disabled = access?.trial?.eligible !== true;
+                    trialButton.textContent = access?.trial?.claimed ? 'Free Trial sudah digunakan' : access?.trial?.eligible ? '🎁 Mulai Free Trial 7 Hari' : 'Free Trial tidak tersedia';
+                    trialButton.style.opacity = trialButton.disabled ? '.55' : '1';
+                }
+                if (trialNote) {
+                    trialNote.textContent = access?.trial?.claimed
+                        ? `Trial telah digunakan${access.trial.expires_at ? ` · berakhir ${new Date(access.trial.expires_at).toLocaleDateString('id-ID')}` : ''}. Tidak ada perpanjangan otomatis.`
+                        : 'Uji Pro selama 7 hari satu kali per akun. Tanpa metode pembayaran dan tanpa penagihan otomatis.';
+                }
+                const quotaHost = document.getElementById('membership-feature-quotas');
+                if (quotaHost) {
+                    const labels = { ai_analysis: 'Analisis AI resep', ai_tips: 'AI Tips', cloud_translation: 'Terjemahan online' };
+                    quotaHost.replaceChildren();
+                    if (access?.quota_configured !== true) {
+                        quotaHost.textContent = 'Kuota fitur belum dikonfigurasi pada server.';
+                    } else {
+                        Object.entries(access?.features || {}).forEach(([key, value]) => {
+                            const line = membershipNode('p', `${labels[key] || key}: ${value.unlimited ? 'Tanpa batas' : `${value.remaining} dari ${value.limit} tersisa · reset 07.00 WIB`}`);
+                            Object.assign(line.style, { margin: '4px 0', fontSize: '.76rem', color: '#718096' });
+                            quotaHost.append(line);
+                        });
+                    }
+                }
+            } catch (accessError) {
+                console.warn('[Feature Access] Status kuota belum dapat dimuat:', accessError?.message || accessError);
+                const quotaHost = document.getElementById('membership-feature-quotas');
+                if (quotaHost) quotaHost.textContent = 'Kuota fitur belum dapat dimuat. Periksa konfigurasi server atau koneksi.';
+                const trialButton = document.getElementById('membership-trial-button');
+                if (trialButton) { trialButton.disabled = true; trialButton.textContent = 'Status Free Trial belum dapat diverifikasi'; }
+            }
         } else {
             if (status) status.textContent = 'Free · Login untuk melihat status keanggotaan akun';
             if (expiry) expiry.textContent = 'Paket berbayar dapat dipilih setelah Anda masuk ke akun.';
+            const trialButton = document.getElementById('membership-trial-button');
+            if (trialButton) { trialButton.disabled = true; trialButton.textContent = 'Login untuk Free Trial'; }
+            const trialNote = document.getElementById('membership-trial-note');
+            if (trialNote) trialNote.textContent = 'Masuk ke akun untuk memeriksa kelayakan Free Trial.';
         }
         return true;
     } catch (error) {
@@ -469,6 +541,20 @@ async function loadMembershipPackages() {
 
 window.pilihPaketKeanggotaan = pilihPaketKeanggotaan;
 window.loadMembershipPackages = loadMembershipPackages;
+window.startFreeTrial = startFreeTrial;
+// [AI-GENERATED][MONETIZATION][V342-D] Refresh server-owned tier/quota/trial
+// state when the existing Profile modal is opened after a sign-in transition.
+document.addEventListener('click', (event) => {
+    const trigger = event.target instanceof Element
+        ? event.target.closest('[data-action="toggleModal"][data-arg="user-modal"]')
+        : null;
+    if (!trigger) return;
+    window.setTimeout(() => {
+        if (document.getElementById('user-modal')?.classList.contains('active')) {
+            void loadMembershipPackages();
+        }
+    }, 0);
+});
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => { void loadMembershipPackages(); }, { once: true });
 } else {

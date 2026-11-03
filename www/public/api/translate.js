@@ -6,6 +6,10 @@
  * User-authored recipe/profile content is excluded by OnlineI18n before it
  * reaches this route. Text and contact email are never written to server logs.
  */
+import { consumeFeatureQuota, featureErrorResponse } from './feature-access-utils.js';
+import { randomUUID } from 'node:crypto';
+import { createMyMemoryUsageEvent, persistAIUsageEvents } from './ai-cost-utils.js';
+
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 24;
 const MAX_RATE_LIMIT_CLIENTS = 2_048;
@@ -216,7 +220,7 @@ function writeCachedTranslation(language, source, value) {
   }
 }
 
-async function fetchMyMemorySegment(source, targetLanguage) {
+async function fetchMyMemorySegment(source, targetLanguage, usageContext = {}) {
   const cached = readCachedTranslation(targetLanguage, source);
   if (cached !== null) return cached;
 
@@ -233,6 +237,7 @@ async function fetchMyMemorySegment(source, targetLanguage) {
   }
 
   let response;
+  const providerStartedAt = Date.now();
   try {
     response = await fetch(endpoint, {
       method: 'GET',
@@ -240,6 +245,10 @@ async function fetchMyMemorySegment(source, targetLanguage) {
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)
     });
   } catch (error) {
+    usageContext.usageEvents?.push(createMyMemoryUsageEvent({
+      userId: usageContext.userId, tierId: usageContext.tierId, requestId: usageContext.requestId, outcome: 'provider_error',
+      durationMs: Date.now() - providerStartedAt, inputCharacters: [...source].length, errorCode: error?.name || 'network_error'
+    }));
     const timedOut = error?.name === 'TimeoutError' || error?.name === 'AbortError';
     const failure = {
       status: timedOut ? 504 : 502,
@@ -255,6 +264,7 @@ async function fetchMyMemorySegment(source, targetLanguage) {
   try { payload = await response.json(); } catch (_) { payload = null; }
   const providerStatus = Number(payload?.responseStatus || 0);
   if (!response.ok || providerStatus !== 200 || payload?.quotaFinished === true) {
+    usageContext.usageEvents?.push(createMyMemoryUsageEvent({ userId: usageContext.userId, tierId: usageContext.tierId, requestId: usageContext.requestId, outcome: 'provider_error', durationMs: Date.now() - providerStartedAt, inputCharacters: [...source].length, errorCode: `http_${response.status || providerStatus}` }));
     const failure = classifyMyMemoryFailure(response.status || providerStatus, payload);
     const wrapped = new Error(failure.error);
     Object.assign(wrapped, failure);
@@ -263,6 +273,7 @@ async function fetchMyMemorySegment(source, targetLanguage) {
 
   const translated = payload?.responseData?.translatedText;
   if (typeof translated !== 'string' || !translated.trim()) {
+    usageContext.usageEvents?.push(createMyMemoryUsageEvent({ userId: usageContext.userId, tierId: usageContext.tierId, requestId: usageContext.requestId, outcome: 'provider_error', durationMs: Date.now() - providerStartedAt, inputCharacters: [...source].length, errorCode: 'empty_translation' }));
     const failure = classifyMyMemoryFailure(response.status, payload);
     const wrapped = new Error(failure.error);
     Object.assign(wrapped, failure);
@@ -271,12 +282,14 @@ async function fetchMyMemorySegment(source, targetLanguage) {
 
   const clean = preserveProviderWhitespace(source, translated);
   if (/^(\s*)(PLEASE SELECT|QUERY LENGTH LIMIT|INVALID SOURCE|INVALID TARGET)/i.test(clean)) {
+    usageContext.usageEvents?.push(createMyMemoryUsageEvent({ userId: usageContext.userId, tierId: usageContext.tierId, requestId: usageContext.requestId, outcome: 'provider_error', durationMs: Date.now() - providerStartedAt, inputCharacters: [...source].length, errorCode: 'invalid_translation' }));
     const failure = classifyMyMemoryFailure(422, { responseDetails: clean });
     const wrapped = new Error(failure.error);
     Object.assign(wrapped, failure);
     throw wrapped;
   }
   writeCachedTranslation(targetLanguage, source, clean);
+  usageContext.usageEvents?.push(createMyMemoryUsageEvent({ userId: usageContext.userId, tierId: usageContext.tierId, requestId: usageContext.requestId, outcome: 'success', durationMs: Date.now() - providerStartedAt, inputCharacters: [...source].length }));
   return clean;
 }
 
@@ -295,13 +308,13 @@ async function mapWithConcurrency(items, concurrency, mapper) {
   return results;
 }
 
-async function translateOneText(text, targetLanguage) {
+async function translateOneText(text, targetLanguage, usageContext = {}) {
   const segments = splitProviderSegments(text);
   const translatedSegments = [];
   // Keep sequential segment order for text nodes that exceed the provider limit.
   for (const segment of segments) {
     // Preserve whitespace-only chunks locally; never spend provider quota on them.
-    translatedSegments.push(segment.trim() ? await fetchMyMemorySegment(segment, targetLanguage) : segment);
+    translatedSegments.push(segment.trim() ? await fetchMyMemorySegment(segment, targetLanguage, usageContext) : segment);
   }
   return translatedSegments.join('');
 }
@@ -340,6 +353,15 @@ export default async function handler(req, res) {
   const validated = validateRequest(body);
   if (validated.error) return json(res, validated.status, { error: validated.error, code: validated.code });
 
+  // [AI-GENERATED][SECURITY][V342-D] One quota unit represents one validated
+  // translation batch; offline glossary/cache paths do not call this endpoint.
+  let translationQuota;
+  try {
+    translationQuota = await consumeFeatureQuota(auth.user.id, 'cloud_translation');
+  } catch (error) {
+    return featureErrorResponse(res, error);
+  }
+
   const limited = enforceRateLimit(req, res, auth.user.id);
   if (limited) {
     return json(res, 429, {
@@ -349,11 +371,13 @@ export default async function handler(req, res) {
     });
   }
 
+  const usageEvents = [];
+  const usageRequestId = randomUUID();
   try {
     const translations = await mapWithConcurrency(
       validated.texts,
       PROVIDER_CONCURRENCY,
-      (text) => translateOneText(text, validated.targetLanguage)
+      (text) => translateOneText(text, validated.targetLanguage, { userId: auth.user.id, tierId: translationQuota?.tier || null, usageEvents, requestId: usageRequestId })
     );
     if (translations.length !== validated.texts.length || translations.some((value) => typeof value !== 'string' || !value.trim())) {
       return json(res, 502, { error: 'MyMemory mengembalikan hasil yang tidak lengkap.', code: 'TRANSLATION_INVALID_UPSTREAM_RESPONSE' });
@@ -374,6 +398,9 @@ export default async function handler(req, res) {
       error: String(error?.error || error?.message || 'MyMemory translation failed.'),
       code
     });
+  } finally {
+    // Metadata only: do not persist source text, translated text, or email.
+    await persistAIUsageEvents(usageEvents);
   }
 }
 

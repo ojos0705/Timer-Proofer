@@ -151,9 +151,9 @@ if (version) {
         // [AI-GENERATED][QA][V334] Online localization uses the authenticated free MyMemory proxy.
         const cloudTranslationPath = path.join(root, 'assets/js/cloud-translation-service.js');
         const onlineI18nPath = path.join(root, 'assets/js/online-i18n.js');
-        const translateApiPath = path.join(root, 'api/translate.js');
-        const languagesApiPath = path.join(root, 'api/translate-languages.js');
-        const languageCodesPath = path.join(root, 'api/translation-language-codes.js');
+        const translateApiPath = path.join(root, 'serverless/api/translate.js');
+        const languagesApiPath = path.join(root, 'serverless/api/translate-languages.js');
+        const languageCodesPath = path.join(root, 'serverless/api/translation-language-codes.js');
         const cloudTranslationSource = fs.existsSync(cloudTranslationPath) ? fs.readFileSync(cloudTranslationPath, 'utf8') : '';
         const onlineI18nSource = fs.existsSync(onlineI18nPath) ? fs.readFileSync(onlineI18nPath, 'utf8') : '';
         const translateApiSource = fs.existsSync(translateApiPath) ? fs.readFileSync(translateApiPath, 'utf8') : '';

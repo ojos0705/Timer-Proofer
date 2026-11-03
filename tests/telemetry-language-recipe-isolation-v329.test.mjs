@@ -9,7 +9,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
 
 test('AI Telemetry has a fixed seven-section contract while preserving product-specific profiles', () => {
-    const backend = read('api/ai-telemetry.js');
+    const backend = read('serverless/api/ai-telemetry.js');
     const core = read('assets/js/app-core.js');
     const requiredSections = [
         '📊 Kondisi Data Aktual',
@@ -32,7 +32,7 @@ test('AI Telemetry has a fixed seven-section contract while preserving product-s
     }
     assert.match(core, /#product-pills-container \.product-pill\.active\[data-product\]/);
     assert.match(core, /outputContract:\s*'telemetry-v1'/);
-    assert.match(read('api/ai-utils.js'), /AI_BACKEND_REVISION\s*=\s*["']V329["']/);
+    assert.match(read('serverless/api/ai-utils.js'), /AI_BACKEND_REVISION\s*=\s*["']V342-E["']/);
 });
 
 test('online language selection uses authenticated MyMemory and does not falsely persist failed choices', () => {
@@ -40,7 +40,7 @@ test('online language selection uses authenticated MyMemory and does not falsely
     const online = read('assets/js/online-i18n.js');
     const cloud = read('assets/js/cloud-translation-service.js');
     const renderer = read('assets/js/lang-renderer.js');
-    const api = read('api/translate.js');
+    const api = read('serverless/api/translate.js');
     const list = read('assets/js/lang-data.js');
     assert.match(list, /\{\s*code:\s*'ab',\s*name:\s*'Abkhaz'/);
     assert.match(engine, /getSupportedTranslationLanguages\(\)/);

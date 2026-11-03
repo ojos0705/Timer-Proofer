@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import handler from '../api/translate.js';
+import handler from '../serverless/api/translate.js';
 
 function responseStub() {
   return {

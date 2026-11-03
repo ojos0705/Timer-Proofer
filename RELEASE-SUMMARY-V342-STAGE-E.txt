@@ -1,0 +1,29 @@
+TIMER PROOFER — V342 STAGE E
+AI Cost Monitoring & Usage Optimization
+
+Automated QA:
+- 566 tests passed; 0 failed.
+- 303 JavaScript files syntax-checked.
+- 69 local modules in entrypoint graph.
+- 80 Service Worker precache paths validated.
+- 2 HTML files; 319 IDs; 0 duplicate IDs.
+- 0 missing imports, inline event handlers, scroll-lock overrides, or same-module duplicate function declarations.
+- 18 cross-module repeated function names remain informational and are not same-module collisions.
+- Product-facing version remains V125.
+
+Changes:
+- Server-side Gemini token/model/duration/outcome telemetry.
+- MyMemory request and source-character telemetry; no unsupported fee estimate.
+- Server-configured per-model cost estimation with pricing version and optional FX snapshot.
+- Private Supabase ai_usage_events ledger with service-role-only access.
+- Admin allowlist-protected GET /api/ai-cost-summary endpoint, grouped by provider/tier/model/feature/outcome/day.
+- No prompts, completions, translation text, API keys, bearer tokens, or contact email stored in the usage ledger.
+- Existing app UI, DOM contract, and product-facing V125 version preserved.
+
+Important:
+- Cost values are estimates, not provider invoices.
+- The Gemini model gemini-3.8-flash remains unpriced until its official rate is confirmed.
+- MyMemory is measured by request/character volume; no monetary fee is inferred.
+- Apply migrations V341, V342-B, V342-D, and V342-E in order.
+- Configure AI_COST_ADMIN_USER_IDS and AI_MODEL_PRICING_JSON in Vercel Preview before validation.
+- No live migration/deployment/device QA/provider billing reconciliation was performed.

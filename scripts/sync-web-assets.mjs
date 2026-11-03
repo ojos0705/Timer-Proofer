@@ -15,7 +15,7 @@ const directories = ['assets', 'vendor'];
 const files = ['logo-donat.svg', 'version.json'];
 // [AI-GENERATED][DEPLOYMENT][V317] Mirror canonical API handlers into the
 // path used by the existing Vercel deployment logs (/www/public/api).
-const apiSource = path.join(root, 'api');
+const apiSource = path.join(root, 'serverless', 'api');
 const deployApiRoot = path.join(root, 'www', 'public', 'api');
 
 function assertSourceExists(relativePath) {
@@ -27,7 +27,7 @@ function assertSourceExists(relativePath) {
 }
 
 fs.mkdirSync(webRoot, { recursive: true });
-if (!fs.existsSync(apiSource)) throw new Error('Sumber API kanonis tidak ditemukan: api/');
+if (!fs.existsSync(apiSource)) throw new Error('Sumber API kanonis tidak ditemukan: serverless/api/');
 fs.mkdirSync(deployApiRoot, { recursive: true });
 fs.cpSync(apiSource, deployApiRoot, { recursive: true, force: true, preserveTimestamps: true });
 for (const relativePath of directories) {
@@ -73,6 +73,6 @@ if (missingPrecache.length) {
 }
 
 console.log(`Sinkronisasi web selesai: ${directories.join(', ')}, ${files.join(', ')} -> www/`);
-console.log('Sinkronisasi API selesai: api/ -> www/public/api/');
+console.log('Sinkronisasi API selesai: serverless/api/ -> www/public/api/');
 console.log(`Validasi entrypoint: ${requiredFiles.length} file wajib tersedia.`);
 console.log(`Validasi precache: ${precacheEntries.length} jalur lokal/eksternal diperiksa; tidak ada aset lokal yang hilang.`);

@@ -1,4 +1,7 @@
 // Shared AI utility functions to avoid DRY violations
+import { requireFeatureUser, consumeFeatureQuota, featureErrorResponse } from './feature-access-utils.js';
+import { randomUUID } from 'node:crypto';
+import { createAIUsageEvent, persistAIUsageEvents } from './ai-cost-utils.js';
 // Used by ai-analyze.js, ai-telemetry.js, and ai-tips.js
 
 // [AI-GENERATED][ROBUSTNESS][V321] Keep each upstream model call bounded.
@@ -10,7 +13,7 @@
 // The complete provider/fallback loop must remain below the frontend 30s timeout.
 const AI_UPSTREAM_TIMEOUT_MS = 11_000;
 const AI_TOTAL_REQUEST_TIMEOUT_MS = 26_000;
-const AI_BACKEND_REVISION = "V329";
+const AI_BACKEND_REVISION = "V342-E";
 // Keep telemetry latency/state behavior unchanged. Recipe analysis and tips are
 // on-demand, longer-form requests: retry transient 5xx once with short jitter.
 // `attempts` includes the first request, so 2 means one additional retry.
@@ -290,16 +293,43 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
   const validationError = validateRequestBody(req, res);
   if (validationError) return validationError;
 
-  // [AI-GENERATED][SECURITY][V157] Apply abuse protection only after cheap
-  // method/body validation so malformed requests cannot consume the AI quota.
-  const releaseAIRequest = enforceAIRateLimit(req, res);
-  if (typeof releaseAIRequest !== 'function') return releaseAIRequest;
-
   if (!process.env.GEMINI_API_KEY) {
-    releaseAIRequest();
     console.error("GEMINI_API_KEY belum diset di environment Vercel");
     return res.status(500).json({ error: "Layanan AI belum dikonfigurasi di server" });
   }
+
+  // [AI-GENERATED][SECURITY][V342-D] Authenticate before consuming IP rate
+  // buckets, then atomically reserve the independent feature quota.
+  let featureUser = null;
+  if (errorMessagePrefix === 'ai-analyze' || errorMessagePrefix === 'ai-tips') {
+    try {
+      const auth = await requireFeatureUser(req);
+      featureUser = auth.user;
+    } catch (error) {
+      return featureErrorResponse(res, error);
+    }
+  }
+
+  // [AI-GENERATED][SECURITY][V157] Apply abuse protection only after cheap
+  // method/body validation and identity verification.
+  const releaseAIRequest = enforceAIRateLimit(req, res);
+  if (typeof releaseAIRequest !== 'function') return releaseAIRequest;
+
+  let featureQuota = null;
+  if (featureUser) {
+    try {
+      const featureId = errorMessagePrefix === 'ai-analyze' ? 'ai_analysis' : 'ai_tips';
+      featureQuota = await consumeFeatureQuota(featureUser.id, featureId);
+    } catch (error) {
+      releaseAIRequest();
+      return featureErrorResponse(res, error);
+    }
+  }
+
+  const usageEvents = [];
+  const usageRequestId = randomUUID();
+  const usageFeatureId = errorMessagePrefix === 'ai-analyze' ? 'ai_analysis' :
+    errorMessagePrefix === 'ai-tips' ? 'ai_tips' : 'ai_telemetry';
 
   try {
     const { GoogleGenAI } = await import("@google/genai");
@@ -330,11 +360,22 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
         break;
       }
 
+      const modelAttemptStartedAt = Date.now();
       try {
         response = await generateWithModel(ai, model, req.body.promptContext, systemInstruction);
         usedModel = model;
+        usageEvents.push(createAIUsageEvent({
+          userId: featureUser?.id || null, tierId: featureQuota?.tier || null, featureId: usageFeatureId, model, outcome: 'success',
+          durationMs: Date.now() - modelAttemptStartedAt, response, requestId: usageRequestId
+        }));
         break;
       } catch (error) {
+        usageEvents.push(createAIUsageEvent({
+          userId: featureUser?.id || null, tierId: featureQuota?.tier || null, featureId: usageFeatureId, model,
+          outcome: isQuotaError(error) ? 'quota_error' : 'provider_error',
+          durationMs: Date.now() - modelAttemptStartedAt, errorCode: error?.code || error?.status || 'provider_error',
+          requestId: usageRequestId
+        }));
         if (isQuotaError(error)) {
           lastQuotaError = error;
           console.warn(`[${errorMessagePrefix}][${AI_BACKEND_REVISION}] quota hit for ${model}, trying fallback...`, { status: error?.status ?? error?.error?.code ?? null });
@@ -365,6 +406,7 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
     const finishReason = getFinishReason(response);
 
     if (!result) {
+      if (usageEvents.length) usageEvents[usageEvents.length - 1].outcome = 'empty_response';
       return res.status(502).json({ error: "AI tidak mengembalikan hasil, coba lagi" });
     }
 
@@ -373,7 +415,7 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
       ? `${result}\n\n_(Analisis terpotong karena batas token. Coba lagi atau sederhanakan resep.)_`
       : result;
 
-    return res.status(200).json({ result: finalResult, truncated, model: usedModel });
+    return res.status(200).json({ result: finalResult, truncated, model: usedModel, ...(featureQuota ? { quota: featureQuota } : {}) });
   } catch (error) {
     console.error(`[${errorMessagePrefix}][${AI_BACKEND_REVISION}] provider request failed`, {
       status: error?.status ?? error?.error?.code ?? null,
@@ -385,6 +427,9 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
     }
     return res.status(500).json({ error: toUserFacingError(error) });
   } finally {
+    // [AI-GENERATED][OBSERVABILITY][V342-E] Persist token/cost metadata only.
+    // Best-effort persistence is bounded and must never replace the AI response.
+    await persistAIUsageEvents(usageEvents);
     // [AI-GENERATED][ROBUSTNESS][V157] Always release the instance concurrency
     // slot, including provider failures and early successful responses.
     releaseAIRequest();

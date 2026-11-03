@@ -44,3 +44,18 @@ test('annual pricing is not fabricated in the package UI', () => {
   assert.match(html, /Tahunan · Segera/);
   assert.doesNotMatch(html, /Rp\s?549\.000/i);
 });
+
+test('V342-D membership UI exposes explicit one-time trial action and per-feature quota status', () => {
+  assert.match(html, /id="membership-trial-button"/);
+  assert.match(html, /data-action="startFreeTrial"/);
+  assert.match(html, /id="membership-feature-quotas"/);
+  assert.match(source, /postJson\('\/api\/start-free-trial'/);
+  assert.match(source, /getJson\('\/api\/feature-access'/);
+  assert.match(source, /trial\?\.eligible !== true/);
+});
+
+test('membership access state refreshes when the existing Profile modal is opened', () => {
+  assert.match(source, /data-action=\"toggleModal\"\]\[data-arg=\"user-modal\"\]/);
+  assert.match(source, /window\.setTimeout\(\(\) =>/);
+  assert.match(source, /void loadMembershipPackages\(\)/);
+});

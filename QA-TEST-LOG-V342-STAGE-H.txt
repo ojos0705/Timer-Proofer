@@ -1,0 +1,32 @@
+V342 Stage H QA — 2026-11-02
+
+Automated suite:
+- npm test: 589 passed, 0 failed.
+- Stage H focused tests: 9 passed, 0 failed.
+- Static JavaScript checks: 316.
+- HTML checks: 3.
+- HTML IDs: 347; duplicate IDs: 0.
+- Missing relative imports: 0.
+- Inline event handlers: 0.
+- Scroll-lock overrides: 0.
+- Duplicate function declarations within a module: 0.
+- Entry-point local module graph: 69.
+- Service Worker precache paths: 80.
+- Product version: V125.
+
+Coverage:
+- IDR fee row normalization and deterministic row hash.
+- Quoted CSV cells, escaped quotes, localized IDR number formats, and Indonesian DD/MM/YYYY dates interpreted in WIB.
+- Unallocated row handling and required report reference.
+- Invalid/unsafe order ID, negative fee, unsupported currency and category rejection.
+- Private service-role-only ledger and idempotent upsert contract.
+- Admin allowlist denial before database access.
+- Dashboard CSV import and unallocated fee visibility.
+
+Not tested in this environment:
+- Actual merchant Payout Report CSV header mapping (no real/redacted sample provided).
+- Password-protected 7zip extraction (intentionally performed outside app).
+- Live Supabase migration, Vercel deployment, Midtrans production account, financial close.
+- Browser/PWA/Android/iOS end-to-end.
+
+Important: Public Midtrans guide documents CSV/XLSX in a password-protected 7zip report but does not publish a complete CSV schema. Validate with a redacted report before relying on production totals. CSV only; XLSX not supported in this stage.
