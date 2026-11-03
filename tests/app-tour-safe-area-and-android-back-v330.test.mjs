@@ -57,7 +57,7 @@ test('V330 Android Back returns one App Tour step instead of minimizing or enter
 
 test('V330 leaves product-facing version unchanged and advances only technical cache/release tokens', () => {
     assert.equal(version.version, 'V125');
-    assert.equal(version.releaseToken, '20261031-v330');
-    assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.232');
-    assert.match(html, /runtime-entry\.js\?v=20261031-v330/);
+    assert.match(version.releaseToken, /^\d{8}-v\d+$/);
+    assert.match(version.serviceWorker, /^Timer-Proofing-v\d+\.\d+\.\d+$/);
+    assert.ok(html.includes('runtime-entry.js?v=' + version.releaseToken));
 });

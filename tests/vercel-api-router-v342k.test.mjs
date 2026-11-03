@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { pathToFileURL } from 'node:url';
+
 
 const routerPath = new URL('../api/index.js', import.meta.url);
-const { __test, default: router } = await import(pathToFileURL(routerPath.pathname));
+const { __test, default: router } = await import(routerPath.href);
 
 test('Vercel deploy exposes one function entrypoint and rewrites public API paths', () => {
   const vercel = JSON.parse(fs.readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'));

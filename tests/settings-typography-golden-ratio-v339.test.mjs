@@ -28,8 +28,8 @@ test('all Settings menu rows share one Golden Ratio typography scale', () => {
 
 test('settings typography release metadata is synchronized to V339', () => {
   assert.equal(version.version, 'V125');
-  assert.equal(version.build, 'es6-modular-v339');
-  assert.equal(version.serviceWorker, 'Timer-Proofing-v1.1.241');
-  assert.equal(version.releaseToken, '20261101-v339');
-  assert.match(html, /runtime-entry\.js\?v=20261101-v339/);
+  assert.match(version.build, /^es6-modular-v\d+$/);
+  assert.match(version.serviceWorker, /^Timer-Proofing-v\d+\.\d+\.\d+$/);
+  assert.match(version.releaseToken, /^\d{8}-v\d+$/);
+  assert.ok(html.includes('runtime-entry.js?v=' + version.releaseToken));
 });

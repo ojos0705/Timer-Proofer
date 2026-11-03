@@ -1,6 +1,6 @@
 
 // app.js
-import { previewRecipePhoto } from './modal.js';
+import './assets/js/modal.js';
 
 
 let newWorker;
