@@ -1,0 +1,10 @@
+Timer Proofer & Kalkulator HPP — V342 Stage I
+Product version: V125
+
+Stage I adds offline route-level integration coverage for authenticated checkout, server-priced Midtrans Snap token creation, webhook signature and provider-status verification, paid/pending/failed/refund transitions, user-scoped payment and entitlement reads, fixed 7-day trial, per-feature quotas, and server-only database permissions.
+
+Full repository QA: 606 tests passed, 0 failed, 0 skipped. Static release checks passed: 317 JavaScript files, 3 HTML files, 347 HTML IDs with 0 duplicates, 0 missing relative imports, 0 inline event handlers, 0 scroll-lock overrides, 0 duplicate function declarations within a module, 69 local entrypoint modules and 80 Service Worker precache paths. Product version remains V125.
+
+No live payment, database migration, deployment, browser checkout, Android/iOS E2E, or financial close was performed. Stage I is mocked integration QA, not a live sandbox certification.
+
+See V342-STAGE-I-IMPLEMENTATION.md, ROOT-EXTRACT-INSTRUCTIONS-V342-STAGE-I.md and QA-TEST-LOG-V342-STAGE-I.txt.

@@ -1,0 +1,47 @@
+TIMER PROOFER V326 — QA TEST LOG
+Date: 2026-10-30
+Product version: V125
+Technical token: 20261030-v326
+Service Worker: Timer-Proofing-v1.1.228
+
+AUTOMATED TESTS
+Command: node --test tests/*.test.mjs
+Result: 448 tests passed, 0 failed.
+
+RELEASE AUDITS
+Command: node scripts/sync-web-assets.mjs
+Result: PASSED. assets, vendor, logo, version metadata and API copies synchronized to www/.
+
+Command: node scripts/verify-release.mjs
+Result: PASSED.
+- 74 precache paths checked; no missing local asset.
+- 67 local modules in entrypoint graph.
+- 249 JavaScript files checked.
+- 2 HTML files checked.
+- 300 HTML IDs checked.
+- Missing imports: 0.
+- Duplicate HTML IDs: 0.
+- Inline handlers: 0.
+- Scroll-lock overrides: 0.
+- Product-facing version: V125.
+
+Command: node scripts/audit-function-names.mjs
+Result: PASSED.
+- Duplicate function declarations within the same module: 0.
+- 14 cross-module repeated function names are informational and remain in separate module scopes.
+
+COVERAGE ADDED / VERIFIED BY SOURCE TESTS
+- HTMLVideoElement requestPictureInPicture fallback and canvas capture stream.
+- Exit/toggle handling for app-owned video PiP and Document PiP.
+- No beforeunload confirmation listener; pagehide persistence remains.
+- History sentinel while timer is active.
+- Article modal is portaled to document root and styled as viewport overlay.
+- Repeatable onboarding preview query does not clear login session or permanent seen flags.
+- Welcome swipe event handlers and native PiP auto-enter bridge.
+
+NOT RUN
+- No real Chrome Android PWA session was available for manual video PiP gesture tests.
+- No physical Android device or Android Studio/SDK build was available for native PiP validation.
+- No iOS Safari device test was run.
+
+Important: Automated tests are not a substitute for Android/iOS browser and native device tests.

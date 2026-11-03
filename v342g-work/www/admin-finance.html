@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="same-origin">
+  <title>Admin Keuangan — Timer Proofer</title>
+  <script type="importmap">{"imports":{"@supabase/supabase-js":"https://esm.sh/@supabase/supabase-js@2"}}</script>
+  <style>
+    :root{color-scheme:light;--ink:#17211d;--muted:#68756e;--line:#dce5df;--paper:#f5f8f5;--card:#fff;--green:#176b48;--gold:#a87922;--red:#a33b36}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}.wrap{max-width:1120px;margin:auto;padding:24px 16px 56px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}h1{font-size:1.55rem;margin:0}h2{font-size:1.05rem;margin:0 0 12px}.muted,small{color:var(--muted)}.panel,.metric{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.metric span{display:block;color:var(--muted);font-size:.82rem}.metric strong{display:block;font-size:1.3rem;margin-top:5px;overflow-wrap:anywhere}.status{padding:12px 14px;border-radius:10px;background:#edf3ee;margin:12px 0}.status.error{background:#fff0ef;color:var(--red)}.status.warn{background:#fff7e8;color:#775315}button{border:0;border-radius:10px;background:var(--green);color:white;padding:11px 16px;font:inherit;font-weight:650;cursor:pointer}button.secondary{background:#e8eee9;color:var(--ink)}button:disabled{opacity:.5;cursor:not-allowed}label{display:grid;gap:5px;font-size:.88rem;color:var(--muted)}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;font:inherit;color:var(--ink);background:#fff}textarea{min-height:76px;resize:vertical}.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600}.tablewrap{overflow:auto}.foot{font-size:.82rem;color:var(--muted)}[hidden]{display:none!important}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header><div><h1>Dashboard Admin Keuangan</h1><div class="muted">Timer Proofer · V342 Stage H · Internal</div></div><div><button id="syncMidtrans" class="secondary" type="button">Rekonsiliasi Midtrans</button> <button id="refresh" class="secondary" type="button">Muat ulang</button> <button id="logout" class="secondary" type="button">Keluar</button></div></header>
+    <div id="status" class="status" role="status">Memeriksa sesi admin…</div>
+    <section id="dashboard" hidden>
+      <section class="panel"><label>Periode ringkasan<select id="days"><option value="7">7 hari</option><option value="30" selected>30 hari</option><option value="90">90 hari</option></select></label></section>
+      <div class="grid">
+        <article class="metric"><span>Order dibayar · gross</span><strong id="paidGross">—</strong><small id="paidCount"></small></article>
+        <article class="metric"><span>Order menunggu pembayaran</span><strong id="pendingGross">—</strong><small id="pendingCount"></small></article>
+        <article class="metric"><span>Order berstatus refunded · gross exposure</span><strong id="refundGross">—</strong><small id="refundCount"></small></article>
+        <article class="metric"><span>Biaya manual tercatat</span><strong id="recordedCosts">—</strong><small id="costEvidence"></small></article>
+        <article class="metric"><span>Estimasi biaya AI · IDR</span><strong id="aiCosts">—</strong><small id="aiUnpriced"></small></article>
+        <article class="metric"><span>Saldo operasional indikatif</span><strong id="balance">—</strong><small id="balanceLabel"></small></article>
+      </div>
+      <section class="panel"><h2>Rekonsiliasi per paket</h2><p class="foot">Settlement dan refund terkonfirmasi berasal dari snapshot status Midtrans. Biaya AI tetap estimasi. Biaya pembayaran/pajak/operasional belum dialokasikan ke paket jika sumbernya tidak menyebut paket/order.</p><div class="tablewrap"><table><thead><tr><th>Paket</th><th>Gross order dibayar</th><th>Settlement Midtrans</th><th>Refund diakui Midtrans</th><th>Refund terkonfirmasi bank</th><th>Net sebelum biaya</th><th>Biaya AI estimasi</th><th>AI belum terhitung</th><th>Biaya payout aktual terimpor</th><th>Kontribusi sebelum AI/biaya lain</th><th>Order belum direkonsiliasi</th></tr></thead><tbody id="tierRows"><tr><td colspan="9">Belum ada snapshot rekonsiliasi.</td></tr></tbody></table></div></section>
+      <section class="panel"><h2>Impor Midtrans Payout Report (CSV)</h2><p class="foot">Unduh report dari Midtrans, ekstrak arsip 7z di perangkat Anda, lalu pilih file CSV. Parser memetakan kolom berdasarkan header; baris yang tidak memiliki biaya valid akan ditolak. XLSX belum didukung pada tahap ini.</p><div class="formgrid"><label>File payout CSV<input id="payoutFile" type="file" accept=".csv,text/csv"></label><label>Referensi payout / batch<input id="payoutReference" maxlength="120" placeholder="Contoh: payout 2026-11-02"></label></div><p><button id="importPayout" type="button">Validasi & impor biaya payout</button></p><div id="payoutResult" class="foot" aria-live="polite"></div><p class="foot">Biaya yang cocok dengan Order ID akan dialokasikan ke paket. Biaya tanpa Order ID tetap dicatat sebagai belum teralokasi dan tidak dibagi rata secara asumtif.</p></section>
+      <section class="panel"><h2>Kelengkapan data keuangan</h2><div id="missingData" class="status warn"></div><p class="foot">Saldo indikatif bukan laba bersih. Rekonsiliasi status Midtrans hanya memverifikasi settlement/refund; MDR dan biaya payout tetap harus dicatat dari Payout Report.</p></section>
+      <section class="panel"><h2>Catat biaya / penyesuaian</h2><form id="adjustmentForm"><div class="formgrid">
+        <label>Kategori<select name="category" required><option value="payment_fee">Biaya pembayaran</option><option value="tax">Pajak</option><option value="infrastructure">Infrastruktur</option><option value="provider_cost">Biaya provider</option><option value="refund_adjustment">Penyesuaian refund</option><option value="other_cost">Biaya lain</option></select></label>
+        <label>Nominal (IDR)<input name="amount_idr" type="number" min="1" max="1000000000000" step="1" required></label>
+        <label>Status bukti<select name="evidence_level" required><option value="actual">Aktual · ada bukti</option><option value="estimated">Estimasi</option></select></label>
+        <label>Tanggal kejadian<input name="occurred_at" type="datetime-local" required></label>
+        <label>Referensi bukti<input name="reference" maxlength="120" placeholder="ID invoice / nomor dokumen" required></label>
+        <label>Catatan<textarea name="note" maxlength="500" placeholder="Keterangan singkat"></textarea></label>
+      </div><p><button type="submit" id="saveAdjustment">Simpan catatan biaya</button></p></form></section>
+      <section class="panel"><h2>Rincian biaya tercatat</h2><div class="tablewrap"><table><thead><tr><th>Tanggal</th><th>Kategori</th><th>Nominal</th><th>Bukti</th><th>Referensi</th></tr></thead><tbody id="costRows"><tr><td colspan="5">Belum ada data.</td></tr></tbody></table></div></section>
+      <section class="panel"><h2>Catatan pemakaian AI</h2><div id="aiBreakdown" class="foot"></div></section>
+    </section>
+  </main>
+  <script type="module">
+    import { AuthService } from './assets/js/auth-service.js';
+    import { parsePayoutCsv, parsePayoutIDR, parsePayoutDate } from './assets/js/finance-payout-csv.js';
+    const $ = (id) => document.getElementById(id);
+    const money = (value) => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(value)||0);
+    let session = null;
+    function setStatus(message, error = false) { $('status').textContent = message; $('status').classList.toggle('error', error); }
+    async function api(path, options = {}) {
+      const response = await fetch(path,{...options,headers:{Authorization:`Bearer ${session.access_token}`,'Content-Type':'application/json',...(options.headers||{})},cache:'no-store'});
+      const data = await response.json().catch(()=>({}));
+      if (!response.ok) { const err = new Error(data.error || `Permintaan gagal (${response.status})`); err.status=response.status; throw err; }
+      return data;
+    }
+    function render(data) {
+      const o=data.orders||{}, c=data.recorded_costs||{}, ai=data.ai||{};
+      $('paidGross').textContent=money(o.paid_gross_idr); $('paidCount').textContent=`${o.paid_orders||0} order dibayar`;
+      $('pendingGross').textContent=money(o.pending_gross_idr); $('pendingCount').textContent=`${o.pending_orders||0} order pending`;
+      $('refundGross').textContent=money(o.refunded_order_gross_idr); $('refundCount').textContent=`${o.refunded_orders||0} order refunded`;
+      $('recordedCosts').textContent=money(c.total_recorded_cost_idr); $('costEvidence').textContent=`Aktual ${money(c.by_evidence_level_idr?.actual)} · Estimasi ${money(c.by_evidence_level_idr?.estimated)}`;
+      $('aiCosts').textContent=money(ai.priced_estimated_cost_idr); $('aiUnpriced').textContent=`${ai.unpriced_events||0} event belum terhitung`;
+      $('balance').textContent=money(data.provisional_operating_balance_idr); $('balanceLabel').textContent=data.balance_label||'';
+      $('missingData').textContent=(data.missing_data||[]).length ? data.missing_data.join(' ') : 'Tidak ada kekurangan data yang terdeteksi pada pemeriksaan dasar. Tetap lakukan rekonsiliasi sumber.';
+      const pc=data.payout_costs||{}; $('payoutResult').textContent=`Biaya payout aktual terimpor: ${money(pc.total_idr)} · cocok order: ${pc.matched_rows||0} · Order ID tidak cocok: ${pc.unmatched_rows||0} · belum teralokasi: ${pc.unallocated_rows||0}.`; 
+      if (data.truncated) $('missingData').textContent += ' Data dipotong pada batas pembacaan maksimum; ringkasan belum lengkap.';
+      const tiers=data.tier_reconciliation||{}; const tierEntries=Object.entries(tiers);
+      $('tierRows').innerHTML=tierEntries.length?tierEntries.map(([tier,x])=>`<tr><td>${escapeHtml(tier.toUpperCase())}</td><td>${money(x.paid_gross_idr)}</td><td>${money(x.settled_gross_idr)}</td><td>${money(x.acknowledged_refunds_idr)}</td><td>${money(x.bank_confirmed_refunds_idr)}</td><td>${money(x.net_after_confirmed_refunds_before_costs_idr)}</td><td>${money(x.ai_estimated_cost_idr)}</td><td>${x.ai_unpriced_events||0}</td><td>${money(x.actual_imported_payout_costs_idr)}</td><td>${money(x.contribution_before_ai_and_other_costs_idr)}</td><td>${x.unverified_orders||0}</td></tr>`).join(''):'<tr><td colspan="11">Belum ada data paket yang dapat direkonsiliasi.</td></tr>';
+      const rows=(data.recorded_cost_rows||[]); $('costRows').innerHTML=rows.length?rows.map(x=>`<tr><td>${new Date(x.occurred_at).toLocaleString('id-ID')}</td><td>${escapeHtml(x.category)}</td><td>${money(x.amount_idr)}</td><td>${escapeHtml(x.evidence_level)}</td><td>${escapeHtml(x.reference)}</td></tr>`).join(''):'<tr><td colspan="5">Belum ada data biaya pada periode ini.</td></tr>';
+      const s=ai.summary||{}; $('aiBreakdown').textContent=`${s.event_count||0} event · ${s.input_tokens||0} token input · ${s.output_tokens||0} token output · ${s.request_units||0} request MyMemory · ${s.input_characters||0} karakter sumber. Biaya IDR hanya estimasi untuk event yang memiliki tarif dan kurs terkonfigurasi.`;
+    }
+    function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    async function load() {
+      if (!session?.access_token) throw new Error('Sesi login tidak ditemukan. Silakan login melalui aplikasi utama.');
+      setStatus('Memuat ringkasan keuangan…');
+      const data=await api(`/api/finance-admin-summary?days=${encodeURIComponent($('days').value)}`);
+      render(data); $('dashboard').hidden=false; setStatus('Data berhasil dimuat. Akses admin diverifikasi oleh server.');
+    }
+    async function init(){
+      try { session=await AuthService.getSession(); if(!session?.access_token) throw new Error('Silakan login di aplikasi Timer Proofer terlebih dahulu.'); await load(); }
+      catch(error){setStatus(error.message,error.status===403||error.status===401); $('dashboard').hidden=true;}
+    }
+    $('refresh').addEventListener('click',()=>load().catch(e=>setStatus(e.message,true)));
+    $('syncMidtrans').addEventListener('click',async()=>{const button=$('syncMidtrans');button.disabled=true;setStatus('Mengambil status transaksi terverifikasi dari Midtrans…');try{const result=await api(`/api/finance-midtrans-reconcile?days=${encodeURIComponent($('days').value)}`,{method:'POST',body:'{}'});setStatus(`Rekonsiliasi selesai: ${result.reconciled_orders}/${result.scanned_orders} order berhasil; ${result.failed_orders} gagal${result.truncated?' (hasil dibatasi)':''}.`);await load();}catch(error){setStatus(error.message,true);}finally{button.disabled=false;}});
+    $('days').addEventListener('change',()=>load().catch(e=>setStatus(e.message,true)));
+    $('logout').addEventListener('click',async()=>{try{await AuthService.signOut();}finally{location.href='./index.html';}});
+    $('adjustmentForm').addEventListener('submit',async(event)=>{
+      event.preventDefault(); const form=event.currentTarget; const button=$('saveAdjustment'); button.disabled=true;
+      try {const raw=Object.fromEntries(new FormData(form)); raw.amount_idr=Number(raw.amount_idr); raw.occurred_at=new Date(raw.occurred_at).toISOString(); await api('/api/finance-admin-summary',{method:'POST',body:JSON.stringify(raw)}); form.reset(); setStatus('Catatan biaya tersimpan.'); await load();}
+      catch(error){setStatus(error.message,true);}finally{button.disabled=false;}
+    });
+    const headerKey=v=>String(v||'').replace(/^\uFEFF/,'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+    $('importPayout').addEventListener('click',async()=>{
+      const button=$('importPayout'),file=$('payoutFile').files?.[0];if(!file){$('payoutResult').textContent='Pilih file CSV terlebih dahulu.';return;}
+      if(file.size>5*1024*1024){$('payoutResult').textContent='Ukuran CSV maksimal 5 MB.';return;}
+      button.disabled=true;$('payoutResult').textContent='Membaca dan memvalidasi CSV…';
+      try{
+        const parsed=parsePayoutCsv(await file.text());if(parsed.length<2)throw new Error('CSV tidak berisi baris data.');
+        const headers=parsed[0].map(headerKey);
+        const find=(aliases)=>headers.findIndex(h=>aliases.includes(h));
+        const indexes={order:find(['order_id','orderid','merchant_order_id']),fee:find(['fee','fee_amount','fee_amount_idr','total_fee','amount_fee']),mdr:find(['mdr_amount','mdr_fee','mdr']),transactionFee:find(['transaction_fee','midtrans_fee']),tax:find(['tax_amount','ppn_amount','vat_amount']),transfer:find(['bank_transfer_fee','payout_transfer_fee']),gross:find(['gross_amount','gross_amount_idr','transaction_amount','amount']),date:find(['date','transaction_date','transaction_time','settlement_time','date_time']),type:find(['payment_type','payment_method','channel']),category:find(['fee_category','fee_type','charge_type'])};
+        if(indexes.date<0)throw new Error(`Kolom tanggal transaksi/settlement tidak terdeteksi. Header ditemukan: ${parsed[0].join(', ')}.`);
+        const feeColumns=indexes.fee>=0?[{key:'fee',category:'payment_fee'}]:[{key:'mdr',category:'payment_fee'},{key:'transactionFee',category:'payment_fee'},{key:'tax',category:'tax'},{key:'transfer',category:'transfer_fee'}].filter(x=>indexes[x.key]>=0);
+        if(!feeColumns.length)throw new Error(`Kolom biaya tidak terdeteksi. Header ditemukan: ${parsed[0].join(', ')}. Gunakan Fee, MDR Amount, Transaction Fee, Tax Amount, atau Transfer Fee.`);
+        const batch=$('payoutReference').value.trim()||file.name;
+        const rows=parsed.slice(1).flatMap((cells,i)=>{
+          const get=k=>indexes[k]>=0?String(cells[indexes[k]]??'').trim():'';
+          const catRaw=get('category').toLowerCase();
+          return feeColumns.map(source=>{
+            const rawFee=get(source.key),fee=parseIdr(rawFee);if(fee===null)throw new Error(`Nominal biaya kolom ${source.key} pada baris ${i+2} tidak valid: ${rawFee}`);
+            const occurredAt=parsePayoutDate(get('date'));if(!occurredAt)throw new Error(`Tanggal pada baris ${i+2} tidak valid: ${get('date')}`);
+            const category=source.category==='payment_fee'&&/tax|ppn|vat/.test(catRaw)?'tax':source.category==='payment_fee'&&/transfer/.test(catRaw)?'transfer_fee':source.category==='payment_fee'&&/other/.test(catRaw)?'other_fee':source.category;
+            return {order_id:get('order'),fee_amount_idr:fee,gross_amount_idr:indexes.gross>=0?parsePayoutIDR(get('gross')):null,occurred_at:occurredAt,payment_type:get('type'),fee_category:category,payout_reference:batch,source_reference:`${file.name}:${i+2}:${source.key}`};
+          });
+        });
+        const result=await api('/api/finance-payout-import',{method:'POST',body:JSON.stringify({payout_reference:batch,rows})});
+        $('payoutResult').textContent=`Impor selesai: ${result.inserted_rows} baris baru dari ${result.unique_rows} baris unik; duplikat ${result.duplicate_rows}; order cocok ${result.matched_orders}; tidak cocok ${result.unmatched_orders}; tanpa Order ID ${result.unallocated_rows}. Total biaya baris laporan ${money(result.imported_fee_idr)}.`;
+        await load();
+      }catch(error){$('payoutResult').textContent=error.message;setStatus(error.message,true);}finally{button.disabled=false;}
+    });
+    init();
+  </script>
+</body>
+</html>

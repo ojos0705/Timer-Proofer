@@ -1,0 +1,13 @@
+Timer Proofer V320
+Product label: V125
+Technical build: 20261030-v320
+
+Fixes:
+- Recipe top close button now uses the canonical delegated data-action path.
+- Weather theme accent/background no longer recolors the entire application; brand text remains chocolate/dough-orange.
+- Recipe AI result is cleared for new recipe creation and when switching recipes.
+- Late responses from prior recipe AI requests are ignored.
+- Service Worker cache rolled to Timer-Proofing-v1.1.222.
+
+Automated QA: 417/417 tests passed. Static release audit passed.
+Live deployment/browser/device test not yet performed.

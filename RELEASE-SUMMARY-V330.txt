@@ -1,0 +1,14 @@
+Timer Proofer — V330 Technical Release
+Date: 2026-10-31
+Product-facing version: V125
+Technical release token: 20261101-v331
+Service Worker cache: Timer-Proofing-v1.1.232
+
+Fixed Android App Tour tooltip placement so the active step card is measured after its content updates and clamped within the visible viewport, including visualViewport and CSS safe-area insets. The card now supports bounded vertical touch scrolling and keeps the navigation footer reachable.
+
+Android Back now belongs to the active App Tour before timer PiP/minimize behavior. At step 2 or later, Back moves to the previous tour step; at step 1, Back closes the tour without minimizing the app.
+
+Preserved existing App Tour element IDs/classes, source ES6 module architecture, login, AI modules, recipe state, timer, and native PiP integration.
+
+QA: npm test PASS — 472/472; release verifier PASS; function-name audit PASS.
+Physical Android interaction testing remains required.

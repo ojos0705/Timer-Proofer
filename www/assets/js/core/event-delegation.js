@@ -8,6 +8,29 @@ import { getOwnCallable } from './action-registry.js';
  */
 
 const SPECIAL_ACTIONS = {
+    // [AI-GENERATED][BUG FIX][V340] Open the canonical Terms & Privacy page
+    // from both Register and Settings. Keep it idempotent so repeated taps
+    // cannot accidentally close the document while its content is being read.
+    openTermsModal(arg = 'tos-modal') {
+        const modalId = String(arg || 'tos-modal').trim();
+        if (modalId !== 'tos-modal') return false;
+        const modal = document.getElementById(modalId);
+        if (!modal) {
+            console.warn('[event-delegation] Modal Syarat & Ketentuan tidak ditemukan.');
+            return false;
+        }
+        if (modal.classList?.contains('active')) {
+            const content = modal.querySelector?.('.modal-scroll-content');
+            if (content) content.scrollTop = 0;
+            return true;
+        }
+        const toggle = window.__TPModalCore?.toggleModal || window.toggleModal;
+        if (typeof toggle !== 'function') {
+            console.error('[event-delegation] Modal controller belum siap untuk Syarat & Ketentuan.');
+            return false;
+        }
+        return toggle(modalId);
+    },
     // [AI-GENERATED][REFACTOR] Handles actions that previously contained inline statements.
     removeElementById(arg) {
         if (!arg) return;

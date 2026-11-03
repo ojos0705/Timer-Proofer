@@ -1,0 +1,26 @@
+V342 STAGE K — QA LOG
+
+Scope: consolidate Vercel API function discovery for Hobby plan while retaining all public API routes and Stage J sandbox smoke-test command.
+
+Implementation checks:
+- Root api/ contains exactly one JavaScript entrypoint: api/index.js.
+- 24 canonical handler/helper modules reside in serverless/api/ outside Vercel's auto-discovered api/ function directory.
+- Router registers all 17 existing endpoint names.
+- vercel.json rewrites /api/:path* to /api/index?__api_route=:path*.
+- Original public endpoint names remain unchanged.
+- package.json includes test:monetization-sandbox -> node scripts/monetization-sandbox-smoke.mjs.
+- Product version remains V125.
+
+Automated tests:
+- npm test: PASS — 617 passed, 0 failed, 0 skipped.
+- Release static checks: JS 322, HTML 3, HTML IDs 347, duplicate IDs 0, missing imports 0, inline handlers 0, scroll-lock overrides 0, duplicate function declarations within a module 0, entrypoint graph 69 modules, Service Worker precache 80, product version V125.
+- Router-specific tests: 4 passed.
+- `MIDTRANS_IS_PRODUCTION=false npm run test:monetization-sandbox`: script found and invoked; safely blocked before network access because MIDTRANS_SERVER_KEY was not configured in this environment. This is expected and does not constitute live Sandbox certification.
+
+Not performed:
+- No Vercel deployment or Vercel Hobby account build was run.
+- No live Midtrans Sandbox certification (requires user's Sandbox server key, Preview URL, test-account access token, and a paid Sandbox order ID).
+- No production payment or database migration.
+
+Deployment acceptance:
+Push this archive to the connected repository, then verify the Vercel Preview deployment is Ready. Confirm that only api/index.js is detected as a Serverless Function and exercise all existing API routes, including Midtrans webhook, payment status, entitlements, AI, translation, finance, and weather.

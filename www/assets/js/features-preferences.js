@@ -1,6 +1,7 @@
 // [AI-GENERATED][REFACTOR] Depend on the canonical modal controller explicitly.
 import { toggleModal } from './modal.js';
 import { NotifSystem } from './notification-service.js'; // [AI-GENERATED][ES6 MODULE][V272]
+import { ProofingAlarmService } from './proofing-alarm-service.js';
 
 // [AI-GENERATED][REFACTOR] ES6 feature module: application sound/offline preferences.
 // Existing storage keys and DOM contracts remain unchanged.
@@ -62,6 +63,10 @@ function muatDataPreferensi() {
 }
 
 function simpanPreferensiLengkap() {
+    // Stop settings audition immediately on save. This preview has an isolated
+    // lifecycle and must not be allowed to continue behind the closed modal.
+    ProofingAlarmService.stopPreview();
+
     const elSound = document.getElementById('set-sound');
     const elVib = document.getElementById('set-vib');
     const elOffline = document.getElementById('set-offline');
@@ -116,9 +121,15 @@ function kunciGrupSuara() {
 function handlerPratinjauSuara() {
     kunciGrupSuara();
     const elSound = document.getElementById('set-sound');
-    
+
+    // Turning sound off also ends an active audition immediately.
+    if (!elSound || !elSound.checked) {
+        ProofingAlarmService.stopPreview();
+        return;
+    }
+
     // Test bunyi hanya jika dalam keadaan diceklis (ON)
-    if (elSound && elSound.checked && typeof window.playAlarmSound === 'function') {
+    if (typeof ProofingAlarmService.playPreview === 'function') {
         // PERBAIKAN: kirim nilai form saat ini langsung sebagai parameter (mode pratinjau),
         // tanpa menyentuh localStorage sama sekali — jadi tidak ada risiko nilai tersimpan
         // "keselip"/tertimpa keliru jika pengguna gonta-ganti nada dengan cepat sebelum
@@ -126,7 +137,7 @@ function handlerPratinjauSuara() {
         const toneSementara = document.getElementById('select-alarm-tone').value;
         const volSementara = document.getElementById('range-alarm-volume').value;
         
-        window.playAlarmSound(toneSementara, volSementara); // Membunyikan suara tes sesuai form, belum disimpan
+        ProofingAlarmService.playPreview(toneSementara, volSementara); // Preview terpisah dari alarm proofing yang sesungguhnya
     }
 }
 

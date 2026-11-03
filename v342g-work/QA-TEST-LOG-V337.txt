@@ -1,0 +1,38 @@
+TIMER PROOFER V337 — QA TEST LOG
+
+Release metadata
+- Product version: V125
+- Technical revision: V337
+- Release token: 20261101-v337
+- Service Worker cache: Timer-Proofing-v1.1.239
+
+Automated release checks (npm test)
+- npm run sync-web-assets: PASS
+- Release verifier: PASS
+- Function-name audit: PASS (0 duplicate function declarations within the same module)
+- Node test suite: PASS — 514 passed, 0 failed, 0 skipped
+- ZIP clean-extraction test: PASS — 514 passed, 0 failed, 0 skipped after extracting the delivered archive into an empty directory
+
+Static source metrics
+- Service Worker precache entries: 80; all local entries resolved
+- Local modules in entrypoint graph: 69
+- JavaScript/MJS files checked: 276
+- HTML files checked: 2
+- HTML IDs: 306
+- Duplicate HTML IDs: 0
+- Inline event handlers: 0
+- Missing relative imports: 0
+- Scroll-lock ownership overrides: 0
+
+V337 focused regression coverage
+- Share panel exposes separate invitation share, URL-only share, and copy-link actions.
+- Native Capacitor Share receives `title` + `url` only for the URL-only action (no invitation text).
+- PWA Web Share receives `{ title, url }` for the URL-only action.
+- Share API absence falls back to the existing copy-link function.
+- User cancellation is handled as normal dismissal.
+
+Not claimed as verified
+- Android Gradle build in this packaging environment.
+- Native share chooser execution on a physical Android device.
+- Recipient-app rendering/link previews in WhatsApp, Gmail, or other installed apps.
+- Browser/PWA end-to-end interaction on the deployed Production domain.

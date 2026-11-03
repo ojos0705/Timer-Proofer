@@ -1,0 +1,47 @@
+QA RELEASE LOG — V330
+Date: 2026-10-31
+
+SCOPE
+- Android App Tour tooltip safe-area positioning.
+- Internal vertical scrolling and safe footer reachability.
+- Android Back precedence while App Tour is active.
+- Existing DOM IDs/classes and established native PiP flow preserved.
+
+AUTOMATED REGRESSION
+Command: npm test
+Result: PASS — 472 passed, 0 failed, 0 skipped.
+The command also ran web asset synchronization, release verification, and function-name audit.
+
+STATIC RELEASE VERIFICATION
+Command: node scripts/verify-release.mjs
+Result: PASS
+- Service Worker precache paths: 74 verified
+- Local modules in entrypoint graph: 67
+- JavaScript files checked: 254
+- HTML files checked: 2
+- HTML IDs checked: 300
+- Missing relative imports: 0
+- Duplicate HTML IDs: 0
+- Inline event handlers: 0
+- Scroll-lock overrides outside owner: 0
+- Product-facing version: V125
+
+FUNCTION AUDIT
+Command: node scripts/audit-function-names.mjs
+Result: PASS
+- Duplicate function declarations within a module: 0
+- Repeated names across separate modules: 14 informational, module-scoped findings.
+
+SYNCHRONIZATION
+Command: node scripts/sync-web-assets.mjs
+Result: PASS
+- assets/ -> www/assets/
+- api/ -> www/public/api/
+- 74 precache entries validated
+
+NOT RUN
+- Gradle Android build in this environment.
+- Physical-device test of Android system navigation bar / safe-area behavior.
+- Physical-device test of App Tour Back behavior and touch scrolling.
+
+The automated suite validates source contracts and static structure; it does not replace installation and interaction tests on a real Android device.

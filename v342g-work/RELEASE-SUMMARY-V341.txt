@@ -1,0 +1,40 @@
+TIMER PROOFER — V341 RELEASE SUMMARY
+
+Scope
+- Reconstruct V341 from the user-provided V340 ROOT-EXTRACT ZIP.
+- Add Supabase-authenticated, server-priced digital Premium checkout using Midtrans Snap.
+- Add server-side order persistence, verified Midtrans notification/Get Status processing, idempotent entitlement activation, and refund revocation.
+- Add authenticated own-order and own-entitlement read endpoints.
+- Connect existing profile checkout to server catalog and Supabase Bearer auth; remove browser-supplied payment amount.
+- Keep physical bakery orders separate from digital Premium membership.
+
+Security
+- Plan amount and duration are sourced only from MONETIZATION_PLANS_JSON on the server.
+- Order IDs are generated server-side.
+- Midtrans SHA-512 notification signature and provider Get Status are both verified.
+- Provider amount/currency are cross-checked against the persisted order.
+- Supabase service-role key is server-only; monetization tables have RLS and no client-role policies.
+- Entitlement activation/revocation is restricted to service-role RPCs.
+
+QA
+- Baseline V340: npm test 523 passed, 0 failed.
+- V341: npm test 538 passed, 0 failed.
+- Service Worker precache: 80 valid entries.
+- Local boot graph: 69 modules.
+- JavaScript checked: 290.
+- HTML checked: 2; IDs: 306; duplicate IDs: 0.
+- Missing local imports: 0; inline event handlers: 0; scroll-lock owner violations: 0.
+- Duplicate function declarations within a module: 0.
+- Product version V125 retained; technical revision V341.
+
+Not performed
+- Supabase migration application.
+- Vercel environment configuration/deployment.
+- Midtrans Sandbox dashboard transaction, webhook delivery, refund, or live transaction.
+- Application-wide entitlement feature gates.
+- AdSense/AdMob, Google Play Billing, Apple IAP.
+- Gradle assemble/install and physical Android/iOS device QA.
+
+Important
+- The illustrative amount in documentation is not a business-approved price. Configure exactly one active plan in MONETIZATION_PLANS_JSON before checkout.
+- See HYBRID-MONETIZATION-V341.md and MANUAL-DEVICE-TEST-PLAN-V341.md.

@@ -1,0 +1,29 @@
+TIMER PROOFER — V338 RELEASE SUMMARY
+
+Purpose
+Improve the native Android share preview so the app link title appears in Android Sharesheet, while retaining PWA Web Share and Capacitor fallback behavior.
+
+Changes
+- Added Android SharePreviewPlugin.
+- Sets Intent.EXTRA_TEXT with URL or invitation text + URL.
+- Sets Intent.EXTRA_TITLE for Android Sharesheet rich text preview.
+- Keeps Intent.EXTRA_SUBJECT for email compatibility.
+- Registers plugin from MainActivity and resolves it through NativeCapacitorService only on Android.
+- Invitation share and URL-only share both use the rich Android bridge; standard Capacitor Share remains fallback.
+- PWA continues using navigator.share.
+
+Compatibility / limitations
+- Does not attempt to reproduce Windows 11 Share Sheet pixels on Android.
+- Android controls its own app/contact suggestions and may differ by OS/OEM.
+- QR code affordance is not guaranteed by Android Sharesheet.
+
+Verification
+- npm test: 517/517 pass.
+- Release verification and clean extraction test pass.
+- Gradle/physical Android test still required on the developer laptop/device.
+
+Version
+- Product version: V125.
+- Technical revision: V338.
+- Release token: 20261101-v338.
+- Service Worker cache: Timer-Proofing-v1.1.240.

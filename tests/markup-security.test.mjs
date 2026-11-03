@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { escapeHtmlMarkup, normalizeSafeRecipeImageSource } from '../assets/js/core/markup-security.js';
-import { formatHasilAI } from '../assets/js/ai-formatters.js';
+import { formatHasilAI, formatTipsHasilAI } from '../assets/js/ai-formatters.js';
 
 const appCore = fs.readFileSync(new URL('../assets/js/app-core.js', import.meta.url), 'utf8');
 
@@ -86,4 +86,17 @@ test('sensor advice no longer interpolates raw sensor values into innerHTML', ()
     assert.match(appCore, /escapeHtmlMarkup\(advice\.action\)/);
     assert.match(appCore, /escapeHtmlMarkup\(advice\.recommendation\)/);
     assert.doesNotMatch(appCore, /insightEl\.innerHTML = `[^`]*\$\{insight\}/);
+});
+
+
+test('AI tips formatter preserves headings and clean numbered steps when the model joins them on one line', () => {
+    const sample = '**LANGKAH SOLUSI TEKNIS KONKRET** 1. Uji Aktivitas Ragi (Proofing Test) Sebelum dicampur ke adonan, masukkan 1 sendok teh ragi dan 1/2 sendok teh gula ke dalam 50 ml air hangat.\n**2.** Urutan Pencampuran Bahan yang Benar\nCampur tepung terigu, gula, dan ragi.';
+    const formatted = formatTipsHasilAI(sample);
+
+    assert.match(formatted, /class="ai-tips-heading"[\s\S]*LANGKAH SOLUSI TEKNIS KONKRET/);
+    assert.match(formatted, /class="ai-tips-list-item"[\s\S]*<strong[^>]*>1\.<\/strong>[\s\S]*Uji Aktivitas Ragi/);
+    assert.match(formatted, /<strong[^>]*>2\.<\/strong>[\s\S]*Urutan Pencampuran Bahan yang Benar/);
+    assert.match(formatted, /class="ai-tips-paragraph"[\s\S]*Campur tepung terigu, gula, dan ragi/);
+    assert.doesNotMatch(formatted, /color:#2980b9|color:#4a235a/);
+    assert.match(formatHasilAI('🧠 Analisis yang lama'), /color:#4a235a/);
 });

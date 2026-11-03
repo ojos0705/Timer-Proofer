@@ -13,7 +13,7 @@ test('article modal checks each existing DOM node before updating it', () => {
     assert.match(fn, /if \(badgeElement\) badgeElement\.textContent/);
     assert.match(fn, /if \(titleElement\) titleElement\.textContent/);
     assert.match(fn, /if \(bodyElement && typeof artikel\.content === 'string'\) bodyElement\.innerHTML/);
-    assert.match(fn, /if \(overlay\) overlay\.classList\.add\('active'\)/);
+    assert.match(fn, /if \(overlay\) \{[\s\S]*?overlay\.classList\.add\('active'\)/);
     assert.doesNotMatch(fn, /document\.getElementById\('modal-(?:badge|title|body)'\)\.innerText/);
 });
 

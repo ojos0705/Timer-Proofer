@@ -1,0 +1,26 @@
+TIMER PROOFER — V327
+====================
+
+Fokus rilis:
+- Android Back ketika countdown aktif masuk Android system Picture-in-Picture pada level Activity (OnBackPressedDispatcher untuk Android modern dan onBackPressed legacy untuk Android 8–12L).
+- Jika PiP native tidak tersedia/ditolak, Activity masuk background tanpa WebView exit prompt.
+- html/body dan app-container dikunci pada viewport; scroll vertikal hanya pada .scrollable-content.
+- Auth wrapper masih memiliki scroll internal pada viewport pendek.
+
+Dipertahankan:
+- PWA PiP.
+- AI Telemetry, AI Analysis, AI Tips.
+- Recipe detail, recipe AI reset, recipe print/Premium Print.
+- Product-facing version V125.
+
+Teknis:
+- Service Worker cache: Timer-Proofing-v1.1.229
+- Release token: 20261030-v327
+- Test suite: 452 passed / 0 failed.
+- Statis release audit: 0 missing imports, 0 duplicate HTML IDs, 0 inline handlers, 0 duplicate function declarations within a module.
+- Function name audit: 14 same names across separate modules are informational and unchanged.
+
+Batasan:
+- Android Gradle build dan uji HP asli belum dilakukan.
+- PWA/browser E2E tidak dijalankan pada sesi ini.
+- Native PiP harus diverifikasi dengan APK V327 di perangkat Android yang mendukung API 26+.

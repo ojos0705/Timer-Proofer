@@ -1,0 +1,32 @@
+TIMER PROOFER — V335 RELEASE SUMMARY
+Date: 2026-11-01
+Product-facing version: V125
+Technical build: es6-modular-v335
+Service Worker cache: Timer-Proofing-v1.1.238
+Release token: 20261101-v336
+
+CHANGES
+- PWA and Android launcher/adaptive/splash assets aligned to the Timer Proofer donut brand.
+- Existing TOS modal opened from the Register screen through the canonical modal action.
+- Registration button is disabled until explicit Terms checkbox consent; submit path validates consent again.
+- Shared branded Bagikan ke Teman modal for PWA and Capacitor; platform share chooser and copy-link fallback retained.
+- Native translation calls use CapacitorHttp direct request to avoid WebView CORS preflight; PWA continues to use browser fetch.
+- Native translation request errors are differentiated; missing CapacitorHttp does not silently fall back to fetch.
+- Cache-bust markers synchronized to V335.
+
+QA
+- `npm test`: PASS.
+- Static release verifier: PASS.
+- Service Worker precache paths: 80; missing local assets: 0.
+- Local modules in entrypoint graph: 69.
+- JavaScript checked: 273; HTML checked: 2; HTML IDs: 305.
+- Missing imports: 0; duplicate HTML IDs: 0; inline event handlers: 0.
+- Scroll-lock overrides outside owner: 0.
+- Duplicate function declarations within a module: 0.
+- Node test suite: 506 passed, 0 failed.
+
+NOT CLAIMED AS VERIFIED
+- No Gradle `assembleDebug` run in this environment (Android SDK environment is not configured here).
+- No physical Android/iOS device run for V335.
+- No live Production Vercel or MyMemory request performed.
+- Installed launcher icon refresh may require installing the new APK; Android launcher may apply its own circle/squircle mask.

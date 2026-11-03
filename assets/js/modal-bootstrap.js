@@ -65,8 +65,24 @@ function detachOverlaysFromProfileContainer() {
     return detachedCount;
 }
 
+// [AI-GENERATED][BUG FIX][V340] The Terms & Conditions page is authored inside
+// #app-container > .scrollable-content. The app shell is an overflow clipping
+// region and body establishes a fixed-position containing block; detach this
+// standalone page modal to body before any click so it can cover the whole view
+// in PWA browsers and Capacitor WebViews. Node identity and delegated handlers stay intact.
+function detachTermsModalFromAppShell() {
+    if (typeof document === 'undefined' || !document.body) return false;
+    const modal = document.getElementById('tos-modal');
+    const appContent = document.querySelector('#app-container > .scrollable-content');
+    if (!modal || !appContent || !appContent.contains(modal)) return false;
+    document.body.appendChild(modal);
+    console.info('[modal-bootstrap] Modal Syarat & Ketentuan dipisahkan dari app shell.');
+    return true;
+}
+
 export function initializeModalBootstrap() {
     detachOverlaysFromProfileContainer();
+    detachTermsModalFromAppShell();
     const existingCore = getModalCore();
     if (existingCore?.version === '5.1.0') {
         modalCoreInstance = existingCore;
@@ -79,7 +95,7 @@ export function initializeModalBootstrap() {
         lastAction: null,
         errors: 0,
         returnToSettings: false,
-        settingsChildIds: new Set(['modal-koneksi-sensor', 'modal-preferensi', 'whatsapp-language-modal', 'help-modal', 'about-modal', 'tos-modal', 'backup-modal', 'rate-modal', 'feedback-modal'])
+        settingsChildIds: new Set(['modal-koneksi-sensor', 'modal-preferensi', 'whatsapp-language-modal', 'help-modal', 'about-modal', 'tos-modal', 'share-app-modal', 'backup-modal', 'rate-modal', 'feedback-modal'])
     };
 
     function setClosed(modal) {

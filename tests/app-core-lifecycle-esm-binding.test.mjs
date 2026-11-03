@@ -8,13 +8,13 @@ const boot = fs.readFileSync(new URL('../assets/js/boot.js', import.meta.url), '
 const lifecycle = fs.readFileSync(new URL('../assets/js/app-lifecycle-service.js', import.meta.url), 'utf8');
 
 test('app-core imports and invokes the canonical lifecycle initializer directly', () => {
-    assert.match(appCore, /import\s+\{\s*init\s+as\s+initializeAppLifecycle\s*\}\s+from\s+['\"]\.\/app-lifecycle-service\.js['\"]/);
+    assert.match(appCore, /import\s+\{\s*init\s+as\s+initializeAppLifecycle\s*,?\s*(?:setTimerBackGuard\s*)?\}\s+from\s+['"]\.\/app-lifecycle-service\.js['"]/);
     assert.match(appCore, /initializeAppLifecycle\(\{[\s\S]*?onForeground:[\s\S]*?onBackground:/);
     assert.doesNotMatch(appCore, /window\.AppLifecycleService\?\.init/);
 });
 
 test('boot and app-core share the same module URL while the legacy facade remains available', () => {
     assert.match(boot, /import\s+['\"]\.\/app-lifecycle-service\.js['\"]/);
-    assert.match(lifecycle, /export\s*\{\s*init\s*,\s*destroy\s*,\s*isNativeApp\s*\}/);
+    assert.match(lifecycle, /export\s*\{\s*init\s*,\s*destroy\s*,\s*isNativeApp\s*,\s*setTimerBackGuard\s*\}/);
     assert.match(lifecycle, /window\.AppLifecycleService\s*=\s*\{/);
 });

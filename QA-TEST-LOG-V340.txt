@@ -1,0 +1,27 @@
+TIMER PROOFER — V340 QA TEST LOG
+
+Baseline: V339
+Technical build: es6-modular-v340
+Product-facing version: V125
+Release token: 20261101-v340
+Service Worker cache: Timer-Proofing-v1.1.242
+
+Focused tests
+- Settings typography Golden Ratio: PASS
+- All 11 title/description values explicitly normalized: PASS
+- Register and Settings TOS entries target the same explicit action: PASS
+- Terms modal detachment from clipped app shell: PASS
+- Terms modal open is idempotent and uses canonical modal controller: PASS
+
+Full automated suite
+- `npm test`: 523 passed, 0 failed.
+- Release verifier: 80 Service Worker precache paths valid; 69 local boot-graph modules; 279 JavaScript files; 2 HTML files; 306 HTML IDs; 0 duplicate IDs; 0 missing local imports; 0 inline event handlers; 0 scroll-lock overrides outside canonical owner.
+- Function-name audit: 0 duplicate function declarations within a module.
+- ZIP CRC/integrity: PASS.
+- Clean extraction + `npm test`: PASS (see package verification report).
+
+Not performed
+- Gradle assembleDebug / installDebug on a physical Android device.
+- Screenshot-level visual QA on actual PWA/Capacitor devices.
+
+Manual QA: use MANUAL-DEVICE-TEST-PLAN-V340.md.

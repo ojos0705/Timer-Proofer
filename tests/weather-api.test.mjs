@@ -1,7 +1,7 @@
 /** [AI-GENERATED][QA][V203] Contract tests for the weather API method, input, and upstream bounds. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import weatherHandler from '../api/weather.js';
+import weatherHandler from '../serverless/api/weather.js';
 
 function createResponseHarness() {
     const headers = new Map();

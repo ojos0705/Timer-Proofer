@@ -1,5 +1,5 @@
 import { AuthService } from './auth-service.js';
-import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261027-v317';
+import { syncModalBodyScrollLock } from './modal-bootstrap.js?v=20261030-v327';
 
 /** Fail closed when the required registration consent control is absent or unchecked. */
 export function validateRegistrationConsent({ documentRef = globalThis.document, onMissing } = {}) {
@@ -7,6 +7,16 @@ export function validateRegistrationConsent({ documentRef = globalThis.document,
     if (consent?.checked === true) return true;
     onMissing?.(consent);
     return false;
+}
+
+/** Keep the register submit button disabled until consent is explicitly accepted. */
+export function syncRegistrationSubmitState({ documentRef = globalThis.document, mode = globalThis.window?.currentAuthMode || currentAuthMode } = {}) {
+    const button = documentRef?.getElementById?.('btn-submit-main') || null;
+    if (!button) return false;
+    const enabled = mode !== 'register' || validateRegistrationConsent({ documentRef });
+    button.disabled = !enabled;
+    button.setAttribute?.('aria-disabled', String(!enabled));
+    return enabled;
 }
 
 /** Build the logout action with explicit dependencies for reliable regression tests. */
@@ -93,7 +103,7 @@ function switchAuthTab(mode) {
     if (mode === 'login') {
         if (title) title.textContent = 'Timer Proofing';
         if (subtitle) subtitle.textContent = 'Masuk ke akun Anda';
-        if (btnSubmit) { btnSubmit.textContent = 'MASUK'; btnSubmit.disabled = false; }
+        if (btnSubmit) { btnSubmit.textContent = 'MASUK'; btnSubmit.disabled = false; btnSubmit.setAttribute?.('aria-disabled', 'false'); }
         if (tabSwitch) tabSwitch.style.display = 'flex';
         if (tabLogin) tabLogin.classList.add('active');
         if (tabRegister) tabRegister.classList.remove('active');
@@ -145,11 +155,13 @@ function switchAuthTab(mode) {
         if (inputName) inputName.removeAttribute('required');
         if (inputPassword) inputPassword.removeAttribute('required');
     }
+    syncRegistrationSubmitState({ documentRef: document, mode });
     return true;
 }
 
 window.currentAuthMode = currentAuthMode;
 window.switchAuthTab = switchAuthTab;
+window.syncRegistrationSubmitState = syncRegistrationSubmitState;
 
 function initAuthTabBindings() {
     const bindOnce = (element, key, handler) => {
@@ -164,6 +176,9 @@ function initAuthTabBindings() {
     bindOnce(document.getElementById('tab-register'), 'authTabBound', (event) => {
         event.preventDefault();
         switchAuthTab('register');
+    });
+    bindOnce(document.getElementById('agree-tos-checkbox'), 'authConsentBound', () => {
+        syncRegistrationSubmitState({ documentRef: document, mode: currentAuthMode });
     });
     const forgotLink = document.getElementById('link-forgot-password');
     const forgotModal = document.getElementById('forgot-password-modal') || document.getElementById('forgot-modal');

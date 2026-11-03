@@ -1,0 +1,45 @@
+QA TEST LOG — V334
+
+Commands:
+  npm test
+  git diff --check
+  unzip -t Timer-Proofer-ES6-Modular-V334-ROOT-EXTRACT.zip
+  fresh extraction + npm test
+
+Automated result:
+  tests: 497
+  passed: 497
+  failed: 0
+  skipped: 0
+
+Static release validation:
+  Service Worker precache assets: 76
+  Local modules in boot graph: 69
+  JavaScript files inspected: 270
+  HTML files inspected: 2
+  HTML IDs: 300
+  Missing relative imports: 0
+  Duplicate HTML IDs: 0
+  Inline event handlers: 0
+  Scroll-lock overrides outside canonical owner: 0
+  Duplicate named function declarations within the same module: 0
+  Product version: V125
+  Technical build: es6-modular-v334
+  Service Worker cache: Timer-Proofing-v1.1.236
+
+Focused coverage:
+- Onboarding one-slide-per-viewport sizing and measured offsets.
+- Login/Register edge-to-edge mobile viewport, internal scroll, and safe-area handling.
+- MyMemory proxy CORS preflight and Authorization headers.
+- Supabase session verification before provider calls.
+- MyMemory request-size validation, UTF-8 splitting, whitespace preservation, and result ordering.
+- Optional contact email parameter; no translation-provider API key dependency.
+- Quota/unsupported-language mapping, including provider language-selection errors.
+- Local language candidates, no false promise that every language pair is supported.
+- Existing AI, timer/PiP, recipe, and modal static contracts.
+
+Limitations:
+- External MyMemory HTTP was mocked because live network/DNS access is unavailable in the build environment.
+- Vercel environment/deployment and live Supabase authentication were not exercised here.
+- Gradle build and installed-PWA/physical Android behavior were not tested in this environment.
+- Run the manual device plan in ROOT-EXTRACT-INSTRUCTIONS-V334.md after deployment and APK installation.

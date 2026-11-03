@@ -1,0 +1,34 @@
+Timer-Proofer technical package V319 — QA test log
+Run date: 2026-10-29
+
+Cause confirmed from Vercel Preview logs:
+- Gemini SDK returned HTTP 400 INVALID_ARGUMENT because configured deadline was 6s.
+- Provider requires manually configured deadline >= 10s.
+
+V319 changes verified:
+- Provider SDK timeout: 11,000 ms.
+- Hard per-call deadline: 11,000 ms by default.
+- Total provider/fallback start budget: 26,000 ms, below frontend request timeout of 30,000 ms.
+- Fallback is not started unless a full 11,000 ms provider call window remains.
+- api/ai-utils.js and www/public/api/ai-utils.js are byte-identical after build sync.
+- Backend revision/header: V319. Product-facing version metadata remains V125.
+
+Automated test results:
+- npm test: PASS
+- Test cases: 411 passed, 0 failed, 0 skipped.
+- Static release checks: PASS.
+- JavaScript syntax checked: 243 files.
+- HTML checked: 2 files.
+- Required entrypoint files: 8 present.
+- Local precache assets checked: 74; no missing local assets.
+- Module graph: 67 local modules.
+- Missing imports: 0.
+- HTML IDs checked: 300; duplicate IDs: 0.
+- Inline handlers: 0.
+- Duplicate function declarations within the same module: 0.
+- Release version reported by checks: V125.
+
+Limits:
+- Local tests do not call the live Gemini API.
+- Local tests cannot verify the Vercel project, deployment, environment variables, or Preview response headers.
+- After pushing/deploying, verify X-AI-Backend-Revision: V319 and retest /api/ai-telemetry and /api/ai-tips.

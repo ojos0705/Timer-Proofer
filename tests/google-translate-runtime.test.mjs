@@ -177,17 +177,61 @@ test('pre-existing widget is patched without injecting another SDK script', asyn
     assert.equal(harness.selects[0].id, 'google-translate-language');
 });
 
-test('language engine delegates TranslateElement and script loading to the ESM adapter', () => {
+test('legacy Google Translate widget adapter is retired from the active language runtime', () => {
     const engine = fs.readFileSync(new URL('../assets/js/language-engine.js', import.meta.url), 'utf8');
-    const runtime = fs.readFileSync(new URL('../assets/js/google-translate-runtime.js', import.meta.url), 'utf8');
     const manifest = fs.readFileSync(new URL('../assets/js/module-manifest.js', import.meta.url), 'utf8');
     const sw = fs.readFileSync(new URL('../www/sw.js', import.meta.url), 'utf8');
-    assert.match(engine, /from '\.\/google-translate-runtime\.js'/);
-    assert.match(engine, /await loadGoogleTranslateWidget\(/);
-    assert.doesNotMatch(engine, /function\s+gtLoadScript\s*\(/);
-    assert.doesNotMatch(engine, /new google\.translate\.TranslateElement/);
-    assert.match(runtime, /windowRef\.googleTranslateElementInit\s*=\s*googleTranslateElementInit/);
-    assert.match(manifest, /google-translate-runtime\.js/);
-    assert.match(sw, /'\.\/assets\/js\/google-translate-runtime\.js'/);
-    assert.equal(typeof googleTranslateElementInit, 'function');
+    assert.match(engine, /from '\.\/online-i18n\.js'/);
+    assert.match(engine, /OnlineI18n\.apply\(/);
+    assert.doesNotMatch(engine, /google-translate-runtime|loadGoogleTranslateWidget|googtrans/);
+    assert.match(manifest, /retiredFromRuntime:\s*\[[^\]]*google-translate-runtime\.js/);
+    assert.doesNotMatch(manifest, /foundation:\s*\[[^\]]*google-translate-runtime\.js/);
+    assert.doesNotMatch(sw, /'\.\/assets\/js\/google-translate-runtime\.js'/);
+    assert.match(sw, /'\.\/assets\/js\/cloud-translation-service\.js'/);
+});
+
+test('SDK success waits until its asynchronously rendered language selector is ready', async () => {
+    reset();
+    const harness = makeHarness();
+    let initCount = 0;
+    harness.windowRef.google = { translate: { TranslateElement: class {
+        constructor() {
+            initCount += 1;
+            setTimeout(() => {
+                if (!harness.selects.length) {
+                    harness.selects.push({ id: '', name: '', options: [{ value: '' }, { value: 'ab' }, { value: 'fr' }], dispatchEvent() {} });
+                }
+            }, 50);
+        }
+    } } };
+
+    const startedAt = Date.now();
+    assert.equal(await loadGoogleTranslateWidget({
+        documentRef: harness.documentRef,
+        windowRef: harness.windowRef,
+        timeoutMs: 1_200
+    }), true);
+    assert.ok(Date.now() - startedAt >= 40, 'loader must wait for the generated language selector');
+    assert.equal(harness.selects[0].id, 'google-translate-language');
+    assert.equal(harness.selects[0].name, 'googtrans');
+    assert.equal(initCount, 1);
+});
+
+test('SDK initialization without a language selector fails retryably and reinitializes on the next attempt', async () => {
+    reset();
+    const harness = makeHarness();
+    let initCount = 0;
+    harness.windowRef.google = { translate: { TranslateElement: class {
+        constructor() {
+            initCount += 1;
+            if (initCount === 2) {
+                harness.selects.push({ id: '', name: '', options: [{ value: '' }, { value: 'ab' }], dispatchEvent() {} });
+            }
+        }
+    } } };
+    const options = { documentRef: harness.documentRef, windowRef: harness.windowRef, timeoutMs: 1_000 };
+
+    await assert.rejects(loadGoogleTranslateWidget(options), { code: 'GOOGLE_TRANSLATE_SELECT_TIMEOUT' });
+    assert.equal(await loadGoogleTranslateWidget(options), true);
+    assert.equal(initCount, 2);
 });

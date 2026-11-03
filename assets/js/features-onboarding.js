@@ -1,13 +1,47 @@
 // [AI-GENERATED][REFACTOR] ES6 feature module: onboarding and guided tour.
 // Keeps the existing DOM contract and exposes only the legacy compatibility bridge needed by the app.
+// [AI-GENERATED][ONBOARDING PREVIEW][V326] A query flag lets an existing
+// authenticated user preview both onboarding screens without deleting the
+// Supabase session or permanently changing the seen flags.
+const ONBOARDING_PREVIEW_OPTIONS = (() => {
+    let enabled = false;
+    let reset = false;
+    try {
+        const params = new URLSearchParams(window.location.search);
+        enabled = params.get('tp-onboarding-preview') === '1';
+        reset = enabled && params.get('reset') === '1';
+    } catch (_) {
+        return { enabled: false };
+    }
+    if (reset) {
+        // Reset only QA preview markers. Never clear the Supabase session or
+        // the real first-visit flags stored in localStorage. Storage may be
+        // unavailable in a restricted browser; the preview must still run.
+        try { sessionStorage.removeItem('tp_onboarding_preview_done'); } catch (_) {}
+        try { sessionStorage.removeItem('tp_welcome_preview_done'); } catch (_) {}
+    }
+    return { enabled };
+})();
+function onboardingPreviewRequested() {
+    return ONBOARDING_PREVIEW_OPTIONS.enabled;
+}
+function isPreviewScreenActive(sessionKey) {
+    if (!onboardingPreviewRequested()) return false;
+    try { return sessionStorage.getItem(sessionKey) !== '1'; }
+    catch (_) { return true; }
+}
+
 class OnboardingManager {
     constructor() {
         this.currentSlide = 0;
         this.totalSlides = 3;
+        this.previewSessionKey = 'tp_onboarding_preview_done';
 
         this.screen = document.getElementById('onboarding-screen');
         this.track = document.getElementById('ob-slider-track');
+        this.sliderWrapper = this.screen?.querySelector('.ob-slider-wrapper') || document.querySelector('.ob-slider-wrapper');
         this.dots = document.querySelectorAll('.ob-dot');
+        this.swipePointerState = null;
         this.btnNext = document.getElementById('ob-btn-next');
         this.btnSkip = document.getElementById('ob-btn-skip');
 
@@ -17,13 +51,17 @@ class OnboardingManager {
     init() {
         // Cek apakah pengguna sudah pernah melihat onboarding
         const hasSeenOnboarding = localStorage.getItem('tp_onboarding_seen');
-        if (!hasSeenOnboarding) {
+        if (this.isPreviewActive() || !hasSeenOnboarding) {
             this.show();
         } else {
             this.hide();
         }
 
         this.bindEvents();
+    }
+
+    isPreviewActive() {
+        return isPreviewScreenActive(this.previewSessionKey);
     }
 
     bindEvents() {
@@ -37,37 +75,137 @@ class OnboardingManager {
 
         this.dots.forEach(dot => {
             dot.addEventListener('click', (e) => {
-                const idx = parseInt(e.target.dataset.index);
-                this.goToSlide(idx);
+                const idx = Number.parseInt(e.target.dataset.index, 10);
+                if (Number.isInteger(idx)) this.goToSlide(idx);
             });
         });
+
+        this.bindSwipeEvents();
+        // Keep the active slide aligned after viewport, orientation, or WebView
+        // chrome changes. The slider uses measured pixels, not a percentage of
+        // the 3-slide track, so a neighboring slide cannot peek into view.
+        this.handleSliderResize = () => this.updateSliderPosition();
+        window.addEventListener('resize', this.handleSliderResize, { passive: true });
+        window.visualViewport?.addEventListener('resize', this.handleSliderResize, { passive: true });
+    }
+
+    /**
+     * [AI-GENERATED][MOBILE-UX][V324]
+     * Enable horizontal swipe navigation on the pre-login onboarding slider.
+     * touch-action: pan-y keeps native vertical gesture handling while allowing
+     * Pointer Events to recognize horizontal movement without blocking taps.
+     */
+    bindSwipeEvents() {
+        const wrapper = this.sliderWrapper;
+        if (!wrapper || wrapper.dataset.tpSwipeBound === 'v324') return;
+        wrapper.dataset.tpSwipeBound = 'v324';
+
+        const begin = (event) => {
+            if (event.isPrimary === false || (event.button !== undefined && event.button !== 0)) return;
+            if (event.target?.closest?.('button, a, input, select, textarea, [data-no-swipe]')) return;
+            this.swipePointerState = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                startY: event.clientY,
+                startedAt: Date.now()
+            };
+            try {
+                if (event.pointerId !== undefined && wrapper.setPointerCapture) {
+                    wrapper.setPointerCapture(event.pointerId);
+                }
+            } catch (_) {
+                // Pointer capture is an enhancement; swipe still works without it.
+            }
+        };
+
+        const finish = (event) => {
+            const state = this.swipePointerState;
+            if (!state) return;
+            if (state.pointerId !== undefined && event.pointerId !== undefined
+                && state.pointerId !== event.pointerId) return;
+
+            this.swipePointerState = null;
+            const deltaX = event.clientX - state.startX;
+            const deltaY = event.clientY - state.startY;
+            const elapsed = Math.max(1, Date.now() - state.startedAt);
+            const horizontalDistance = Math.abs(deltaX);
+            const horizontalDominant = horizontalDistance > Math.abs(deltaY) * 1.15;
+            const fastEnough = horizontalDistance / elapsed >= 0.25;
+
+            if (!horizontalDominant || (horizontalDistance < 44 && !fastEnough)) return;
+            if (deltaX < 0) this.nextSlide();
+            else this.previousSlide();
+        };
+
+        const cancel = () => { this.swipePointerState = null; };
+
+        if ('PointerEvent' in window) {
+            wrapper.addEventListener('pointerdown', begin, { passive: true });
+            wrapper.addEventListener('pointerup', finish, { passive: true });
+            wrapper.addEventListener('pointercancel', cancel, { passive: true });
+            wrapper.addEventListener('lostpointercapture', cancel, { passive: true });
+        } else {
+            // Legacy WebView fallback. Only bind when Pointer Events are absent,
+            // so a single physical gesture can never advance two slides.
+            let touchStart = null;
+            wrapper.addEventListener('touchstart', (event) => {
+                const touch = event.changedTouches?.[0];
+                if (!touch) return;
+                touchStart = { x: touch.clientX, y: touch.clientY, at: Date.now() };
+            }, { passive: true });
+            wrapper.addEventListener('touchend', (event) => {
+                if (!touchStart) return;
+                const touch = event.changedTouches?.[0];
+                const start = touchStart;
+                touchStart = null;
+                if (!touch) return;
+                const deltaX = touch.clientX - start.x;
+                const deltaY = touch.clientY - start.y;
+                if (Math.abs(deltaX) < 44 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.15) return;
+                if (deltaX < 0) this.nextSlide();
+                else this.previousSlide();
+            }, { passive: true });
+            wrapper.addEventListener('touchcancel', () => { touchStart = null; }, { passive: true });
+        }
     }
 
     show() {
-        if (this.screen) this.screen.classList.add('active');
+        if (this.screen) {
+            this.screen.classList.add('active');
+            requestAnimationFrame(() => this.updateSliderPosition());
+        }
     }
 
     hide() {
         if (this.screen) this.screen.classList.remove('active');
     }
 
+    updateSliderPosition() {
+        if (!this.track || !this.sliderWrapper) return;
+        const width = this.sliderWrapper.getBoundingClientRect?.().width || this.sliderWrapper.clientWidth || 0;
+        if (!Number.isFinite(width) || width <= 0) return;
+        const offset = Math.round(width * this.currentSlide);
+        this.track.style.transform = `translate3d(-${offset}px, 0, 0)`;
+    }
+
     goToSlide(index) {
-        this.currentSlide = index;
-        if (this.track) {
-            this.track.style.transform = `translateX(-${index * 33.333}%)`;
-        }
+        const nextIndex = Number.isInteger(index)
+            ? Math.min(this.totalSlides - 1, Math.max(0, index))
+            : this.currentSlide;
+        this.currentSlide = nextIndex;
+        this.updateSliderPosition();
 
         // Update indikator titik
         this.dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
+            dot.classList.toggle('active', i === this.currentSlide);
         });
 
         // Ubah teks tombol di slide terakhir
         if (this.currentSlide === this.totalSlides - 1) {
-            this.btnNext.innerText = 'Masuk / Daftar';
+            if (this.btnNext) this.btnNext.innerText = 'Masuk / Daftar';
             if (this.btnSkip) this.btnSkip.style.visibility = 'hidden';
         } else {
-            this.btnNext.innerText = 'Lanjutkan';
+            if (this.btnNext) this.btnNext.innerText = 'Lanjutkan';
             if (this.btnSkip) this.btnSkip.style.visibility = 'visible';
         }
     }
@@ -80,8 +218,16 @@ class OnboardingManager {
         }
     }
 
+    previousSlide() {
+        if (this.currentSlide > 0) this.goToSlide(this.currentSlide - 1);
+    }
+
     finish() {
-        localStorage.setItem('tp_onboarding_seen', 'true');
+        if (this.isPreviewActive()) {
+            try { sessionStorage.setItem(this.previewSessionKey, '1'); } catch (_) {}
+        } else {
+            localStorage.setItem('tp_onboarding_seen', 'true');
+        }
         this.hide();
         // Catatan: form login (#auth-wrapper) tidak perlu dimunculkan manual di sini —
         // CSS "body.logged-out .auth-container" sudah otomatis menampilkannya
@@ -137,6 +283,13 @@ class AppOnboardingManager {
 
         this.currentSlide = 0;
         this.currentTourStep = 0;
+        this.previewSessionKey = 'tp_welcome_preview_done';
+        // [AI-GENERATED][ANDROID UX][V330] Track the currently highlighted target
+        // so the tooltip can be repositioned while Android/WebView changes viewport.
+        this.activeTourTarget = null;
+        this.handleTourViewportChange = () => {
+            if (this.isTourActive()) this.positionTooltip(this.activeTourTarget);
+        };
         // [AI-GENERATED][ROBUSTNESS][V111] Own the delayed tour render so a stale
         // callback cannot mutate the UI after the tour advances or closes.
         this.tourRenderTimer = null;
@@ -177,6 +330,7 @@ class AppOnboardingManager {
                 this.goToSlide(idx);
             });
         });
+        this.bindWelcomeSwipeEvents();
 
         // Welcome Buttons
         if (this.btnStartTour) {
@@ -206,11 +360,61 @@ class AppOnboardingManager {
             this.btnTourSkip.addEventListener('click', () => this.endTour());
         }
 
+        // [AI-GENERATED][ANDROID UX][V330] Keep the action card inside the
+        // currently visible viewport when WebView/system bars or orientation change.
+        window.addEventListener('resize', this.handleTourViewportChange, { passive: true });
+        window.addEventListener('scroll', this.handleTourViewportChange, { passive: true, capture: true });
+        window.visualViewport?.addEventListener('resize', this.handleTourViewportChange, { passive: true });
+        window.visualViewport?.addEventListener('scroll', this.handleTourViewportChange, { passive: true });
+
         // [AI-GENERATED][REFACTOR][V110] Auto-slide hanya aktif selama welcome
         // screen benar-benar tampil. Jangan membuat interval untuk pengguna yang
         // sudah pernah menyelesaikan welcome flow.
         // Pantau status login agar Welcome Screen muncul tepat setelah login
         this.watchLoginState();
+    }
+
+    bindWelcomeSwipeEvents() {
+        const surface = this.welcomeModal?.querySelector('.welcome-slider-container');
+        if (!surface || surface.dataset.tpSwipeBound === 'v326') return;
+        surface.dataset.tpSwipeBound = 'v326';
+        let start = null;
+        const onStart = (event) => {
+            if (event.isPrimary === false || (event.button !== undefined && event.button !== 0)) return;
+            start = { x: event.clientX, y: event.clientY, at: Date.now(), id: event.pointerId };
+        };
+        const onEnd = (event) => {
+            if (!start || (start.id !== undefined && event.pointerId !== undefined && start.id !== event.pointerId)) return;
+            const dx = event.clientX - start.x;
+            const dy = event.clientY - start.y;
+            const elapsed = Math.max(1, Date.now() - start.at);
+            start = null;
+            if (Math.abs(dx) < 44 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
+            if (Math.abs(dx) / elapsed < 0.18 && Math.abs(dx) < 60) return;
+            if (dx < 0) this.goToSlide(Math.min(2, this.currentSlide + 1));
+            else this.goToSlide(Math.max(0, this.currentSlide - 1));
+        };
+        const onCancel = () => { start = null; };
+        if ('PointerEvent' in window) {
+            surface.addEventListener('pointerdown', onStart, { passive: true });
+            surface.addEventListener('pointerup', onEnd, { passive: true });
+            surface.addEventListener('pointercancel', onCancel, { passive: true });
+        } else {
+            surface.addEventListener('touchstart', (event) => {
+                const touch = event.changedTouches?.[0];
+                if (touch) start = { x: touch.clientX, y: touch.clientY, at: Date.now() };
+            }, { passive: true });
+            surface.addEventListener('touchend', (event) => {
+                const touch = event.changedTouches?.[0];
+                if (!touch || !start) return;
+                onEnd({ clientX: touch.clientX, clientY: touch.clientY });
+            }, { passive: true });
+            surface.addEventListener('touchcancel', onCancel, { passive: true });
+        }
+    }
+
+    isPreviewActive() {
+        return isPreviewScreenActive(this.previewSessionKey);
     }
 
     /** --- LOGIKA WELCOME SCREEN --- */
@@ -221,7 +425,7 @@ class AppOnboardingManager {
         if (!document.body.classList.contains('logged-in')) return;
 
         const hasSeenWelcome = localStorage.getItem('tp_welcome_seen');
-        if (!hasSeenWelcome) {
+        if (this.isPreviewActive() || !hasSeenWelcome) {
             this.showWelcome();
         }
     }
@@ -278,9 +482,7 @@ class AppOnboardingManager {
             if (this.welcomeModal?.classList.contains('active') || this.tourOverlay?.classList.contains('active')) {
                 this.closeWelcome();
                 this.stopTourRenderTimer();
-                document.querySelectorAll('.tour-highlighted-element').forEach(el => {
-                    el.classList.remove('tour-highlighted-element');
-                });
+                this.clearTourHighlights();
                 this.tourOverlay?.classList.remove('active');
                 this.tooltipCard?.classList.remove('active');
             }
@@ -322,6 +524,10 @@ class AppOnboardingManager {
     }
 
     setSeenStatus() {
+        if (this.isPreviewActive()) {
+            try { sessionStorage.setItem(this.previewSessionKey, '1'); } catch (_) {}
+            return;
+        }
         localStorage.setItem('tp_welcome_seen', 'true');
     }
 
@@ -331,7 +537,7 @@ class AppOnboardingManager {
             this.sliderTrack.style.transform = `translateX(-${index * 33.333}%)`;
         }
         this.dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
+            dot.classList.toggle('active', i === this.currentSlide);
         });
     }
 
@@ -369,40 +575,50 @@ class AppOnboardingManager {
         const step = this.tourSteps[this.currentTourStep];
         if (!step || !this.tooltipCard) return;
 
-        // Auto Switch Tab Aplikasi jika target berada di halaman berbeda
+        // Auto Switch Tab Aplikasi jika target berada di halaman berbeda.
         this.switchAppTabIfNeeded(step.tab);
 
-        // Hapus sorotan sebelumnya
-        document.querySelectorAll('.tour-highlighted-element').forEach(el => {
-            el.classList.remove('tour-highlighted-element');
-        });
+        // Bersihkan sorotan dan stacking layer langkah sebelumnya sebelum
+        // memindahkan fokus ke halaman/menu lain.
+        this.clearTourHighlights();
 
         // [AI-GENERATED][ROBUSTNESS][V111] Cancel any previous delayed render
-        // before scheduling the next one. This prevents stale tour callbacks from
-        // updating highlights/tooltips after a rapid next/skip/close action.
+        // before scheduling the next one. A stale callback cannot mutate a newer step.
         this.stopTourRenderTimer();
         const scheduledStep = this.currentTourStep;
         this.tourRenderTimer = setTimeout(() => {
             this.tourRenderTimer = null;
-            if (!this.tourOverlay?.classList.contains('active')) return;
-            if (scheduledStep !== this.currentTourStep) return;
+            if (!this.isTourActive() || scheduledStep !== this.currentTourStep) return;
 
-            const targetEl = document.querySelector(step.element);
-
-            if (targetEl) {
-                targetEl.classList.add('tour-highlighted-element');
-                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                this.positionTooltip(targetEl);
-            }
-
-            // Update Konten Tooltip (dengan guard null-safety)
+            // [AI-GENERATED][ANDROID UX][V330] Update content BEFORE measuring the
+            // card. The old order measured the previous step's height and could
+            // place the new card partly below Android's visible WebView area.
             if (this.stepBadge) this.stepBadge.innerText = `Langkah ${this.currentTourStep + 1} dari ${this.tourSteps.length}`;
             if (this.tourTitle) this.tourTitle.innerText = step.title;
             if (this.tourDesc) this.tourDesc.innerText = step.description;
-
-            // Kontrol Tombol Navigasi
             if (this.btnTourPrev) this.btnTourPrev.style.display = this.currentTourStep === 0 ? 'none' : 'inline-block';
             if (this.btnTourNext) this.btnTourNext.innerText = this.currentTourStep === this.tourSteps.length - 1 ? 'Selesai 🎉' : 'Lanjut ➔';
+
+            const targetEl = document.querySelector(step.element);
+            this.activeTourTarget = targetEl || null;
+            if (targetEl) {
+                targetEl.classList.add('tour-highlighted-element');
+                // z-index anak navbar tidak dapat melewati stacking context parent.
+                const navLayer = targetEl.closest('.bottom-bar');
+                if (navLayer) navLayer.classList.add('tour-highlight-layer');
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // Wait for text/layout paint, then measure and clamp the final position.
+            const updatePosition = () => {
+                if (!this.isTourActive() || scheduledStep !== this.currentTourStep) return;
+                this.positionTooltip(targetEl || null);
+            };
+            if (typeof window.requestAnimationFrame === 'function') {
+                window.requestAnimationFrame(() => window.requestAnimationFrame(updatePosition));
+            } else {
+                setTimeout(updatePosition, 0);
+            }
         }, 150);
     }
 
@@ -417,38 +633,92 @@ class AppOnboardingManager {
 
     positionTooltip(targetEl) {
         if (!this.tooltipCard) return;
-        const rect = targetEl.getBoundingClientRect();
-        const tooltipHeight = this.tooltipCard.offsetHeight || 180;
-        const viewportHeight = window.innerHeight;
 
-        let topPos;
-        let leftPos = Math.max(20, (window.innerWidth - 360) / 2); // Terpusat di layar HP max 480px
+        // [AI-GENERATED][ANDROID UX][V330] visualViewport reflects the actually
+        // visible WebView region on phones, including changes around system UI.
+        const visualViewport = window.visualViewport;
+        const viewportWidth = visualViewport?.width || document.documentElement.clientWidth || window.innerWidth;
+        const viewportHeight = visualViewport?.height || document.documentElement.clientHeight || window.innerHeight;
+        const viewportLeft = visualViewport?.offsetLeft || 0;
+        const viewportTop = visualViewport?.offsetTop || 0;
+        const computed = window.getComputedStyle(this.tooltipCard);
+        const safeTop = Number.parseFloat(computed.getPropertyValue('--tour-safe-area-top')) || 0;
+        const safeBottom = Number.parseFloat(computed.getPropertyValue('--tour-safe-area-bottom')) || 0;
+        const margin = 12;
+        const minTop = viewportTop + Math.max(margin, safeTop + margin);
+        const maxBottom = viewportTop + viewportHeight - Math.max(margin, safeBottom + margin);
+        const availableHeight = Math.max(100, maxBottom - minTop);
 
-        // Posisikan di bawah atau di atas elemen target tergantung ruang yang tersedia
-        if (rect.bottom + tooltipHeight + 20 < viewportHeight) {
-            topPos = rect.bottom + 14; // Di bawah elemen
-        } else {
-            topPos = Math.max(20, rect.top - tooltipHeight - 14); // Di atas elemen
+        this.tooltipCard.style.maxHeight = `${availableHeight}px`;
+        const cardRect = this.tooltipCard.getBoundingClientRect();
+        const cardWidth = Math.min(cardRect.width || 360, Math.max(0, viewportWidth - (margin * 2)));
+        const cardHeight = Math.min(
+            Math.max(this.tooltipCard.scrollHeight || 0, cardRect.height || 0),
+            availableHeight
+        );
+        const leftPos = viewportLeft + Math.max(margin, (viewportWidth - cardWidth) / 2);
+
+        let topPos = minTop + Math.max(0, (availableHeight - cardHeight) / 2);
+        if (targetEl?.getBoundingClientRect) {
+            const targetRect = targetEl.getBoundingClientRect();
+            if (targetRect.bottom + cardHeight + 20 <= maxBottom) {
+                topPos = targetRect.bottom + 14;
+            } else if (targetRect.top - cardHeight - 14 >= minTop) {
+                topPos = targetRect.top - cardHeight - 14;
+            } else {
+                // Neither side has enough room: center the scrollable card in
+                // the visible viewport rather than allowing it under system UI.
+                topPos = minTop + Math.max(0, (availableHeight - cardHeight) / 2);
+            }
         }
 
-        this.tooltipCard.style.top = `${topPos}px`;
+        const maxTop = Math.max(minTop, maxBottom - cardHeight);
+        topPos = Math.min(Math.max(topPos, minTop), maxTop);
         this.tooltipCard.style.left = `${leftPos}px`;
+        this.tooltipCard.style.top = `${topPos}px`;
+    }
+
+    isTourActive() {
+        return Boolean(
+            this.tourOverlay?.classList.contains('active') &&
+            this.tooltipCard?.classList.contains('active')
+        );
+    }
+
+    /**
+     * Android hardware Back belongs to the active onboarding flow before
+     * application-level minimize/PiP handling. At step 2+, Back moves one step
+     * backward; at the first step it closes the tour without closing the app.
+     */
+    handleBackButton() {
+        if (!this.isTourActive()) return false;
+        if (this.currentTourStep > 0) this.prevTourStep();
+        else this.endTour();
+        return true;
+    }
+
+    clearTourHighlights() {
+        document.querySelectorAll('.tour-highlighted-element').forEach((element) => {
+            element.classList.remove('tour-highlighted-element');
+        });
+        document.querySelectorAll('.bottom-bar.tour-highlight-layer').forEach((element) => {
+            element.classList.remove('tour-highlight-layer');
+        });
     }
 
     switchAppTabIfNeeded(tabName) {
         if (!tabName) return;
-        
-        // Memanggil handler tab navigasi bawaan index.html
-        if (tabName === 'recipe') {
-            const recipeBtn = document.getElementById('bottom-item-recipe');
-            if (recipeBtn) recipeBtn.click();
-        } else if (tabName === 'tips') {
-            const tipsBtn = document.getElementById('bottom-item-tips');
-            if (tipsBtn) tipsBtn.click();
-        } else if (tabName === 'home') {
-            const homeBtn = document.querySelector('.bottom-item:first-child');
-            if (homeBtn) homeBtn.click();
-        }
+
+        // Gunakan ID tab yang saat ini benar-benar ada di markup.
+        const tabIds = {
+            home: 'tab-timer',
+            recipe: 'tab-recipe',
+            tips: 'tab-tips'
+        };
+        const targetId = tabIds[tabName];
+        if (!targetId) return;
+        const tabButton = document.getElementById(targetId);
+        if (tabButton && !tabButton.classList.contains('active-tab')) tabButton.click();
     }
 
     nextTourStep() {
@@ -472,14 +742,13 @@ class AppOnboardingManager {
         // the tour so no delayed callback can mutate a closed overlay.
         this.stopTourRenderTimer();
 
-        // Hapus highlight
-        document.querySelectorAll('.tour-highlighted-element').forEach(el => {
-            el.classList.remove('tour-highlighted-element');
-        });
+        // Hapus highlight dan pulihkan stacking context navbar.
+        this.clearTourHighlights();
 
-        // Sembunyikan Overlay & Card
+        // Sembunyikan Overlay & Card dan lepaskan referensi target aktif.
         if (this.tourOverlay) this.tourOverlay.classList.remove('active');
         if (this.tooltipCard) this.tooltipCard.classList.remove('active');
+        this.activeTourTarget = null;
 
         // Kembalikan ke Tab Utama
         this.switchAppTabIfNeeded('home');

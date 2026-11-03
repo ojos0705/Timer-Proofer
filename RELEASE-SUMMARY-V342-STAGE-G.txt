@@ -1,0 +1,20 @@
+Timer Proofer — V342 Stage G
+Midtrans Reconciliation & Tier Economics
+
+Delivered:
+- Admin-only Midtrans reconciliation endpoint: api/finance-midtrans-reconcile.js
+- Pure finance aggregation helpers: api/finance-reconciliation-utils.js
+- Private provider reconciliation snapshots migration
+- Per-tier settlement, acknowledged refund, bank-confirmed refund, net-before-cost and AI cost display
+- Manual reconciliation button in www/admin-finance.html
+- Focused tests for amount validation, refunds, tier costs, privacy and access control
+
+Important accounting boundaries:
+- Only Midtrans-confirmed settlement is treated as settled funds; capture alone is not.
+- A refund is bank-confirmed only when Midtrans provides bank_confirmed_at.
+- MDR/payout fees must come from Midtrans Payout Report.
+- AI provider cost remains an estimate, not invoice data.
+- Net margin remains unavailable until fees, taxes, refunds and all operating costs are reconciled and allocated.
+
+Not deployed. Migration not applied to production. No live provider calls or device E2E tests performed.
+Product-facing app version remains V125.

@@ -1,0 +1,3598 @@
+
+> Timer Proofing@0.1.0 test
+> node scripts/sync-web-assets.mjs && node scripts/verify-release.mjs && node scripts/audit-function-names.mjs && node --test tests/*.test.mjs
+
+Sinkronisasi web selesai: assets, vendor, logo-donat.svg, version.json -> www/
+Sinkronisasi API selesai: api/ -> www/public/api/
+Validasi entrypoint: 8 file wajib tersedia.
+Validasi precache: 80 jalur lokal/eksternal diperiksa; tidak ada aset lokal yang hilang.
+Aset precache Service Worker: 80
+Modul lokal dalam graph entrypoint: 69
+JavaScript diperiksa : 303
+HTML diperiksa       : 2
+ID HTML              : 319
+Import hilang        : 0
+ID duplikat           : 0
+Handler inline        : 0
+Override scroll lock  : 0
+Versi                 : V125
+
+LULUS: semua pemeriksaan statis release berhasil.
+Nama fungsi berulang lintas modul (informatif): 18
+- handleVisibilityChange: assets/js/app-core.js:2164, assets/js/app-lifecycle-service.js:69
+- renderList: assets/js/app-core.js:11601, assets/js/notification-service.js:99
+- init: assets/js/app-lifecycle-service.js:337, assets/js/offline-i18n.js:280
+- remove: assets/js/bakery-ingredient-service.js:102, assets/js/storage-service.js:213
+- reset: assets/js/bakery-ingredient-service.js:107, assets/js/offline-i18n.js:208, assets/js/online-i18n.js:418, assets/js/proofing-completion-service.js:13
+- toFiniteNumber: assets/js/core/proofing-insight.js:5, assets/js/recipe-calculator.js:6
+- normalizeState: assets/js/gamification-cache.js:59, assets/js/proofing-service.js:96
+- getWindow: assets/js/google-translate-runtime.js:15, assets/js/runtime-bootstrap.js:14
+- getDocument: assets/js/google-translate-runtime.js:19, assets/js/runtime-bootstrap.js:10
+- makeError: assets/js/google-translate-runtime.js:23, assets/js/online-i18n.js:41
+- toggleModal: assets/js/modal-bootstrap.js:200, assets/js/modal.js:114
+- closeAllModals: assets/js/modal-bootstrap.js:259, assets/js/modal.js:121
+- startObserver: assets/js/offline-i18n.js:141, assets/js/online-i18n.js:378
+- stopObserver: assets/js/offline-i18n.js:161, assets/js/online-i18n.js:298
+- apply: assets/js/offline-i18n.js:215, assets/js/online-i18n.js:427
+- normalizeOwnerId: assets/js/profile-service.js:29, assets/js/recipe-photo-persistence-service.js:96, assets/js/recipe-photo-restore-guard.js:7, assets/js/recipe-realtime-owner-guard.js:7, assets/js/recipe-storage-service.js:22
+- isBlobLike: assets/js/recipe-photo-persistence-service.js:18, assets/js/recipe-photo-service.js:20
+- clear: assets/js/recipe-photo-service.js:265, assets/js/storage-service.js:265
+Deklarasi fungsi duplikat dalam modul yang sama: 0
+LULUS: tidak ada deklarasi function bernama duplikat dalam satu modul.
+TAP version 13
+# Subtest: permanent account deletion clears owner-scoped IndexedDB blobs
+ok 1 - permanent account deletion clears owner-scoped IndexedDB blobs
+  ---
+  duration_ms: 0.882332
+  type: 'test'
+  ...
+# Subtest: ordinary signed-out lifecycle does not delete persisted recipe photos
+ok 2 - ordinary signed-out lifecycle does not delete persisted recipe photos
+  ---
+  duration_ms: 0.374545
+  type: 'test'
+  ...
+# Subtest: achievement popup displays title and description as text without interpreting markup
+ok 3 - achievement popup displays title and description as text without interpreting markup
+  ---
+  duration_ms: 2.021321
+  type: 'test'
+  ...
+# Subtest: achievement popup safely reports missing popup element
+ok 4 - achievement popup safely reports missing popup element
+  ---
+  duration_ms: 1.307954
+  type: 'test'
+  ...
+# Subtest: action registry resolves an explicitly owned callable entry
+ok 5 - action registry resolves an explicitly owned callable entry
+  ---
+  duration_ms: 9.217565
+  type: 'test'
+  ...
+# Subtest: action registry rejects inherited callable properties such as toString and constructor
+ok 6 - action registry rejects inherited callable properties such as toString and constructor
+  ---
+  duration_ms: 0.168655
+  type: 'test'
+  ...
+# Subtest: action registry rejects invalid containers, names, and non-callable own properties
+ok 7 - action registry rejects invalid containers, names, and non-callable own properties
+  ---
+  duration_ms: 0.100171
+  type: 'test'
+  ...
+# Subtest: delegated click and legacy-call resolution both use the own-property guard
+ok 8 - delegated click and legacy-call resolution both use the own-property guard
+  ---
+  duration_ms: 0.303418
+  type: 'test'
+  ...
+# Subtest: V342-E parses model pricing and rejects malformed or negative pricing values
+ok 9 - V342-E parses model pricing and rejects malformed or negative pricing values
+  ---
+  duration_ms: 1.390179
+  type: 'test'
+  ...
+# Subtest: V342-E extracts Gemini usage metadata without storing prompt or response content
+ok 10 - V342-E extracts Gemini usage metadata without storing prompt or response content
+  ---
+  duration_ms: 0.69542
+  type: 'test'
+  ...
+# Subtest: V342-E estimates cost from server-configured rates and records only bounded metadata
+ok 11 - V342-E estimates cost from server-configured rates and records only bounded metadata
+  ---
+  duration_ms: 0.864655
+  type: 'test'
+  ...
+# Subtest: V342-E skips persistence without service-role credentials and safely persists metadata with server credentials
+ok 12 - V342-E skips persistence without service-role credentials and safely persists metadata with server credentials
+  ---
+  duration_ms: 1.449839
+  type: 'test'
+  ...
+# Subtest: V342-E aggregates model, feature and day usage without treating unpriced events as zero-cost
+ok 13 - V342-E aggregates model, feature and day usage without treating unpriced events as zero-cost
+  ---
+  duration_ms: 0.367645
+  type: 'test'
+  ...
+# Subtest: V342-E migration keeps AI event ledger private and stores no prompt or response columns
+ok 14 - V342-E migration keeps AI event ledger private and stores no prompt or response columns
+  ---
+  duration_ms: 0.445953
+  type: 'test'
+  ...
+# Subtest: V342-E admin summary endpoint is allowlist-protected and clamps the query window
+ok 15 - V342-E admin summary endpoint is allowlist-protected and clamps the query window
+  ---
+  duration_ms: 9.387581
+  type: 'test'
+  ...
+# Subtest: V342-E records MyMemory request units and character volume but never estimates an unsupported provider fee
+ok 16 - V342-E records MyMemory request units and character volume but never estimates an unsupported provider fee
+  ---
+  duration_ms: 4.110936
+  type: 'test'
+  ...
+# Subtest: AI SDK client has an explicit upstream timeout and uses the selected endpoint retry policy
+ok 17 - AI SDK client has an explicit upstream timeout and uses the selected endpoint retry policy
+  ---
+  duration_ms: 0.904916
+  type: 'test'
+  ...
+# Subtest: AI analysis and tips retry transient 5xx once while telemetry policy remains unchanged
+ok 18 - AI analysis and tips retry transient 5xx once while telemetry policy remains unchanged
+  ---
+  duration_ms: 0.566645
+  type: 'test'
+  ...
+# Subtest: AI analysis retry policy is applied to SDK client without mutating the frozen policy
+ok 19 - AI analysis retry policy is applied to SDK client without mutating the frozen policy
+  ---
+  duration_ms: 0.201094
+  type: 'test'
+  ...
+# Subtest: AI client creates independent HTTP options for each request handler instance
+ok 20 - AI client creates independent HTTP options for each request handler instance
+  ---
+  duration_ms: 0.120882
+  type: 'test'
+  ...
+# Subtest: AI request validation enforces POST and a non-empty promptContext under the size limit
+ok 21 - AI request validation enforces POST and a non-empty promptContext under the size limit
+  ---
+  duration_ms: 0.943024
+  type: 'test'
+  ...
+# Subtest: AI response parsing ignores internal thought parts and reports finish reason
+ok 22 - AI response parsing ignores internal thought parts and reports finish reason
+  ---
+  duration_ms: 0.161083
+  type: 'test'
+  ...
+# Subtest: AI fallback chain uses distinct stable backends and excludes model IDs that auto-route
+ok 23 - AI fallback chain uses distinct stable backends and excludes model IDs that auto-route
+  ---
+  duration_ms: 0.123327
+  type: 'test'
+  ...
+# Subtest: AI fallback candidates are never repeated when advancing through the configured chain
+ok 24 - AI fallback candidates are never repeated when advancing through the configured chain
+  ---
+  duration_ms: 0.169556
+  type: 'test'
+  ...
+# Subtest: Gemini 3.8 generation config omits unsupported legacy sampling parameters
+ok 25 - Gemini 3.8 generation config omits unsupported legacy sampling parameters
+  ---
+  duration_ms: 0.509189
+  type: 'test'
+  ...
+# Subtest: the Gemini 3.6 fallback only receives supported thinkingLevel configuration
+ok 26 - the Gemini 3.6 fallback only receives supported thinkingLevel configuration
+  ---
+  duration_ms: 0.439103
+  type: 'test'
+  ...
+# Subtest: AI service recognizes temporary high-demand and availability errors for model fallback
+ok 27 - AI service recognizes temporary high-demand and availability errors for model fallback
+  ---
+  duration_ms: 0.213943
+  type: 'test'
+  ...
+# Subtest: AI backend revision is explicit so deployment logs identify the shipped fix
+ok 28 - AI backend revision is explicit so deployment logs identify the shipped fix
+  ---
+  duration_ms: 0.066019
+  type: 'test'
+  ...
+# Subtest: AI request deadline aborts provider call and rejects even if SDK promise hangs
+ok 29 - AI request deadline aborts provider call and rejects even if SDK promise hangs
+  ---
+  duration_ms: 26.118885
+  type: 'test'
+  ...
+# Subtest: upstream timeout and overload errors use availability fallback, not quota handling
+ok 30 - upstream timeout and overload errors use availability fallback, not quota handling
+  ---
+  duration_ms: 0.46389
+  type: 'test'
+  ...
+# Subtest: AI endpoint exposes backend revision header for production deployment verification
+ok 31 - AI endpoint exposes backend revision header for production deployment verification
+  ---
+  duration_ms: 0.134193
+  type: 'test'
+  ...
+# Subtest: saving preferences stops the preview before closing the modal
+ok 32 - saving preferences stops the preview before closing the modal
+  ---
+  duration_ms: 2.330428
+  type: 'test'
+  ...
+# Subtest: settings preview uses its own playback API, not the real proofing alarm API
+ok 33 - settings preview uses its own playback API, not the real proofing alarm API
+  ---
+  duration_ms: 1.045768
+  type: 'test'
+  ...
+# Subtest: alarm service tracks preview audio separately from completion alarm audio
+ok 34 - alarm service tracks preview audio separately from completion alarm audio
+  ---
+  duration_ms: 0.255195
+  type: 'test'
+  ...
+# Subtest: late preview play rejection cannot restart audio after Save stopped it
+ok 35 - late preview play rejection cannot restart audio after Save stopped it
+  ---
+  duration_ms: 0.126341
+  type: 'test'
+  ...
+# Subtest: turning the sound setting off stops the current preview immediately
+ok 36 - turning the sound setting off stops the current preview immediately
+  ---
+  duration_ms: 0.276928
+  type: 'test'
+  ...
+# Subtest: Android rich share plugin sends URL text and Sharesheet preview title
+ok 37 - Android rich share plugin sends URL text and Sharesheet preview title
+  ---
+  duration_ms: 0.846518
+  type: 'test'
+  ...
+# Subtest: native Android rich share plugin is registered by the existing Activity
+ok 38 - native Android rich share plugin is registered by the existing Activity
+  ---
+  duration_ms: 0.264359
+  type: 'test'
+  ...
+# Subtest: Android invitation share and URL-only share prefer rich preview with safe plugin fallback
+ok 39 - Android invitation share and URL-only share prefer rich preview with safe plugin fallback
+  ---
+  duration_ms: 1.018868
+  type: 'test'
+  ...
+# Subtest: app-core imports and invokes the canonical lifecycle initializer directly
+ok 40 - app-core imports and invokes the canonical lifecycle initializer directly
+  ---
+  duration_ms: 1.055383
+  type: 'test'
+  ...
+# Subtest: boot and app-core share the same module URL while the legacy facade remains available
+ok 41 - boot and app-core share the same module URL while the legacy facade remains available
+  ---
+  duration_ms: 0.200052
+  type: 'test'
+  ...
+# Subtest: initializes the lifecycle in hidden state and runs the background callback once
+ok 42 - initializes the lifecycle in hidden state and runs the background callback once
+  ---
+  duration_ms: 3.172219
+  type: 'test'
+  ...
+# Subtest: V332 tooltip card is bounded by viewport and supports vertical touch scrolling
+ok 43 - V332 tooltip card is bounded by viewport and supports vertical touch scrolling
+  ---
+  duration_ms: 0.863163
+  type: 'test'
+  ...
+# Subtest: V332 tooltip measures updated step content and clamps position to the visible viewport
+ok 44 - V332 tooltip measures updated step content and clamps position to the visible viewport
+  ---
+  duration_ms: 0.249206
+  type: 'test'
+  ...
+# Subtest: V332 Android Back returns one App Tour step instead of minimizing or entering PiP
+ok 45 - V332 Android Back returns one App Tour step instead of minimizing or entering PiP
+  ---
+  duration_ms: 0.266743
+  type: 'test'
+  ...
+# Subtest: V332 App Tour highlights recipe and tips tabs above the overlay using the current tab IDs
+ok 46 - V332 App Tour highlights recipe and tips tabs above the overlay using the current tab IDs
+  ---
+  duration_ms: 0.585995
+  type: 'test'
+  ...
+# Subtest: V332 leaves product-facing version unchanged and advances only technical cache/release tokens
+ok 47 - V332 leaves product-facing version unchanged and advances only technical cache/release tokens
+  ---
+  duration_ms: 0.295616
+  type: 'test'
+  ...
+# Subtest: article modal checks each existing DOM node before updating it
+ok 48 - article modal checks each existing DOM node before updating it
+  ---
+  duration_ms: 0.87419
+  type: 'test'
+  ...
+# Subtest: article badge and title use text-only DOM sinks
+ok 49 - article badge and title use text-only DOM sinks
+  ---
+  duration_ms: 0.227924
+  type: 'test'
+  ...
+# Subtest: runtime entry initializes AuthService through an ESM import after boot resolves
+ok 50 - runtime entry initializes AuthService through an ESM import after boot resolves
+  ---
+  duration_ms: 0.844055
+  type: 'test'
+  ...
+# Subtest: AuthService remains an explicit named export without an unused window bridge
+ok 51 - AuthService remains an explicit named export without an unused window bridge
+  ---
+  duration_ms: 0.159511
+  type: 'test'
+  ...
+# Subtest: authentication defaults to login with password sign-in controls visible
+ok 52 - authentication defaults to login with password sign-in controls visible
+  ---
+  duration_ms: 1.088584
+  type: 'test'
+  ...
+# Subtest: app-core imports the extracted mode owner through an explicit ESM binding
+ok 53 - app-core imports the extracted mode owner through an explicit ESM binding
+  ---
+  duration_ms: 0.347265
+  type: 'test'
+  ...
+# Subtest: auth submit requires explicit terms consent before calling signup
+ok 54 - auth submit requires explicit terms consent before calling signup
+  ---
+  duration_ms: 0.196807
+  type: 'test'
+  ...
+# Subtest: concurrent logout callers share one stable signOut promise and one SDK call
+ok 55 - concurrent logout callers share one stable signOut promise and one SDK call
+  ---
+  duration_ms: 0.798816
+  type: 'test'
+  ...
+# Subtest: a failed logout releases the guard so the user can retry
+ok 56 - a failed logout releases the guard so the user can retry
+  ---
+  duration_ms: 0.577812
+  type: 'test'
+  ...
+# Subtest: a queued SIGNED_IN event cannot start stale lifecycle hooks after logout begins
+ok 57 - a queued SIGNED_IN event cannot start stale lifecycle hooks after logout begins
+  ---
+  duration_ms: 20.430155
+  type: 'test'
+  ...
+# Subtest: getSessionUser reads cached session identity without invoking server-verified getUser
+ok 58 - getSessionUser reads cached session identity without invoking server-verified getUser
+  ---
+  duration_ms: 1.169476
+  type: 'test'
+  ...
+# Subtest: getSessionUser returns null for a locally signed-out session
+ok 59 - getSessionUser returns null for a locally signed-out session
+  ---
+  duration_ms: 0.168244
+  type: 'test'
+  ...
+# Subtest: background lifecycle continues to gamification when proofing persistence rejects
+ok 60 - background lifecycle continues to gamification when proofing persistence rejects
+  ---
+  duration_ms: 3.564811
+  type: 'test'
+  ...
+# Subtest: background lifecycle observes and contains a rejected gamification flush
+ok 61 - background lifecycle observes and contains a rejected gamification flush
+  ---
+  duration_ms: 0.918577
+  type: 'test'
+  ...
+# Subtest: background lifecycle waits for gamification persistence to settle
+ok 62 - background lifecycle waits for gamification persistence to settle
+  ---
+  duration_ms: 6.57449
+  type: 'test'
+  ...
+# Subtest: a partial proofing flush result is reported but does not suppress gamification
+ok 63 - a partial proofing flush result is reported but does not suppress gamification
+  ---
+  duration_ms: 0.727859
+  type: 'test'
+  ...
+# Subtest: the registered app background callback delegates to the failure-isolated helper
+ok 64 - the registered app background callback delegates to the failure-isolated helper
+  ---
+  duration_ms: 4.48462
+  type: 'test'
+  ...
+# Subtest: synchronous clock-stop or timer-snapshot errors do not skip the durable background flush
+ok 65 - synchronous clock-stop or timer-snapshot errors do not skip the durable background flush
+  ---
+  duration_ms: 0.795881
+  type: 'test'
+  ...
+# Subtest: background lifecycle registration delegates preparation and persistence to the guarded helper
+ok 66 - background lifecycle registration delegates preparation and persistence to the guarded helper
+  ---
+  duration_ms: 0.241374
+  type: 'test'
+  ...
+# [StorageService] LocalStorage SET gagal untuk "bakeryIngredients": Error: quota exceeded
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/bakery-ingredient-persistence-result.test.mjs:17:35)
+#     at setString (file:///mnt/data/v342d-work/assets/js/storage-service.js:176:22)
+#     at Object.setJSON (file:///mnt/data/v342d-work/assets/js/storage-service.js:361:12)
+#     at Object.persist (file:///mnt/data/v342d-work/assets/js/bakery-ingredient-service.js?test=persist-result-v270:71:40)
+#     at TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/bakery-ingredient-persistence-result.test.mjs:33:33)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+# Subtest: ingredient persistence rejects when StorageService cannot confirm a durable write
+ok 67 - ingredient persistence rejects when StorageService cannot confirm a durable write
+  ---
+  duration_ms: 11.350745
+  type: 'test'
+  ...
+# Subtest: app-core consumes ingredient persistence errors and warns instead of leaving a rejected Promise unhandled
+ok 68 - app-core consumes ingredient persistence errors and warns instead of leaving a rejected Promise unhandled
+  ---
+  duration_ms: 2.051467
+  type: 'test'
+  ...
+# Subtest: BakeryIngredientService imports StorageService through a named ES module binding
+ok 69 - BakeryIngredientService imports StorageService through a named ES module binding
+  ---
+  duration_ms: 0.826438
+  type: 'test'
+  ...
+# Subtest: release verifier prevents regressions to the mutable StorageService global
+ok 70 - release verifier prevents regressions to the mutable StorageService global
+  ---
+  duration_ms: 0.142044
+  type: 'test'
+  ...
+# Subtest: ingredient persistence keeps working when the legacy StorageService global is unavailable
+ok 71 - ingredient persistence keeps working when the legacy StorageService global is unavailable
+  ---
+  duration_ms: 10.156131
+  type: 'test'
+  ...
+# Subtest: bakery ingredient state is initialized from the existing legacy array
+ok 72 - bakery ingredient state is initialized from the existing legacy array
+  ---
+  duration_ms: 0.729501
+  type: 'test'
+  ...
+# Subtest: legacy bakery ingredient assignments use an accessor connected to the module binding
+ok 73 - legacy bakery ingredient assignments use an accessor connected to the module binding
+  ---
+  duration_ms: 0.182295
+  type: 'test'
+  ...
+# Subtest: PWA manifest provides installable any and maskable PNG icons
+ok 74 - PWA manifest provides installable any and maskable PNG icons
+  ---
+  duration_ms: 1.926058
+  type: 'test'
+  ...
+# Subtest: Android launcher, adaptive foreground/background and splash assets use the PWA donut palette
+ok 75 - Android launcher, adaptive foreground/background and splash assets use the PWA donut palette
+  ---
+  duration_ms: 3.690411
+  type: 'test'
+  ...
+# Subtest: translation and candidate language routes allow Capacitor Authorization CORS preflight
+ok 76 - translation and candidate language routes allow Capacitor Authorization CORS preflight
+  ---
+  duration_ms: 1.214814
+  type: 'test'
+  ...
+# Subtest: MyMemory validation enforces item, character, target and per-provider byte limits
+ok 77 - MyMemory validation enforces item, character, target and per-provider byte limits
+  ---
+  duration_ms: 1.985848
+  type: 'test'
+  ...
+# Subtest: translation endpoint requires a verified Supabase session before calling MyMemory
+ok 78 - translation endpoint requires a verified Supabase session before calling MyMemory
+  ---
+  duration_ms: 0.350228
+  type: 'test'
+  ...
+# Subtest: authenticated translation reaches MyMemory and returns translations in source order without credentials
+ok 79 - authenticated translation reaches MyMemory and returns translations in source order without credentials
+  ---
+  duration_ms: 3.328946
+  type: 'test'
+  ...
+# Subtest: optional contact email enables the documented higher MyMemory free quota without an API key
+ok 80 - optional contact email enables the documented higher MyMemory free quota without an API key
+  ---
+  duration_ms: 0.82825
+  type: 'test'
+  ...
+# Subtest: MyMemory response normalization preserves surrounding whitespace exactly
+ok 81 - MyMemory response normalization preserves surrounding whitespace exactly
+  ---
+  duration_ms: 0.098709
+  type: 'test'
+  ...
+# Subtest: MyMemory quota and unsupported-pair errors are reported distinctly
+ok 82 - MyMemory quota and unsupported-pair errors are reported distinctly
+  ---
+  duration_ms: 0.302506
+  type: 'test'
+  ...
+# Subtest: local candidate catalog does not claim actual MyMemory pair support
+ok 83 - local candidate catalog does not claim actual MyMemory pair support
+  ---
+  duration_ms: 0.160403
+  type: 'test'
+  ...
+# Subtest: per-user translation rate limit remains bounded
+ok 84 - per-user translation rate limit remains bounded
+  ---
+  duration_ms: 0.430029
+  type: 'test'
+  ...
+# [Timer Proofer QA server] http://127.0.0.1:39611
+# [Timer Proofer QA server] http://127.0.0.1:41437
+# Subtest: local QA server serves the PWA entrypoint with an explicit HTML content type
+ok 85 - local QA server serves the PWA entrypoint with an explicit HTML content type
+  ---
+  duration_ms: 29.460924
+  type: 'test'
+  ...
+# [Timer Proofer QA server] http://127.0.0.1:35381
+# Subtest: local QA server serves the ES-module entrypoint and its auth feature modules
+ok 86 - local QA server serves the ES-module entrypoint and its auth feature modules
+  ---
+  duration_ms: 20.187295
+  type: 'test'
+  ...
+# [Timer Proofer QA server] http://127.0.0.1:36849
+# Subtest: local QA server serves version metadata without a stale cache directive
+ok 87 - local QA server serves version metadata without a stale cache directive
+  ---
+  duration_ms: 6.046247
+  type: 'test'
+  ...
+# [Timer Proofer QA server] http://127.0.0.1:41561
+# Subtest: local QA server rejects traversal, malformed encoding, and hidden paths
+ok 88 - local QA server rejects traversal, malformed encoding, and hidden paths
+  ---
+  duration_ms: 12.036489
+  type: 'test'
+  ...
+# Subtest: local QA server supports HEAD and rejects unsupported methods
+ok 89 - local QA server supports HEAD and rejects unsupported methods
+  ---
+  duration_ms: 6.626092
+  type: 'test'
+  ...
+# Subtest: HTTPS runtime initializes analytics queue and imports the local html2pdf bundle as a module
+ok 90 - HTTPS runtime initializes analytics queue and imports the local html2pdf bundle as a module
+  ---
+  duration_ms: 7.871512
+  type: 'test'
+  ...
+# Subtest: file:// runtime skips module PDF loading because direct local files restrict module imports
+ok 91 - file:// runtime skips module PDF loading because direct local files restrict module imports
+  ---
+  duration_ms: 3.053339
+  type: 'test'
+  ...
+# Subtest: Capacitor custom URL schemes can load local PDF modules without HTTP-only manifest links
+ok 92 - Capacitor custom URL schemes can load local PDF modules without HTTP-only manifest links
+  ---
+  duration_ms: 1.896173
+  type: 'test'
+  ...
+# Subtest: module import failure falls back to the local classic loader on incompatible WebViews
+ok 93 - module import failure falls back to the local classic loader on incompatible WebViews
+  ---
+  duration_ms: 1.793537
+  type: 'test'
+  ...
+# Subtest: PDF module and compatibility fallback failure do not block application runtime initialization
+ok 94 - PDF module and compatibility fallback failure do not block application runtime initialization
+  ---
+  duration_ms: 2.735329
+  type: 'test'
+  ...
+# Subtest: index has no executable inline JavaScript and uses a module entrypoint
+ok 95 - index has no executable inline JavaScript and uses a module entrypoint
+  ---
+  duration_ms: 2.265731
+  type: 'test'
+  ...
+# Subtest: orphaned service window aliases are removed while named ES-module exports remain
+ok 96 - orphaned service window aliases are removed while named ES-module exports remain
+  ---
+  duration_ms: 1.960459
+  type: 'test'
+  ...
+# Subtest: application consumers import these services without looking up their removed global aliases
+ok 97 - application consumers import these services without looking up their removed global aliases
+  ---
+  duration_ms: 2.129575
+  type: 'test'
+  ...
+# Subtest: feature quota denial is surfaced with the feature-specific 429 code
+ok 98 - feature quota denial is surfaced with the feature-specific 429 code
+  ---
+  duration_ms: 1.507186
+  type: 'test'
+  ...
+# Subtest: AI analysis endpoint rejects unauthenticated requests before reserving feature quota
+ok 99 - AI analysis endpoint rejects unauthenticated requests before reserving feature quota
+  ---
+  duration_ms: 6.715678
+  type: 'test'
+  ...
+# Subtest: feature quota configuration requires independent limits for each tier and feature
+ok 100 - feature quota configuration requires independent limits for each tier and feature
+  ---
+  duration_ms: 0.392332
+  type: 'test'
+  ...
+# Subtest: Free Trial endpoint requires a verified login and asks the database for a one-time 7-day claim
+ok 101 - Free Trial endpoint requires a verified login and asks the database for a one-time 7-day claim
+  ---
+  duration_ms: 1.005347
+  type: 'test'
+  ...
+# Subtest: feature access endpoint returns Free tier quotas and trial eligibility from server records
+ok 102 - feature access endpoint returns Free tier quotas and trial eligibility from server records
+  ---
+  duration_ms: 1.038739
+  type: 'test'
+  ...
+# Subtest: V342-D migration enforces unique one-time trial, daily per-feature counters and service-role-only RPCs
+ok 103 - V342-D migration enforces unique one-time trial, daily per-feature counters and service-role-only RPCs
+  ---
+  duration_ms: 5.538991
+  type: 'test'
+  ...
+# Subtest: successful logout signs out once and updates the existing auth and modal UI
+ok 104 - successful logout signs out once and updates the existing auth and modal UI
+  ---
+  duration_ms: 1.450229
+  type: 'test'
+  ...
+# Subtest: duplicate logout taps share the in-flight UI operation
+ok 105 - duplicate logout taps share the in-flight UI operation
+  ---
+  duration_ms: 0.226261
+  type: 'test'
+  ...
+# Subtest: failed logout reports the error and permits a later retry
+ok 106 - failed logout reports the error and permits a later retry
+  ---
+  duration_ms: 0.415647
+  type: 'test'
+  ...
+# Subtest: auth mode switcher owns login and registration UI state in the feature module
+ok 107 - auth mode switcher owns login and registration UI state in the feature module
+  ---
+  duration_ms: 0.286142
+  type: 'test'
+  ...
+# Subtest: registration consent validation fails closed and points out the unchecked control
+ok 108 - registration consent validation fails closed and points out the unchecked control
+  ---
+  duration_ms: 0.260313
+  type: 'test'
+  ...
+# Subtest: registration consent validation rejects a missing control and accepts an explicit checked state
+ok 109 - registration consent validation rejects a missing control and accepts an explicit checked state
+  ---
+  duration_ms: 0.120902
+  type: 'test'
+  ...
+# Subtest: same function name in separate ES modules is informational, not a collision
+ok 110 - same function name in separate ES modules is informational, not a collision
+  ---
+  duration_ms: 1.249486
+  type: 'test'
+  ...
+# Subtest: duplicate function declarations within one module are detected with line numbers
+ok 111 - duplicate function declarations within one module are detected with line numbers
+  ---
+  duration_ms: 1.025017
+  type: 'test'
+  ...
+# Subtest: malformed or absent cache becomes a safe cache miss
+ok 112 - malformed or absent cache becomes a safe cache miss
+  ---
+  duration_ms: 1.450499
+  type: 'test'
+  ...
+# Subtest: cache numbers, dates, badges and quests are normalized before runtime use
+ok 113 - cache numbers, dates, badges and quests are normalized before runtime use
+  ---
+  duration_ms: 0.497301
+  type: 'test'
+  ...
+# Subtest: negative, infinite and nonnumeric pending totals cannot poison future sync deltas
+ok 114 - negative, infinite and nonnumeric pending totals cannot poison future sync deltas
+  ---
+  duration_ms: 0.905206
+  type: 'test'
+  ...
+# Subtest: duplicate quest conflict keys are merged before an upsert batch is built
+ok 115 - duplicate quest conflict keys are merged before an upsert batch is built
+  ---
+  duration_ms: 0.256056
+  type: 'test'
+  ...
+# Subtest: Google Translate callback is registered before script insertion and one load initializes the widget once
+ok 116 - Google Translate callback is registered before script insertion and one load initializes the widget once
+  ---
+  duration_ms: 2.658673
+  type: 'test'
+  ...
+# Subtest: script error is cleaned up and the adapter permits a later retry
+ok 117 - script error is cleaned up and the adapter permits a later retry
+  ---
+  duration_ms: 1.114172
+  type: 'test'
+  ...
+# Subtest: script load without named callback fails clearly and removes the script
+ok 118 - script load without named callback fails clearly and removes the script
+  ---
+  duration_ms: 0.33092
+  type: 'test'
+  ...
+# Subtest: timeout removes the script and allows another attempt
+ok 119 - timeout removes the script and allows another attempt
+  ---
+  duration_ms: 1001.349655
+  type: 'test'
+  ...
+# Subtest: pre-existing widget is patched without injecting another SDK script
+ok 120 - pre-existing widget is patched without injecting another SDK script
+  ---
+  duration_ms: 0.280183
+  type: 'test'
+  ...
+# Subtest: legacy Google Translate widget adapter is retired from the active language runtime
+ok 121 - legacy Google Translate widget adapter is retired from the active language runtime
+  ---
+  duration_ms: 0.81477
+  type: 'test'
+  ...
+# Subtest: SDK success waits until its asynchronously rendered language selector is ready
+ok 122 - SDK success waits until its asynchronously rendered language selector is ready
+  ---
+  duration_ms: 149.95723
+  type: 'test'
+  ...
+# Subtest: SDK initialization without a language selector fails retryably and reinitializes on the next attempt
+ok 123 - SDK initialization without a language selector fails retryably and reinitializes on the next attempt
+  ---
+  duration_ms: 1054.421737
+  type: 'test'
+  ...
+# Subtest: ingredient names are escaped before insertion into table and card markup
+ok 124 - ingredient names are escaped before insertion into table and card markup
+  ---
+  duration_ms: 0.639716
+  type: 'test'
+  ...
+# Subtest: ingredient IDs are escaped for HTML attributes and encoded as JavaScript string literals
+ok 125 - ingredient IDs are escaped for HTML attributes and encoded as JavaScript string literals
+  ---
+  duration_ms: 0.975402
+  type: 'test'
+  ...
+# Subtest: non-finite ingredient numbers render as zero instead of attacker-controlled markup
+ok 126 - non-finite ingredient numbers render as zero instead of attacker-controlled markup
+  ---
+  duration_ms: 0.188875
+  type: 'test'
+  ...
+# Subtest: HTML escaping safely neutralizes imported ingredient names and hostile IDs
+ok 127 - HTML escaping safely neutralizes imported ingredient names and hostile IDs
+  ---
+  duration_ms: 0.212711
+  type: 'test'
+  ...
+# Subtest: language data is importable as a standalone ESM module without browser globals
+ok 128 - language data is importable as a standalone ESM module without browser globals
+  ---
+  duration_ms: 1.818965
+  type: 'test'
+  ...
+# Subtest: language codes are unique to avoid ambiguous selection and duplicate list entries
+ok 129 - language codes are unique to avoid ambiguous selection and duplicate list entries
+  ---
+  duration_ms: 0.165229
+  type: 'test'
+  ...
+# Subtest: all in-repository language-list rendering uses the ESM export, not window.daftarBahasa
+ok 130 - all in-repository language-list rendering uses the ESM export, not window.daftarBahasa
+  ---
+  duration_ms: 0.298741
+  type: 'test'
+  ...
+# Subtest: language filter is safe when document, input, or list container is missing
+ok 131 - language filter is safe when document, input, or list container is missing
+  ---
+  duration_ms: 0.993369
+  type: 'test'
+  ...
+# Subtest: language filter matches visible label case-insensitively and trims search text
+ok 132 - language filter matches visible label case-insensitively and trims search text
+  ---
+  duration_ms: 0.260714
+  type: 'test'
+  ...
+# Subtest: language filter matches data-name and restores all items for an empty search
+ok 133 - language filter matches data-name and restores all items for an empty search
+  ---
+  duration_ms: 0.171058
+  type: 'test'
+  ...
+# Subtest: language engine exports filtering and selection functions while keeping only compatibility bridges global
+ok 134 - language engine exports filtering and selection functions while keeping only compatibility bridges global
+  ---
+  duration_ms: 0.882952
+  type: 'test'
+  ...
+# Subtest: legacy ingredient table and mobile card escape name and type before HTML insertion
+ok 135 - legacy ingredient table and mobile card escape name and type before HTML insertion
+  ---
+  duration_ms: 2.030245
+  type: 'test'
+  ...
+# Subtest: legacy ingredient numeric fields are finite before being rendered
+ok 136 - legacy ingredient numeric fields are finite before being rendered
+  ---
+  duration_ms: 0.347545
+  type: 'test'
+  ...
+# Subtest: malformed imported records cannot break renderer iteration
+ok 137 - malformed imported records cannot break renderer iteration
+  ---
+  duration_ms: 0.110858
+  type: 'test'
+  ...
+# Subtest: HTML-sensitive ingredient labels are neutralized
+ok 138 - HTML-sensitive ingredient labels are neutralized
+  ---
+  duration_ms: 0.145039
+  type: 'test'
+  ...
+# Subtest: renderer escapes hostile ingredient markup and falls back for non-finite numeric values
+ok 139 - renderer escapes hostile ingredient markup and falls back for non-finite numeric values
+  ---
+  duration_ms: 0.909042
+  type: 'test'
+  ...
+# Subtest: renderer tolerates a malformed non-array state and non-object records
+ok 140 - renderer tolerates a malformed non-array state and non-object records
+  ---
+  duration_ms: 0.456249
+  type: 'test'
+  ...
+# Subtest: browser Back returns from Tips to the Timer tab through the production lifecycle handler
+ok 141 - browser Back returns from Tips to the Timer tab through the production lifecycle handler
+  ---
+  duration_ms: 1.662349
+  type: 'test'
+  ...
+# Subtest: browser Back returns from the Recipe tab to Timer instead of leaving an active overlay
+ok 142 - browser Back returns from the Recipe tab to Timer instead of leaving an active overlay
+  ---
+  duration_ms: 0.127733
+  type: 'test'
+  ...
+# Subtest: tab overlays close safely even when app-core has not registered switchTab yet
+ok 143 - tab overlays close safely even when app-core has not registered switchTab yet
+  ---
+  duration_ms: 0.226422
+  type: 'test'
+  ...
+# Subtest: Back closes a topmost page modal before the underlying Tips tab
+ok 144 - Back closes a topmost page modal before the underlying Tips tab
+  ---
+  duration_ms: 0.131779
+  type: 'test'
+  ...
+# Subtest: browser Back normalizes an active modal when the modal bridge throws
+ok 145 - browser Back normalizes an active modal when the modal bridge throws
+  ---
+  duration_ms: 0.171419
+  type: 'test'
+  ...
+# Subtest: browser Back normalizes an active modal when the modal bridge is incomplete
+ok 146 - browser Back normalizes an active modal when the modal bridge is incomplete
+  ---
+  duration_ms: 0.928832
+  type: 'test'
+  ...
+# Subtest: native Back uses the same modal-before-tab precedence as browser Back
+ok 147 - native Back uses the same modal-before-tab precedence as browser Back
+  ---
+  duration_ms: 0.571974
+  type: 'test'
+  ...
+# Subtest: browser Back safely closes the legacy recipe-list modal when its bridge is missing
+ok 148 - browser Back safely closes the legacy recipe-list modal when its bridge is missing
+  ---
+  duration_ms: 0.175775
+  type: 'test'
+  ...
+# Subtest: browser Back normalizes the recipe-list modal when its legacy close bridge throws
+ok 149 - browser Back normalizes the recipe-list modal when its legacy close bridge throws
+  ---
+  duration_ms: 0.309818
+  type: 'test'
+  ...
+# Subtest: closing recipe-list modal keeps background scroll locked if another overlay remains active
+ok 150 - closing recipe-list modal keeps background scroll locked if another overlay remains active
+  ---
+  duration_ms: 0.378511
+  type: 'test'
+  ...
+# Subtest: duplicate lifecycle signals are deduplicated and distinct transitions are serialized
+ok 151 - duplicate lifecycle signals are deduplicated and distinct transitions are serialized
+  ---
+  duration_ms: 6.872282
+  type: 'test'
+  ...
+# Subtest: duplicate init calls preserve the original lifecycle callbacks until destroy
+ok 152 - duplicate init calls preserve the original lifecycle callbacks until destroy
+  ---
+  duration_ms: 0.624382
+  type: 'test'
+  ...
+# Subtest: reinitializing lifecycle service is not blocked by a pending callback from the destroyed generation
+ok 153 - reinitializing lifecycle service is not blocked by a pending callback from the destroyed generation
+  ---
+  duration_ms: 0.601308
+  type: 'test'
+  ...
+# Subtest: HTML escaping covers text and quoted-attribute metacharacters
+ok 154 - HTML escaping covers text and quoted-attribute metacharacters
+  ---
+  duration_ms: 0.901391
+  type: 'test'
+  ...
+# Subtest: safe recipe image source accepts common raster data URLs and web image URLs
+ok 155 - safe recipe image source accepts common raster data URLs and web image URLs
+  ---
+  duration_ms: 0.49694
+  type: 'test'
+  ...
+# Subtest: safe recipe image source rejects active, local-file, SVG data URLs and unreasonable sizes
+ok 156 - safe recipe image source rejects active, local-file, SVG data URLs and unreasonable sizes
+  ---
+  duration_ms: 2.678063
+  type: 'test'
+  ...
+# Subtest: production-step photo markup uses a validated and escaped source
+ok 157 - production-step photo markup uses a validated and escaped source
+  ---
+  duration_ms: 0.493445
+  type: 'test'
+  ...
+# Subtest: saved recipe cards and print documents escape imported values while retaining raw share text
+ok 158 - saved recipe cards and print documents escape imported values while retaining raw share text
+  ---
+  duration_ms: 0.953379
+  type: 'test'
+  ...
+# Subtest: AI formatter escapes model-supplied HTML before adding presentation markup
+ok 159 - AI formatter escapes model-supplied HTML before adding presentation markup
+  ---
+  duration_ms: 0.401005
+  type: 'test'
+  ...
+# Subtest: AI question, error, telemetry, and provider text are escaped at direct HTML sinks
+ok 160 - AI question, error, telemetry, and provider text are escaped at direct HTML sinks
+  ---
+  duration_ms: 0.785576
+  type: 'test'
+  ...
+# Subtest: AI greeting escapes weather and temperature values read from the rendered provider UI
+ok 161 - AI greeting escapes weather and temperature values read from the rendered provider UI
+  ---
+  duration_ms: 0.499193
+  type: 'test'
+  ...
+# Subtest: sensor advice no longer interpolates raw sensor values into innerHTML
+ok 162 - sensor advice no longer interpolates raw sensor values into innerHTML
+  ---
+  duration_ms: 1.15328
+  type: 'test'
+  ...
+# Subtest: AI tips formatter preserves headings and clean numbered steps when the model joins them on one line
+ok 163 - AI tips formatter preserves headings and clean numbered steps when the model joins them on one line
+  ---
+  duration_ms: 1.208915
+  type: 'test'
+  ...
+# Subtest: placeholder Client Key is rejected before inserting any SDK script
+ok 164 - placeholder Client Key is rejected before inserting any SDK script
+  ---
+  duration_ms: 2.471981
+  type: 'test'
+  ...
+# Subtest: concurrent checkout requests share one SDK load and use the public Client Key attribute
+ok 165 - concurrent checkout requests share one SDK load and use the public Client Key attribute
+  ---
+  duration_ms: 0.553976
+  type: 'test'
+  ...
+# Subtest: production environment uses the Midtrans production Snap URL
+ok 166 - production environment uses the Midtrans production Snap URL
+  ---
+  duration_ms: 0.437029
+  type: 'test'
+  ...
+# Subtest: SDK load failure removes the failed script and a later attempt can retry
+ok 167 - SDK load failure removes the failed script and a later attempt can retry
+  ---
+  duration_ms: 0.326203
+  type: 'test'
+  ...
+# Subtest: SDK load timeout cleans up the element and allows an explicit retry
+ok 168 - SDK load timeout cleans up the element and allows an explicit retry
+  ---
+  duration_ms: 6.035149
+  type: 'test'
+  ...
+# Subtest: SDK load without window.snap.pay is rejected clearly
+ok 169 - SDK load without window.snap.pay is rejected clearly
+  ---
+  duration_ms: 0.416469
+  type: 'test'
+  ...
+# Subtest: already available Snap API is reused without inserting another script
+ok 170 - already available Snap API is reused without inserting another script
+  ---
+  duration_ms: 0.16583
+  type: 'test'
+  ...
+# Subtest: language-engine delegates SDK loading through the ES6 module, not a direct global lookup
+ok 171 - language-engine delegates SDK loading through the ES6 module, not a direct global lookup
+  ---
+  duration_ms: 1.39161
+  type: 'test'
+  ...
+# Subtest: mini weather values use an idempotent delegated click handler outside DOMContentLoaded
+ok 172 - mini weather values use an idempotent delegated click handler outside DOMContentLoaded
+  ---
+  duration_ms: 1.314975
+  type: 'test'
+  ...
+# Subtest: collapsed stats preserve mobile hit targets and tap interaction
+ok 173 - collapsed stats preserve mobile hit targets and tap interaction
+  ---
+  duration_ms: 0.35115
+  type: 'test'
+  ...
+# Subtest: pre-login onboarding slider supports horizontal Pointer Events and legacy touch fallback
+ok 174 - pre-login onboarding slider supports horizontal Pointer Events and legacy touch fallback
+  ---
+  duration_ms: 0.149576
+  type: 'test'
+  ...
+# Subtest: onboarding slider allows horizontal swipe without blocking native vertical panning
+ok 175 - onboarding slider allows horizontal swipe without blocking native vertical panning
+  ---
+  duration_ms: 0.394135
+  type: 'test'
+  ...
+# Subtest: technical cache advances to V327 while visible app version remains V125
+ok 176 - technical cache advances to V327 while visible app version remains V125
+  ---
+  duration_ms: 0.412843
+  type: 'test'
+  ...
+# Subtest: closing a page modal keeps scroll locked when the Tips overlay remains active
+ok 177 - closing a page modal keeps scroll locked when the Tips overlay remains active
+  ---
+  duration_ms: 3.916401
+  type: 'test'
+  ...
+# Subtest: closeAllModals preserves scroll lock while the recipe-photo preview is visible
+ok 178 - closeAllModals preserves scroll lock while the recipe-photo preview is visible
+  ---
+  duration_ms: 0.963855
+  type: 'test'
+  ...
+# Subtest: closing the final visible blocking overlay releases document scroll lock
+ok 179 - closing the final visible blocking overlay releases document scroll lock
+  ---
+  duration_ms: 0.705415
+  type: 'test'
+  ...
+# Subtest: the canonical scroll-lock API accounts for the article overlay
+ok 180 - the canonical scroll-lock API accounts for the article overlay
+  ---
+  duration_ms: 0.795631
+  type: 'test'
+  ...
+# Subtest: opening a page modal delegates locking to the canonical owner
+ok 181 - opening a page modal delegates locking to the canonical owner
+  ---
+  duration_ms: 1.526103
+  type: 'test'
+  ...
+# Subtest: scroll stays locked while a modal is visibly completing its close transition
+ok 182 - scroll stays locked while a modal is visibly completing its close transition
+  ---
+  duration_ms: 0.648529
+  type: 'test'
+  ...
+# Subtest: delayed notification and language modal closes resync the canonical scroll lock
+ok 183 - delayed notification and language modal closes resync the canonical scroll lock
+  ---
+  duration_ms: 0.477851
+  type: 'test'
+  ...
+# Subtest: a rejected async modal initializer is logged without breaking synchronous modal opening
+ok 184 - a rejected async modal initializer is logged without breaking synchronous modal opening
+  ---
+  duration_ms: 6.138896
+  type: 'test'
+  ...
+# Subtest: ES module modal bootstrap is idempotent and does not register duplicate click handlers
+ok 185 - ES module modal bootstrap is idempotent and does not register duplicate click handlers
+  ---
+  duration_ms: 0.946869
+  type: 'test'
+  ...
+# Subtest: ES module modal-core exports provide the canonical core and scroll-lock behavior
+ok 186 - ES module modal-core exports provide the canonical core and scroll-lock behavior
+  ---
+  duration_ms: 0.985537
+  type: 'test'
+  ...
+# Subtest: notification modal prefers registered ES-module hooks over the mutable legacy bridge
+ok 187 - notification modal prefers registered ES-module hooks over the mutable legacy bridge
+  ---
+  duration_ms: 1.252471
+  type: 'test'
+  ...
+# Subtest: notification modal retains a legacy fallback if it opens before ES-module hooks register
+ok 188 - notification modal retains a legacy fallback if it opens before ES-module hooks register
+  ---
+  duration_ms: 0.846187
+  type: 'test'
+  ...
+# Subtest: settings close is handled only by its existing delegated modal action
+ok 189 - settings close is handled only by its existing delegated modal action
+  ---
+  duration_ms: 1.06013
+  type: 'test'
+  ...
+# Subtest: notification back control is handled only by its existing delegated modal action
+ok 190 - notification back control is handled only by its existing delegated modal action
+  ---
+  duration_ms: 0.425392
+  type: 'test'
+  ...
+# Subtest: recipe calculator actions do not run through both delegation and direct listeners
+ok 191 - recipe calculator actions do not run through both delegation and direct listeners
+  ---
+  duration_ms: 1.877895
+  type: 'test'
+  ...
+# Subtest: toggleModal is not executed twice by the generic action delegation when modal bootstrap owns it
+ok 192 - toggleModal is not executed twice by the generic action delegation when modal bootstrap owns it
+  ---
+  duration_ms: 0.403209
+  type: 'test'
+  ...
+# Subtest: modal bootstrap exports the canonical core and safe scroll-lock function
+ok 193 - modal bootstrap exports the canonical core and safe scroll-lock function
+  ---
+  duration_ms: 0.896603
+  type: 'test'
+  ...
+# Subtest: in-repository consumers import the scroll-lock API instead of reading the mutable global
+ok 194 - in-repository consumers import the scroll-lock API instead of reading the mutable global
+  ---
+  duration_ms: 4.162903
+  type: 'test'
+  ...
+# Subtest: module manifest records modal bootstrap as the canonical modal-core owner
+ok 195 - module manifest records modal bootstrap as the canonical modal-core owner
+  ---
+  duration_ms: 0.237098
+  type: 'test'
+  ...
+# Subtest: all modal-core consumers share the exact same cache-busted module URL
+ok 196 - all modal-core consumers share the exact same cache-busted module URL
+  ---
+  duration_ms: 2.398891
+  type: 'test'
+  ...
+# Subtest: bakeryIngredients accessor preserves the initial array and follows legacy reassignment
+ok 197 - bakeryIngredients accessor preserves the initial array and follows legacy reassignment
+  ---
+  duration_ms: 2.611351
+  type: 'test'
+  ...
+# Subtest: activeRecipeSteps accessor keeps module and legacy state synchronized
+ok 198 - activeRecipeSteps accessor keeps module and legacy state synchronized
+  ---
+  duration_ms: 1.761358
+  type: 'test'
+  ...
+# Subtest: a non-configurable legacy state property does not crash module evaluation
+ok 199 - a non-configurable legacy state property does not crash module evaluation
+  ---
+  duration_ms: 0.871766
+  type: 'test'
+  ...
+# Subtest: membership package UI preserves the existing checkout action and amount ID
+ok 200 - membership package UI preserves the existing checkout action and amount ID
+  ---
+  duration_ms: 1.042915
+  type: 'test'
+  ...
+# Subtest: membership UI loads active server catalog and renders user-controlled text safely
+ok 201 - membership UI loads active server catalog and renders user-controlled text safely
+  ---
+  duration_ms: 0.281675
+  type: 'test'
+  ...
+# Subtest: checkout requires the explicitly selected active server plan, never the first active plan
+ok 202 - checkout requires the explicitly selected active server plan, never the first active plan
+  ---
+  duration_ms: 0.166712
+  type: 'test'
+  ...
+# Subtest: membership status is read from the authenticated server entitlement endpoint
+ok 203 - membership status is read from the authenticated server entitlement endpoint
+  ---
+  duration_ms: 0.108574
+  type: 'test'
+  ...
+# Subtest: annual pricing is not fabricated in the package UI
+ok 204 - annual pricing is not fabricated in the package UI
+  ---
+  duration_ms: 0.322837
+  type: 'test'
+  ...
+# Subtest: V342-D membership UI exposes explicit one-time trial action and per-feature quota status
+ok 205 - V342-D membership UI exposes explicit one-time trial action and per-feature quota status
+  ---
+  duration_ms: 0.247935
+  type: 'test'
+  ...
+# Subtest: membership access state refreshes when the existing Profile modal is opened
+ok 206 - membership access state refreshes when the existing Profile modal is opened
+  ---
+  duration_ms: 0.102895
+  type: 'test'
+  ...
+# Subtest: V342 catalog accepts one active server-owned plan and exposes no secret fields
+ok 207 - V342 catalog accepts one active server-owned plan and exposes no secret fields
+  ---
+  duration_ms: 1.64315
+  type: 'test'
+  ...
+# Subtest: V342 rejects missing, malformed, empty catalogs and preserves the legacy single-plan guard
+ok 208 - V342 rejects missing, malformed, empty catalogs and preserves the legacy single-plan guard
+  ---
+  duration_ms: 7.443214
+  type: 'test'
+  ...
+# Subtest: V341 rejects client-configured invalid prices and durations
+ok 209 - V341 rejects client-configured invalid prices and durations
+  ---
+  duration_ms: 0.212671
+  type: 'test'
+  ...
+# Subtest: V341 catalog does not mutate the configured source object
+ok 210 - V341 catalog does not mutate the configured source object
+  ---
+  duration_ms: 0.201635
+  type: 'test'
+  ...
+# Subtest: V341 extracts only a well-formed bearer token
+ok 211 - V341 extracts only a well-formed bearer token
+  ---
+  duration_ms: 0.205591
+  type: 'test'
+  ...
+# Subtest: V341 parses only JSON object request bodies
+ok 212 - V341 parses only JSON object request bodies
+  ---
+  duration_ms: 0.197808
+  type: 'test'
+  ...
+# Subtest: V341 validates a Supabase session through the Auth user endpoint
+ok 213 - V341 validates a Supabase session through the Auth user endpoint
+  ---
+  duration_ms: 1.156135
+  type: 'test'
+  ...
+# Subtest: V341 rejects absent or invalid Supabase bearer sessions
+ok 214 - V341 rejects absent or invalid Supabase bearer sessions
+  ---
+  duration_ms: 0.437129
+  type: 'test'
+  ...
+# Subtest: V341 generates unpredictable server-owned order identifiers
+ok 215 - V341 generates unpredictable server-owned order identifiers
+  ---
+  duration_ms: 0.603
+  type: 'test'
+  ...
+# Subtest: V341 verifies Midtrans SHA-512 signatures and rejects tampering
+ok 216 - V341 verifies Midtrans SHA-512 signatures and rejects tampering
+  ---
+  duration_ms: 0.746356
+  type: 'test'
+  ...
+# Subtest: V341 maps only confirmed settlement/capture to paid
+ok 217 - V341 maps only confirmed settlement/capture to paid
+  ---
+  duration_ms: 0.314245
+  type: 'test'
+  ...
+# Subtest: V341 selects the correct Midtrans status API environment
+ok 218 - V341 selects the correct Midtrans status API environment
+  ---
+  duration_ms: 0.083035
+  type: 'test'
+  ...
+# Subtest: V341 uses the same public Supabase anon key as the existing app auth module
+ok 219 - V341 uses the same public Supabase anon key as the existing app auth module
+  ---
+  duration_ms: 12.81398
+  type: 'test'
+  ...
+# Subtest: V341 frontend checkout sends a Supabase bearer token and plan id, never a client amount
+ok 220 - V341 frontend checkout sends a Supabase bearer token and plan id, never a client amount
+  ---
+  duration_ms: 5.645742
+  type: 'test'
+  ...
+# Subtest: V341 SQL locks down direct client writes and grants activation RPC only to service_role
+ok 221 - V341 SQL locks down direct client writes and grants activation RPC only to service_role
+  ---
+  duration_ms: 4.198416
+  type: 'test'
+  ...
+# Subtest: V341 API routes fail closed for unsupported methods and unauthenticated user data
+ok 222 - V341 API routes fail closed for unsupported methods and unauthenticated user data
+  ---
+  duration_ms: 8.118884
+  type: 'test'
+  ...
+# Subtest: V341 public catalog route returns only the configured active plan
+ok 223 - V341 public catalog route returns only the configured active plan
+  ---
+  duration_ms: 2.287513
+  type: 'test'
+  ...
+# Subtest: V342 catalog supports multiple active Lite and Pro monthly plans with server-owned metadata
+ok 224 - V342 catalog supports multiple active Lite and Pro monthly plans with server-owned metadata
+  ---
+  duration_ms: 0.482779
+  type: 'test'
+  ...
+# Subtest: V342 rejects duplicate plan ids, invalid periods, and invalid display order
+ok 225 - V342 rejects duplicate plan ids, invalid periods, and invalid display order
+  ---
+  duration_ms: 0.280343
+  type: 'test'
+  ...
+# Subtest: V342 SQL snapshots plan metadata and serializes entitlement activation per user
+ok 226 - V342 SQL snapshots plan metadata and serializes entitlement activation per user
+  ---
+  duration_ms: 3.581926
+  type: 'test'
+  ...
+# Subtest: V342 membership endpoint returns a normalized Free state when no active entitlement exists
+ok 227 - V342 membership endpoint returns a normalized Free state when no active entitlement exists
+  ---
+  duration_ms: 0.768891
+  type: 'test'
+  ...
+# Subtest: V342 checkout resolves the selected plan server-side and ignores client amount fields
+ok 228 - V342 checkout resolves the selected plan server-side and ignores client amount fields
+  ---
+  duration_ms: 0.978607
+  type: 'test'
+  ...
+# Subtest: document and body are viewport-locked; app-container cannot become the page scroller
+ok 229 - document and body are viewport-locked; app-container cannot become the page scroller
+  ---
+  duration_ms: 2.992296
+  type: 'test'
+  ...
+# Subtest: Android native Back enters system PiP before WebView exit when timer is active
+ok 230 - Android native Back enters system PiP before WebView exit when timer is active
+  ---
+  duration_ms: 8.720672
+  type: 'test'
+  ...
+# Subtest: native PiP state remains synced with JS timer state and PiP exit restores the WebView
+ok 231 - native PiP state remains synced with JS timer state and PiP exit restores the WebView
+  ---
+  duration_ms: 0.243187
+  type: 'test'
+  ...
+# Subtest: technical cache token is advanced while visible application version remains V125
+ok 232 - technical cache token is advanced while visible application version remains V125
+  ---
+  duration_ms: 0.148234
+  type: 'test'
+  ...
+# Subtest: native Android cannot open the browser video PiP surface
+ok 233 - native Android cannot open the browser video PiP surface
+  ---
+  duration_ms: 0.912357
+  type: 'test'
+  ...
+# Subtest: native PiP branch runs before browser mini/video/document PiP branches
+ok 234 - native PiP branch runs before browser mini/video/document PiP branches
+  ---
+  duration_ms: 0.450279
+  type: 'test'
+  ...
+# Subtest: native PiP branch closes browser PiP surfaces before entering Activity PiP
+ok 235 - native PiP branch closes browser PiP surfaces before entering Activity PiP
+  ---
+  duration_ms: 0.178729
+  type: 'test'
+  ...
+# Subtest: Capacitor plugin capability remains explicitly native-gated
+ok 236 - Capacitor plugin capability remains explicitly native-gated
+  ---
+  duration_ms: 0.190798
+  type: 'test'
+  ...
+# Subtest: Capacitor Share is an explicit Capacitor 8 runtime dependency
+ok 237 - Capacitor Share is an explicit Capacitor 8 runtime dependency
+  ---
+  duration_ms: 2.413352
+  type: 'test'
+  ...
+# Subtest: Android generated plugin registry and Gradle include Capacitor Share
+ok 238 - Android generated plugin registry and Gradle include Capacitor Share
+  ---
+  duration_ms: 0.494707
+  type: 'test'
+  ...
+# Subtest: Existing share UI uses the native plugin inside Capacitor and Web Share in browser
+ok 239 - Existing share UI uses the native plugin inside Capacitor and Web Share in browser
+  ---
+  duration_ms: 2.28554
+  type: 'test'
+  ...
+# Subtest: CapacitorHttp is exported from the bundled core and registered by NativeCapacitorService
+ok 240 - CapacitorHttp is exported from the bundled core and registered by NativeCapacitorService
+  ---
+  duration_ms: 0.864755
+  type: 'test'
+  ...
+# Subtest: translation client opts into native HTTP while browser requests retain fetch and API CORS stays enabled
+ok 241 - translation client opts into native HTTP while browser requests retain fetch and API CORS stays enabled
+  ---
+  duration_ms: 1.036765
+  type: 'test'
+  ...
+# Subtest: CapacitorHttp native JSON request reaches the native bridge and returns parsed API data
+ok 242 - CapacitorHttp native JSON request reaches the native bridge and returns parsed API data
+  ---
+  duration_ms: 8.414651
+  type: 'test'
+  ...
+# Subtest: notification store normalizes cache, safely renders text, and persists user actions
+ok 243 - notification store normalizes cache, safely renders text, and persists user actions
+  ---
+  duration_ms: 16.864385
+  type: 'test'
+  ...
+# Subtest: NotifSystem is a named ESM export and remains available as a compatibility bridge
+ok 244 - NotifSystem is a named ESM export and remains available as a compatibility bridge
+  ---
+  duration_ms: 0.996254
+  type: 'test'
+  ...
+# Subtest: application notification consumers use named imports rather than window.NotifSystem
+ok 245 - application notification consumers use named imports rather than window.NotifSystem
+  ---
+  duration_ms: 2.812245
+  type: 'test'
+  ...
+# Subtest: modal bootstrap registers callback hooks and keeps only a controlled legacy fallback
+ok 246 - modal bootstrap registers callback hooks and keeps only a controlled legacy fallback
+  ---
+  duration_ms: 0.338611
+  type: 'test'
+  ...
+# Subtest: application startup does not persist synthetic notification examples as real events
+ok 247 - application startup does not persist synthetic notification examples as real events
+  ---
+  duration_ms: 2.734267
+  type: 'test'
+  ...
+# Subtest: notification service owns the read-all and delete-all controls
+ok 248 - notification service owns the read-all and delete-all controls
+  ---
+  duration_ms: 2.290007
+  type: 'test'
+  ...
+# Subtest: OfflineI18n exports the canonical object via ESM and retains a compatibility bridge
+ok 249 - OfflineI18n exports the canonical object via ESM and retains a compatibility bridge
+  ---
+  duration_ms: 5.063152
+  type: 'test'
+  ...
+# Subtest: language engine and app core import OfflineI18n instead of consuming its mutable global
+ok 250 - language engine and app core import OfflineI18n instead of consuming its mutable global
+  ---
+  duration_ms: 2.644592
+  type: 'test'
+  ...
+# [OfflineWeatherCache] Gagal membaca cache cuaca. SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+#     at JSON.parse (<anonymous>)
+#     at readOfflineWeatherCache (file:///mnt/data/v342d-work/assets/js/core/offline-weather-cache.js:36:29)
+#     at TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/offline-weather-cache.test.mjs:26:22)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+# [OfflineWeatherCache] Gagal membaca preferensi mode luring. Error: storage disabled
+#     at Object.getItem (file:///mnt/data/v342d-work/tests/offline-weather-cache.test.mjs:36:27)
+#     at readForcedOfflinePreference (file:///mnt/data/v342d-work/assets/js/core/offline-weather-cache.js:15:49)
+#     at TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/offline-weather-cache.test.mjs:39:18)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# [OfflineWeatherCache] Gagal membaca nilai "saved_lat". Error: storage disabled
+#     at Object.getItem (file:///mnt/data/v342d-work/tests/offline-weather-cache.test.mjs:36:27)
+#     at readOfflineWeatherValue (file:///mnt/data/v342d-work/assets/js/core/offline-weather-cache.js:24:49)
+#     at TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/offline-weather-cache.test.mjs:40:18)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# [OfflineWeatherCache] Gagal membaca cache cuaca. Error: storage disabled
+#     at Object.getItem (file:///mnt/data/v342d-work/tests/offline-weather-cache.test.mjs:36:27)
+#     at readOfflineWeatherCache (file:///mnt/data/v342d-work/assets/js/core/offline-weather-cache.js:33:54)
+#     at TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/offline-weather-cache.test.mjs:41:22)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# [OfflineWeatherCache] Gagal menyimpan cache cuaca. Error: storage quota
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/offline-weather-cache.test.mjs:37:27)
+#     at writeOfflineWeatherCache (file:///mnt/data/v342d-work/assets/js/core/offline-weather-cache.js:52:17)
+#     at TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/offline-weather-cache.test.mjs:42:18)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: offline preference reads true only for the explicit stored value
+ok 251 - offline preference reads true only for the explicit stored value
+  ---
+  duration_ms: 0.865787
+  type: 'test'
+  ...
+# Subtest: offline weather cache rejects malformed JSON and non-object payloads safely
+ok 252 - offline weather cache rejects malformed JSON and non-object payloads safely
+  ---
+  duration_ms: 1.342196
+  type: 'test'
+  ...
+# Subtest: offline cache helper contains storage access failures
+ok 253 - offline cache helper contains storage access failures
+  ---
+  duration_ms: 0.669591
+  type: 'test'
+  ...
+# Subtest: location labels accept a single component and preserve additional separators
+ok 254 - location labels accept a single component and preserve additional separators
+  ---
+  duration_ms: 0.330509
+  type: 'test'
+  ...
+# Subtest: offline cache writes JSON through the injected storage boundary
+ok 255 - offline cache writes JSON through the injected storage boundary
+  ---
+  duration_ms: 0.179881
+  type: 'test'
+  ...
+# Subtest: V334 onboarding keeps exact one-page flex slides and measured pixel offsets
+ok 256 - V334 onboarding keeps exact one-page flex slides and measured pixel offsets
+  ---
+  duration_ms: 1.07378
+  type: 'test'
+  ...
+# Subtest: Onboarding illustration and copy shrink on short screens without changing swipe ownership
+ok 257 - Onboarding illustration and copy shrink on short screens without changing swipe ownership
+  ---
+  duration_ms: 0.359002
+  type: 'test'
+  ...
+# Subtest: V334 login/register card fills mobile viewport edge-to-edge and scrolls internally
+ok 258 - V334 login/register card fills mobile viewport edge-to-edge and scrolls internally
+  ---
+  duration_ms: 0.710011
+  type: 'test'
+  ...
+# Subtest: API client exposes stable route, invalid-response and network codes
+ok 259 - API client exposes stable route, invalid-response and network codes
+  ---
+  duration_ms: 0.126971
+  type: 'test'
+  ...
+# Subtest: V334 language picker explains free-provider limits and deployment/network errors
+ok 260 - V334 language picker explains free-provider limits and deployment/network errors
+  ---
+  duration_ms: 0.136977
+  type: 'test'
+  ...
+# Subtest: V334 advances only technical metadata while product version stays V125
+ok 261 - V334 advances only technical metadata while product version stays V125
+  ---
+  duration_ms: 0.120612
+  type: 'test'
+  ...
+# Subtest: online translation skips user-authored recipe records but translates static recipe editor UI
+ok 262 - online translation skips user-authored recipe records but translates static recipe editor UI
+  ---
+  duration_ms: 0.877725
+  type: 'test'
+  ...
+# Subtest: browser batches match MyMemory server limits and cache unique strings per target language
+ok 263 - browser batches match MyMemory server limits and cache unique strings per target language
+  ---
+  duration_ms: 0.232191
+  type: 'test'
+  ...
+# Subtest: free translation proxy requires a signed-in session and uses optional MyMemory contact email only server-side
+ok 264 - free translation proxy requires a signed-in session and uses optional MyMemory contact email only server-side
+  ---
+  duration_ms: 0.149856
+  type: 'test'
+  ...
+# Subtest: candidate language list is local; provider-pair support is checked only when selected
+ok 265 - candidate language list is local; provider-pair support is checked only when selected
+  ---
+  duration_ms: 0.246913
+  type: 'test'
+  ...
+# Subtest: cloud client retries only transient network/upstream errors and treats auth/quota/pair errors as terminal
+ok 266 - cloud client retries only transient network/upstream errors and treats auth/quota/pair errors as terminal
+  ---
+  duration_ms: 0.308466
+  type: 'test'
+  ...
+# Subtest: translation APIs allow Authorization in CORS preflight and the app still uses the ESM translation engine
+ok 267 - translation APIs allow Authorization in CORS preflight and the app still uses the ESM translation engine
+  ---
+  duration_ms: 0.164478
+  type: 'test'
+  ...
+# Subtest: page modal scroll region can shrink and scroll without pushing bottom actions out of view
+ok 268 - page modal scroll region can shrink and scroll without pushing bottom actions out of view
+  ---
+  duration_ms: 0.884525
+  type: 'test'
+  ...
+# Subtest: settings modal keeps its existing IDs and menu action targets
+ok 269 - settings modal keeps its existing IDs and menu action targets
+  ---
+  duration_ms: 0.508427
+  type: 'test'
+  ...
+# Subtest: normalizes valid customer name and email before forwarding to the gateway
+ok 270 - normalizes valid customer name and email before forwarding to the gateway
+  ---
+  duration_ms: 1.204818
+  type: 'test'
+  ...
+# Subtest: does not validate an oversized email and then truncate it into an invalid address
+ok 271 - does not validate an oversized email and then truncate it into an invalid address
+  ---
+  duration_ms: 0.201174
+  type: 'test'
+  ...
+# Subtest: omits invalid and empty emails but retains a usable customer name
+ok 272 - omits invalid and empty emails but retains a usable customer name
+  ---
+  duration_ms: 0.174163
+  type: 'test'
+  ...
+# Subtest: bounds customer name length and safely defaults malformed customer details
+ok 273 - bounds customer name length and safely defaults malformed customer details
+  ---
+  duration_ms: 0.8876
+  type: 'test'
+  ...
+# Subtest: native PDF adapter validates the output and returns only the base64 payload
+ok 274 - native PDF adapter validates the output and returns only the base64 payload
+  ---
+  duration_ms: 0.773758
+  type: 'test'
+  ...
+# Subtest: native PDF adapter gives an actionable error when the local bundle is unavailable
+ok 275 - native PDF adapter gives an actionable error when the local bundle is unavailable
+  ---
+  duration_ms: 0.683732
+  type: 'test'
+  ...
+# Subtest: app-core consumes PDF services rather than directly depending on canvas/jsPDF globals
+ok 276 - app-core consumes PDF services rather than directly depending on canvas/jsPDF globals
+  ---
+  duration_ms: 1.064106
+  type: 'test'
+  ...
+# Subtest: PDF service renders an element with the local worker and returns its canvas and document
+ok 277 - PDF service renders an element with the local worker and returns its canvas and document
+  ---
+  duration_ms: 1.459002
+  type: 'test'
+  ...
+# Subtest: invalid renderer input is rejected before calling the local PDF factory
+ok 278 - invalid renderer input is rejected before calling the local PDF factory
+  ---
+  duration_ms: 0.613456
+  type: 'test'
+  ...
+# Subtest: missing local PDF bundle is reported as a retryable capability error
+ok 279 - missing local PDF bundle is reported as a retryable capability error
+  ---
+  duration_ms: 1.002053
+  type: 'test'
+  ...
+# Subtest: saving the offline preference reconciles UI for both enable and disable transitions
+ok 280 - saving the offline preference reconciles UI for both enable and disable transitions
+  ---
+  duration_ms: 0.971286
+  type: 'test'
+  ...
+# Subtest: normalizes Indonesian product name donat to the existing donut recipe key
+ok 281 - normalizes Indonesian product name donat to the existing donut recipe key
+  ---
+  duration_ms: 1.965056
+  type: 'test'
+  ...
+# Subtest: normalizes UI IDs and hyphenated product aliases without changing HTML contracts
+ok 282 - normalizes UI IDs and hyphenated product aliases without changing HTML contracts
+  ---
+  duration_ms: 0.167583
+  type: 'test'
+  ...
+# Subtest: normalization is case-insensitive and tolerates nullish input
+ok 283 - normalization is case-insensitive and tolerates nullish input
+  ---
+  duration_ms: 0.159751
+  type: 'test'
+  ...
+# Subtest: unknown, empty, malformed, or inherited recipe entries use the fallback
+ok 284 - unknown, empty, malformed, or inherited recipe entries use the fallback
+  ---
+  duration_ms: 0.4442
+  type: 'test'
+  ...
+# Subtest: product instruction renderer uses the normalized resolver and text nodes, not innerHTML
+ok 285 - product instruction renderer uses the normalized resolver and text nodes, not innerHTML
+  ---
+  duration_ms: 0.934481
+  type: 'test'
+  ...
+# Subtest: product instruction helper stays precached for offline boot after V277 cache rollover
+ok 286 - product instruction helper stays precached for offline boot after V277 cache rollover
+  ---
+  duration_ms: 0.131178
+  type: 'test'
+  ...
+# [StorageService] LocalStorage SET gagal untuk "profile_name::retry-owner-a": Error: simulated write failure: profile_name::retry-owner-a
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/profile-account-isolation.test.mjs:12:41)
+#     at Object.setString (file:///mnt/data/v342d-work/assets/js/storage-service.js:176:22)
+#     at file:///mnt/data/v342d-work/assets/js/profile-service.js:104:53
+#     at Array.map (<anonymous>)
+#     at writeProfileForOwner (file:///mnt/data/v342d-work/assets/js/profile-service.js:104:16)
+#     at migrateLegacyProfileForOwner (file:///mnt/data/v342d-work/assets/js/profile-service.js:153:31)
+#     at async Object.setProfileOwner [as setOwner] (file:///mnt/data/v342d-work/assets/js/profile-service.js:170:16)
+#     at async TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/profile-account-isolation.test.mjs:77:18)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# [ProfileService] Migrasi profil legacy belum lengkap: [ 'profile_name::retry-owner-a' ]
+# Subtest: profile values stay isolated when two accounts use the same device
+ok 287 - profile values stay isolated when two accounts use the same device
+  ---
+  duration_ms: 2.720075
+  type: 'test'
+  ...
+# Subtest: legacy profile is claimed by one owner and never inherited by a second account
+ok 288 - legacy profile is claimed by one owner and never inherited by a second account
+  ---
+  duration_ms: 1.615147
+  type: 'test'
+  ...
+# Subtest: an interrupted legacy migration remains sealed to its original owner and can be retried
+ok 289 - an interrupted legacy migration remains sealed to its original owner and can be retried
+  ---
+  duration_ms: 1.527235
+  type: 'test'
+  ...
+# Subtest: clearing a scoped profile does not delete another owner’s legacy migration data
+ok 290 - clearing a scoped profile does not delete another owner’s legacy migration data
+  ---
+  duration_ms: 0.329888
+  type: 'test'
+  ...
+# Subtest: profile service fails closed when used without an authenticated owner
+ok 291 - profile service fails closed when used without an authenticated owner
+  ---
+  duration_ms: 0.540125
+  type: 'test'
+  ...
+# Subtest: profile cleanup confirms success only when each key removal returns true
+ok 292 - profile cleanup confirms success only when each key removal returns true
+  ---
+  duration_ms: 1.772264
+  type: 'test'
+  ...
+# Subtest: profile cleanup reports a false result and continues through remaining keys
+ok 293 - profile cleanup reports a false result and continues through remaining keys
+  ---
+  duration_ms: 0.959488
+  type: 'test'
+  ...
+# Subtest: profile cleanup captures rejected removals without aborting later keys
+ok 294 - profile cleanup captures rejected removals without aborting later keys
+  ---
+  duration_ms: 0.293423
+  type: 'test'
+  ...
+# Subtest: profile cleanup rejects non-true values as unconfirmed removal
+ok 295 - profile cleanup rejects non-true values as unconfirmed removal
+  ---
+  duration_ms: 0.160292
+  type: 'test'
+  ...
+# Subtest: invalid key entries are reported without calling the storage adapter
+ok 296 - invalid key entries are reported without calling the storage adapter
+  ---
+  duration_ms: 0.407275
+  type: 'test'
+  ...
+# Subtest: profile cleanup validates its inputs before starting storage work
+ok 297 - profile cleanup validates its inputs before starting storage work
+  ---
+  duration_ms: 0.483119
+  type: 'test'
+  ...
+# Subtest: profile cleanup routes proofing_logs through the canonical clearLogs operation
+ok 298 - profile cleanup routes proofing_logs through the canonical clearLogs operation
+  ---
+  duration_ms: 2.9488
+  type: 'test'
+  ...
+# Subtest: V310 detaches every independent overlay nested inside the profile container
+ok 299 - V310 detaches every independent overlay nested inside the profile container
+  ---
+  duration_ms: 0.883904
+  type: 'test'
+  ...
+# Subtest: V310 keeps profile-only data loading tied to the profile modal
+ok 300 - V310 keeps profile-only data loading tied to the profile modal
+  ---
+  duration_ms: 0.152911
+  type: 'test'
+  ...
+# Subtest: authenticated profile owner is established before app initialization
+ok 301 - authenticated profile owner is established before app initialization
+  ---
+  duration_ms: 0.965277
+  type: 'test'
+  ...
+# Subtest: signed-out lifecycle seals the prior profile namespace
+ok 302 - signed-out lifecycle seals the prior profile namespace
+  ---
+  duration_ms: 0.124759
+  type: 'test'
+  ...
+# Subtest: permanent account deletion seals profile owner even when auth sign-out fails
+ok 303 - permanent account deletion seals profile owner even when auth sign-out fails
+  ---
+  duration_ms: 0.094702
+  type: 'test'
+  ...
+# Subtest: late profile load/save results cannot overwrite the UI after owner changes
+ok 304 - late profile load/save results cannot overwrite the UI after owner changes
+  ---
+  duration_ms: 1.254724
+  type: 'test'
+  ...
+# [StorageService] LocalStorage SET gagal untuk "profile_email::profile-test-owner-two": Error: simulated write failure: profile_email::profile-test-owner-two
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/profile-persistence.test.mjs:13:41)
+#     at Object.setString (file:///mnt/data/v342d-work/assets/js/storage-service.js:176:22)
+#     at file:///mnt/data/v342d-work/assets/js/profile-service.js:104:53
+#     at Array.map (<anonymous>)
+#     at writeProfileForOwner (file:///mnt/data/v342d-work/assets/js/profile-service.js:104:16)
+#     at Object.saveStoredProfile [as save] (file:///mnt/data/v342d-work/assets/js/profile-service.js:214:46)
+#     at TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/profile-persistence.test.mjs:52:41)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: profile save succeeds only after every canonical and compatibility key is confirmed
+ok 305 - profile save succeeds only after every canonical and compatibility key is confirmed
+  ---
+  duration_ms: 2.752865
+  type: 'test'
+  ...
+# Subtest: profile save rejects partial persistence and identifies the failed key
+ok 306 - profile save rejects partial persistence and identifies the failed key
+  ---
+  duration_ms: 1.565002
+  type: 'test'
+  ...
+# Subtest: profile UI does not announce success or close the edit modal after persistence failure
+ok 307 - profile UI does not announce success or close the edit modal after persistence failure
+  ---
+  duration_ms: 0.257589
+  type: 'test'
+  ...
+# Subtest: valid numeric sensor readings preserve cold, ideal, and hot guidance
+ok 308 - valid numeric sensor readings preserve cold, ideal, and hot guidance
+  ---
+  duration_ms: 0.944986
+  type: 'test'
+  ...
+# Subtest: hostile or malformed sensor strings are rejected as data, not reflected as markup
+ok 309 - hostile or malformed sensor strings are rejected as data, not reflected as markup
+  ---
+  duration_ms: 0.786658
+  type: 'test'
+  ...
+# Subtest: impossible sensor readings fall back safely and invalid humidity does not trigger humidity guidance
+ok 310 - impossible sensor readings fall back safely and invalid humidity does not trigger humidity guidance
+  ---
+  duration_ms: 0.154253
+  type: 'test'
+  ...
+# Subtest: missing or non-finite readings return conservative plain-text guidance
+ok 311 - missing or non-finite readings return conservative plain-text guidance
+  ---
+  duration_ms: 0.501928
+  type: 'test'
+  ...
+# [StorageService] LocalStorage SET gagal untuk "proofing_logs": Error: simulated storage write failure
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/proofing-log-clear.test.mjs:12:42)
+#     at setString (file:///mnt/data/v342d-work/assets/js/storage-service.js:176:22)
+#     at Object.setJSON (file:///mnt/data/v342d-work/assets/js/storage-service.js:361:12)
+#     at file:///mnt/data/v342d-work/assets/js/proofing-service.js:156:52
+#     at async waitForActual (node:assert:566:5)
+#     at async Function.rejects (node:assert:687:25)
+#     at async TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/proofing-log-clear.test.mjs:37:5)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# [ProofingService] Mengabaikan kegagalan antrean log sebelum pembersihan: Error: Tidak ada backend penyimpanan yang berhasil menyimpan log proofing.
+#     at file:///mnt/data/v342d-work/assets/js/proofing-service.js:158:23
+#     at async waitForActual (node:assert:566:5)
+#     at async Function.rejects (node:assert:687:25)
+#     at async TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/proofing-log-clear.test.mjs:37:5)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# Subtest: clearLogs invalidates an append still waiting in the serialized queue
+ok 312 - clearLogs invalidates an append still waiting in the serialized queue
+  ---
+  duration_ms: 1.601046
+  type: 'test'
+  ...
+# Subtest: clearLogs discards an in-memory retry after a persistence failure
+ok 313 - clearLogs discards an in-memory retry after a persistence failure
+  ---
+  duration_ms: 2.102975
+  type: 'test'
+  ...
+# Subtest: append requested after clearLogs completes is persisted normally
+ok 314 - append requested after clearLogs completes is persisted normally
+  ---
+  duration_ms: 0.300804
+  type: 'test'
+  ...
+# Subtest: pending log retry does not duplicate an entry already committed to LocalStorage
+ok 315 - pending log retry does not duplicate an entry already committed to LocalStorage
+  ---
+  duration_ms: 1.013209
+  type: 'test'
+  ...
+# Subtest: distinct identical-looking events remain distinct while a repeated retry is idempotent
+ok 316 - distinct identical-looking events remain distinct while a repeated retry is idempotent
+  ---
+  duration_ms: 1.246973
+  type: 'test'
+  ...
+# Subtest: log deduplication preserves legacy entries and enforces the configured retention limit
+ok 317 - log deduplication preserves legacy entries and enforces the configured retention limit
+  ---
+  duration_ms: 0.808992
+  type: 'test'
+  ...
+# Subtest: append and lifecycle retry share the idempotent merge helper
+ok 318 - append and lifecycle retry share the idempotent merge helper
+  ---
+  duration_ms: 0.6825
+  type: 'test'
+  ...
+# Subtest: retains the existing singleton method and browser-global contract
+ok 319 - retains the existing singleton method and browser-global contract
+  ---
+  duration_ms: 1.47086
+  type: 'test'
+  ...
+# Subtest: rejects invalid durations without touching the native plugin
+ok 320 - rejects invalid durations without touching the native plugin
+  ---
+  duration_ms: 0.300614
+  type: 'test'
+  ...
+# Subtest: permission denial clears the old notification with canonical ID 1
+ok 321 - permission denial clears the old notification with canonical ID 1
+  ---
+  duration_ms: 1.469808
+  type: 'test'
+  ...
+# Subtest: permission denial retries old-alarm cleanup once after a transient cancel failure
+ok 322 - permission denial retries old-alarm cleanup once after a transient cancel failure
+  ---
+  duration_ms: 0.370429
+  type: 'test'
+  ...
+# Subtest: permission denial reports when stale-alarm cleanup still fails after retry
+ok 323 - permission denial reports when stale-alarm cleanup still fails after retry
+  ---
+  duration_ms: 0.430209
+  type: 'test'
+  ...
+# Subtest: schedules using an absolute deadline and preserves caller notification content
+ok 324 - schedules using an absolute deadline and preserves caller notification content
+  ---
+  duration_ms: 0.326793
+  type: 'test'
+  ...
+# Subtest: reuses an already-pending alarm when its ISO deadline matches
+ok 325 - reuses an already-pending alarm when its ISO deadline matches
+  ---
+  duration_ms: 0.787579
+  type: 'test'
+  ...
+# Subtest: cleans up a potentially partial native schedule after bridge rejection
+ok 326 - cleans up a potentially partial native schedule after bridge rejection
+  ---
+  duration_ms: 0.43753
+  type: 'test'
+  ...
+# Subtest: handles non-native environments without attempting native notification operations
+ok 327 - handles non-native environments without attempting native notification operations
+  ---
+  duration_ms: 0.464952
+  type: 'test'
+  ...
+# Subtest: contains synchronous native plugin discovery failures
+ok 328 - contains synchronous native plugin discovery failures
+  ---
+  duration_ms: 0.647888
+  type: 'test'
+  ...
+# Subtest: falls back to scheduling when pending-notification inspection fails
+ok 329 - falls back to scheduling when pending-notification inspection fails
+  ---
+  duration_ms: 0.279652
+  type: 'test'
+  ...
+# Subtest: does not schedule a notification for an expired absolute deadline
+ok 330 - does not schedule a notification for an expired absolute deadline
+  ---
+  duration_ms: 0.163016
+  type: 'test'
+  ...
+# Subtest: cancel supersedes a schedule already crossing the native schedule boundary
+ok 331 - cancel supersedes a schedule already crossing the native schedule boundary
+  ---
+  duration_ms: 0.31146
+  type: 'test'
+  ...
+# Subtest: cancel supersedes a request while pending-alarm inspection is awaiting the plugin
+ok 332 - cancel supersedes a request while pending-alarm inspection is awaiting the plugin
+  ---
+  duration_ms: 0.229537
+  type: 'test'
+  ...
+# Subtest: schedule requests supersede each other before an obsolete request can schedule
+ok 333 - schedule requests supersede each other before an obsolete request can schedule
+  ---
+  duration_ms: 0.334475
+  type: 'test'
+  ...
+# Subtest: retries cancellation once before replacing a potentially stale native alarm
+ok 334 - retries cancellation once before replacing a potentially stale native alarm
+  ---
+  duration_ms: 0.303468
+  type: 'test'
+  ...
+# Subtest: public cancel retries one transient native failure and reports success when recovered
+ok 335 - public cancel retries one transient native failure and reports success when recovered
+  ---
+  duration_ms: 0.200533
+  type: 'test'
+  ...
+# Subtest: public cancel reports failure after two native cancellation failures
+ok 336 - public cancel reports failure after two native cancellation failures
+  ---
+  duration_ms: 0.192711
+  type: 'test'
+  ...
+# Subtest: does not retry a failed cancellation after a newer request supersedes the generation
+ok 337 - does not retry a failed cancellation after a newer request supersedes the generation
+  ---
+  duration_ms: 0.629079
+  type: 'test'
+  ...
+# Subtest: returns an explicit schedule error when both cancellation attempts fail
+ok 338 - returns an explicit schedule error when both cancellation attempts fail
+  ---
+  duration_ms: 1.362316
+  type: 'test'
+  ...
+# Subtest: skips permissions for a superseded schedule waiting behind in-flight work
+ok 339 - skips permissions for a superseded schedule waiting behind in-flight work
+  ---
+  duration_ms: 0.393524
+  type: 'test'
+  ...
+# Subtest: does not request notification permission after a newer request supersedes a pending permission check
+ok 340 - does not request notification permission after a newer request supersedes a pending permission check
+  ---
+  duration_ms: 0.80857
+  type: 'test'
+  ...
+# Subtest: invalid scheduleSeconds input does not supersede a valid schedule already in progress
+ok 341 - invalid scheduleSeconds input does not supersede a valid schedule already in progress
+  ---
+  duration_ms: 0.358331
+  type: 'test'
+  ...
+# Subtest: ProofingService exposes the frozen named ESM export without publishing a window alias
+ok 342 - ProofingService exposes the frozen named ESM export without publishing a window alias
+  ---
+  duration_ms: 0.804815
+  type: 'test'
+  ...
+# Subtest: app-core uses the required ProofingService ESM binding directly for cleanup and lifecycle flush
+ok 343 - app-core uses the required ProofingService ESM binding directly for cleanup and lifecycle flush
+  ---
+  duration_ms: 0.363229
+  type: 'test'
+  ...
+# Subtest: positive sub-second initialSeconds never normalizes to zero
+ok 344 - positive sub-second initialSeconds never normalizes to zero
+  ---
+  duration_ms: 1.098619
+  type: 'test'
+  ...
+# Subtest: clearState reports confirmed browser removal and clears the persisted timer key
+ok 345 - clearState reports confirmed browser removal and clears the persisted timer key
+  ---
+  duration_ms: 0.370439
+  type: 'test'
+  ...
+# Subtest: rejects invalid duration without creating a running timer
+ok 346 - rejects invalid duration without creating a running timer
+  ---
+  duration_ms: 2.202003
+  type: 'test'
+  ...
+# Subtest: uses a valid restored deadline as the canonical target
+ok 347 - uses a valid restored deadline as the canonical target
+  ---
+  duration_ms: 0.588599
+  type: 'test'
+  ...
+# Subtest: normalizes a missing restored deadline from the requested duration
+ok 348 - normalizes a missing restored deadline from the requested duration
+  ---
+  duration_ms: 0.127172
+  type: 'test'
+  ...
+# Subtest: rejects an expired restored target unless overtime is explicitly enabled
+ok 349 - rejects an expired restored target unless overtime is explicitly enabled
+  ---
+  duration_ms: 0.322346
+  type: 'test'
+  ...
+# Subtest: rejecting an expired restore does not disturb an already-running timer
+ok 350 - rejecting an expired restore does not disturb an already-running timer
+  ---
+  duration_ms: 0.29835
+  type: 'test'
+  ...
+# Subtest: a synchronous onTick callback may stop the timer without leaking an interval
+ok 351 - a synchronous onTick callback may stop the timer without leaking an interval
+  ---
+  duration_ms: 0.157978
+  type: 'test'
+  ...
+# Subtest: a throwing onTick callback clears its timer before propagating the error
+ok 352 - a throwing onTick callback clears its timer before propagating the error
+  ---
+  duration_ms: 0.854089
+  type: 'test'
+  ...
+# Subtest: a throwing onOvertime callback clears an expired timer before propagating the error
+ok 353 - a throwing onOvertime callback clears an expired timer before propagating the error
+  ---
+  duration_ms: 0.429739
+  type: 'test'
+  ...
+# Subtest: a failed callback from an older generation does not stop a replacement timer
+ok 354 - a failed callback from an older generation does not stop a replacement timer
+  ---
+  duration_ms: 0.624142
+  type: 'test'
+  ...
+# Subtest: stopIntervalOnly freezes ticks but preserves the absolute session deadline
+ok 355 - stopIntervalOnly freezes ticks but preserves the absolute session deadline
+  ---
+  duration_ms: 1101.395584
+  type: 'test'
+  ...
+# Subtest: retains and clears an interval whose runtime handle is zero
+ok 356 - retains and clears an interval whose runtime handle is zero
+  ---
+  duration_ms: 1.209426
+  type: 'test'
+  ...
+# Subtest: rejects a Symbol duration safely and preserves an already-running timer
+ok 357 - rejects a Symbol duration safely and preserves an already-running timer
+  ---
+  duration_ms: 0.272341
+  type: 'test'
+  ...
+# Subtest: treats an uncoercible restored deadline as absent and starts from duration
+ok 358 - treats an uncoercible restored deadline as absent and starts from duration
+  ---
+  duration_ms: 0.145079
+  type: 'test'
+  ...
+# Subtest: V326 uses video Picture-in-Picture fallback for mobile PWA browsers
+ok 359 - V326 uses video Picture-in-Picture fallback for mobile PWA browsers
+  ---
+  duration_ms: 3.59061
+  type: 'test'
+  ...
+# Subtest: V326 removes beforeunload confirmation and keeps pagehide persistence
+ok 360 - V326 removes beforeunload confirmation and keeps pagehide persistence
+  ---
+  duration_ms: 3.460744
+  type: 'test'
+  ...
+# Subtest: V326 traps PWA Back only while the countdown is active
+ok 361 - V326 traps PWA Back only while the countdown is active
+  ---
+  duration_ms: 3.82316
+  type: 'test'
+  ...
+# Subtest: V326 portals article detail overlay to the viewport root
+ok 362 - V326 portals article detail overlay to the viewport root
+  ---
+  duration_ms: 3.154541
+  type: 'test'
+  ...
+# Subtest: V326 supports onboarding preview without erasing auth session flags
+ok 363 - V326 supports onboarding preview without erasing auth session flags
+  ---
+  duration_ms: 0.363568
+  type: 'test'
+  ...
+# Subtest: V326 native PiP tracks timer activity and prepares Android auto-enter
+ok 364 - V326 native PiP tracks timer activity and prepares Android auto-enter
+  ---
+  duration_ms: 0.283659
+  type: 'test'
+  ...
+# Subtest: every local JS module used by the runtime entrypoint is precached for first offline launch
+ok 365 - every local JS module used by the runtime entrypoint is precached for first offline launch
+  ---
+  duration_ms: 8.566209
+  type: 'test'
+  ...
+# Subtest: serialized notification queue is part of install-time precache
+ok 366 - serialized notification queue is part of install-time precache
+  ---
+  duration_ms: 0.164097
+  type: 'test'
+  ...
+# Subtest: every local path declared in the Service Worker precache exists in the release package
+ok 367 - every local path declared in the Service Worker precache exists in the release package
+  ---
+  duration_ms: 0.663691
+  type: 'test'
+  ...
+# Subtest: top recipe close button is handled by the single delegated data-action owner
+ok 368 - top recipe close button is handled by the single delegated data-action owner
+  ---
+  duration_ms: 1.168714
+  type: 'test'
+  ...
+# Subtest: both new-recipe entry points and switching to an existing recipe clear old AI output
+ok 369 - both new-recipe entry points and switching to an existing recipe clear old AI output
+  ---
+  duration_ms: 0.3441
+  type: 'test'
+  ...
+# Subtest: recipe AI reset hides and empties the old report and restores the live-analysis button
+ok 370 - recipe AI reset hides and empties the old report and restores the live-analysis button
+  ---
+  duration_ms: 0.309467
+  type: 'test'
+  ...
+# Subtest: late AI responses from an earlier recipe cannot repopulate the newly reset editor
+ok 371 - late AI responses from an earlier recipe cannot repopulate the newly reset editor
+  ---
+  duration_ms: 0.212821
+  type: 'test'
+  ...
+# Subtest: weather-driven accent is scoped to location header and no longer recolors global bakery UI
+ok 372 - weather-driven accent is scoped to location header and no longer recolors global bakery UI
+  ---
+  duration_ms: 0.405883
+  type: 'test'
+  ...
+# Subtest: technical cache boundary advances while visible product version remains V125
+ok 373 - technical cache boundary advances while visible product version remains V125
+  ---
+  duration_ms: 0.177598
+  type: 'test'
+  ...
+# Subtest: recipe copy commits only the durable list and uses the stable AuthService client
+ok 374 - recipe copy commits only the durable list and uses the stable AuthService client
+  ---
+  duration_ms: 1.696951
+  type: 'test'
+  ...
+# [NotifSystem] v2.0.0 aktif — satu sumber data notifikasi.
+# [StorageService] LocalStorage SET gagal untuk "premium_saved_recipes::recipe-copy-owner": Error: quota exceeded
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/recipe-copy-transaction.test.mjs:42:27)
+#     at Object.setString (file:///mnt/data/v342d-work/assets/js/storage-service.js:176:22)
+#     at saveRecipeListInternal (file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:180:40)
+#     at file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:844:33
+# [StorageService] LocalStorage SET gagal untuk "premium_saved_recipes::recipe-copy-owner": Error: quota exceeded
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/recipe-copy-transaction.test.mjs:42:27)
+#     at Object.setString (file:///mnt/data/v342d-work/assets/js/storage-service.js:176:22)
+#     at saveRecipeListInternal (file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:180:40)
+#     at file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:844:33
+# [StorageService] LocalStorage SET gagal untuk "premium_saved_recipes::recipe-copy-owner": Error: quota exceeded
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/recipe-copy-transaction.test.mjs:42:27)
+#     at Object.setString (file:///mnt/data/v342d-work/assets/js/storage-service.js:176:22)
+#     at saveRecipeListInternal (file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:195:47)
+#     at async file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:844:27
+# [StorageService] LocalStorage SET gagal untuk "premium_saved_recipes::recipe-copy-owner": Error: quota exceeded
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/recipe-copy-transaction.test.mjs:42:27)
+#     at Object.setString (file:///mnt/data/v342d-work/assets/js/storage-service.js:176:22)
+#     at saveRecipeListInternal (file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:180:40)
+#     at file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:810:16
+#     at file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:55:20
+# [StorageService] LocalStorage SET gagal untuk "premium_saved_recipes::recipe-copy-owner": Error: quota exceeded
+#     at Object.setItem (file:///mnt/data/v342d-work/tests/recipe-copy-transaction.test.mjs:42:27)
+#     at Object.setString (file:///mnt/data/v342d-work/assets/js/storage-service.js:176:22)
+#     at saveRecipeListInternal (file:///mnt/data/v342d-work/assets/js/recipe-storage-service.js?test=v274-recipe-copy:195:47)
+# Subtest: RecipeStorageService duplicate transaction preserves existing data on persistence failure
+ok 375 - RecipeStorageService duplicate transaction preserves existing data on persistence failure
+  ---
+  duration_ms: 18.469036
+  type: 'test'
+  ...
+# [NotifSystem] v2.0.0 aktif — satu sumber data notifikasi.
+# Subtest: stale delete captured for owner A cannot delete a recipe after owner B becomes active
+ok 376 - stale delete captured for owner A cannot delete a recipe after owner B becomes active
+  ---
+  duration_ms: 13.398152
+  type: 'test'
+  ...
+# Subtest: recipe detail has a visible, accessible top-right close control wired to the existing close handler
+ok 377 - recipe detail has a visible, accessible top-right close control wired to the existing close handler
+  ---
+  duration_ms: 1.363999
+  type: 'test'
+  ...
+# Subtest: recipe detail header adapts to narrow viewports and safe areas without changing existing selectors
+ok 378 - recipe detail header adapts to narrow viewports and safe areas without changing existing selectors
+  ---
+  duration_ms: 0.265701
+  type: 'test'
+  ...
+# Subtest: recipe overlay paints above the top navigation so its header and close control are not covered
+ok 379 - recipe overlay paints above the top navigation so its header and close control are not covered
+  ---
+  duration_ms: 0.277679
+  type: 'test'
+  ...
+# Subtest: V312 refreshes the runtime module URL and Service Worker cache
+ok 380 - V312 refreshes the runtime module URL and Service Worker cache
+  ---
+  duration_ms: 0.213111
+  type: 'test'
+  ...
+# Subtest: location header reads actual nested scroll targets and supports wheel/touch fallback
+ok 381 - location header reads actual nested scroll targets and supports wheel/touch fallback
+  ---
+  duration_ms: 1.368596
+  type: 'test'
+  ...
+# Subtest: saved recipe Print uses the Premium PDF pipeline instead of a reduced print popup
+ok 382 - saved recipe Print uses the Premium PDF pipeline instead of a reduced print popup
+  ---
+  duration_ms: 0.540346
+  type: 'test'
+  ...
+# Subtest: Premium exporter returns a Promise so temporary saved-recipe state is restored after rendering
+ok 383 - Premium exporter returns a Promise so temporary saved-recipe state is restored after rendering
+  ---
+  duration_ms: 0.299652
+  type: 'test'
+  ...
+# Subtest: RecipePhotoService remains a named ESM export without an unused object global
+ok 384 - RecipePhotoService remains a named ESM export without an unused object global
+  ---
+  duration_ms: 1.050295
+  type: 'test'
+  ...
+# Subtest: RecipePhotoPersistenceService remains a named ESM export without a window alias
+ok 385 - RecipePhotoPersistenceService remains a named ESM export without a window alias
+  ---
+  duration_ms: 1.012108
+  type: 'test'
+  ...
+# Subtest: photo service consumers bind dependencies through named ESM imports
+ok 386 - photo service consumers bind dependencies through named ESM imports
+  ---
+  duration_ms: 3.270848
+  type: 'test'
+  ...
+# Subtest: release verifier prevents unused photo service aliases from returning
+ok 387 - release verifier prevents unused photo service aliases from returning
+  ---
+  duration_ms: 0.25169
+  type: 'test'
+  ...
+# Subtest: a successful user upload increments the restore-invalidating mutation epoch
+ok 388 - a successful user upload increments the restore-invalidating mutation epoch
+  ---
+  duration_ms: 2.989373
+  type: 'test'
+  ...
+# Subtest: uploading into a later slot preserves earlier photos and physical slot positions
+ok 389 - uploading into a later slot preserves earlier photos and physical slot positions
+  ---
+  duration_ms: 0.416168
+  type: 'test'
+  ...
+# Subtest: empty or invalid upload selections do not create false photo mutations
+ok 390 - empty or invalid upload selections do not create false photo mutations
+  ---
+  duration_ms: 0.164468
+  type: 'test'
+  ...
+# Subtest: photo restore and slot reads remain safe when the global File constructor is unavailable
+ok 391 - photo restore and slot reads remain safe when the global File constructor is unavailable
+  ---
+  duration_ms: 0.945407
+  type: 'test'
+  ...
+# Subtest: photo mutation state is held in the ES6 module, not mutable window globals
+ok 392 - photo mutation state is held in the ES6 module, not mutable window globals
+  ---
+  duration_ms: 0.113301
+  type: 'test'
+  ...
+# Subtest: save and restore preserve sparse slot positions, names, types, and bytes
+ok 393 - save and restore preserve sparse slot positions, names, types, and bytes
+  ---
+  duration_ms: 14.755544
+  type: 'test'
+  ...
+# Subtest: replace removes stale slots but never changes a different recipe owner scope
+ok 394 - replace removes stale slots but never changes a different recipe owner scope
+  ---
+  duration_ms: 57.205676
+  type: 'test'
+  ...
+# Subtest: delete removes all photos for only the selected owner and recipe
+ok 395 - delete removes all photos for only the selected owner and recipe
+  ---
+  duration_ms: 47.646775
+  type: 'test'
+  ...
+# Subtest: missing owner or recipe identifiers do not create or expose records
+ok 396 - missing owner or recipe identifiers do not create or expose records
+  ---
+  duration_ms: 0.469769
+  type: 'test'
+  ...
+# Subtest: permanent account cleanup removes every recipe photo for that owner only
+ok 397 - permanent account cleanup removes every recipe photo for that owner only
+  ---
+  duration_ms: 86.098857
+  type: 'test'
+  ...
+# Subtest: permanent account cleanup rejects a missing owner instead of deleting globally
+ok 398 - permanent account cleanup rejects a missing owner instead of deleting globally
+  ---
+  duration_ms: 23.323258
+  type: 'test'
+  ...
+# Subtest: IndexedDB unavailability rejects cleanly and the serialized queue recovers
+ok 399 - IndexedDB unavailability rejects cleanly and the serialized queue recovers
+  ---
+  duration_ms: 26.273446
+  type: 'test'
+  ...
+# Subtest: transaction setup failure closes its database handle and the queue recovers
+ok 400 - transaction setup failure closes its database handle and the queue recovers
+  ---
+  duration_ms: 27.541426
+  type: 'test'
+  ...
+# Subtest: composite IDs cannot collide or delete legacy records from another owner scope
+ok 401 - composite IDs cannot collide or delete legacy records from another owner scope
+  ---
+  duration_ms: 174.053244
+  type: 'test'
+  ...
+# [RecipePhotoPersistence] Payload foto tidak valid; foto lama dipertahankan.
+# [RecipePhotoPersistence] Payload foto tidak valid; foto lama dipertahankan.
+# [RecipePhotoPersistence] Payload foto tidak valid; foto lama dipertahankan.
+# [RecipePhotoPersistence] Payload foto tidak valid; foto lama dipertahankan.
+# [RecipePhotoPersistence] Daftar slot foto tidak valid; foto lama dipertahankan.
+# [RecipePhotoPersistence] Daftar slot foto tidak valid; foto lama dipertahankan.
+# [RecipePhotoPersistence] Daftar slot foto tidak valid; foto lama dipertahankan.
+# [RecipePhotoPersistence] Daftar slot foto tidak valid; foto lama dipertahankan.
+# Subtest: malformed non-Blob slots fail closed and preserve previously saved photos
+ok 402 - malformed non-Blob slots fail closed and preserve previously saved photos
+  ---
+  duration_ms: 145.672677
+  type: 'test'
+  ...
+# [RecipePhotoPersistence] Blob tidak tersedia; foto lama dipertahankan.
+# Subtest: missing Blob support rejects photo replacement before clearing previously saved photos
+ok 403 - missing Blob support rejects photo replacement before clearing previously saved photos
+  ---
+  duration_ms: 34.277674
+  type: 'test'
+  ...
+# Subtest: photo restore degrades safely to empty slots when Blob constructor is unavailable
+ok 404 - photo restore degrades safely to empty slots when Blob constructor is unavailable
+  ---
+  duration_ms: 35.175159
+  type: 'test'
+  ...
+# Subtest: blocked IndexedDB open rejects promptly, closes a late connection, and queue recovers
+ok 405 - blocked IndexedDB open rejects promptly, closes a late connection, and queue recovers
+  ---
+  duration_ms: 64.80712
+  type: 'test'
+  ...
+# Subtest: database connection closes on versionchange and the persistence queue recovers
+ok 406 - database connection closes on versionchange and the persistence queue recovers
+  ---
+  duration_ms: 41.704986
+  type: 'test'
+  ...
+# Subtest: synchronous objectStore/openCursor setup failures close connections and the persistence queue recovers
+ok 407 - synchronous objectStore/openCursor setup failures close connections and the persistence queue recovers
+  ---
+  duration_ms: 92.286092
+  type: 'test'
+  ...
+# Subtest: release IndexedDB lifecycle handling is present and documented in the service
+ok 408 - release IndexedDB lifecycle handling is present and documented in the service
+  ---
+  duration_ms: 2.216256
+  type: 'test'
+  ...
+# Subtest: synchronous cursor continuation failure aborts the transaction, closes the DB, and recovers the queue
+ok 409 - synchronous cursor continuation failure aborts the transaction, closes the DB, and recovers the queue
+  ---
+  duration_ms: 92.576009
+  type: 'test'
+  ...
+# Subtest: global recipe photo preview is detached from hidden profile modal
+ok 410 - global recipe photo preview is detached from hidden profile modal
+  ---
+  duration_ms: 0.807189
+  type: 'test'
+  ...
+# Subtest: recipe method tabs use block layout so ingredient panel does not become a flex container
+ok 411 - recipe method tabs use block layout so ingredient panel does not become a flex container
+  ---
+  duration_ms: 1.085239
+  type: 'test'
+  ...
+# Subtest: uploaded recipe photo slots route existing images to preview instead of reopening upload
+ok 412 - uploaded recipe photo slots route existing images to preview instead of reopening upload
+  ---
+  duration_ms: 0.148534
+  type: 'test'
+  ...
+# Subtest: photo restore may apply only while owner and generations remain unchanged
+ok 413 - photo restore may apply only while owner and generations remain unchanged
+  ---
+  duration_ms: 0.759967
+  type: 'test'
+  ...
+# Subtest: late photos from owner A are rejected after the active account changes to owner B
+ok 414 - late photos from owner A are rejected after the active account changes to owner B
+  ---
+  duration_ms: 1.131959
+  type: 'test'
+  ...
+# Subtest: photo restore fails closed when either owner identity is absent
+ok 415 - photo restore fails closed when either owner identity is absent
+  ---
+  duration_ms: 0.181344
+  type: 'test'
+  ...
+# Subtest: late photo restore is rejected after recipe navigation invalidates its epoch
+ok 416 - late photo restore is rejected after recipe navigation invalidates its epoch
+  ---
+  duration_ms: 0.164188
+  type: 'test'
+  ...
+# Subtest: late photo restore is rejected after a user photo mutation
+ok 417 - late photo restore is rejected after a user photo mutation
+  ---
+  duration_ms: 0.146331
+  type: 'test'
+  ...
+# Subtest: app-core revalidates the authenticated owner after IndexedDB load and before rendering photos
+ok 418 - app-core revalidates the authenticated owner after IndexedDB load and before rendering photos
+  ---
+  duration_ms: 2.356377
+  type: 'test'
+  ...
+# Subtest: new recipes may persist the current photo slots without a prior restore
+ok 419 - new recipes may persist the current photo slots without a prior restore
+  ---
+  duration_ms: 2.352672
+  type: 'test'
+  ...
+# Subtest: editing a recipe may replace photos after a successful restore for the same owner
+ok 420 - editing a recipe may replace photos after a successful restore for the same owner
+  ---
+  duration_ms: 0.345786
+  type: 'test'
+  ...
+# Subtest: failed photo restore preserves persisted photos when the user has not changed slots
+ok 421 - failed photo restore preserves persisted photos when the user has not changed slots
+  ---
+  duration_ms: 0.121774
+  type: 'test'
+  ...
+# Subtest: explicit user photo mutation after a failed restore permits intentional replacement
+ok 422 - explicit user photo mutation after a failed restore permits intentional replacement
+  ---
+  duration_ms: 0.150818
+  type: 'test'
+  ...
+# Subtest: photo restore owner mismatch blocks writes unless the current editor has explicitly changed photos
+ok 423 - photo restore owner mismatch blocks writes unless the current editor has explicitly changed photos
+  ---
+  duration_ms: 0.225751
+  type: 'test'
+  ...
+# Subtest: missing restore result and mismatched recipe ID fail closed for existing recipes
+ok 424 - missing restore result and mismatched recipe ID fail closed for existing recipes
+  ---
+  duration_ms: 0.101904
+  type: 'test'
+  ...
+# Subtest: app-core checks the save policy before replacing IndexedDB photo slots
+ok 425 - app-core checks the save policy before replacing IndexedDB photo slots
+  ---
+  duration_ms: 2.733175
+  type: 'test'
+  ...
+# Subtest: realtime recipe event is accepted only when event, auth, and local namespace owner match
+ok 426 - realtime recipe event is accepted only when event, auth, and local namespace owner match
+  ---
+  duration_ms: 0.651103
+  type: 'test'
+  ...
+# Subtest: realtime recipe guard rejects unauthenticated, ownerless, or mismatched sessions
+ok 427 - realtime recipe guard rejects unauthenticated, ownerless, or mismatched sessions
+  ---
+  duration_ms: 0.123967
+  type: 'test'
+  ...
+# Subtest: realtime handler captures local namespace before auth await and revalidates after reads and writes
+ok 428 - realtime handler captures local namespace before auth await and revalidates after reads and writes
+  ---
+  duration_ms: 3.200442
+  type: 'test'
+  ...
+# Subtest: recipe save lock is released when the cached-session owner lookup rejects before local persistence
+ok 429 - recipe save lock is released when the cached-session owner lookup rejects before local persistence
+  ---
+  duration_ms: 1.414054
+  type: 'test'
+  ...
+# Subtest: recipe-form parsing and recipe-domain construction are inside the same try/finally guard
+ok 430 - recipe-form parsing and recipe-domain construction are inside the same try/finally guard
+  ---
+  duration_ms: 0.289847
+  type: 'test'
+  ...
+# Subtest: recipe save persists locally through the owner-pinned transaction before optional cloud sync
+ok 431 - recipe save persists locally through the owner-pinned transaction before optional cloud sync
+  ---
+  duration_ms: 0.189235
+  type: 'test'
+  ...
+# Subtest: rejected cached-session lookup is caught and releases the recipe-save lock
+ok 432 - rejected cached-session lookup is caught and releases the recipe-save lock
+  ---
+  duration_ms: 1.776512
+  type: 'test'
+  ...
+# Subtest: synchronous transaction-context capture failure also releases the recipe-save lock
+ok 433 - synchronous transaction-context capture failure also releases the recipe-save lock
+  ---
+  duration_ms: 0.726877
+  type: 'test'
+  ...
+# Subtest: recipe construction failure before storage also releases the recipe-save lock
+ok 434 - recipe construction failure before storage also releases the recipe-save lock
+  ---
+  duration_ms: 0.54972
+  type: 'test'
+  ...
+# Subtest: recipe save is allowed only when account, editor, and photo generations match
+ok 435 - recipe save is allowed only when account, editor, and photo generations match
+  ---
+  duration_ms: 0.878866
+  type: 'test'
+  ...
+# Subtest: recipe save rejects missing or mismatched authenticated/local owners
+ok 436 - recipe save rejects missing or mismatched authenticated/local owners
+  ---
+  duration_ms: 1.024647
+  type: 'test'
+  ...
+# Subtest: late save is rejected after editor navigation, recipe selection, or photo mutation
+ok 437 - late save is rejected after editor navigation, recipe selection, or photo mutation
+  ---
+  duration_ms: 0.139671
+  type: 'test'
+  ...
+# Subtest: save captures context before awaits and pins owner with a precommit validator
+ok 438 - save captures context before awaits and pins owner with a precommit validator
+  ---
+  duration_ms: 2.783592
+  type: 'test'
+  ...
+# Subtest: local recipe save uses cached session identity and stays offline-capable
+ok 439 - local recipe save uses cached session identity and stays offline-capable
+  ---
+  duration_ms: 2.615187
+  type: 'test'
+  ...
+# Subtest: cancelled new-recipe confirmation does not invalidate the active editor epoch
+ok 440 - cancelled new-recipe confirmation does not invalidate the active editor epoch
+  ---
+  duration_ms: 1.931606
+  type: 'test'
+  ...
+# Subtest: production-step state has one canonical module binding and a legacy accessor bridge
+ok 441 - production-step state has one canonical module binding and a legacy accessor bridge
+  ---
+  duration_ms: 3.239871
+  type: 'test'
+  ...
+# Subtest: production-step compatibility bridge handles non-configurable legacy descriptors without crashing startup
+ok 442 - production-step compatibility bridge handles non-configurable legacy descriptors without crashing startup
+  ---
+  duration_ms: 2.805685
+  type: 'test'
+  ...
+# [NotifSystem] v2.0.0 aktif — satu sumber data notifikasi.
+# Subtest: precommit validator receives the captured owner and rejects before local mutation
+ok 443 - precommit validator receives the captured owner and rejects before local mutation
+  ---
+  duration_ms: 3.23257
+  type: 'test'
+  ...
+# Subtest: failed precommit guard does not poison the FIFO and a valid subsequent write persists
+ok 444 - failed precommit guard does not poison the FIFO and a valid subsequent write persists
+  ---
+  duration_ms: 0.651103
+  type: 'test'
+  ...
+# Subtest: owner change already ahead in the FIFO rejects a pinned stale save
+ok 445 - owner change already ahead in the FIFO rejects a pinned stale save
+  ---
+  duration_ms: 0.231449
+  type: 'test'
+  ...
+# Subtest: cleanup restores globals for other test environments
+ok 446 - cleanup restores globals for other test environments
+  ---
+  duration_ms: 0.188064
+  type: 'test'
+  ...
+# Subtest: recipe detail close returns to recipe master view before closing the recipe modal
+ok 447 - recipe detail close returns to recipe master view before closing the recipe modal
+  ---
+  duration_ms: 0.94056
+  type: 'test'
+  ...
+# Subtest: location shrink initializer binds even when app-core loads after DOMContentLoaded
+ok 448 - location shrink initializer binds even when app-core loads after DOMContentLoaded
+  ---
+  duration_ms: 1.128764
+  type: 'test'
+  ...
+# Subtest: location identity text uses stable chocolate and dough colors, not weather accent
+ok 449 - location identity text uses stable chocolate and dough colors, not weather accent
+  ---
+  duration_ms: 0.579154
+  type: 'test'
+  ...
+# Subtest: premium print is awaitable, renders in viewport and waits for layout before capture
+ok 450 - premium print is awaitable, renders in viewport and waits for layout before capture
+  ---
+  duration_ms: 0.414306
+  type: 'test'
+  ...
+# Subtest: technical cache token is V327 while product-facing version remains V125
+ok 451 - technical cache token is V327 while product-facing version remains V125
+  ---
+  duration_ms: 0.133231
+  type: 'test'
+  ...
+# [NotifSystem] v2.0.0 aktif — satu sumber data notifikasi.
+# Subtest: queued save, upsert, and copy from owner A cannot mutate owner B after an owner switch
+ok 452 - queued save, upsert, and copy from owner A cannot mutate owner B after an owner switch
+  ---
+  duration_ms: 16.758017
+  type: 'test'
+  ...
+# Subtest: cloud recipe pull/push aborts if the authenticated account differs from the local namespace
+ok 453 - cloud recipe pull/push aborts if the authenticated account differs from the local namespace
+  ---
+  duration_ms: 5.054845
+  type: 'test'
+  ...
+# Subtest: Terms link targets the existing TOS modal through the canonical modal action
+ok 454 - Terms link targets the existing TOS modal through the canonical modal action
+  ---
+  duration_ms: 1.217638
+  type: 'test'
+  ...
+# Subtest: registration submit begins disabled and requires checked consent
+ok 455 - registration submit begins disabled and requires checked consent
+  ---
+  duration_ms: 0.287113
+  type: 'test'
+  ...
+# [AuthService] Supabase SDK tidak tersedia.
+# [AuthService] Supabase SDK tidak tersedia.
+# Subtest: register button follows checkbox state while login remains available
+ok 456 - register button follows checkbox state while login remains available
+  ---
+  duration_ms: 10.733363
+  type: 'test'
+  ...
+# Subtest: runs async operations in enqueue order without overlapping them
+ok 457 - runs async operations in enqueue order without overlapping them
+  ---
+  duration_ms: 1.246783
+  type: 'test'
+  ...
+# Subtest: a rejected operation does not block later queued operations
+ok 458 - a rejected operation does not block later queued operations
+  ---
+  duration_ms: 0.479814
+  type: 'test'
+  ...
+# Subtest: rejects non-function operations without breaking the queue
+ok 459 - rejects non-function operations without breaking the queue
+  ---
+  duration_ms: 1.244068
+  type: 'test'
+  ...
+# Subtest: AuthService, StorageService, and BakeryIngredientService keep named ESM exports without window aliases
+ok 460 - AuthService, StorageService, and BakeryIngredientService keep named ESM exports without window aliases
+  ---
+  duration_ms: 3.567996
+  type: 'test'
+  ...
+# Subtest: canonical runtime consumers bind each service through ES6 Module imports
+ok 461 - canonical runtime consumers bind each service through ES6 Module imports
+  ---
+  duration_ms: 3.383347
+  type: 'test'
+  ...
+# Subtest: release verifier prevents removed service globals from returning
+ok 462 - release verifier prevents removed service globals from returning
+  ---
+  duration_ms: 0.31073
+  type: 'test'
+  ...
+# Subtest: Service Worker activates only after every required precache asset is stored
+ok 463 - Service Worker activates only after every required precache asset is stored
+  ---
+  duration_ms: 5.967128
+  type: 'test'
+  ...
+# Subtest: Service Worker rejects partial precache and preserves the previous active worker
+ok 464 - Service Worker rejects partial precache and preserves the previous active worker
+  ---
+  duration_ms: 1.533224
+  type: 'test'
+  ...
+# Subtest: activation deletes only previous Timer-Proofing caches, not other apps on the same origin
+ok 465 - activation deletes only previous Timer-Proofing caches, not other apps on the same origin
+  ---
+  duration_ms: 0.824415
+  type: 'test'
+  ...
+# Subtest: same-origin API GET responses bypass Service Worker Cache Storage
+ok 466 - same-origin API GET responses bypass Service Worker Cache Storage
+  ---
+  duration_ms: 1.02009
+  type: 'test'
+  ...
+# Subtest: offline navigation never serves another app cache entry from the same origin
+ok 467 - offline navigation never serves another app cache entry from the same origin
+  ---
+  duration_ms: 1.35792
+  type: 'test'
+  ...
+# Subtest: offline static-asset lookup cannot leak a matching foreign app cache entry
+ok 468 - offline static-asset lookup cannot leak a matching foreign app cache entry
+  ---
+  duration_ms: 0.994922
+  type: 'test'
+  ...
+# Subtest: a successful online navigation is not broken by a Cache Storage write failure
+ok 469 - a successful online navigation is not broken by a Cache Storage write failure
+  ---
+  duration_ms: 1.210648
+  type: 'test'
+  ...
+# Subtest: settings child pages preserve parent navigation and restore settings when closed
+ok 470 - settings child pages preserve parent navigation and restore settings when closed
+  ---
+  duration_ms: 4.494585
+  type: 'test'
+  ...
+# Subtest: language menu uses canonical modal controller and tour uses existing tab IDs
+ok 471 - language menu uses canonical modal controller and tour uses existing tab IDs
+  ---
+  duration_ms: 1.931156
+  type: 'test'
+  ...
+# Subtest: help and tour close through the canonical modal lifecycle
+ok 472 - help and tour close through the canonical modal lifecycle
+  ---
+  duration_ms: 4.371239
+  type: 'test'
+  ...
+# Subtest: all 11 Settings rows declare exactly the same Golden Ratio type scale
+ok 473 - all 11 Settings rows declare exactly the same Golden Ratio type scale
+  ---
+  duration_ms: 1.345181
+  type: 'test'
+  ...
+# Subtest: settings typography release metadata is synchronized to V340
+ok 474 - settings typography release metadata is synchronized to V340
+  ---
+  duration_ms: 0.182385
+  type: 'test'
+  ...
+# Subtest: share action remains connected to the existing settings menu contract
+ok 475 - share action remains connected to the existing settings menu contract
+  ---
+  duration_ms: 1.054592
+  type: 'test'
+  ...
+# Subtest: share flow supports native Capacitor Share and browser Web Share without user-agent gating
+ok 476 - share flow supports native Capacitor Share and browser Web Share without user-agent gating
+  ---
+  duration_ms: 0.843212
+  type: 'test'
+  ...
+# Subtest: share flow has clipboard and manual prompt fallbacks and a public URL on native platforms
+ok 477 - share flow has clipboard and manual prompt fallbacks and a public URL on native platforms
+  ---
+  duration_ms: 0.396799
+  type: 'test'
+  ...
+# Subtest: share opens a consistent branded in-app panel on PWA and Capacitor
+ok 478 - share opens a consistent branded in-app panel on PWA and Capacitor
+  ---
+  duration_ms: 0.79513
+  type: 'test'
+  ...
+# Subtest: share panel exposes separate invitation, URL-only share, and copy actions
+ok 479 - share panel exposes separate invitation, URL-only share, and copy actions
+  ---
+  duration_ms: 1.481716
+  type: 'test'
+  ...
+# Subtest: URL-only action passes only title and URL to rich Android Sharesheet bridge
+ok 480 - URL-only action passes only title and URL to rich Android Sharesheet bridge
+  ---
+  duration_ms: 0.762141
+  type: 'test'
+  ...
+# Subtest: URL-only action uses Web Share API in PWA and retains a copy fallback
+ok 481 - URL-only action uses Web Share API in PWA and retains a copy fallback
+  ---
+  duration_ms: 0.717353
+  type: 'test'
+  ...
+# Subtest: browser cleanup succeeds when local storage is cleared and no native backend is required
+ok 482 - browser cleanup succeeds when local storage is cleared and no native backend is required
+  ---
+  duration_ms: 2.004936
+  type: 'test'
+  ...
+# Subtest: native cleanup succeeds only when both local and native backends confirm clear
+ok 483 - native cleanup succeeds only when both local and native backends confirm clear
+  ---
+  duration_ms: 0.317249
+  type: 'test'
+  ...
+# Subtest: native clear failure is not hidden by a successful local clear
+ok 484 - native clear failure is not hidden by a successful local clear
+  ---
+  duration_ms: 0.090817
+  type: 'test'
+  ...
+# Subtest: local clear failure is not hidden by a successful native clear
+ok 485 - local clear failure is not hidden by a successful native clear
+  ---
+  duration_ms: 0.102465
+  type: 'test'
+  ...
+# Subtest: a detected native backend without a usable clear method cannot report complete cleanup
+ok 486 - a detected native backend without a usable clear method cannot report complete cleanup
+  ---
+  duration_ms: 0.09254
+  type: 'test'
+  ...
+# Subtest: a failed local clear cannot report complete browser cleanup
+ok 487 - a failed local clear cannot report complete browser cleanup
+  ---
+  duration_ms: 0.342407
+  type: 'test'
+  ...
+# Subtest: browser key removal succeeds after local storage confirms the removal
+ok 488 - browser key removal succeeds after local storage confirms the removal
+  ---
+  duration_ms: 0.116116
+  type: 'test'
+  ...
+# Subtest: native key removal requires both local and Preferences confirmation
+ok 489 - native key removal requires both local and Preferences confirmation
+  ---
+  duration_ms: 0.139701
+  type: 'test'
+  ...
+# Subtest: failed local removal cannot be masked by native success
+ok 490 - failed local removal cannot be masked by native success
+  ---
+  duration_ms: 0.426974
+  type: 'test'
+  ...
+# Subtest: missing native remove capability is not reported as complete cleanup
+ok 491 - missing native remove capability is not reported as complete cleanup
+  ---
+  duration_ms: 0.711634
+  type: 'test'
+  ...
+# Subtest: missing or invalid storage keys fail closed
+ok 492 - missing or invalid storage keys fail closed
+  ---
+  duration_ms: 0.212891
+  type: 'test'
+  ...
+# Subtest: browser persistence writes require LocalStorage confirmation
+ok 493 - browser persistence writes require LocalStorage confirmation
+  ---
+  duration_ms: 0.177347
+  type: 'test'
+  ...
+# Subtest: native persistence writes require both LocalStorage and Preferences confirmation
+ok 494 - native persistence writes require both LocalStorage and Preferences confirmation
+  ---
+  duration_ms: 0.087181
+  type: 'test'
+  ...
+# Subtest: missing or invalid write results fail closed
+ok 495 - missing or invalid write results fail closed
+  ---
+  duration_ms: 0.139791
+  type: 'test'
+  ...
+# Subtest: flush waits for a newer per-key write appended while an older write settles
+ok 496 - flush waits for a newer per-key write appended while an older write settles
+  ---
+  duration_ms: 0.762851
+  type: 'test'
+  ...
+# Subtest: flush restarts when an account-reset barrier changes during an awaited write
+ok 497 - flush restarts when an account-reset barrier changes during an awaited write
+  ---
+  duration_ms: 0.200082
+  type: 'test'
+  ...
+# Subtest: flush reports failed in-flight writes instead of masking them
+ok 498 - flush reports failed in-flight writes instead of masking them
+  ---
+  duration_ms: 1.231128
+  type: 'test'
+  ...
+# Subtest: flush returns false for an invalid dependency contract
+ok 499 - flush returns false for an invalid dependency contract
+  ---
+  duration_ms: 0.171929
+  type: 'test'
+  ...
+# Subtest: a late native snapshot cannot overwrite a newer StorageService write
+ok 500 - a late native snapshot cannot overwrite a newer StorageService write
+  ---
+  duration_ms: 1.29823
+  type: 'test'
+  ...
+# Subtest: a late native snapshot does not resurrect a key removed while the read was pending
+ok 501 - a late native snapshot does not resurrect a key removed while the read was pending
+  ---
+  duration_ms: 0.174954
+  type: 'test'
+  ...
+# Subtest: native-only legacy values still hydrate when no newer mutation occurs
+ok 502 - native-only legacy values still hydrate when no newer mutation occurs
+  ---
+  duration_ms: 1.108703
+  type: 'test'
+  ...
+# Subtest: direct synchronous local writes are preferred even when they bypass the mutation tracker
+ok 503 - direct synchronous local writes are preferred even when they bypass the mutation tracker
+  ---
+  duration_ms: 0.179902
+  type: 'test'
+  ...
+# Subtest: concurrent reads share mutation invalidation and can finish independently
+ok 504 - concurrent reads share mutation invalidation and can finish independently
+  ---
+  duration_ms: 0.15865
+  type: 'test'
+  ...
+# Subtest: StorageService setString uses the all-active-backends write result policy
+ok 505 - StorageService setString uses the all-active-backends write result policy
+  ---
+  duration_ms: 0.772376
+  type: 'test'
+  ...
+# Subtest: persistence failures stay marked until a successful mutation clears the marker
+ok 506 - persistence failures stay marked until a successful mutation clears the marker
+  ---
+  duration_ms: 0.113031
+  type: 'test'
+  ...
+# Subtest: StorageService flush reports a rejected pending key write as failure
+ok 507 - StorageService flush reports a rejected pending key write as failure
+  ---
+  duration_ms: 0.316457
+  type: 'test'
+  ...
+# Subtest: ProofingService propagates StorageService flush failure to lifecycle caller
+ok 508 - ProofingService propagates StorageService flush failure to lifecycle caller
+  ---
+  duration_ms: 0.155545
+  type: 'test'
+  ...
+# Subtest: new mirrored-write policy remains in the boot graph through the existing shared helper
+ok 509 - new mirrored-write policy remains in the boot graph through the existing shared helper
+  ---
+  duration_ms: 0.101944
+  type: 'test'
+  ...
+# Subtest: StorageService delegates flush to the stable-queue helper
+ok 510 - StorageService delegates flush to the stable-queue helper
+  ---
+  duration_ms: 0.10592
+  type: 'test'
+  ...
+# Subtest: stable-queue helper is precached for offline lifecycle flushes
+ok 511 - stable-queue helper is precached for offline lifecycle flushes
+  ---
+  duration_ms: 0.132751
+  type: 'test'
+  ...
+# Subtest: Supabase SDK is mapped as an ESM dependency and no longer loaded through a classic script tag
+ok 512 - Supabase SDK is mapped as an ESM dependency and no longer loaded through a classic script tag
+  ---
+  duration_ms: 0.923204
+  type: 'test'
+  ...
+# Subtest: runtime attempts the SDK bridge before importing boot and isolates an SDK load failure
+ok 513 - runtime attempts the SDK bridge before importing boot and isolates an SDK load failure
+  ---
+  duration_ms: 1.420874
+  type: 'test'
+  ...
+# Subtest: authentication APIs use retryable SDK initialization while retaining a synchronous compatibility getter
+ok 514 - authentication APIs use retryable SDK initialization while retaining a synchronous compatibility getter
+  ---
+  duration_ms: 0.377179
+  type: 'test'
+  ...
+# Subtest: Supabase ESM bridge is included in the Service Worker precache and module manifest
+ok 515 - Supabase ESM bridge is included in the Service Worker precache and module manifest
+  ---
+  duration_ms: 0.101313
+  type: 'test'
+  ...
+# Subtest: an already initialized Supabase client is preserved without loading the SDK again
+ok 516 - an already initialized Supabase client is preserved without loading the SDK again
+  ---
+  duration_ms: 0.931937
+  type: 'test'
+  ...
+# Subtest: concurrent SDK initialization shares one load and installs the createClient bridge
+ok 517 - concurrent SDK initialization shares one load and installs the createClient bridge
+  ---
+  duration_ms: 0.310869
+  type: 'test'
+  ...
+# Subtest: a failed SDK load releases its guard so a later auth attempt can retry
+ok 518 - a failed SDK load releases its guard so a later auth attempt can retry
+  ---
+  duration_ms: 1.345801
+  type: 'test'
+  ...
+# Subtest: an invalid module export is rejected without leaving a poisoned retry guard
+ok 519 - an invalid module export is rejected without leaving a poisoned retry guard
+  ---
+  duration_ms: 0.235265
+  type: 'test'
+  ...
+# Subtest: a client installed during an SDK load wins over the arriving factory namespace
+ok 520 - a client installed during an SDK load wins over the arriving factory namespace
+  ---
+  duration_ms: 0.440185
+  type: 'test'
+  ...
+# Subtest: AI Telemetry has a fixed seven-section contract while preserving product-specific profiles
+ok 521 - AI Telemetry has a fixed seven-section contract while preserving product-specific profiles
+  ---
+  duration_ms: 5.00854
+  type: 'test'
+  ...
+# Subtest: online language selection uses authenticated MyMemory and does not falsely persist failed choices
+ok 522 - online language selection uses authenticated MyMemory and does not falsely persist failed choices
+  ---
+  duration_ms: 1.144127
+  type: 'test'
+  ...
+# Subtest: AI recipe analysis is cleared on master navigation and stale recipe responses are rejected
+ok 523 - AI recipe analysis is cleared on master navigation and stale recipe responses are rejected
+  ---
+  duration_ms: 2.950904
+  type: 'test'
+  ...
+# Subtest: AI assistant loading state remains inside the card on narrow screens
+ok 524 - AI assistant loading state remains inside the card on narrow screens
+  ---
+  duration_ms: 4.01453
+  type: 'test'
+  ...
+# Subtest: Android native PiP uses one shared Activity entry path and sends the app task behind launcher after one Back
+ok 525 - Android native PiP uses one shared Activity entry path and sends the app task behind launcher after one Back
+  ---
+  duration_ms: 0.322287
+  type: 'test'
+  ...
+# Subtest: Register and Settings terms links route through the same explicit TOS action
+ok 526 - Register and Settings terms links route through the same explicit TOS action
+  ---
+  duration_ms: 1.376388
+  type: 'test'
+  ...
+# Subtest: Terms modal is moved out of the clipped app scroll region before interaction
+ok 527 - Terms modal is moved out of the clipped app scroll region before interaction
+  ---
+  duration_ms: 0.182446
+  type: 'test'
+  ...
+# Subtest: openTermsModal is safe, idempotent, and uses the canonical modal controller
+ok 528 - openTermsModal is safe, idempotent, and uses the canonical modal controller
+  ---
+  duration_ms: 2.288995
+  type: 'test'
+  ...
+# Subtest: openTermsModal reports a missing dialog instead of silently toggling an unrelated modal
+ok 529 - openTermsModal reports a missing dialog instead of silently toggling an unrelated modal
+  ---
+  duration_ms: 0.842192
+  type: 'test'
+  ...
+# Subtest: donut instruction map uses the canonical alias target and includes steps
+ok 530 - donut instruction map uses the canonical alias target and includes steps
+  ---
+  duration_ms: 1.117037
+  type: 'test'
+  ...
+# Subtest: recipe guide opens as an absolute overlay over the timer circle
+ok 531 - recipe guide opens as an absolute overlay over the timer circle
+  ---
+  duration_ms: 0.33149
+  type: 'test'
+  ...
+# Subtest: timer controls bind when app-core loads after DOMContentLoaded
+ok 532 - timer controls bind when app-core loads after DOMContentLoaded
+  ---
+  duration_ms: 0.368456
+  type: 'test'
+  ...
+# Subtest: START starts synchronously and does not block on notification permission
+ok 533 - START starts synchronously and does not block on notification permission
+  ---
+  duration_ms: 0.25795
+  type: 'test'
+  ...
+# Subtest: custom time validates 1–120 minutes and persists the selected duration
+ok 534 - custom time validates 1–120 minutes and persists the selected duration
+  ---
+  duration_ms: 0.195114
+  type: 'test'
+  ...
+# Subtest: scroll area is the only vertical scroller inside a fixed-height app shell
+ok 535 - scroll area is the only vertical scroller inside a fixed-height app shell
+  ---
+  duration_ms: 0.216287
+  type: 'test'
+  ...
+# Subtest: Capacitor native bridge registers TimerPip and Android activity supports PiP
+ok 536 - Capacitor native bridge registers TimerPip and Android activity supports PiP
+  ---
+  duration_ms: 0.157578
+  type: 'test'
+  ...
+# Subtest: hardware Back enters native PiP only while the proofing timer is running
+ok 537 - hardware Back enters native PiP only while the proofing timer is running
+  ---
+  duration_ms: 0.402067
+  type: 'test'
+  ...
+# Subtest: Android PiP exit callback restores the normal WebView layout even without appState change
+ok 538 - Android PiP exit callback restores the normal WebView layout even without appState change
+  ---
+  duration_ms: 0.511603
+  type: 'test'
+  ...
+# Subtest: parses canonical MM:SS and HH:MM:SS countdown text
+ok 539 - parses canonical MM:SS and HH:MM:SS countdown text
+  ---
+  duration_ms: 0.74854
+  type: 'test'
+  ...
+# Subtest: rejects malformed countdown text and out-of-range minute/second fields
+ok 540 - rejects malformed countdown text and out-of-range minute/second fields
+  ---
+  duration_ms: 0.178519
+  type: 'test'
+  ...
+# Subtest: formatted non-negative timer values parse back to the same number of seconds
+ok 541 - formatted non-negative timer values parse back to the same number of seconds
+  ---
+  duration_ms: 0.367805
+  type: 'test'
+  ...
+# Subtest: successful timer startup preserves the exact returned handle and skips recovery
+ok 542 - successful timer startup preserves the exact returned handle and skips recovery
+  ---
+  duration_ms: 0.744463
+  type: 'test'
+  ...
+# Subtest: zero-like timer handles are preserved rather than treated as startup exceptions
+ok 543 - zero-like timer handles are preserved rather than treated as startup exceptions
+  ---
+  duration_ms: 0.182375
+  type: 'test'
+  ...
+# Subtest: startup exception invokes recovery exactly once and retains the original error
+ok 544 - startup exception invokes recovery exactly once and retains the original error
+  ---
+  duration_ms: 1.068213
+  type: 'test'
+  ...
+# Subtest: recovery failure is reported separately without masking the startup failure
+ok 545 - recovery failure is reported separately without masking the startup failure
+  ---
+  duration_ms: 0.135484
+  type: 'test'
+  ...
+# Subtest: rejects a non-function starter as a programming error
+ok 546 - rejects a non-function starter as a programming error
+  ---
+  duration_ms: 0.378381
+  type: 'test'
+  ...
+# Subtest: app-core rolls back running UI state after a synchronous first-tick exception
+ok 547 - app-core rolls back running UI state after a synchronous first-tick exception
+  ---
+  duration_ms: 0.650422
+  type: 'test'
+  ...
+# Subtest: timer startup guard is included in Service Worker precache for first offline boot
+ok 548 - timer startup guard is included in Service Worker precache for first offline boot
+  ---
+  duration_ms: 0.151218
+  type: 'test'
+  ...
+# Subtest: GET /api/translate is a safe endpoint health check; it does not perform translation
+ok 549 - GET /api/translate is a safe endpoint health check; it does not perform translation
+  ---
+  duration_ms: 1.620446
+  type: 'test'
+  ...
+# Subtest: Translation requests remain POST-only and authenticated
+ok 550 - Translation requests remain POST-only and authenticated
+  ---
+  duration_ms: 0.315196
+  type: 'test'
+  ...
+# Subtest: language codes normalize separators and reject malformed values
+ok 551 - language codes normalize separators and reject malformed values
+  ---
+  duration_ms: 1.292661
+  type: 'test'
+  ...
+# Subtest: translation batches respect both item count and Unicode character limits
+ok 552 - translation batches respect both item count and Unicode character limits
+  ---
+  duration_ms: 1.625123
+  type: 'test'
+  ...
+# Subtest: provider language catalog is authoritative and regional codes may use only a supported base language
+ok 553 - provider language catalog is authoritative and regional codes may use only a supported base language
+  ---
+  duration_ms: 0.316778
+  type: 'test'
+  ...
+# Subtest: notification and settings controls keep valid targets and modal IDs
+ok 554 - notification and settings controls keep valid targets and modal IDs
+  ---
+  duration_ms: 2.240833
+  type: 'test'
+  ...
+# Subtest: all literal modal actions in the static HTML resolve to existing element IDs
+ok 555 - all literal modal actions in the static HTML resolve to existing element IDs
+  ---
+  duration_ms: 1.983885
+  type: 'test'
+  ...
+# Subtest: Tips and recipe navigation preserve their established DOM and dispatcher contracts
+ok 556 - Tips and recipe navigation preserve their established DOM and dispatcher contracts
+  ---
+  duration_ms: 1.593546
+  type: 'test'
+  ...
+# Subtest: event delegation reports unknown actions instead of silently swallowing them
+ok 557 - event delegation reports unknown actions instead of silently swallowing them
+  ---
+  duration_ms: 0.86793
+  type: 'test'
+  ...
+# [Weather API] Reverse geocoding unavailable (429).
+# [Weather API] Reverse geocoding temporarily unavailable.
+# Error di Serverless Proxy: Error: OpenWeather API error: 503
+#     at handler (file:///mnt/data/v342d-work/api/weather.js:130:13)
+#     at async TestContext.<anonymous> (file:///mnt/data/v342d-work/tests/weather-api.test.mjs:148:9)
+#     at async Test.run (node:internal/test_runner/test:1054:7)
+#     at async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+# [Weather API] Reverse geocoding returned invalid JSON.
+# [Weather API] Reverse geocoding temporarily unavailable.
+# Subtest: weather endpoint rejects unsupported methods before upstream calls
+ok 558 - weather endpoint rejects unsupported methods before upstream calls
+  ---
+  duration_ms: 2.600115
+  type: 'test'
+  ...
+# Subtest: weather preflight returns before validation and upstream requests
+ok 559 - weather preflight returns before validation and upstream requests
+  ---
+  duration_ms: 0.197408
+  type: 'test'
+  ...
+# Subtest: weather endpoint rejects out-of-range coordinates without calling providers
+ok 560 - weather endpoint rejects out-of-range coordinates without calling providers
+  ---
+  duration_ms: 0.248726
+  type: 'test'
+  ...
+# Subtest: weather and optional geocoding receive independent abort timeouts
+ok 561 - weather and optional geocoding receive independent abort timeouts
+  ---
+  duration_ms: 0.7221
+  type: 'test'
+  ...
+# Subtest: weather remains available when reverse geocoding is rate-limited
+ok 562 - weather remains available when reverse geocoding is rate-limited
+  ---
+  duration_ms: 0.938657
+  type: 'test'
+  ...
+# Subtest: weather remains available when reverse geocoding throws a network error
+ok 563 - weather remains available when reverse geocoding throws a network error
+  ---
+  duration_ms: 0.851716
+  type: 'test'
+  ...
+# Subtest: weather endpoint still fails closed when the primary weather provider fails
+ok 564 - weather endpoint still fails closed when the primary weather provider fails
+  ---
+  duration_ms: 1.423679
+  type: 'test'
+  ...
+# Subtest: weather remains available when reverse geocoding returns invalid JSON
+ok 565 - weather remains available when reverse geocoding returns invalid JSON
+  ---
+  duration_ms: 0.592515
+  type: 'test'
+  ...
+# Subtest: a reverse-geocoding timeout does not abort a successful primary weather request
+ok 566 - a reverse-geocoding timeout does not abort a successful primary weather request
+  ---
+  duration_ms: 0.853598
+  type: 'test'
+  ...
+1..566
+# tests 566
+# suites 0
+# pass 566
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11179.927248

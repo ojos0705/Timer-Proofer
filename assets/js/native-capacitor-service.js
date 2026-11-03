@@ -8,7 +8,8 @@ import {
     Filesystem,
     LocalNotifications,
     Preferences,
-    Share
+    Share,
+    CapacitorHttp
 } from '../../vendor/capacitor-plugins.js';
 
 const STATIC_PLUGINS = Object.freeze({
@@ -16,14 +17,17 @@ const STATIC_PLUGINS = Object.freeze({
     Filesystem,
     LocalNotifications,
     Preferences,
-    Share
+    Share,
+    CapacitorHttp
 });
 
 const NATIVE_PLUGIN_NAMES = Object.freeze([
     'Geolocation',
     'Network',
     'Haptics',
-    'BluetoothLe'
+    'BluetoothLe',
+    'TimerPip',
+    'SharePreview'
 ]);
 
 function getCapacitor() {
@@ -58,6 +62,15 @@ function registerNativePlugin(name) {
     }
 }
 
+function isAndroidPlatform() {
+    try {
+        return isNativePlatform() && getCapacitor()?.getPlatform?.() === 'android';
+    } catch (error) {
+        console.warn('[NativeCapacitorService] Deteksi platform Android gagal:', error);
+        return false;
+    }
+}
+
 function getPlugin(name) {
     if (STATIC_PLUGINS[name]) return STATIC_PLUGINS[name];
 
@@ -87,12 +100,16 @@ function getCapabilities() {
         filesystem: canUse('Filesystem'),
         localNotifications: canUse('LocalNotifications'),
         preferences: canUse('Preferences'),
-        share: canUse('Share')
+        share: canUse('Share'),
+        richSharePreview: isAndroidPlatform() && canUse('SharePreview'),
+        http: canUse('CapacitorHttp'),
+        pictureInPicture: canUse('TimerPip')
     });
 }
 
 const NativeCapacitorService = Object.freeze({
     isNativePlatform,
+    isAndroidPlatform,
     getPlugin,
     canUse,
     getCapabilities,
@@ -101,6 +118,7 @@ const NativeCapacitorService = Object.freeze({
     LocalNotifications,
     Preferences,
     Share,
+    CapacitorHttp,
     DocumentsDirectory: 'DOCUMENTS'
 });
 
@@ -108,6 +126,7 @@ const NativeCapacitorService = Object.freeze({
 export {
     NativeCapacitorService,
     isNativePlatform,
+    isAndroidPlatform,
     getPlugin,
     canUse,
     getCapabilities

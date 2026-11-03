@@ -1,0 +1,13 @@
+Timer Proofer ES6 Modular — V324
+Product version remains V125.
+
+Changes:
+1. Fix `shrunk-main` and `shrunk-sub` tap/click swap by binding a guarded document-level delegated listener immediately, independent of DOMContentLoaded timing.
+2. Remove old per-element click listeners from the late DOMContentLoaded block to avoid missed/double binding.
+3. Add mobile hit-target pointer/touch CSS for compact location stats.
+4. Enable horizontal swipe on the pre-login onboarding slider via Pointer Events, with touch-event fallback for older WebViews.
+5. Keep vertical native panning available through touch-action: pan-y.
+6. Clamp onboarding slide index and update track/dots from normalized index.
+7. Bump technical release token and Service Worker cache to invalidate old installed PWA assets.
+
+QA: 433/433 automated tests pass; static release audit passes. Physical mobile E2E remains pending.

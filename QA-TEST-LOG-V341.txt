@@ -1,0 +1,33 @@
+TIMER PROOFER — V341 QA TEST LOG
+
+Baseline: user-provided Timer-Proofer-ES6-Modular-V340-ROOT-EXTRACT.zip
+Product-facing version: V125
+Technical build: es6-modular-v341
+Release token: 20261101-v341
+Service Worker cache: Timer-Proofing-v1.1.243
+
+Baseline V340 verification
+- npm test: 523 passed, 0 failed.
+
+V341 automated verification
+- npm test: 540 passed, 0 failed.
+- Release verifier: 80 Service Worker precache paths valid; 69 local boot-graph modules; 290 JavaScript files; 2 HTML files; 306 HTML IDs; 0 duplicate IDs; 0 missing local imports; 0 inline event handlers; 0 scroll-lock overrides outside canonical owner.
+- Function-name audit: 0 duplicate function declarations within a module. Informational same-name functions across separate modules remain non-errors.
+- API source -> www/public/api synchronization: PASS.
+- Node syntax checks for all six new API handlers/helpers and updated checkout module: PASS.
+- Frontend checkout static guard: Bearer auth and server plan ID required; no client-supplied gross_amount.
+- Monetization tests: plan catalog validation, auth verification, signature verification, provider status mapping, user-scoped API access, SQL RLS/RPC restrictions, and route fail-closed behavior PASS.
+
+Not performed
+- Supabase SQL migration application.
+- Vercel environment configuration or deployment.
+- Midtrans Sandbox dashboard test, webhook delivery, refund, or live payment.
+- Production database/RLS verification against the real Supabase project.
+- Application-wide entitlement feature gates.
+- AdSense/AdMob, Google Play Billing, Apple IAP.
+- Gradle assemble/install, iOS build, or physical-device visual QA.
+
+Release metadata
+- Product version remains V125.
+- Technical revision V341.
+- Cache token 20261101-v341 / Timer-Proofing-v1.1.243.

@@ -1,22 +1,49 @@
 // Shared AI utility functions to avoid DRY violations
+import { requireFeatureUser, consumeFeatureQuota, featureErrorResponse } from './feature-access-utils.js';
+import { randomUUID } from 'node:crypto';
+import { createAIUsageEvent, persistAIUsageEvents } from './ai-cost-utils.js';
 // Used by ai-analyze.js, ai-telemetry.js, and ai-tips.js
 
-// [AI-GENERATED][ROBUSTNESS][V205] Keep each upstream model call bounded and avoid
-// multiplying provider retries across the explicit model-fallback loop. Quota
-// responses are handled by trying the next configured model below.
-// Keep three sequential fallback attempts within the frontend 30s timeout.
-// Each request also receives an AbortSignal and a hard Promise deadline because
-// SDK/network timeout behavior can vary across runtime and SDK versions.
-const AI_UPSTREAM_TIMEOUT_MS = 6_000;
-const AI_BACKEND_REVISION = "V318";
+// [AI-GENERATED][ROBUSTNESS][V321] Keep each upstream model call bounded.
+// Telemetry preserves its previous no-retry SDK policy; on-demand recipe analysis
+// and tips allow one short retry for transient 5xx before advancing model fallback.
+// Quota responses are handled by trying the next configured model below.
+// Gemini's SDK rejects manually configured deadlines below 10 seconds. Use 11s
+// to stay safely above that provider minimum while retaining bounded fallback.
+// The complete provider/fallback loop must remain below the frontend 30s timeout.
+const AI_UPSTREAM_TIMEOUT_MS = 11_000;
+const AI_TOTAL_REQUEST_TIMEOUT_MS = 26_000;
+const AI_BACKEND_REVISION = "V342-E";
+// Keep telemetry latency/state behavior unchanged. Recipe analysis and tips are
+// on-demand, longer-form requests: retry transient 5xx once with short jitter.
+// `attempts` includes the first request, so 2 means one additional retry.
 const AI_UPSTREAM_RETRY_OPTIONS = Object.freeze({ attempts: 1 });
+const AI_ANALYSIS_RETRY_OPTIONS = Object.freeze({
+  attempts: 2,
+  initialDelay: 0.6,
+  maxDelay: 1.2,
+  expBase: 2,
+  jitter: 0.25,
+  httpStatusCodes: Object.freeze([408, 500, 502, 503, 504]),
+});
 
-export function createAIClient(GoogleGenAI, apiKey) {
+function getRetryOptionsForEndpoint(endpoint) {
+  return endpoint === "ai-analyze" || endpoint === "ai-tips"
+    ? AI_ANALYSIS_RETRY_OPTIONS
+    : AI_UPSTREAM_RETRY_OPTIONS;
+}
+
+export function createAIClient(GoogleGenAI, apiKey, retryOptions = AI_UPSTREAM_RETRY_OPTIONS) {
   return new GoogleGenAI({
     apiKey,
     httpOptions: {
       timeout: AI_UPSTREAM_TIMEOUT_MS,
-      retryOptions: { ...AI_UPSTREAM_RETRY_OPTIONS },
+      retryOptions: {
+        ...retryOptions,
+        ...(retryOptions.httpStatusCodes
+          ? { httpStatusCodes: [...retryOptions.httpStatusCodes] }
+          : {}),
+      },
     },
   });
 }
@@ -163,17 +190,17 @@ async function generateWithModel(ai, model, promptContext, systemInstruction, ti
   const config = {
     systemInstruction,
     maxOutputTokens: 4096,
-    // [AI-GENERATED][ROBUSTNESS][V318] Do not let automatic continuation turn
+    // [AI-GENERATED][ROBUSTNESS][V321] Do not let automatic continuation turn
     // one provider call into several hidden calls beyond the request deadline.
     automaticContinuation: false,
-    // [AI-GENERATED][ROBUSTNESS][V318] Abort the HTTP request on timeout.
+    // [AI-GENERATED][ROBUSTNESS][V321] Abort the HTTP request on timeout.
     abortSignal: controller.signal,
   };
   if (useThinking) {
     config.thinkingConfig = { thinkingLevel: "minimal" };
   }
 
-  // [AI-GENERATED][ROBUSTNESS][V318] The explicit race is a second line of
+  // [AI-GENERATED][ROBUSTNESS][V321] The explicit race is a second line of
   // defense: even if an SDK/network layer fails to reject promptly on abort,
   // the serverless handler continues to the next fallback within a hard bound.
   const requestPromise = Promise.resolve().then(() => ai.models.generateContent({
@@ -217,7 +244,7 @@ function setupCORSHeaders(req, res) {
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, Accept, X-Requested-With"
   );
-  // [AI-GENERATED][OBSERVABILITY][V318] Expose the backend revision on every
+  // [AI-GENERATED][OBSERVABILITY][V321] Expose the backend revision on every
   // response, including preflight and errors, so production routing is verifiable.
   res.setHeader("Access-Control-Expose-Headers", "X-AI-Backend-Revision");
   res.setHeader("X-AI-Backend-Revision", AI_BACKEND_REVISION);
@@ -259,41 +286,96 @@ function handleQuotaError(error, res) {
 
 async function processAIRequest(req, res, systemInstruction, errorMessagePrefix) {
   setupCORSHeaders(req, res);
-  
+
   const preflightResponse = handlePreflight(req, res);
   if (preflightResponse) return preflightResponse;
 
   const validationError = validateRequestBody(req, res);
   if (validationError) return validationError;
 
-  // [AI-GENERATED][SECURITY][V157] Apply abuse protection only after cheap
-  // method/body validation so malformed requests cannot consume the AI quota.
-  const releaseAIRequest = enforceAIRateLimit(req, res);
-  if (typeof releaseAIRequest !== 'function') return releaseAIRequest;
-
   if (!process.env.GEMINI_API_KEY) {
-    releaseAIRequest();
     console.error("GEMINI_API_KEY belum diset di environment Vercel");
     return res.status(500).json({ error: "Layanan AI belum dikonfigurasi di server" });
   }
 
+  // [AI-GENERATED][SECURITY][V342-D] Authenticate before consuming IP rate
+  // buckets, then atomically reserve the independent feature quota.
+  let featureUser = null;
+  if (errorMessagePrefix === 'ai-analyze' || errorMessagePrefix === 'ai-tips') {
+    try {
+      const auth = await requireFeatureUser(req);
+      featureUser = auth.user;
+    } catch (error) {
+      return featureErrorResponse(res, error);
+    }
+  }
+
+  // [AI-GENERATED][SECURITY][V157] Apply abuse protection only after cheap
+  // method/body validation and identity verification.
+  const releaseAIRequest = enforceAIRateLimit(req, res);
+  if (typeof releaseAIRequest !== 'function') return releaseAIRequest;
+
+  let featureQuota = null;
+  if (featureUser) {
+    try {
+      const featureId = errorMessagePrefix === 'ai-analyze' ? 'ai_analysis' : 'ai_tips';
+      featureQuota = await consumeFeatureQuota(featureUser.id, featureId);
+    } catch (error) {
+      releaseAIRequest();
+      return featureErrorResponse(res, error);
+    }
+  }
+
+  const usageEvents = [];
+  const usageRequestId = randomUUID();
+  const usageFeatureId = errorMessagePrefix === 'ai-analyze' ? 'ai_analysis' :
+    errorMessagePrefix === 'ai-tips' ? 'ai_tips' : 'ai_telemetry';
+
   try {
     const { GoogleGenAI } = await import("@google/genai");
-    // [AI-GENERATED][ROBUSTNESS][V205] Apply explicit per-request timeout and
-    // disable nested SDK retries; the model fallback loop already owns retries.
-    const ai = createAIClient(GoogleGenAI, process.env.GEMINI_API_KEY);
+    // [AI-GENERATED][ROBUSTNESS][V321] Apply the explicit per-request timeout
+    // and endpoint-specific retry policy; the model loop owns cross-model fallback.
+    const retryOptions = getRetryOptionsForEndpoint(errorMessagePrefix);
+    const ai = createAIClient(GoogleGenAI, process.env.GEMINI_API_KEY, retryOptions);
 
     let response = null;
     let usedModel = GEMINI_MODELS[0];
     let lastQuotaError = null;
     let lastAvailabilityError = null;
+    const providerLoopStartedAt = Date.now();
 
     for (const model of GEMINI_MODELS) {
+      // [AI-GENERATED][ROBUSTNESS][V321] A Gemini SDK deadline must be >=10s;
+      // do not start another fallback when less than one valid call window remains.
+      const elapsedMs = Date.now() - providerLoopStartedAt;
+      if (elapsedMs + AI_UPSTREAM_TIMEOUT_MS > AI_TOTAL_REQUEST_TIMEOUT_MS) {
+        const deadlineError = new Error('AI provider fallback budget exhausted before next model attempt');
+        deadlineError.code = 'AI_UPSTREAM_TIMEOUT';
+        lastAvailabilityError = lastAvailabilityError || deadlineError;
+        console.warn(`[${errorMessagePrefix}][${AI_BACKEND_REVISION}] total provider deadline reached; skipping remaining fallback models.`, {
+          elapsedMs,
+          totalTimeoutMs: AI_TOTAL_REQUEST_TIMEOUT_MS,
+          nextModel: model,
+        });
+        break;
+      }
+
+      const modelAttemptStartedAt = Date.now();
       try {
         response = await generateWithModel(ai, model, req.body.promptContext, systemInstruction);
         usedModel = model;
+        usageEvents.push(createAIUsageEvent({
+          userId: featureUser?.id || null, tierId: featureQuota?.tier || null, featureId: usageFeatureId, model, outcome: 'success',
+          durationMs: Date.now() - modelAttemptStartedAt, response, requestId: usageRequestId
+        }));
         break;
       } catch (error) {
+        usageEvents.push(createAIUsageEvent({
+          userId: featureUser?.id || null, tierId: featureQuota?.tier || null, featureId: usageFeatureId, model,
+          outcome: isQuotaError(error) ? 'quota_error' : 'provider_error',
+          durationMs: Date.now() - modelAttemptStartedAt, errorCode: error?.code || error?.status || 'provider_error',
+          requestId: usageRequestId
+        }));
         if (isQuotaError(error)) {
           lastQuotaError = error;
           console.warn(`[${errorMessagePrefix}][${AI_BACKEND_REVISION}] quota hit for ${model}, trying fallback...`, { status: error?.status ?? error?.error?.code ?? null });
@@ -324,6 +406,7 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
     const finishReason = getFinishReason(response);
 
     if (!result) {
+      if (usageEvents.length) usageEvents[usageEvents.length - 1].outcome = 'empty_response';
       return res.status(502).json({ error: "AI tidak mengembalikan hasil, coba lagi" });
     }
 
@@ -332,7 +415,7 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
       ? `${result}\n\n_(Analisis terpotong karena batas token. Coba lagi atau sederhanakan resep.)_`
       : result;
 
-    return res.status(200).json({ result: finalResult, truncated, model: usedModel });
+    return res.status(200).json({ result: finalResult, truncated, model: usedModel, ...(featureQuota ? { quota: featureQuota } : {}) });
   } catch (error) {
     console.error(`[${errorMessagePrefix}][${AI_BACKEND_REVISION}] provider request failed`, {
       status: error?.status ?? error?.error?.code ?? null,
@@ -344,6 +427,9 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
     }
     return res.status(500).json({ error: toUserFacingError(error) });
   } finally {
+    // [AI-GENERATED][OBSERVABILITY][V342-E] Persist token/cost metadata only.
+    // Best-effort persistence is bounded and must never replace the AI response.
+    await persistAIUsageEvents(usageEvents);
     // [AI-GENERATED][ROBUSTNESS][V157] Always release the instance concurrency
     // slot, including provider failures and early successful responses.
     releaseAIRequest();
@@ -352,7 +438,10 @@ async function processAIRequest(req, res, systemInstruction, errorMessagePrefix)
 
 export {
   AI_UPSTREAM_TIMEOUT_MS,
+  AI_TOTAL_REQUEST_TIMEOUT_MS,
   AI_UPSTREAM_RETRY_OPTIONS,
+  AI_ANALYSIS_RETRY_OPTIONS,
+  getRetryOptionsForEndpoint,
   AI_BACKEND_REVISION,
   GEMINI_MODELS,
   toUserFacingError,

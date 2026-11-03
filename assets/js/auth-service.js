@@ -130,13 +130,17 @@ async function handleSignedIn(session, epoch) {
 
         setAuthUi(session);
 
-        try {
-            localStorage.setItem('tp_onboarding_seen', 'true');
-        } catch (error) {
-            console.warn('[AuthService] Gagal menyimpan status onboarding:', error);
+        // [AI-GENERATED][ONBOARDING PREVIEW][V326] Do not auto-dismiss the
+        // walkthrough when an existing session is restored during explicit QA preview.
+        const onboardingPreviewActive = window.appOnboardingWalkthrough?.isPreviewActive?.() === true;
+        if (!onboardingPreviewActive) {
+            try {
+                localStorage.setItem('tp_onboarding_seen', 'true');
+            } catch (error) {
+                console.warn('[AuthService] Gagal menyimpan status onboarding:', error);
+            }
+            window.appOnboardingWalkthrough?.hide?.();
         }
-
-        window.appOnboardingWalkthrough?.hide?.();
 
         if (epoch !== lifecycleEpoch) return;
 

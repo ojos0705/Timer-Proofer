@@ -1,0 +1,20 @@
+TIMER PROOFER — V337 RELEASE SUMMARY
+
+Change:
+- Adds a dedicated URL-only share action to the existing share modal.
+- Preserves invitation share with title, invitation text, and public application URL.
+- Capacitor native share action sends title + URL only (without invitation text).
+- PWA action uses Web Share API with title + URL only.
+- Existing copy-link fallback remains available.
+- Same in-app choices are exposed across PWA and Capacitor; the native operating-system chooser remains platform-specific.
+
+Version:
+- Product version remains V125.
+- Technical release: V337.
+- Release token: 20261101-v337.
+- Service Worker cache: Timer-Proofing-v1.1.239.
+
+QA:
+- npm test: 514 passed, 0 failed.
+- ZIP integrity and clean-extraction checks are documented separately.
+- Physical Android testing is not claimed by automated tests.

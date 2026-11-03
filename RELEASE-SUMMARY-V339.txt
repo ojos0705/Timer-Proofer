@@ -1,0 +1,35 @@
+TIMER PROOFER — V339 RELEASE SUMMARY
+
+Purpose
+Normalize Settings menu typography using a shared Golden Ratio scale so that “Tour Aplikasi” no longer appears larger than other menu entries.
+
+Changes
+- Added scoped CSS typography tokens to #settings-modal.
+- Primary menu labels use 1rem.
+- Supporting descriptions use 1rem / 1.618 (0.618rem).
+- Normalized font weight, color, line-height, icon sizing, chevron sizing, and icon-to-label gap across all 11 menu rows.
+- Removed one-off inline typography from the Tour Aplikasi row.
+- Preserved all element IDs, classes, data-action attributes, DOM structure, row padding, touch area, and navigation behavior.
+
+Verification
+- npm test: 519 passed, 0 failed, 0 skipped.
+- Release verifier: PASS.
+- JavaScript checked: 278.
+- HTML checked: 2.
+- HTML IDs: 306; duplicates: 0.
+- Missing local imports: 0.
+- Inline event handlers: 0.
+- Service Worker precache assets: 80.
+- Boot graph local modules: 69.
+- Duplicate function declarations in a single module: 0.
+- ZIP integrity: PASS.
+- Clean extraction + npm test: PASS.
+
+Not claimed
+- No physical Android/iOS device test or deployed PWA screenshot QA was performed in this environment.
+
+Version
+- Product version: V125.
+- Technical revision: V339.
+- Release token: 20261101-v339.
+- Service Worker cache: Timer-Proofing-v1.1.241.

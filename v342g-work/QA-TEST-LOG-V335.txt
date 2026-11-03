@@ -1,0 +1,42 @@
+TIMER PROOFER — V335 QA TEST LOG
+Date: 2026-11-01
+
+Command:
+  npm test
+
+Pipeline:
+  1. scripts/sync-web-assets.mjs
+  2. scripts/verify-release.mjs
+  3. scripts/audit-function-names.mjs
+  4. node --test tests/*.test.mjs
+
+STATIC RELEASE VALIDATION: PASS
+- Required entrypoints: 8 present
+- Service Worker precache: 80 paths validated
+- Local precache assets missing: 0
+- Local modules in boot graph: 69
+- JavaScript files checked: 273
+- HTML files checked: 2
+- HTML IDs: 305
+- Missing local imports: 0
+- Duplicate HTML IDs: 0
+- Inline event handlers: 0
+- Scroll-lock overrides outside canonical owner: 0
+- Duplicate function declarations within one module: 0
+
+UNIT / CONTRACT TESTS: PASS
+- Tests: 506
+- Passed: 506
+- Failed: 0
+- Skipped: 0
+
+Focused V335 tests include:
+- PWA manifest icon files and Android launcher/adaptive/splash asset integrity.
+- Terms link and modal action contract.
+- Registration consent state: unchecked disabled, checked enabled, uncheck disabled, login remains enabled.
+- CapacitorHttp native bridge path for authenticated translation request.
+- PWA fetch fallback and CORS contract remain intact.
+- Existing application, modal, timer, auth, recipe, AI, PWA, and native regression suite.
+
+LIMITATIONS
+This is automated source/static verification. It does not prove live Vercel deployment, MyMemory quota/provider availability, Gradle compilation, or real-device UI/HTTP behavior. These require deployment and manual PWA/Android/iOS testing.

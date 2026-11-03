@@ -24,13 +24,14 @@
 }
 </script>
 <link href="logo-donat.svg" rel="icon" type="image/svg+xml"/>
-<link href="logo-donat.svg" rel="apple-touch-icon"/>
+<link href="assets/icons/timer-proofer-192.png" rel="icon" type="image/png" sizes="192x192"/>
+<link href="assets/icons/timer-proofer-apple-touch-180.png" rel="apple-touch-icon"/>
 <script async="" src="https://www.googletagmanager.com/gtag.js?id=G-QNGDTC4HVF"></script>
 <!-- [AI-GENERATED][ES6 MODULE][V259] Midtrans Snap is loaded on checkout by midtrans-runtime.js. Keep the key public-only; never put the server key here. -->
 <meta name="midtrans-snap-config" data-client-key="YOUR_CLIENT_KEY" data-environment="sandbox" content="Midtrans Snap runtime configuration"/>
 <!-- [AI-GENERATED][ES6 MODULE][V258] Supabase, modal bootstrap, and lazy PDF services use the module runtime. -->
 <!-- [AI-GENERATED][ES6 MODULE][V255] Runtime globals are initialized before the application module graph. -->
-<script type="module" src="./assets/js/runtime-entry.js?v=20261027-v317"></script>
+<script type="module" src="./assets/js/runtime-entry.js?v=20261102-v342"></script>
 <title>Timer Proofer</title>
 <style>
         :root {
@@ -64,7 +65,7 @@ NEUTRAL COLORS
 --text-muted: #64748b;     /* Alias untuk teks pudar */
     
 --gray-600: #475569;
---text-dark: #334155;      /* Teks gelap utama */
+--text-dark: #4E342E;      /* Teks utama mengikuti warna cokelat brand/adonan */
 
 /* ==========================
        STATUS COLORS
@@ -131,6 +132,11 @@ outline-offset: 2px;
 
     html {
         background-color: #E2E8F0; /* Warna abu-abu lembut untuk latar luar area 480px */
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        overflow: hidden !important;
+        overscroll-behavior: none;
     }
 
         /*  STYLE SELURUH PAGE */
@@ -162,8 +168,10 @@ outline-offset: 2px;
     width: 100vw !important;
     height: 100vh !important;
     height: 100dvh !important;
+    box-sizing: border-box;
     z-index: 999999 !important; /* Memaksa onboarding ada di paling depan */
     background: #FFFDF9 !important;
+    overscroll-behavior: contain;
     display: none;
 }
 
@@ -175,18 +183,22 @@ outline-offset: 2px;
     width: 100%;
     max-width: 440px;
     height: 100%;
+    min-height: 100%;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 24px 20px 36px 20px;
+    padding: max(12px, env(safe-area-inset-top, 0px)) 20px calc(16px + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
 }
 
 /* Header */
 .ob-header {
     display: flex;
+    flex: 0 0 40px;
     justify-content: flex-end;
     height: 40px;
+    min-height: 40px;
 }
 
 .ob-skip-btn {
@@ -202,47 +214,71 @@ outline-offset: 2px;
 /* Slider Track */
 .ob-slider-wrapper {
     width: 100%;
+    min-width: 0;
+    min-height: 0;
     overflow: hidden;
-    flex: 1;
+    flex: 1 1 0;
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior-x: contain;
+    cursor: grab;
 }
+.ob-slider-wrapper:active { cursor: grabbing; }
+.ob-slider-track { will-change: transform; }
 
+/* Track stays exactly one viewport wide; individual slides overflow as flex
+   pages. Pixel positioning in OnboardingManager prevents a partial next card. */
 .ob-slider-track {
     display: flex;
-    width: 300%;
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
     transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .ob-slide {
-    width: 33.333%;
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 0;
     padding: 0 12px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: clamp(8px, 2dvh, 18px);
     text-align: center;
 }
 
 .ob-illustration {
-    width: 180px;
-    height: 180px;
+    width: clamp(104px, 24vmin, 180px);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    flex: 0 0 auto;
     background: #FFF5E6;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 32px;
+    margin-bottom: clamp(0px, 1.4dvh, 12px);
     border: 4px solid #F2D2A9;
     box-shadow: 0 12px 28px rgba(230, 126, 34, 0.15);
 }
 
 .ob-emoji {
-    font-size: 5rem;
+    font-size: clamp(3rem, 11vmin, 5rem);
 }
 
 .ob-title {
-    font-size: 1.45rem;
+    font-size: clamp(1.12rem, 4.8vw, 1.45rem);
     font-weight: 900;
     color: #4E342E;
     margin: 0 0 12px 0;
@@ -255,6 +291,7 @@ outline-offset: 2px;
     margin: 0;
     line-height: 1.5;
     max-width: 310px;
+    overflow-wrap: anywhere;
 }
 
 /* Footer & Navigation */
@@ -262,8 +299,10 @@ outline-offset: 2px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    flex: 0 0 auto;
+    gap: clamp(10px, 2dvh, 20px);
     width: 100%;
+    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
 }
 
 .ob-dots {
@@ -397,6 +436,10 @@ outline-offset: 2px;
 .welcome-slider-container {
     width: 100%;
     overflow: hidden;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior-x: contain;
     position: relative;
     background: #FFF9F0;
     border-radius: 16px;
@@ -538,13 +581,26 @@ outline-offset: 2px;
 
 /* Tooltip Card */
 .tour-tooltip-card {
+    /* [AI-GENERATED][ANDROID UX][V330] Fit the tooltip within the visible
+       viewport and keep its scroll gesture independent from the page. */
+    --tour-safe-area-top: env(safe-area-inset-top, 0px);
+    --tour-safe-area-bottom: env(safe-area-inset-bottom, 0px);
     position: fixed;
     z-index: 99999; /* Selalu di atas .bottom-bar (9999) & tour-overlay */
-    width: calc(100% - 40px);
+    width: min(360px, calc(100vw - 24px));
     max-width: 360px;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - var(--tour-safe-area-top) - var(--tour-safe-area-bottom) - 24px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    scrollbar-width: thin;
     background: #FFFFFF;
     border-radius: 18px;
     padding: 18px;
+    padding-bottom: calc(18px + var(--tour-safe-area-bottom));
     box-shadow: 0 15px 35px rgba(0,0,0,0.3);
     border: 1px solid var(--dough, #F2D2A9);
     opacity: 0;
@@ -589,6 +645,12 @@ outline-offset: 2px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    background: #FFFFFF;
+    padding-top: 8px;
 }
 
 .tour-btn-link {
@@ -938,6 +1000,49 @@ outline-offset: 2px;
     }
 
     /* Mengelompokkan pengaturan lebar agar identik */
+    #app-container {
+        /* [AI-GENERATED][APP-SHELL][V327] App shell stays fixed; only its
+           .scrollable-content child may move vertically. */
+        position: absolute !important;
+        top: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100%;
+        max-width: 480px;
+        height: auto !important;
+        min-height: 0;
+        min-width: 0;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden !important;
+        overscroll-behavior: none;
+    }
+    /* [AI-GENERATED][APP-SHELL][V327] The fixed body is the viewport frame;
+       this selector prevents the desktop/browser document from becoming a
+       second scroll container. */
+    html,
+    body {
+        overflow: hidden !important;
+        overscroll-behavior: none !important;
+    }
+
+    /* The app shell is fixed; only this inner region scrolls. Height 0 plus
+       flex growth prevents the mobile WebView from turning this into a page scroll. */
+    #app-container > .scrollable-content {
+        flex: 1 1 0px;
+        height: 0;
+        min-height: 0;
+        max-height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        touch-action: pan-y;
+    }
+
     .container, 
     .auth-container {
         width: 100%;
@@ -1170,6 +1275,42 @@ outline-offset: 2px;
         }
         .page-modal > .modal-bottom-actions { flex: 0 0 auto; }
 
+
+        /* [AI-GENERATED][UI TYPOGRAPHY][V340]
+           Satu skala tipografi untuk seluruh item Pengaturan.
+           Judul : deskripsi mengikuti rasio phi (1 : 1/1.618).
+           Padding dan tinggi area sentuh tidak diubah. */
+        #settings-modal {
+            --settings-type-primary: 1rem;
+            --settings-type-secondary: calc(var(--settings-type-primary) / var(--phi));
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > div:first-child {
+            gap: 12px !important;
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > div:first-child > span:first-child {
+            font-size: 1.1rem !important;
+            line-height: 1 !important;
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > div:first-child > div > div:first-child {
+            font-size: var(--settings-type-primary) !important;
+            font-weight: 600 !important;
+            line-height: 1.2 !important;
+            color: #3e2723 !important;
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > div:first-child > div > div:nth-child(2) {
+            margin-top: 3px !important;
+            font-size: var(--settings-type-secondary) !important;
+            font-weight: 400 !important;
+            line-height: 1.35 !important;
+            color: #888 !important;
+        }
+        #settings-modal .modal-scroll-content > div[data-action] > span:last-child {
+            color: #cbd5e1 !important;
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            line-height: 1 !important;
+        }
+
         .modal-bottom-actions {
     flex-shrink: 0;
     background: var(--cream, #FDF5E6);
@@ -1254,7 +1395,7 @@ outline-offset: 2px;
   /* Sections & Quests */
   .gamification-section-title { font-size: 0.85rem; font-weight: 800; color: #4E342E; margin: 18px 0 10px 0; text-align: left; border-bottom: 1px dashed rgba(230, 126, 34, 0.3); padding-bottom: 6px; }
   .daily-quests-container { display: flex; flex-direction: column; gap: 8px; }
-  .quest-item { display: flex; justify-content: space-between; align-items: center; background: #FFFDF9; border: 1px solid rgba(243, 156, 18, 0.2); padding: 10px 12px; border-radius: 10px; font-size: 0.8rem; color: #2C3E50; }
+  .quest-item { display: flex; justify-content: space-between; align-items: center; background: #FFFDF9; border: 1px solid rgba(243, 156, 18, 0.2); padding: 10px 12px; border-radius: 10px; font-size: 0.8rem; color: var(--chocolate, #4E342E); }
   .quest-item.completed { opacity: 0.6; background: #EAFAF1; border-color: #A9DFBF; text-decoration: line-through; }
   .quest-reward { font-weight: 800; color: #E67E22; font-size: 0.75rem; }
   
@@ -1536,6 +1677,11 @@ outline-offset: 2px;
 }
         /* Baris data angka (Suhu & Kelembaban bersebelahan) */
         .shrunk-stats-row {display: flex;flex-direction: row;align-items: center; /* Menyejajarkan posisi vertikal tengah antara teks besar & kecil */gap: 10px; /* Jarak horizontal antara shrunk-main dan shrunk-sub */}
+        /* [AI-GENERATED][MOBILE-UX][V324] Preserve a reliable tap target after the header collapses. */
+        #location-section.shrunk .shrunk-stats-row,
+        #location-section.shrunk #shrunk-main,
+        #location-section.shrunk #shrunk-sub {pointer-events: auto !important; touch-action: manipulation; position: relative; z-index: 2;}
+        #location-section.shrunk .shrunk-stats-row {min-height: 40px;}
 
         /* Data Utama (Kiri - Ukuran Besar) */
         #shrunk-main {font-size: 2rem;font-weight: 900;cursor: pointer;user-select: none;transition: opacity 0.15s ease, transform 0.1s ease;letter-spacing: -1px;line-height: 1; /* Mencegah space kosong vertikal berlebih */}
@@ -1760,6 +1906,30 @@ outline-offset: 2px;
   background-color: #ffffff;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  position: relative;
+  z-index: 1;
+}
+
+/* Expanded instructions cover the timer instead of changing its flow position. */
+.cara-pembuatan-wrapper.overlay-open {
+  position: absolute;
+  top: var(--cara-overlay-top, 0px);
+  left: 16px;
+  right: 16px;
+  z-index: 40;
+  margin: 0;
+  max-height: min(68vh, 520px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  box-shadow: 0 14px 34px rgba(35, 22, 14, 0.24);
+}
+
+.cara-pembuatan-wrapper.overlay-open .cara-pembuatan-body {
+  max-height: min(58vh, 420px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .cara-pembuatan-header {
@@ -1866,6 +2036,23 @@ outline-offset: 2px;
     align-items: center;
     box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
 }
+/* [AI-GENERATED][APP TOUR][V332] Raise the navbar's own stacking context
+   when one of its child tabs is spotlighted. A child z-index cannot escape
+   its parent's lower stacking context, which caused tour steps 4-5 to dim. */
+.bottom-bar.tour-highlight-layer {
+    /* Lift only the parent stacking context. The target keeps the exact same
+       .tour-highlighted-element spotlight styling as App Tour steps 1–3. */
+    z-index: 99996 !important;
+    isolation: isolate;
+    pointer-events: none;
+}
+.bottom-bar.tour-highlight-layer .bottom-item {
+    pointer-events: none;
+}
+.bottom-bar.tour-highlight-layer .bottom-item:not(.tour-highlighted-element) {
+    opacity: 0.34;
+    filter: saturate(0.45);
+}
 /* PERBAIKAN: .bottom-bar berada di luar #app-container/.container secara struktur HTML,
    jadi aturan "body.logged-out .container{display:none}" tidak ikut menyembunyikannya.
    Tambahkan aturan eksplisit ini agar navbar bawah tidak muncul di halaman Masuk/Daftar. */
@@ -1939,7 +2126,7 @@ body.logged-out .bottom-bar {
 
         .article-dot.active {background: var(--accent, #E67E22); width: 15px; border-radius: 10px;}
 
-        #article-modal {display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; align-items: flex-end; justify-content: center; background: transparent;}
+        #article-modal {display: none; position: fixed !important; inset: 0 !important; width: 100vw !important; max-width: none !important; height: 100vh !important; height: 100dvh !important; z-index: 20000 !important; align-items: stretch; justify-content: center; background: rgba(0,0,0,.55); overflow: hidden; margin: 0 !important; padding: 0 !important; box-sizing: border-box;}
 
         /* ANIMASI SAAT MODAL ARTIKEL AKTIF */
         #article-modal.active {display: flex;}
@@ -1947,10 +2134,10 @@ body.logged-out .bottom-bar {
         #article-modal.active .article-modal-content {transform: translateY(0); /* Meluncur penuh mengisi layar */}
 
         /* OVERLAY BACKGROUND DI BELAKANG MODAL */
-        .article-modal-overlay {position: fixed; top: 0;left: 0;width: 100%;height: 100%;background: rgba(0, 0, 0, 0.5);backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);z-index: 2000;/* Keadaan Default: Sembunyikan total dan matikan klik */display: none !important; pointer-events: none;}
+        .article-modal-overlay {position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; background: rgba(0, 0, 0, 0.5);backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);z-index: 20000;/* Keadaan Default: Sembunyikan total dan matikan klik */display: none !important; pointer-events: none;}
 
         /* KOTAK KONTEN HALAMAN ARTIKEL */
-        .article-modal-content {background: var(--cream, #FDF5E6); width: 100%; max-width: 480px; margin: 0; height: 100%; /* <--- Sudah diperbaiki menjadi height */ border-radius: 0; /* Menghilangkan radius agar penuh ke atas */ overflow-y: auto; -webkit-overflow-scrolling: touch; padding: calc(20px + env(safe-area-inset-top)) 20px 20px 20px; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); transform: translateY(100%); transition: transform 0.3s ease-out;}
+        .article-modal-content {background: var(--cream, #FDF5E6); position: relative; width: 100vw; max-width: none; margin: 0; height: 100vh; height: 100dvh; min-height: 100dvh; border-radius: 0; /* Menghilangkan radius agar penuh ke atas */ overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -5px 25px rgba(0,0,0,0.15); transform: translateY(100%); transition: transform 0.3s ease-out;}
 
         /* ANIMASI SAAT MODAL AKTIF */
         .article-modal-overlay.active {
@@ -2987,9 +3174,9 @@ body.logged-out .bottom-bar {
 }
 
         /* Wadah untuk konten yang bisa scroll */
-        .scrollable-content {flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overflow-x: hidden; padding: 15px; padding-bottom: 100px; -webkit-overflow-scrolling: touch; background-color: transparent; color: var(--chocolate); box-sizing: border-box;}
-        #loc-line1 { font-weight: bold; color: var(--accent); }
-        #loc-line2 { font-size: 0.8rem; color: var(--accent); opacity: 0.8; }
+        .scrollable-content {flex: 1 1 0px; height: 0; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; touch-action: pan-y; position: relative; padding: 15px; padding-bottom: 100px; background-color: transparent; color: var(--chocolate); box-sizing: border-box;}
+        #loc-line1 { font-weight: bold; color: #4E342E !important; }
+        #loc-line2 { font-size: 0.8rem; color: #6D4C41 !important; opacity: 0.9; }
         /* Mengubah arah susunan dari menyamping (row) menjadi atas-bawah (column) */
         #refresh-indicator { text-align: center; padding: 10px; font-size: 0.8rem; color: var(--accent); display: none; }
 
@@ -3031,10 +3218,33 @@ body > .skiptranslate {
     left: -9999px !important;
 }
 
-/* Mencegah bodi digeser ke bawah oleh script Google */
+/* [AI-GENERATED][APP-SHELL][V327]
+   Kunci shell aplikasi pada viewport. Scroll vertikal hanya dimiliki
+   #app-container > .scrollable-content, bukan html/body/app-container. */
 body {
-    top: 0px !important;
-    position: static !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    position: fixed !important;
+    width: 100% !important;
+    max-width: 480px !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+}
+
+/* Login/daftar tetap dapat digulir internal pada layar pendek. */
+body.logged-out #auth-wrapper {
+    max-height: 100%;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
 }
 
     /* Style elegan ala bar menu WhatsApp */
@@ -3250,6 +3460,7 @@ body {
 /* STYLE TOMBOL PILIHAN PROOFING */
 /* Container Wrapper Utama */
 .proofer-selector-wrapper {
+    position: relative;
     background: linear-gradient(145deg, #ffffff, #fcf9f6);
     border-radius: 16px;
     padding: 16px;
@@ -3382,7 +3593,233 @@ body {
     display: block; 
 }
 
-    </style>
+    
+/* [AI-GENERATED][NATIVE UX][V325] Minimal timer surface for Android system PiP. */
+body.native-pip #app-container {
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+body.native-pip .top-nav-bar,
+body.native-pip #location-section,
+body.native-pip #refresh-indicator,
+body.native-pip #achievement-popup,
+body.native-pip .bottom-bar,
+body.native-pip .about-btn { display: none !important; }
+body.native-pip #app-container > .scrollable-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 4px !important;
+    overflow: hidden !important;
+}
+body.native-pip .scrollable-content > :not(.proofer-selector-wrapper) { display: none !important; }
+body.native-pip .proofer-selector-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+body.native-pip .proofer-selector-wrapper > :not(.timer-circle) { display: none !important; }
+body.native-pip .timer-circle {
+    width: min(62vw, 190px) !important;
+    max-width: 62vw !important;
+    margin: auto !important;
+    flex-shrink: 0 !important;
+}
+body.native-pip #countdown { font-size: clamp(1.3rem, 8vw, 2.1rem) !important; }
+body.native-pip .timer-content-wrapper .time-info { font-size: clamp(0.48rem, 2.4vw, 0.75rem) !important; }
+
+
+/* [AI-GENERATED][MOBILE RESPONSIVE][V329] Keep AI assistant controls inside the card on narrow phones. */
+.ai-assistant-card,
+.ai-assistant-card * { box-sizing: border-box; }
+.ai-assistant-card #ai-tips-input {
+    min-width: 0;
+    width: 100%;
+    flex: 1 1 170px;
+}
+.ai-assistant-card #ai-tips-btn {
+    flex: 0 1 auto;
+    min-width: 96px;
+    max-width: 100%;
+    min-height: 42px;
+    padding: 8px 12px !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.2;
+    text-align: center;
+}
+@media (max-width: 380px) {
+    .ai-assistant-card > div:nth-of-type(2) { flex-wrap: wrap !important; }
+    .ai-assistant-card #ai-tips-input { flex-basis: 100%; }
+    .ai-assistant-card #ai-tips-btn { flex: 1 1 100%; width: 100%; }
+}
+
+
+/* [AI-GENERATED][MOBILE-UX][V333] Fit onboarding and authentication to the live WebView viewport. */
+#onboarding-screen .ob-container {
+    height: 100%;
+    min-height: 0;
+    padding-top: max(12px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+}
+#onboarding-screen .ob-slider-wrapper,
+#onboarding-screen .ob-slider-track,
+#onboarding-screen .ob-slide {
+    min-height: 0;
+}
+#onboarding-screen .ob-slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+    max-width: 100%;
+}
+#onboarding-screen .ob-footer { padding-bottom: 0; }
+@media (max-height: 680px) {
+    #onboarding-screen .ob-container {
+        padding-top: max(8px, env(safe-area-inset-top, 0px));
+        padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+    }
+    #onboarding-screen .ob-illustration { width: clamp(88px, 20vmin, 132px); }
+    #onboarding-screen .ob-title { font-size: clamp(1rem, 4vw, 1.25rem); }
+    #onboarding-screen .ob-desc { font-size: 0.82rem; line-height: 1.38; }
+    #onboarding-screen .ob-primary-btn { padding: 12px; }
+}
+
+/* [AI-GENERATED][MOBILE-UX][V334]
+   Keep the login/register panel edge-to-edge on narrow mobile WebViews so
+   there is no unused cream strip above or below the form. Safe areas are
+   applied inside the panel exactly once; the panel owns overflow when the
+   keyboard or a short viewport reduces available height. */
+body.logged-out {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0;
+}
+body.logged-out #auth-wrapper {
+    flex: 1 1 auto;
+    width: min(100%, 420px);
+    height: auto;
+    min-height: 0 !important;
+    max-height: 100%;
+    margin: 0 auto;
+    padding: clamp(10px, 1.8dvh, 16px) clamp(14px, 3.6vw, 22px);
+    justify-content: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+}
+body.logged-out #auth-wrapper::-webkit-scrollbar { display: none; }
+body.logged-out #auth-wrapper .inputs-wrapper { min-height: 0; }
+body.logged-out #auth-wrapper .auth-header { margin-bottom: clamp(7px, 1.2dvh, 11px); }
+body.logged-out #auth-wrapper .tab-switch { margin-bottom: clamp(8px, 1.3dvh, 12px); }
+body.logged-out #auth-wrapper .divider { margin-top: clamp(8px, 1.2dvh, 11px); margin-bottom: clamp(8px, 1.2dvh, 11px); }
+@media (max-width: 600px) {
+    body.logged-out { align-items: stretch; justify-content: stretch; }
+    body.logged-out #auth-wrapper {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        max-height: 100%;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding-top: calc(env(safe-area-inset-top, 0px) + clamp(8px, 1.2dvh, 12px));
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + clamp(8px, 1.2dvh, 12px));
+        justify-content: center;
+    }
+}
+@media (max-height: 680px) {
+    body.logged-out #auth-wrapper { padding-left: 16px; padding-right: 16px; }
+    body.logged-out #auth-wrapper .auth-header { margin-bottom: 6px; }
+    body.logged-out #auth-wrapper .tab-switch { margin-bottom: 7px; }
+    body.logged-out #auth-wrapper .divider { margin: 7px 0; }
+    body.logged-out #auth-wrapper .form-group { margin-bottom: 7px; }
+    body.logged-out #auth-wrapper .form-group input { padding-top: 8px; padding-bottom: 8px; }
+}
+
+
+/* [AI-GENERATED][SHARE-UI][V335] Platform-neutral share presentation; only the OS chooser remains native. */
+#share-app-modal .share-app-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    padding: clamp(18px, 4vw, 28px) clamp(18px, 5vw, 28px) calc(24px + env(safe-area-inset-bottom, 0px));
+}
+#share-app-modal .share-app-brand {
+    display: grid;
+    place-items: center;
+    width: 112px;
+    height: 112px;
+    border-radius: 28px;
+    background: #FDF5E6;
+    box-shadow: 0 8px 24px rgba(78, 52, 46, .10);
+}
+#share-app-modal .share-app-brand img { width: 92px; height: 92px; object-fit: contain; }
+#share-app-modal .share-app-title {
+    margin: 4px 0 0;
+    color: var(--chocolate, #4E342E);
+    font-size: clamp(1.1rem, 4.6vw, 1.35rem);
+    line-height: 1.28;
+}
+#share-app-modal .share-app-description,
+#share-app-modal .share-app-footnote {
+    max-width: 430px;
+    margin: 0;
+    color: rgba(78, 52, 46, .72);
+    font-size: .86rem;
+    line-height: 1.5;
+}
+#share-app-modal .share-app-link-card {
+    width: 100%;
+    max-width: 460px;
+    box-sizing: border-box;
+    padding: 14px;
+    border: 1px solid rgba(78, 52, 46, .12);
+    border-radius: 14px;
+    background: #fff;
+    text-align: left;
+}
+#share-app-modal .share-app-link-label { color: #8A756B; font-size: .72rem; font-weight: 800; margin-bottom: 5px; }
+#share-app-modal .share-app-link-value { color: #3E2723; font-size: .82rem; overflow-wrap: anywhere; }
+#share-app-modal .share-app-actions { width: 100%; max-width: 460px; display: grid; gap: 10px; }
+#share-app-modal .share-app-primary,
+#share-app-modal .share-app-secondary,
+#share-app-modal .share-app-tertiary {
+    width: 100%; min-height: 48px; border-radius: 12px; padding: 12px 16px;
+    font-size: .88rem; font-weight: 800; cursor: pointer; box-sizing: border-box;
+}
+#share-app-modal .share-app-primary { background: var(--accent, #E67E22); color: #fff; border: 0; box-shadow: 0 4px 12px rgba(230, 126, 34, .2); }
+#share-app-modal .share-app-secondary { background: #fff; color: var(--chocolate, #4E342E); border: 1px solid rgba(78, 52, 46, .18); }
+#share-app-modal .share-app-tertiary { background: #FDF5E6; color: var(--chocolate, #4E342E); border: 1px solid rgba(230, 126, 34, .26); }
+#share-app-modal .share-app-footnote { font-size: .72rem; }
+
+</style>
 </head>
 <body class="auth-pending"> <!-- [AI-GENERATED][AUTH-BOOT][V313] Resolve persisted session before exposing login/register UI. -->
 <!-- KODE PENAMBAHAN BARU -->
@@ -3442,14 +3879,14 @@ body {
 <input id="agree-tos-checkbox" name="agree-tos" data-onchange="validateSubmitButton()" style="width: 16px; height: 16px; margin-top: 2px; cursor: pointer; accent-color: #3e2723;" type="checkbox"/>
 <label for="agree-tos-checkbox" style="font-size: 0.8rem; color: #3e2723; cursor: pointer; user-select: none; line-height: 1.3;">
                         Saya telah membaca dan menyetujui 
-                        <a data-action="openTosModal" href="#" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Syarat &amp; Ketentuan Layanan</a> 
+                        <a data-action="openTermsModal" data-arg="tos-modal" href="#" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Syarat &amp; Ketentuan Layanan</a> 
                         serta Kebijakan Privasi.
                     </label>
 </div>
 </div>
 </div>
 <!-- Tombol Submit Utama -->
-<button class="btn-submit" id="btn-submit-main" type="submit">MASUK</button>
+<button class="btn-submit" id="btn-submit-main" type="submit" disabled aria-disabled="true">MASUK</button>
 </form>
 <!-- Link Kembali ke Login (Khusus Mode Lupa Password) -->
 <div id="back-to-login-wrapper" style="text-align: center; margin-top: 14px; display: none;">
@@ -3688,7 +4125,7 @@ body {
 <strong>Insight:</strong> Memindai suhu ruang dan produk aktif untuk analisis fermentasi...
             </div>
 <!-- Rekomendasi Tindakan -->
-<div id="ai-recommendation" style="font-size: 0.82rem; color: #2C3E50; line-height: 1.5; background: rgba(255, 255, 255, 0.7); padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(243, 156, 18, 0.2);">
+<div id="ai-recommendation" style="font-size: 0.82rem; color: #4E342E; line-height: 1.5; background: rgba(255, 255, 255, 0.7); padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(243, 156, 18, 0.2);">
 <strong>Rekomendasi AI:</strong> <br/>⏳ Menyiapkan parameter telemetri sesuai adonan Anda.
             </div>
 <!-- Tombol Sinkronisasi -->
@@ -3942,25 +4379,40 @@ body {
 <div class="log-empty">Tidak ada stok bahan tersedia.</div>
 </div>
 </div>
-<!-- PEMBAYARAN -->
+<!-- [AI-GENERATED][MONETIZATION][V342-C] Paket Keanggotaan: harga selalu berasal dari katalog server. -->
+<section class="membership-package-section" aria-labelledby="membership-package-title" style="margin: 18px 0;">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;"><h3 class="profile-section-title" id="membership-package-title" style="margin-bottom:10px;">💎 Paket Keanggotaan</h3><button class="profile-refresh-btn" data-action="loadMembershipPackages" type="button" style="font-size:.76rem;padding:7px 10px;">↻ Muat ulang</button></div>
+<div id="membership-current-status" aria-live="polite" style="background:#fffaf2;border:1px solid rgba(230,126,34,.2);border-radius:14px;padding:14px;margin-bottom:14px;text-align:left;">
+<strong style="display:block;color:#4E342E;">Status Keanggotaan</strong>
+<span id="membership-current-plan" style="display:block;margin-top:5px;color:#718096;font-size:.86rem;">Memuat status akun…</span>
+<span id="membership-expiry" style="display:block;margin-top:4px;color:#718096;font-size:.76rem;"></span>
+<div id="membership-feature-quotas" aria-live="polite" style="border-top:1px solid #f1e5d8;margin-top:10px;padding-top:8px;"><span style="font-size:.76rem;color:#718096;">Memuat kuota fitur…</span></div>
+<button id="membership-trial-button" data-action="startFreeTrial" type="button" disabled style="width:100%;margin-top:10px;border:1px solid #d6a64f;background:#fff8e8;color:#7c4a03;border-radius:10px;padding:10px;font-weight:800;opacity:.55;">Memeriksa Free Trial…</button>
+<p id="membership-trial-note" style="font-size:.72rem;color:#718096;margin:6px 0 0;line-height:1.45;">Uji Pro selama 7 hari satu kali per akun. Tanpa metode pembayaran dan tanpa penagihan otomatis.</p>
+</div>
+<div role="group" aria-label="Periode pembayaran" style="display:flex;gap:8px;margin:0 0 12px;">
+<button type="button" aria-pressed="true" style="flex:1;border:1px solid var(--accent,#E67E22);background:#fff3e6;color:#9a4d0b;border-radius:10px;padding:9px;font-weight:800;">Bulanan</button>
+<button type="button" disabled aria-disabled="true" title="Harga tahunan belum ditetapkan" style="flex:1;border:1px solid #e2e8f0;background:#f8fafc;color:#94a3b8;border-radius:10px;padding:9px;font-weight:700;opacity:.8;">Tahunan · Segera</button>
+</div>
+<div id="membership-plan-list" aria-live="polite" aria-busy="true" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;">
+<div class="log-empty" style="grid-column:1/-1;">Memuat pilihan paket…</div>
+</div>
+<p style="font-size:.74rem;line-height:1.5;color:#718096;margin:10px 2px 16px;text-align:left;">Masa aktif dimulai setelah pembayaran terverifikasi. Pembaruan saat ini dilakukan secara manual. Harga yang ditampilkan merupakan total yang ditagihkan.</p>
 <div class="payment-checkout-container" style="background: #ffffff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 420px; margin: 0 auto; text-align: center;">
-<div style="font-size: 2.5rem; margin-bottom: 10px;">🧾</div>
-<h4 style="margin: 0 0 8px 0; color: #4E342E; font-size: 1.1rem; font-weight: 800;">Konfirmasi Pembayaran</h4>
-<p style="font-size: 0.8rem; color: #718096; margin-bottom: 20px;">Selesaikan transaksi Anda secara aman menggunakan berbagai metode pembayaran instan.</p>
-<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 20px; text-align: left; font-size: 0.82rem;">
-<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-<span style="color: #64748b;">Produk / Layanan:</span>
-<span style="font-weight: 700; color: #4E342E;">Langganan / Pesanan Adonan</span>
+<div style="font-size: 2rem; margin-bottom: 8px;">🧾</div>
+<h4 style="margin: 0 0 8px 0; color: #4E342E; font-size: 1.05rem; font-weight: 800;">Ringkasan Pembayaran</h4>
+<p id="membership-checkout-description" style="font-size: 0.8rem; color: #718096; margin-bottom: 16px;">Pilih paket untuk melihat rincian tagihan.</p>
+<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; margin-bottom: 16px; text-align: left; font-size: 0.82rem;">
+<div style="display: flex; justify-content: space-between; gap:10px; margin-bottom: 6px;"><span style="color: #64748b;">Paket:</span><strong id="pay-plan-name" style="color:#4E342E;text-align:right;">Belum dipilih</strong></div>
+<div style="display: flex; justify-content: space-between; gap:10px; margin-bottom: 6px;"><span style="color: #64748b;">Masa aktif:</span><strong id="pay-plan-period" style="color:#4E342E;text-align:right;">—</strong></div>
+<div style="display: flex; justify-content: space-between; gap:10px; margin-bottom: 6px;"><span style="color: #64748b;">Harga paket:</span><strong id="pay-subtotal-amount" style="color:#4E342E;text-align:right;">—</strong></div>
+<div style="display: flex; justify-content: space-between; gap:10px; margin-bottom: 6px;"><span style="color: #64748b;">Diskon:</span><strong id="pay-discount-amount" style="color:#4E342E;text-align:right;">Rp0</strong></div>
+<div style="display: flex; justify-content: space-between; gap:10px; border-top: 1px dashed #cbd5e1; padding-top: 8px;"><span style="font-weight: 700; color: #4E342E;">Total Tagihan:</span><span id="pay-total-amount" style="font-weight: 800; color: #E67E22;">Pilih paket</span></div>
 </div>
-<div style="display: flex; justify-content: space-between; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
-<span style="font-weight: 700; color: #4E342E;">Total Tagihan:</span>
-<span id="pay-total-amount" style="font-weight: 800; color: #E67E22;">Rp 50.000</span>
+<button class="btn" data-action="mulaiTransaksiMidtrans" disabled style="background: var(--accent, #E67E22); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(230,126,34,0.25); opacity:.55;" type="button">💳 LANJUTKAN PEMBAYARAN</button>
+<p style="font-size:.7rem;color:#94a3b8;margin:12px 0 0;">Pembayaran diproses melalui Midtrans. Aktivasi paket menunggu konfirmasi server.</p>
 </div>
-</div>
-<button class="btn" data-action="mulaiTransaksiMidtrans" style="background: var(--accent, #E67E22); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(230,126,34,0.25);" type="button">
-                    💳 BAYAR SEKARANG
-                </button>
-</div>
+</section>
 </div>
 </div>
 
@@ -4085,8 +4537,8 @@ body {
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">🌡️</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Koneksi Sensor</div>
-<div style="font-size: 0.7rem; color: #888;">Hubungkan termometer BLE &amp; perangkat IoT</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Koneksi Sensor</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Hubungkan termometer BLE &amp; perangkat IoT</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4095,8 +4547,8 @@ body {
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">🎛️</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Preferensi Aplikasi</div>
-<div style="font-size: 0.7rem; color: #888;">Suara, getaran, &amp; mode offline</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Preferensi Aplikasi</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Suara, getaran, &amp; mode offline</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4106,8 +4558,8 @@ body {
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">🌐</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Bahasa Aplikasi / App Language</div>
-<div id="label-bahasa-aktif" style="font-size: 0.7rem; color: #888;">Bahasa Indonesia (Default)</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Bahasa Aplikasi / App Language</div>
+<div id="label-bahasa-aktif" style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Bahasa Indonesia (Default)</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4116,28 +4568,28 @@ body {
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">❓</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Pusat Bantuan &amp; Panduan</div>
-<div style="font-size: 0.7rem; color: #888;">FAQ, cara penggunaan, dan tips proofing</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Pusat Bantuan &amp; Panduan</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">FAQ, cara penggunaan, dan tips proofing</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
 </div>
 <div data-action="handleRestartTourFromSettings" data-onmouseout="this.style.background='transparent'" data-onmouseover="this.style.background='#fdf8f4'" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s;">
-<div style="display: flex; align-items: center; gap: 14px;">
-<span style="font-size: 18px; line-height: 1;">🚀</span>
+<div style="display: flex; align-items: center; gap: 12px;">
+<span>🚀</span>
 <div>
-<div style="font-weight: 700; color: #4E342E; font-size: 14px; line-height: 1.2;">Tour Aplikasi</div>
-<div style="font-size: 12px; color: #8D6E63; margin-top: 3px;">Ulangi panduan interaktif fitur aplikasi</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Tour Aplikasi</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Ulangi panduan interaktif fitur aplikasi</div>
 </div>
 </div>
-<span style="color: #C8B6A6; font-size: 14px;">›</span>
+<span>›</span>
 </div>
-<div data-action="openTosModal" data-onmouseout="this.style.background='transparent'" data-onmouseover="this.style.background='#fdf8f4'" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;">
+<div data-action="openTermsModal" data-arg="tos-modal" data-onmouseout="this.style.background='transparent'" data-onmouseover="this.style.background='#fdf8f4'" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; transition: background 0.2s; background: transparent;">
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">📜</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Syarat &amp; Ketentuan Layanan</div>
-<div style="font-size: 0.7rem; color: #888;">Aturan penggunaan &amp; kebijakan hukum</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Syarat &amp; Ketentuan Layanan</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Aturan penggunaan &amp; kebijakan hukum</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4147,8 +4599,8 @@ body {
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">💾</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Pencadangan &amp; Pemulihan</div>
-<div style="font-size: 0.7rem; color: #888;">Ekspor atau impor semua resep Anda</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Pencadangan &amp; Pemulihan</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Ekspor atau impor semua resep Anda</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4157,8 +4609,8 @@ body {
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">ℹ️</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Tentang Aplikasi</div>
-<div id="about-menu-version" style="font-size: 0.7rem; color: #888;">Memuat versi...</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Tentang Aplikasi</div>
+<div id="about-menu-version" style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Memuat versi...</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4168,8 +4620,8 @@ body {
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">📤</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Bagikan ke Teman</div>
-<div style="font-size: 0.7rem; color: #888;">Rekomendasikan Timer Proofing</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Bagikan ke Teman</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Rekomendasikan Timer Proofing</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4179,8 +4631,8 @@ body {
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">⭐</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Beri Nilai Kami</div>
-<div style="font-size: 0.7rem; color: #888;">Play Store, App Store, Galaxy Store...</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Beri Nilai Kami</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Play Store, App Store, Galaxy Store...</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4190,8 +4642,8 @@ body {
 <div style="display: flex; align-items: center; gap: 12px;">
 <span style="font-size: 1.1rem;">💬</span>
 <div>
-<div style="font-size: 0.82rem; font-weight: 600; color: #3e2723;">Berikan Saran</div>
-<div style="font-size: 0.7rem; color: #888;">Kritik, masukan, &amp; laporan bug</div>
+<div style="font-size: 1rem; font-weight: 600; line-height: 1.2; color: #3e2723;">Berikan Saran</div>
+<div style="margin-top: 3px; font-size: 0.618rem; font-weight: 400; line-height: 1.35; color: #888;">Kritik, masukan, &amp; laporan bug</div>
 </div>
 </div>
 <span style="color: #cbd5e1; font-size: 1rem; font-weight: bold;">›</span>
@@ -4435,6 +4887,31 @@ body {
 </div>
 <!--TAMBAHAN-->
 <!-- MODAL PENCADANGAN / BACKUP -->
+<!-- [AI-GENERATED][SHARE-UI][V335] Shared branded share panel for PWA and Capacitor. -->
+<div class="page-modal" id="share-app-modal" inert="" aria-hidden="true">
+  <div class="article-modal-header share-app-header" style="padding: 15px 20px 10px 20px;">
+    <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">📤 Bagikan ke Teman</h3>
+    <button class="article-modal-close" data-action="toggleModal" data-arg="share-app-modal" id="btn-close-share-app" aria-label="Tutup">×</button>
+  </div>
+  <div class="modal-scroll-content share-app-content">
+    <div class="share-app-brand" aria-hidden="true">
+      <img src="logo-donat.svg" alt="" width="88" height="88" />
+    </div>
+    <h2 class="share-app-title">Ajak teman menggunakan Timer Proofer</h2>
+    <p class="share-app-description">Bagikan aplikasi untuk membantu teman memantau proofing adonan dan menghitung HPP resep bakery.</p>
+    <div class="share-app-link-card">
+      <div class="share-app-link-label">Tautan aplikasi</div>
+      <div class="share-app-link-value" id="share-app-url">https://timer-proofer.vercel.app/</div>
+    </div>
+    <div class="share-app-actions">
+      <button class="share-app-primary" id="btn-share-app-native" data-action="shareAppNow" type="button">📲 Bagikan melalui aplikasi</button>
+      <button class="share-app-tertiary" id="btn-share-app-link" data-action="shareAppLinkOnly" type="button">🔗 Bagikan tautan saja</button>
+      <button class="share-app-secondary" id="btn-copy-app-link" data-action="copyAppShareLink" type="button">📋 Salin tautan</button>
+    </div>
+    <p class="share-app-footnote">Tautan publik dapat dibuka melalui browser dan dipasang sebagai PWA.</p>
+  </div>
+</div>
+
 <div class="page-modal" id="backup-modal" inert="">
 <div class="article-modal-header" style="padding: 15px 20px 5px 20px;">
 <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
@@ -4602,7 +5079,7 @@ body {
 <div class="recipe-detail-header-actions" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
 <button data-action="buatResepBaruForm" style="background: #fff; color: #E67E22; border: 1px solid #F2D2A9; padding: 7px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;" title="Reset Form Resep Baru" type="button">+ Resep Baru</button>
 <button data-action="simpanResepKeDatabase" style="background: #27ae60; color: white; border: none; padding: 7px 14px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer;" type="button">💾 Simpan</button>
-<button id="btn-recipe-close-top" aria-label="Tutup detail resep" title="Tutup detail resep" type="button">×</button>
+<button id="btn-recipe-close-top" data-action="tutupHalamanResepSecaraAman" aria-label="Tutup detail resep" title="Tutup detail resep" type="button">×</button>
 </div>
 </div>
 <!-- Area Scroll Konten Utama dengan Padding Bottom 90px agar tidak tertutup tombol fixed -->

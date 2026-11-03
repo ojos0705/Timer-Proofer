@@ -9,6 +9,13 @@ import { NativeCapacitorService } from './native-capacitor-service.js';
 let audioCtx = null;
 let alarmAudioAktif = null;
 let alarmOscillatorAktif = [];
+let alarmPlaybackGeneration = 0;
+
+// Preview audio has its own lifecycle so saving preferences can stop only the
+// audition without interfering with a real proofing-completion alarm.
+let previewAudioAktif = null;
+let previewOscillatorAktif = [];
+let previewPlaybackGeneration = 0;
 
 function dapatkanAudioContext(isUserGesture = false) {
     if (!audioCtx) {
@@ -26,12 +33,19 @@ function dapatkanAudioContext(isUserGesture = false) {
 }
 
 function hentikanSemuaSuaraAlarm() {
+    // Stop any settings audition first; a real alarm takes exclusive ownership.
+    stopAlarmPreview();
+    // Invalidate pending play() rejections before stopping the active alarm.
+    alarmPlaybackGeneration += 1;
     if (alarmAudioAktif) {
-        try {
-            alarmAudioAktif.pause();
-            alarmAudioAktif.currentTime = 0;
-        } catch (_) {}
+        const audio = alarmAudioAktif;
         alarmAudioAktif = null;
+        try {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.removeAttribute?.('src');
+            audio.load?.();
+        } catch (_) {}
     }
 
     if (alarmOscillatorAktif.length) {
@@ -119,6 +133,7 @@ function playAlarmSound(overrideTone, overrideVolume) {
     if (readAlarmPreference('app_sound', 'true') === 'false') return false;
 
     hentikanSemuaSuaraAlarm();
+    const playbackGeneration = alarmPlaybackGeneration;
 
     const selectedTone = overrideTone || readAlarmPreference('app_alarm_tone', 'default');
     const volumeRaw = overrideVolume !== undefined && overrideVolume !== null
@@ -153,8 +168,11 @@ function playAlarmSound(overrideTone, overrideVolume) {
         Promise.resolve(audio.play()).then(() => {
             window.DEBUG && console.log('[ProofingAlarmService] Audio alarm berhasil diputar:', audioPath);
         }).catch(error => {
+            // A preview/save/stop may have cancelled this attempt while play()
+            // was pending. Never restart a beep after the user stopped playback.
+            if (playbackGeneration !== alarmPlaybackGeneration || alarmAudioAktif !== audio) return;
             console.warn('[ProofingAlarmService] Audio file gagal diputar, fallback ke beep:', error);
-            if (alarmAudioAktif === audio) alarmAudioAktif = null;
+            alarmAudioAktif = null;
             playAlarmTone();
         });
 
@@ -166,9 +184,120 @@ function playAlarmSound(overrideTone, overrideVolume) {
     }
 }
 
+
+
+/** Stop only preference-preview audio; leave a real completion alarm untouched. */
+function stopAlarmPreview() {
+    previewPlaybackGeneration += 1;
+
+    if (previewAudioAktif) {
+        const audio = previewAudioAktif;
+        previewAudioAktif = null;
+        try {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.removeAttribute?.('src');
+            audio.load?.();
+        } catch (_) {}
+    }
+
+    if (previewOscillatorAktif.length) {
+        previewOscillatorAktif.forEach((oscillator) => {
+            try { oscillator.stop(); } catch (_) {}
+            try { oscillator.disconnect(); } catch (_) {}
+        });
+        previewOscillatorAktif = [];
+    }
+}
+
+function playAlarmPreviewTone(volumeValue) {
+    const ctx = dapatkanAudioContext(true);
+    if (!ctx) return false;
+
+    const playbackGeneration = previewPlaybackGeneration;
+    const startTime = ctx.currentTime;
+    const safeVolume = Math.max(0.01, Math.min(1, Number(volumeValue) || 0.8));
+
+    try {
+        for (let index = 0; index < 3; index += 1) {
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            const startAt = startTime + (index * 0.4);
+            const stopAt = startAt + 0.3;
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, startAt);
+            gainNode.gain.setValueAtTime(safeVolume * 0.5, startAt);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, stopAt);
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            oscillator.start(startAt);
+            oscillator.stop(stopAt);
+            previewOscillatorAktif.push(oscillator);
+            oscillator.addEventListener('ended', () => {
+                previewOscillatorAktif = previewOscillatorAktif.filter((item) => item !== oscillator);
+                if (playbackGeneration !== previewPlaybackGeneration) return;
+            }, { once: true });
+        }
+        return true;
+    } catch (error) {
+        console.warn('[ProofingAlarmService] Preview beep gagal:', error);
+        stopAlarmPreview();
+        return false;
+    }
+}
+
+/** Play a settings audition independently from the actual proofing alarm. */
+function playAlarmPreview(overrideTone, overrideVolume) {
+    stopAlarmPreview();
+    if (readAlarmPreference('app_sound', 'true') === 'false') return false;
+
+    const selectedTone = overrideTone || readAlarmPreference('app_alarm_tone', 'default');
+    const volumeRaw = overrideVolume !== undefined && overrideVolume !== null
+        ? overrideVolume
+        : readAlarmPreference('app_alarm_volume', '80');
+    const parsedVolume = Number(volumeRaw);
+    const volumeValue = Number.isFinite(parsedVolume)
+        ? Math.min(1, Math.max(0, parsedVolume / 100))
+        : 0.8;
+
+    const audioPaths = Object.freeze({
+        custom: 'assets/audio/donat-proofing.mp3',
+        'soft-bell': 'assets/audio/soft-bell.mp3',
+        'kitchen-timer': 'assets/audio/kitchen-timer.mp3'
+    });
+    const audioPath = audioPaths[selectedTone] || '';
+    if (!audioPath) return playAlarmPreviewTone(volumeValue);
+
+    const playbackGeneration = previewPlaybackGeneration;
+    let audio;
+    try {
+        audio = new Audio(audioPath);
+        audio.volume = volumeValue;
+        previewAudioAktif = audio;
+        audio.addEventListener('ended', () => {
+            if (previewAudioAktif === audio) previewAudioAktif = null;
+        }, { once: true });
+
+        Promise.resolve(audio.play()).catch((error) => {
+            if (playbackGeneration !== previewPlaybackGeneration || previewAudioAktif !== audio) return;
+            console.warn('[ProofingAlarmService] Audio preview gagal:', error);
+            previewAudioAktif = null;
+            playAlarmPreviewTone(volumeValue);
+        });
+        return true;
+    } catch (error) {
+        console.warn('[ProofingAlarmService] Inisialisasi audio preview gagal:', error);
+        if (previewAudioAktif === audio) previewAudioAktif = null;
+        return playAlarmPreviewTone(volumeValue);
+    }
+}
+
 export const ProofingAlarmService = Object.freeze({
     getAudioContext: dapatkanAudioContext,
     stopAll: hentikanSemuaSuaraAlarm,
+    stopPreview: stopAlarmPreview,
+    playPreview: playAlarmPreview,
     playTone: playAlarmTone,
     playSound: playAlarmSound,
     vibrate: triggerVibration
@@ -177,6 +306,8 @@ export const ProofingAlarmService = Object.freeze({
 window.ProofingAlarmService = ProofingAlarmService;
 window.dapatkanAudioContext = dapatkanAudioContext;
 window.hentikanSemuaSuaraAlarm = hentikanSemuaSuaraAlarm;
+window.stopAlarmPreviewSound = stopAlarmPreview;
+window.playAlarmPreviewSound = playAlarmPreview;
 window.playAlarmTone = playAlarmTone;
 window.playAlarmSound = playAlarmSound;
 window.triggerVibration = triggerVibration;

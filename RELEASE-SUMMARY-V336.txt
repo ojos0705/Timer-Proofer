@@ -1,0 +1,39 @@
+TIMER PROOFER — V336 RELEASE SUMMARY
+
+Product-facing version: V125 (unchanged)
+Technical build: es6-modular-v336
+Release token: 20261101-v336
+Service Worker cache: Timer-Proofing-v1.1.238
+
+FIXES
+1. Added official @capacitor/share 8.0.2 as an explicit dependency compatible with Capacitor 8 core.
+2. Added Android plugin registration, Gradle include/dependency, and generated plugin metadata so the existing native Share call resolves to the Android implementation.
+3. Added GET /api/translate health response. It returns endpoint reachability/method guidance only; actual translation remains authenticated POST.
+4. Preserved MyMemory translation and local per-language cache. MYMEMORY_CONTACT_EMAIL remains an optional server-only Vercel variable that uses MyMemory's documented de= contact-email parameter for the higher daily allowance.
+
+VALIDATION
+- npm test: 511 passed, 0 failed.
+- Release verifier: PASS.
+- Module boot graph: 69 local modules.
+- JavaScript checked: 275.
+- HTML checked: 2.
+- HTML IDs: 305; duplicates: 0.
+- Missing relative imports: 0.
+- Inline event handlers: 0.
+- Duplicate function declarations within a module: 0.
+- Service Worker local precache paths: 80; missing: 0.
+- ZIP integrity checked.
+- Clean extraction + full test suite: PASS (see QA-TEST-LOG-V336.txt).
+
+NOT CLAIMED AS VERIFIED
+- npm ci download of @capacitor/share in this offline packaging environment.
+- Gradle build after the user synchronizes the native plugin.
+- Android share chooser on a physical device.
+- Live Vercel POST translation / current MyMemory quota.
+
+NEXT DEVICE STEPS
+1. npm ci
+2. npm test
+3. npm run sync:android
+4. cd android && .\gradlew.bat :app:assembleDebug && .\gradlew.bat :app:installDebug
+5. Test Android share chooser and live translation after Production deployment.

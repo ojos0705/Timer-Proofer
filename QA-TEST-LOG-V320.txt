@@ -1,0 +1,30 @@
+TIMER PROOFER — QA V320
+Date: 2026-10-30
+Visible product version: V125
+Technical release token: 20261030-v320
+
+AUTOMATED TESTS
+- npm test: PASS
+- Node test runner: 417 passed, 0 failed
+- Static release audit: PASS
+- JavaScript files syntax-checked: 244
+- HTML files checked: 2
+- Relative imports missing: 0
+- Duplicate HTML IDs: 0
+- Inline event handlers: 0
+- Scroll-lock overrides outside modal owner: 0
+- Duplicate function declarations within a module: 0
+- Offline precache entries checked: 74; missing local entries: 0
+
+REGRESSION COVERAGE ADDED
+- Top recipe close button uses delegated data-action owner.
+- Both new-recipe entry points clear the prior live AI result.
+- Opening another saved recipe also clears the previous AI report.
+- A late AI response from an older recipe is ignored using a request epoch.
+- Weather-driven accent is scoped to #location-section; global bakery brand color stays brown/orange.
+- PWA cache token updates to V320 while visible version stays V125.
+
+NOT PERFORMED
+- Live browser interaction test against the deployed Preview URL.
+- Android/iOS Capacitor device test.
+- Vercel production domain assignment (must be configured in Project Settings → Domains).

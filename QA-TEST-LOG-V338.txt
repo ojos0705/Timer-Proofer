@@ -1,0 +1,30 @@
+TIMER PROOFER — V338 QA TEST LOG
+Date: 2026-11-01
+
+SOURCE
+- Baseline: V337 root-extract package.
+- Scope: Android Sharesheet rich link preview title metadata.
+- Product-facing version: V125.
+- Technical build: es6-modular-v338.
+- Release token: 20261101-v338.
+- Service Worker cache: Timer-Proofing-v1.1.240.
+
+STATIC / AUTOMATED CHECKS
+- npm test: PASS — 517 passed, 0 failed, 0 skipped.
+- Release verifier: PASS.
+- JavaScript files checked: 277.
+- HTML files checked: 2.
+- HTML IDs: 306; duplicate IDs: 0.
+- Missing local imports: 0.
+- Inline event handlers: 0.
+- Scroll-lock overrides outside owner module: 0.
+- Duplicate function declarations within a module: 0.
+- Service Worker precache entries: 80.
+- Local modules in boot graph: 69.
+- New native Android share tests: 3 passed.
+- ZIP integrity: PASS.
+- Clean extraction + npm test: PASS.
+
+NOT CLAIMED AS VERIFIED
+- Android Gradle compilation/build and physical-device Sharesheet rendering were not run in this environment. Gradle 9.6 distribution download was blocked because services.gradle.org could not be resolved; no cached Gradle distribution/Android SDK was available.
+- Actual target-app behavior, recipient suggestions, and QR/copy affordances vary by Android version and OEM and require device testing.

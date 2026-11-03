@@ -1,0 +1,23 @@
+Timer Proofer — V342 Stage F
+Admin Finance Dashboard
+
+Delivered:
+- Standalone authenticated admin dashboard: www/admin-finance.html
+- Finance summary + append-only adjustment API: api/finance-admin-summary.js
+- Private finance ledger migration: supabase/migrations/20261102_finance_ledger_v342f.sql
+- Finance dashboard tests: tests/finance-admin-v342f.test.mjs
+- Implementation and root-extract documentation
+
+Security:
+- Dedicated FINANCE_ADMIN_USER_IDS allowlist, separate from AI_COST_ADMIN_USER_IDS
+- Supabase service-role key remains server-only
+- Ledger inaccessible to anon/authenticated roles
+
+Accounting:
+- Gross paid orders and refunded gross exposure shown separately
+- Expense entries distinguish actual vs estimated
+- AI costs remain provider-rate estimates
+- Net margin is intentionally unavailable until all real fees, refunds, taxes and operating costs are reconciled
+
+Not deployed. Migration not applied to live database. Browser and device E2E not performed.
+Product-facing app version remains V125.
